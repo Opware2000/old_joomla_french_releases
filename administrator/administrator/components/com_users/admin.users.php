@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.users.php 6080 2006-12-21 06:48:26Z pasamio $
+* @version $Id: admin.users.php 7813 2007-06-29 06:04:09Z louis $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -203,8 +203,8 @@ function editUser( $uid='0', $option='users' ) {
 	if ($msg) {
 		echo "<script type=\"text/javascript\"> alert('".$msg."'); window.history.go(-1);</script>\n";
 		exit;
-	}	
-	
+	}
+
 	$row = new mosUser( $database );
 	// load the row from the db table
 	$row->load( (int)$uid );
@@ -216,12 +216,12 @@ function editUser( $uid='0', $option='users' ) {
 		;
 		$database->setQuery( $query );
 		$contact = $database->loadObjectList();
-		
+
 		$row->name = trim( $row->name );
 		$row->email = trim( $row->email );
 		$row->username = trim( $row->username );
 		$row->password = trim( $row->password );
-		
+
 	} else {
 		$contact 	= NULL;
 		$row->block = 0;
@@ -259,7 +259,7 @@ function editUser( $uid='0', $option='users' ) {
 		}
 
 		$lists['gid'] 		= mosHTML::selectList( $gtree, 'gid', 'size="10"', 'value', 'text', $row->gid );
-	} 
+	}
 
 	// build the html select list
 	$lists['block'] 		= mosHTML::yesnoRadioList( 'block', 'class="inputbox" size="1"', $row->block );
@@ -275,7 +275,7 @@ function editUser( $uid='0', $option='users' ) {
 function saveUser( $task ) {
 	global $database, $my, $acl;
 	global $mosConfig_live_site, $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_sitename;
-	
+
 	$userIdPosted = mosGetParam($_POST, 'id');
 	if ($userIdPosted) {
 		$msg = checkUserPermissions( array($userIdPosted), 'save', in_array($my->gid, array(24, 25)) );
@@ -285,12 +285,12 @@ function saveUser( $task ) {
 		}
 	}
 
-	$row = new mosUser( $database );	
+	$row = new mosUser( $database );
 	if (!$row->bind( $_POST )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-	
+
 	$row->name = trim( $row->name );
 	$row->email = trim( $row->email );
 	$row->username = trim( $row->username );
@@ -308,27 +308,36 @@ function saveUser( $task ) {
 		// new user stuff
 		if ($row->password == '') {
 			$pwd 			= mosMakePassword();
-			$row->password 	= md5( $pwd );
+
+			$salt = mosMakePassword(16);
+			$crypt = md5($pwd.$salt);
+			$row->password = $crypt.':'.$salt;
 		} else {
 			$pwd 			= trim( $row->password );
-			$row->password 	= md5( trim( $row->password ) );
+
+			$salt = mosMakePassword(16);
+			$crypt = md5($pwd.$salt);
+			$row->password = $crypt.':'.$salt;
 		}
 		$row->registerDate 	= date( 'Y-m-d H:i:s' );
 	} else {
 		$original = new mosUser( $database );
 		$original->load( (int)$row->id );
-		
+
 		// existing user stuff
 		if ($row->password == '') {
 			// password set to null if empty
 			$row->password = null;
 		} else {
-			$row->password = md5( trim( $row->password ) );
+			$row->password = trim($row->password);
+			$salt = mosMakePassword(16);
+			$crypt = md5($row->password.$salt);
+			$row->password = $crypt.':'.$salt;
 		}
-		
+
 		// if group has been changed and where original group was a Super Admin
-		if ( $row->gid != $original->gid ) {		
-			if ( $original->gid == 25 ) {					
+		if ( $row->gid != $original->gid ) {
+			if ( $original->gid == 25 ) {
 				// count number of active super admins
 				$query = "SELECT COUNT( id )"
 				. "\n FROM #__users"
@@ -337,14 +346,14 @@ function saveUser( $task ) {
 				;
 				$database->setQuery( $query );
 				$count = $database->loadResult();
-				
+
 				if ( $count <= 1 ) {
 					// disallow change if only one Super Admin exists
 					echo "<script> alert('You cannot change this users Group as it is the only active Super Administrator for your site'); window.history.go(-1); </script>\n";
 					exit();
 				}
 			}
-			
+
 			$user_group = strtolower( $acl->get_group_name( $original->gid, 'ARO' ) );
 			if (( $user_group == 'super administrator' && $my->gid != 25) ) {
 				// disallow change of super-Admin by non-super admin
@@ -371,7 +380,7 @@ function saveUser( $task ) {
 		echo "<script> alert('Vous ne pouvez pas créer un utilisateur dans ce groupe, seuls les Super Administrateurs peuvent le faire'); window.history.go(-1); </script>\n";
 		exit();
 	}
-		
+
 	// save usertype to usertype column
 	$query = "SELECT name"
 	. "\n FROM #__core_acl_aro_groups"
@@ -452,7 +461,7 @@ function saveUser( $task ) {
 			$adminName 	= $admin->name;
 			$adminEmail = $admin->email;
 		}
-		
+
 		mosMail( $adminEmail, $adminName, $row->email, $subject, $message );
 	}
 

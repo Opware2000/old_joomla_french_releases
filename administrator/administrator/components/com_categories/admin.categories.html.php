@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 6000 2006-12-13 19:52:58Z friesengeist $
+* @version $Id: admin.categories.html.php 7409 2007-05-14 21:10:47Z robs $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -55,7 +55,9 @@ class categories_html {
 					}
 				}
 				?>
-				<th class="categories">Gestionnaire de Cat&eacute;gories<small><small>[ <?php echo $section_name;?> ]</small></small>				</th>
+				<th class="categories">
+				Gestionnaire de Cat&eacute;gories <small><small>[ <?php echo $section_name;?> ]</small></small>
+				</th>
 				<?php
 			}
 			?>
@@ -104,7 +106,8 @@ class categories_html {
 			}
 			?>
 			<th width="5%" nowrap="nowrap">
-			ID	Cat&eacute;gorie		</th>
+			ID	Cat&eacute;gorie
+			</th>
 			<?php
 			if ( $type == 'content') {
 				?>
@@ -275,6 +278,8 @@ class categories_html {
 
 			if ( form.name.value == "" ) {
 				alert("La catégorie doit avoir un nom");
+			} else if (form.title.value ==""){
+				alert("La catégorie doit avoir un titre");
 			} else {
 				<?php getEditorContents( 'editor1', 'description' ) ; ?>
 				submitform(pressbutton);
@@ -303,17 +308,21 @@ class categories_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					D&eacute;tails de la cat&eacute;gorie</th>
+					D&eacute;tails de la cat&eacute;gorie
+					</th>
 				<tr>
 				<tr>
 					<td>
-					Titre de la Cat&eacute;gorie:					</td>
+					Titre de la Cat&eacute;gorie:
+					</td>
 					<td colspan="2">
 					<input class="text_area" type="text" name="title" value="<?php echo stripslashes( $row->title ); ?>" size="50" maxlength="50" title="Un nom court pour les menus" />
 					</td>
 				</tr>
 				<tr>
-					<td>Nom de la Cat&eacute;gorie:					</td>
+					<td>
+					Nom de la Cat&eacute;gorie:
+					</td>
 					<td colspan="2">
 					<input class="text_area" type="text" name="name" value="<?php echo stripslashes( $row->name ); ?>" size="50" maxlength="255" title="Un nom long pour les titres" />
 					</td>
@@ -641,7 +650,7 @@ class categories_html {
 			<br />
 			<?php echo $SectionList ?>
 			<br /><br />
-		  </td>
+			</td>
 			<td align="left" valign="top" width="20%">
 			<strong>Cat&eacute;gories &agrave;  copier:</strong>
 			<br />
@@ -652,7 +661,7 @@ class categories_html {
 			}
 			echo "</ol>";
 			?>
-		  </td>
+			</td>
 			<td valign="top" width="20%">
 			<strong>Articles &agrave;  copier:</strong>
 			<br />
@@ -664,7 +673,7 @@ class categories_html {
 			}
 			echo "</ol>";
 			?>
-		  </td>
+			</td>
 			<td valign="top">
 			Ceci copiera les cat&eacute;gories s&eacute;lectionn&eacute;es
 			<br />

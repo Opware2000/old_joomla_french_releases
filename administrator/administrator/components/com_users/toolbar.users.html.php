@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.users.html.php 108 2005-09-16 17:39:25Z stingrey $
+* @version $Id: toolbar.users.html.php 7443 2007-05-20 18:02:52Z robs $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -38,7 +38,7 @@ class TOOLBAR_users {
 			mosMenuBar::cancel();
 		}
 		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.users.edit' );
+		mosMenuBar::help( 'screen.users' );
 		mosMenuBar::endTable();
 	}
 

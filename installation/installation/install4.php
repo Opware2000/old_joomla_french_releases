@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install4.php 5973 2006-12-11 01:26:33Z robs $
+* @version $Id: install4.php 7813 2007-06-29 06:04:09Z louis $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -141,6 +141,7 @@ if ($siteUrl) {
 	$configArray['dirPerms']=$dirPerms;
 
 	$config = "<?php\n";
+	$config .= "if(!defined('RG_EMULATION')) { define( 'RG_EMULATION', 0 ); }\n";
 	$config .= "\$mosConfig_offline = '0';\n";
 	$config .= "\$mosConfig_host = '{$configArray['DBhostname']}';\n";
 	$config .= "\$mosConfig_user = '{$configArray['DBuserName']}';\n";
@@ -211,6 +212,7 @@ if ($siteUrl) {
 	$config .= "\$mosConfig_admin_expired = '1';\n";
 	$config .= "\$mosConfig_frontend_login = '1';\n";
 	$config .= "\$mosConfig_frontend_userparams = '1';\n";
+	$config .= "\$mosConfig_itemid_compat = '0';\n";
 	$config .= "setlocale (LC_TIME, \$mosConfig_locale);\n";
 	$config .= "?>";
 
@@ -221,7 +223,9 @@ if ($siteUrl) {
 		$canWrite = false;
 	} // if
 
-	$cryptpass=md5( $adminPassword );
+	$salt = mosMakePassword(16);
+	$crypt = md5($adminPassword.$salt);
+	$cryptpass = $crypt.':'.$salt;
 
 	$database = new database( $DBhostname, $DBuserName, $DBpassword, $DBname, $DBPrefix );
 	$nullDate = $database->getNullDate();

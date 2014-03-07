@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_components.php 310 2005-10-02 11:17:00Z stingrey $
+* @version $Id: mod_components.php 7409 2007-05-14 21:10:47Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -85,7 +85,7 @@ foreach ($comps as $row) {
 						} // if
 					} else {
 						?>
-						<table width="50%" class="adminlist" border="1">						
+						<table width="50%" class="adminlist" border="1" style="text-align: left">
 						<?php
 						if ($i < $topLevelLimit ) {
 							$i++;

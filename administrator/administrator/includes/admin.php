@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.php 5617 2006-11-01 23:05:29Z Saka $
+* @version $Id: admin.php 7832 2007-07-03 01:30:02Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -130,7 +130,7 @@ function mosLoadCustomModule( &$module, &$params ) {
 	$moduleclass_sfx 	= $params->get( 'moduleclass_sfx', '' );
 	$rsscache			= $params->get( 'rsscache', 3600 );
 	$cachePath			= $mosConfig_cachepath .'/';
-	
+
 	echo '<table cellpadding="0" cellspacing="0" class="moduletable' . $moduleclass_sfx . '">';
 
 	if ($module->content) {
@@ -156,10 +156,10 @@ function mosLoadCustomModule( &$module, &$params ) {
 
 			if ( $success )	{
 				$totalChannels = $rssDoc->getChannelCount();
-				
+
 				for ($i = 0; $i < $totalChannels; $i++) {
 					$currChannel =& $rssDoc->getChannel($i);
-					
+
 					$feed_title = $currChannel->getTitle();
 					$feed_title = mosCommonHTML::newsfeedEncoding( $rssDoc, $feed_title );
 
@@ -167,31 +167,31 @@ function mosLoadCustomModule( &$module, &$params ) {
 					echo '<td><strong><a href="'. $currChannel->getLink() .'" target="_child">';
 					echo $feed_title .'</a></strong></td>';
 					echo '</tr>';
-					
+
 					if ($rssdesc) {
 						$feed_descrip = $currChannel->getDescription();
 						$feed_descrip = mosCommonHTML::newsfeedEncoding( $rssDoc, $feed_descrip );
-						
+
 						echo '<tr>';
 						echo '<td>'. $feed_descrip .'</td>';
 						echo '</tr>';
 					}
-	
+
 					$actualItems 	= $currChannel->getItemCount();
 					$setItems 		= $rssitems;
-	
+
 					if ($setItems > $actualItems) {
 						$totalItems = $actualItems;
 					} else {
 						$totalItems = $setItems;
 					}
-	
+
 					for ($j = 0; $j < $totalItems; $j++) {
 						$currItem =& $currChannel->getItem($j);
-	
+
 						$item_title = $currItem->getTitle();
 						$item_title = mosCommonHTML::newsfeedEncoding( $rssDoc, $item_title );
-						
+
 						$text 		= $currItem->getDescription();
 						$text 		= mosCommonHTML::newsfeedEncoding( $rssDoc, $text );
 
@@ -315,7 +315,7 @@ function mosMainBody_Admin() {
  */
 function josSecurityCheck($width='95%') {
 	$wrongSettingsTexts = array();
-	
+
 	if ( ini_get('magic_quotes_gpc') != '1' ) {
 		$wrongSettingsTexts[] = 'PHP magic_quotes_gpc setting is `OFF` instead of `ON`';
 	}
@@ -323,7 +323,7 @@ function josSecurityCheck($width='95%') {
 		$wrongSettingsTexts[] = 'Paramètre PHP register_globals est sur `ON` au lieu de `OFF`';
 	}
 	if ( RG_EMULATION != 0 ) {
-		$wrongSettingsTexts[] = 'Paramètre Joomla! RG_EMULATION est sur `ON` au lieu de `OFF` dans le fichier globals.php <br /><span style=\"font-weight: normal; font-style: italic; color: black;\">`ON` est défini par défaut pour des raisons de compatibilité</span>';
+		$wrongSettingsTexts[] = 'Paramètre PHP register_globals est sur `ON`. &nbsp; Pour le d&eacute;sactiver, cliquez Site -> Configuration Globale -> Serveur, s&eacute;lectionnez `OFF`, et sauvegardez.<br /><span style="font-weight: normal; font-style: italic; color: #666;">`ON` est défini par défaut pour des raisons de compatibilité descendante.</span>';
 	}
 	
 	if ( count($wrongSettingsTexts) ) {

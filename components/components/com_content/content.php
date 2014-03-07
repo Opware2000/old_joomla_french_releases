@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.php 6019 2006-12-18 19:50:34Z friesengeist $
+* @version $Id: content.php 7443 2007-05-20 18:02:52Z robs $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -60,6 +60,7 @@ switch ( $task ) {
 
 	case 'category':
 		$selected 	= strval( mosGetParam( $_REQUEST, 'order', '' ) );
+		$selected	= preg_replace( '/[^a-z]/i', '', $selected );
 		$filter 	= stripslashes( strval( mosGetParam( $_REQUEST, 'filter', '' ) ) );
 
 		$cache->call( 'showCategory', $id, $gid, $access, $sectionid, $limit, NULL, $limitstart, 0, $selected, $filter );
@@ -138,7 +139,7 @@ function findKeyItem( $gid, $access, $pop, $option, $now ) {
 
 	$query = "SELECT id"
 	. "\n FROM #__content"
-	. "\n WHERE attribs LIKE '%keyref=" . $database->getEscaped( $keyref ) . "%'"
+	. "\n WHERE attribs LIKE '%keyref=" . $database->getEscaped( $keyref ) . "\n%'"
 	;
 	$database->setQuery( $query );
 	$id = $database->loadResult();
@@ -1807,7 +1808,7 @@ function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
 		$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );
 
 		if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
-			$row->publish_down = 'Never';
+			$row->publish_down = 'Jamais';
 		}
 		$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );
 
@@ -1843,7 +1844,7 @@ function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
 		$row->ordering 		= 0;
 		$row->images 		= array();
 		$row->publish_up 	= date( 'Y-m-d H:i:s', time() + ( $mosConfig_offset * 60 * 60 ) );
-		$row->publish_down 	= 'Never';
+		$row->publish_down 	= 'Jamais';
 		$row->creator 		= 0;
 		$row->modifier 		= 0;
 		$row->frontpage 	= 0;
@@ -1987,7 +1988,7 @@ function saveContent( &$access, $task ) {
 	}
 	$row->publish_up = mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset );
 
-	if (trim( $row->publish_down ) == 'Never' || trim( $row->publish_down ) == '') {
+	if (trim( $row->publish_down ) == 'Jamais' || trim( $row->publish_down ) == '') {
 		$row->publish_down = $nullDate;
 	} else {
 		if (strlen(trim( $row->publish_down )) <= 10) {
@@ -2176,7 +2177,19 @@ function cancelContent( &$access ) {
 function emailContentForm( $uid, $gid ) {
 	global $database, $mosConfig_hideEmail;
 
-	if ($mosConfig_hideEmail) {
+	$id	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
+
+	if ( $id ) {
+		$query	= 'SELECT attribs FROM #__content WHERE `id`=' . $id;
+		$database->setQuery( $query );
+		$params = new mosParameters( $database->loadResult() );
+	} else {
+		$params = new mosParameters( '' );
+	}
+
+	$email = intval( $params->get( 'email', 0 ) );
+
+	if ($mosConfig_hideEmail && !$email ) {
 		echo _NOT_AUTH;
 		return;
 	}
@@ -2254,7 +2267,19 @@ function emailContentSend( $uid, $gid ) {
 	global $database, $mainframe;
 	global $mosConfig_live_site, $mosConfig_sitename, $mosConfig_hideEmail;
 
-	if ($mosConfig_hideEmail) {
+	$id	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
+
+	if ( $id ) {
+		$query	= 'SELECT attribs FROM #__content WHERE `id`=' . $id;
+		$database->setQuery( $query );
+		$params = new mosParameters( $database->loadResult() );
+	} else {
+		$params = new mosParameters( '' );
+	}
+
+	$paramEmail = intval( $params->get( 'email', 0 ) );
+
+	if ($mosConfig_hideEmail && !$paramEmail ) {
 		echo _NOT_AUTH;
 		return;
 	}

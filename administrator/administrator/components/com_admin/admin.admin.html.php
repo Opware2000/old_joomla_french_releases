@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.admin.html.php 5612 2006-11-01 05:01:48Z Saka $
+* @version $Id: admin.admin.html.php 7211 2007-04-29 02:26:51Z robs $
 * @package Joomla
 * @subpackage Admin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -204,7 +204,7 @@ class HTML_admin_misc {
 							<img src="../images/<?php echo $img; ?>" />
 						</td>
 					</tr>
-					<tr>					
+					<tr>
 						<td>
 							Safe Mode:
 						</td>
@@ -314,7 +314,7 @@ class HTML_admin_misc {
 			<tr>
 				<td colspan="2" style="height: 10px;">
 				</td>
-			</tr>			
+			</tr>
 			<tr>
 				<td valign="top">
 					<strong>Fichier de Configuration:</strong>
@@ -331,9 +331,12 @@ class HTML_admin_misc {
 						$cf[$k] = '$mosConfig_password = \'xxxxxx\'';
 					} else if (eregi( 'mosConfig_db ', $v)) {
 						$cf[$k] = '$mosConfig_db = \'xxxxxx\'';
-					} else if (eregi( '<?php', $v)) {
-						$cf[$k] = '&lt;?php';
 					}
+				}
+				foreach ($cf as $k=>$v) {
+					$k = htmlspecialchars( $k );
+					$v = htmlspecialchars( $v );
+					$cf[$k]=$v;
 				}
 				echo implode( "<br />", $cf );
 				?>
@@ -382,7 +385,7 @@ class HTML_admin_misc {
 					<strong>For all Joomla! functions and features to work ALL of the following directories should be writeable:</strong>
 					<?php
 					$sp = ini_get('session.save_path');
-										
+
 					mosHTML::writableCell( 'administrator/backups' );
 					mosHTML::writableCell( 'administrator/components' );
 					mosHTML::writableCell( 'administrator/modules' );
@@ -403,7 +406,7 @@ class HTML_admin_misc {
 					mosHTML::writableCell( 'templates' );
 					mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ' );
 					mosHTML::writableCell( $sp, 0, '<strong>Session Directory</strong> ' );
-					?>					
+					?>
 				</td>
 			</tr>
 			</table>
@@ -416,7 +419,7 @@ class HTML_admin_misc {
 
 	function ListComponents() {
 		global $database;
-		
+
 		$query = "SELECT params"
 		. "\n FROM #__modules "
 		. "\n WHERE module = 'mod_components'"
@@ -424,7 +427,7 @@ class HTML_admin_misc {
 		$database->setQuery( $query );
 		$row = $database->loadResult();
 		$params = new mosParameters( $row );
-		
+
 		mosLoadAdminModule( 'components', $params );
 	}
 
@@ -434,11 +437,11 @@ class HTML_admin_misc {
 	function help() {
 		global $mosConfig_live_site;
 		$helpurl 	= strval( mosGetParam( $GLOBALS, 'mosConfig_helpurl', '' ) );
-		
+
 		if ( $helpurl == 'http://help.mamboserver.com' ) {
 			$helpurl = 'http://help.joomla.org';
 		}
-		
+
 		$fullhelpurl = $helpurl . '/index2.php?option=com_content&amp;task=findkey&pop=1&keyref=';
 
 		$helpsearch = strval( mosGetParam( $_REQUEST, 'helpsearch', '' ) );
@@ -449,7 +452,7 @@ class HTML_admin_misc {
 		if (!eregi( '\.html$', $page )) {
 			$page .= '.xml';
 		}
-		
+
 		echo $helpsearch;
 		?>
 		<style type="text/css">

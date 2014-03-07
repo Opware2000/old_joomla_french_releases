@@ -120,7 +120,7 @@ class HTML_typedcontent {
 			// correct times to include server offset info
 			$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );
 			if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
-				$row->publish_down = 'Never';
+				$row->publish_down = 'Jamais';
 			}
 			$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );
 

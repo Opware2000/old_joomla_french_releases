@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 4807 2006-08-28 17:30:12Z stingrey $
+* @version $Id: index.php 7424 2007-05-17 15:56:10Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -34,48 +34,48 @@ function view() {
 	$_VERSION 		= new joomlaVersion();
 	$versioninfo 	= $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS;
 	$version 		= $_VERSION->PRODUCT .' '. $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS.' [ '.$_VERSION->CODENAME .' ] '. $_VERSION->RELDATE .' '. $_VERSION->RELTIME .' '. $_VERSION->RELTZ;
-	
-echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Joomla! - Web Installer</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../images/favicon.ico" />
-<link rel="stylesheet" href="install.css" type="text/css" />
-</head>
-<body>
 
-<div id="wrapper">
-<div id="header">
+	echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
+	?>
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<title>Joomla! - Web Installer</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="shortcut icon" href="../images/favicon.ico" />
+	<link rel="stylesheet" href="install.css" type="text/css" />
+	</head>
+	<body>
+
+	<div id="wrapper">
+		<div id="header">
 			<div id="joomla">
 				<img src="header_install.png" alt="Installation Joomla!" />
 			</div>
-</div>
-</div>
+		</div>
+	</div>
 
-<div id="ctr" align="center">
-<div class="install">
-<div id="stepbar">
-<div class="step-on">Pré-installation</div>
-<div class="step-off">Licence</div>
-<div class="step-off">Etape 1</div>
-<div class="step-off">Etape 2</div>
-<div class="step-off">Etape 3</div>
-<div class="step-off">Etape 4</div>
-</div>
+	<div id="ctr" align="center">
+		<div class="install">
+			<div id="stepbar">
+				<div class="step-on">Pré-installation</div>
+				<div class="step-off">Licence</div>
+				<div class="step-off">Etape 1</div>
+				<div class="step-off">Etape 2</div>
+				<div class="step-off">Etape 3</div>
+				<div class="step-off">Etape 4</div>
+			</div>
 
-<div id="right">
-<div id="step">Pré-installation</div>
+			<div id="right">
+				<div id="step">Pré-installation</div>
 
-<div class="far-right">
-	<input name="Button2" type="submit" class="button" value="Suivant >>" onclick="window.location='install.php';" />
-	<br/>
-	<br/>
-	<input type="button" class="button" value="Vérifier à nouveau" onclick="window.location=window.location" />
-</div>
-<div class="clr"></div>
+				<div class="far-right">
+					<input name="Button2" type="submit" class="button" value="Suivant >>" onclick="window.location='install.php';" />
+					<br/>
+					<br/>
+					<input type="button" class="button" value="Vérifier à nouveau" onclick="window.location=window.location" />
+				</div>
+				<div class="clr"></div>
 
 				<h1 style="text-align: center; border-bottom: 0px;">
 					<?php echo $version; ?>
@@ -176,10 +176,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 				if ( ini_get('register_globals') == '1' ) {
 					$wrongSettingsTexts[] = 'Paramètre PHP register_globals est sur `ON` au lieu de `OFF`';
 				}
-				if ( RG_EMULATION != 0 ) {
-					$wrongSettingsTexts[] = 'Paramètre Joomla! RG_EMULATION est sur `ON` au lieu de `OFF` dans le fichier globals.php <br /><span style="font-weight: normal; font-style: italic; color: #666;">`ON` est défini par défaut pour des raisons de compatibilité</span>';
-				}	
-	
+
 				if ( count($wrongSettingsTexts) ) {
 					?>							
 					<h1>
@@ -290,39 +287,15 @@ foreach ($php_recommended_settings as $phprec) {
 	?>
 										</font>
 									</b>
-	<td>
-</tr>
-<?php
-}
-?>
-						<tr>
-							<td class="item">
-								Emulation de Register Globals :
-							</td>
-							<td class="toggle">
-								OFF:
-							</td>
-							<td>
-								<?php
-								if ( RG_EMULATION ) {
-									?>
-									<font color="red"><b>
-									<?php
-								} else {
-									?>
-									<font color="green"><b>
-									<?php
-								}
-								echo ((RG_EMULATION) ? 'ON' : 'OFF');
-								?>
-								</b>
-								</font>
-							<td>
-						</tr>
-</table>
-</div>
-</div>
-<div class="clr"></div>
+								<td>
+							</tr>
+							<?php
+						}
+						?>
+						</table>
+					</div>
+				</div>
+				<div class="clr"></div>
 
 				<h1>
 					Permissions des répertoires:

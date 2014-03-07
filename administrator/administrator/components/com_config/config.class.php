@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: config.class.php 5950 2006-12-06 23:18:11Z facedancer $
+* @version $Id: config.class.php 7146 2007-04-15 23:53:12Z friesengeist $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -183,6 +183,8 @@ class mosConfig {
 	var $config_multilingual_support = 0;
 	/** @var int */
 	var $config_multipage_toc	= 0;
+	/** var int getItemid compatibility mode, 0 for latest version, or specific maintenance version number */
+	var $config_itemid_compat	= 0;
 
 	/**
 	 * @return array An array of the public vars in the class

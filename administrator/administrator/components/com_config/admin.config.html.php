@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 6070 2006-12-20 02:09:09Z robs $
+* @version $Id: admin.config.html.php 7424 2007-05-17 15:56:10Z robs $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,7 +23,7 @@ class HTML_config {
 
 	function showconfig( &$row, &$lists, $option) {
 		global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_session_type, $mainframe;
-		
+
 		$tabs = new mosTabs(0);
 		?>
 		<script type="text/javascript">
@@ -98,7 +98,7 @@ class HTML_config {
 		}
 		function submitbutton(pressbutton) {
 			var form = document.adminForm;
-			
+
 			// do field validation
 			if (form.config_session_type.value != <?php echo $row->config_session_type; ?> ){
 				if ( confirm('Etes vous certain de vouloir changer la `Méthode d\'Authentification de Session`? \n\n Toutes les sessions existantes sur le site public seront supprimées !! \n\n') ) {
@@ -395,6 +395,11 @@ class HTML_config {
 				<td><?php echo $lists['item_navigation']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
+			<tr>
+				<td>Mode compatibilit&eacute; des Itemid:</td>
+				<td><?php echo $lists['itemid_compat']; ?></td>
+				<td>&nbsp;</td>
+			</tr>
 			</table>
 			<input type="hidden" name="config_multilingual_support" value="<?php echo $row->config_multilingual_support?>">
 			<?php
@@ -651,7 +656,33 @@ class HTML_config {
 					</fieldset>
 				</td>
 				<td>&nbsp;</td>
-			  </tr>
+			</tr>
+			<tr>
+				<?php
+				$rgmode = 0;
+				if( defined( 'RG_EMULATION' ) ) {
+					$rgmode = RG_EMULATION;
+				}
+				?>
+				<td valign="top">Emulation du param&egrave;tre Register Globals:</td>
+				<td>
+					<fieldset><legend>Emulation du param&egrave;tre Register Globals:</legend>
+						<table cellpadding="1" cellspacing="1" border="0">
+							<tr>
+								<td><input type="radio" id="rgemulation" name="rgemulation" value="0"<?php if (!$rgmode) echo ' checked="checked"'; ?>/></td>
+								<td><label for="rgemulation">OFF - plus s&eacute;curis&eacute; donc recommand&eacute;</label></td>
+							</tr>
+							<tr>
+								<td><input type="radio" id="rgemulation" name="rgemulation" value="1"<?php if ($rgmode) echo ' checked="checked"'; ?>/></td>
+								<td><label for="rgemulation">ON - meilleure comptaibilit&eacute; mais moins s&eacute;curis&eacute;</label></td>
+							</tr>
+							</tr>
+						</table>
+					</fieldset>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+
 			</table>
 			<?php
 		$tabs->endTab();

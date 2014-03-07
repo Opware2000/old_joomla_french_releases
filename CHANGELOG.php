@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: CHANGELOG.php 6087 2006-12-24 19:19:44Z robs $
+* @version $Id: CHANGELOG.php 8142 2007-07-21 09:20:01Z rmuilwijk $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -37,6 +37,62 @@ code fixes.
 - -> Removed
 ! -> Note
 
+21-Jul-2007 Robin Muilwijk
+ ^ (version.php) preparation for release
+ 
+18-Jul-2007 Rob Schley
+ # Fixed admin session problems with immediate logout after login.
+ # Fixed a few misc. bugs.
+
+
+11-Jul-2007 Sam Moffatt
+ ^ Removed assumption that a group exists for a user (may not actually be true)
+
+
+04-Jul-2007 Rob Schley
+ # Fixed a bug in the administrator login system that prevented users from logging in
+
+
+02-Jul-2007 Rob Schley
+ * SECURITY A6 [LOW Level]: Fixed [#5630] HRS attack on variable "url"
+ * SECURITY A1 [LOW Level]: Fixed [#5654] Multiple fields subjected to cross-site scripting vulnerabilities
+ * SECURITY A7 [LOW Level]: Fixed possible session fixation vulnerability in administrator application
+
+
+29-Jun-2007 Louis Landry
+ ^ Hardened password storage mechanism to use a random salt
+ ! Remember Me cookies will be invalid and require a re-login
+
+
+20-May-2007 Rob Schley
+ # Fixed key reference lookups to match whole results only
+ # Fixed two help screen naming issues.
+ ^ Changed RG_EMULATION warning message to refer to Global Configuration Setting
+
+
+17-May-2007 Rob Schley
+ ^ Moved register globals emulation controls into Global Configuration
+
+
+15-May-2007 Rob Schley
+ # Fixed [topic,170296] : Typos in Search Mambot configurations
+
+
+14-May-2007 Rob Schley
+ # Fixed [topic,153233] : "Mail to Friend" parameter checks not checking content item setings
+ # Fixed [topic,126371] : IE7 left align problem
+ # Fixed [topic,167745] : Added JavaScript alert for empty category title
+
+
+28-Apr-2007 Rob Schley
+ ^ Changed cookie naming conventions to not break when using HTTPS
+ # Fixed [topic,156116] : Optimzed queries for menu creation to improve performance.
+ * SECURITY A4 [ LOW Level ]: XSS issue in com_search and com_content
+ * SECURITY A4 [ LOW Level ]: XSS vulnerability in mod_login
+
+
+16-Apr-2007 Enno Klasing
+ # Re-enabled Itemid behaviour of 1.0.11 (optional, default is behaviour of 1.0.12)
 
 ----------------------------------------------------------------------------------------
 --------------- 1.0.12 Stable Released -- [25-December-2006 01:00 UTC] -----------------
