@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.xml.php 3549 2006-05-18 08:24:53Z stingrey $
+* @version $Id: joomla.xml.php 4044 2006-06-16 17:41:14Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -237,7 +237,7 @@ class mosParameters {
 
 			if ($description = $element->getAttribute( 'description' )) {
 				// add the params description to the display
-				$html[] = '<tr><td colspan="3">' . $description . '</td></tr>';
+				$html[] = '<tr><td colspan="2">' . $description . '</td></tr>';
 			}
 
 			//$params = mosParseParams( $row->params );

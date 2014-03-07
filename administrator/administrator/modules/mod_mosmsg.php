@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_mosmsg.php 3551 2006-05-18 20:23:01Z stingrey $
+* @version $Id: mod_mosmsg.php 4109 2006-06-23 20:50:56Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -18,7 +18,7 @@ $mosmsg = strval( ( strip_tags( mosGetParam( $_REQUEST, 'mosmsg', '' ) ) ) );
 
 // Browser Check
 $browserCheck = 0;
-if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && isset( $_SERVER['HTTP_REFERER'] ) ) {
+if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && isset( $_SERVER['HTTP_REFERER'] ) && strpos($_SERVER['HTTP_REFERER'], $mosConfig_live_site) !== false ) {
 	$browserCheck = 1;
 }
 

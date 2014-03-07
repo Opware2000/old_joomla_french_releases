@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.class.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: weblinks.class.php 4060 2006-06-19 22:31:10Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -81,6 +81,10 @@ class mosWeblink extends mosDBTable {
 		if ( !( eregi( 'http://', $this->url ) || ( eregi( 'https://',$this->url ) )  || ( eregi( 'ftp://',$this->url ) ) ) ) {
 			$this->url = 'http://'.$this->url;
 		}
+		
+		// SQL injection protection
+		$this->catid = intval($this->catid);
+		$this->title = $this->_db->getEscaped( $this->title );
 
 		/** check for existing name */
 		$query = "SELECT id"

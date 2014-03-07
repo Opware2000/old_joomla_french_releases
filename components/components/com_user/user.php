@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.php 3754 2006-05-31 12:08:37Z stingrey $
+* @version $Id: user.php 4054 2006-06-19 19:47:14Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -151,7 +151,10 @@ function userSave( $option, $uid) {
 	if ($uid == 0 || $user_id == 0 || $user_id != $uid) {
 		mosNotAuth();
 		return;
-	}
+	}	
+	
+	// simple spoof check security
+	josSpoofCheck();	
 	
 	$row = new mosUser( $database );
 	$row->load( $user_id );	

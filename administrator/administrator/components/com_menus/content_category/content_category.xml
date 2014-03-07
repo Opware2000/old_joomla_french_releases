@@ -23,6 +23,14 @@
 			<option value="1">Afficher</option>
 		</param>
 		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="description_cat" type="radio" default="1" label="Description de la catégorie" description="Afficher/Masquer la description de la catégorie">
+			<option value="0">Masquer</option>
+			<option value="1">Afficher</option>
+		</param>
+		<param name="description_cat_image" type="radio" default="1" label="Image Description de la catégorie" description="Afficher/Masquer une image pour la description de la catégorie">
+			<option value="0">Masquer</option>
+			<option value="1">Afficher</option>
+		</param>
 		<param name="orderby" type="list" default="" label="Trier par" description="Ce paramètre prend le pas sur le tri défini dans le gestionnaire d'articles.">
 			<option value="">Défaut</option>
 			<option value="date">Plus ancien en tête</option>

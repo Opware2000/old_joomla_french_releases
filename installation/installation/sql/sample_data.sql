@@ -1,7 +1,7 @@
 # $Id: sample_data.sql 3846 2006-06-04 14:10:01Z stingrey $
 
 #
-# Dumping data for table `jos_banner`
+# Dumping data for table `#__banner`
 #
 
 INSERT INTO `#__banner` VALUES (1, 1, 'banner', 'OSM 1', 0, 42, 0, 'osmbanner1.png', 'http://www.opensourcematters.org', '2004-07-07 15:31:29', 1, 0, '0000-00-00 00:00:00', NULL, NULL);
@@ -36,7 +36,7 @@ INSERT INTO `#__categories` VALUES (12, 0, 'Contacts', 'Contacts', '', 'com_cont
 # Dumping data for table `#__contact_details`
 #
 
-INSERT INTO `#__contact_details` VALUES (1, 'Name', 'Position', 'Street', 'Suburb', 'State', 'Country', 'Zip Code', 'Telephone', 'Fax', 'Miscellanous info', 'asterisk.png', 'top', 'email@email.com', 1, 1, 0, '0000-00-00 00:00:00', 1, '', 0, 12, 0);
+INSERT INTO `#__contact_details` VALUES (1, 'Nom', 'Fonction', 'Rue', 'Ville', 'Etat', 'Pays', 'CodePostal', 'Telephone', 'Fax', 'Infos diverses', 'asterisk.png', 'top', 'email@email.com', 1, 1, 0, '0000-00-00 00:00:00', 1, '', 0, 12, 0);
 
 #
 # Dumping data for table `#__content`

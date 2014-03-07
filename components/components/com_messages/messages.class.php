@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: messages.class.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: messages.class.php 4095 2006-06-21 18:46:51Z stingrey $
 * @package Joomla
 * @subpackage Messages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -46,6 +46,16 @@ class mosMessage extends mosDBTable {
 		$this->mosDBTable( '#__messages', 'message_id', $db );
 	}
 
+	/**
+	* Validation and filtering
+	*/
+	function check() {
+		// filter malicious code
+		$this->filter( );
+		
+		return true;
+	}
+	
 	function send( $from_id=null, $to_id=null, $subject=null, $message=null ) {
 		global $database;
 

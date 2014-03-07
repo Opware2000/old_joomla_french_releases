@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.html.php 3478 2006-05-13 20:31:22Z stingrey $
+* @version $Id: registration.html.php 4061 2006-06-19 22:32:49Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -21,6 +21,8 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 */
 class HTML_registration {
 	function lostPassForm($option) {
+		// used for spoof hardening
+		$validate = josSpoofValue();
 		?>
 		<form action="index.php" method="post">
 
@@ -52,19 +54,24 @@ class HTML_registration {
 		</tr>
 		<tr>
 			<td colspan="2">
-				<input type="hidden" name="option" value="<?php echo $option;?>" />
-				<input type="hidden" name="task" value="sendNewPass" /> <input type="submit" class="button" value="<?php echo _BUTTON_SEND_PASS; ?>" />
+				<input type="submit" class="button" value="<?php echo _BUTTON_SEND_PASS; ?>" />
 			</td>
 		</tr>
 		</table>
+		
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="task" value="sendNewPass" /> 
+		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>
 		<?php
 	}
 
 	function registerForm($option, $useractivation) {
+		// used for spoof hardening
+		$validate = josSpoofValue();
 		?>
 		<script language="javascript" type="text/javascript">
-		function submitbutton() {
+		function submitbutton_reg() {
 			var form = document.mosForm;
 			var r = new RegExp("[\<|\>|\"|\'|\%|\;|\(|\)|\&|\+|\-]", "i");
 
@@ -154,7 +161,8 @@ class HTML_registration {
 		<input type="hidden" name="useractivation" value="<?php echo $useractivation;?>" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="task" value="saveRegistration" />
-		<input type="button" value="<?php echo _BUTTON_SEND_REG; ?>" class="button" onclick="submitbutton()" />
+		<input type="button" value="<?php echo _BUTTON_SEND_REG; ?>" class="button" onclick="submitbutton_reg()" />
+		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>
 		<?php
 	}

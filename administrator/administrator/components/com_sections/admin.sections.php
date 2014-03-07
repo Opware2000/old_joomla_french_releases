@@ -283,8 +283,8 @@ function editSection( $uid=0, $scope='', $option ) {
 	$len 		= strlen( COM_IMAGE_BASE );
 	
 	// handling for MOSImage directories
-	$folders[] 	= mosHTML::makeOption( '*1*', 'All'  );
-	$folders[] 	= mosHTML::makeOption( '*0*', 'None' );
+	$folders[] 	= mosHTML::makeOption( '*1*', 'Tous'  );
+	$folders[] 	= mosHTML::makeOption( '*0*', 'Aucun' );
 	$folders[] 	= mosHTML::makeOption( '*#*', '---------------------' );
 	$folders[] 	= mosHTML::makeOption( '/' );
 	foreach ($imgFiles as $file) {

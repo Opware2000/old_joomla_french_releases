@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_related_items.php 3710 2006-05-29 03:21:43Z stingrey $
+* @version $Id: mod_related_items.php 4052 2006-06-19 19:33:35Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,7 +16,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 global $mosConfig_offset, $option, $task;
 
-$id 		= mosGetParam( $_REQUEST, 'id', null );
+$id 		= intval( mosGetParam( $_REQUEST, 'id', null ) );
 
 $now 		= _CURRENT_SERVER_TIME;
 $nullDate 	= $database->getNullDate();

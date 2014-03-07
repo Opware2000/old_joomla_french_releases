@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: english.php 3507 2006-05-15 19:02:27Z stingrey $
+* @version $Id: english.php 4004 2006-06-12 17:44:14Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -190,7 +190,7 @@ DEFINE('_SUBJECT_PROMPT',' Message subject:');
 DEFINE('_BUTTON_SUBMIT_MAIL','Send e-mail');
 DEFINE('_BUTTON_CANCEL','Cancel');
 DEFINE('_EMAIL_ERR_NOINFO','You must enter your valid e-mail and the valid e-mail to send to.');
-DEFINE('_EMAIL_MSG',' The following page from the "%s" website has been sent to you by %s ( %s ).
+DEFINE('_EMAIL_MSG','The following page from the "%s" website has been sent to you by %s ( %s ).
 
 You can access it at the following url:
 %s');

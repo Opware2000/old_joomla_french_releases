@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_newsflash.php 3137 2006-04-17 11:25:16Z stingrey $
+* @version $Id: mod_newsflash.php 4106 2006-06-23 19:59:18Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -32,12 +32,7 @@ if (!defined( '_JOS_NEWSFLASH_MODULE' )) {
 		$row->created 	= '';
 		$row->modified 	= '';	
 
-		$bs 			= $mainframe->getBlogSectionCount();
-		$bc 			= $mainframe->getBlogCategoryCount();
-		$gbs 			= $mainframe->getGlobalBlogSectionCount();
-		$ItemidCount 	= $mainframe->getItemid( $row->id, 0, 0, $bs, $bc, $gbs );
-		
-		HTML_content::show( $row, $params, $access, 0, 'com_content', $ItemidCount );
+		HTML_content::show( $row, $params, $access, 0 );
 	}
 }
 

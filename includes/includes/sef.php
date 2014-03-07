@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sef.php 3673 2006-05-26 12:56:08Z akede $
+* @version $Id: sef.php 4126 2006-06-25 19:26:39Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -74,10 +74,37 @@ if ($mosConfig_sef) {
 			$_REQUEST['limitstart'] = $limitstart;
 			
 			$QUERY_STRING = "option=com_content&task=$task&sectionid=$sectionid&id=$id&Itemid=$Itemid&order=$order&filter=$filter&limit=$limit&limitstart=$limitstart";
-		} else if (isset($url_array[$pos+7]) && $url_array[$pos+7] != '' && ( in_array('archivecategory', $url_array) || in_array('archivesection', $url_array) ) ) {
-		// $option/$task/$sectionid/$Itemid/$limit/$limitstart/year/month
+		} else if (isset($url_array[$pos+7]) && $url_array[$pos+7] != '' && $url_array[$pos+5] > 1000 && ( in_array('archivecategory', $url_array) || in_array('archivesection', $url_array) ) ) {
+			// $option/$task/$id/$limit/$limitstart/year/month/module
 			$task 					= $url_array[$pos+1];
-			$sectionid				= $url_array[$pos+2];
+			$id						= $url_array[$pos+2];
+			$limit 					= $url_array[$pos+3];
+			$limitstart 			= $url_array[$pos+4];
+			$year 					= $url_array[$pos+5];
+			$month 					= $url_array[$pos+6];
+			$module					= $url_array[$pos+7];
+
+			// pass data onto global variables
+			$_GET['task'] 			= $task;
+			$_REQUEST['task'] 		= $task;
+			$_GET['id'] 			= $id;
+			$_REQUEST['id'] 		= $id;
+			$_GET['limit'] 			= $limit;
+			$_REQUEST['limit'] 		= $limit;
+			$_GET['limitstart'] 	= $limitstart;
+			$_REQUEST['limitstart'] = $limitstart;
+			$_GET['year'] 			= $year;
+			$_REQUEST['year'] 		= $year;
+			$_GET['month'] 			= $month;
+			$_REQUEST['month'] 		= $month;
+			$_GET['module']			= $module;
+			$_REQUEST['module']		= $module;
+
+			$QUERY_STRING = "option=com_content&task=$task&id=$id&limit=$limit&limitstart=$limitstart&year=$year&month=$month&module=$module";			
+		} else if (isset($url_array[$pos+7]) && $url_array[$pos+7] != '' && $url_array[$pos+6] > 1000 && ( in_array('archivecategory', $url_array) || in_array('archivesection', $url_array) ) ) {
+			// $option/$task/$id/$Itemid/$limit/$limitstart/year/month
+			$task 					= $url_array[$pos+1];
+			$id						= $url_array[$pos+2];
 			$Itemid 				= $url_array[$pos+3];
 			$limit 					= $url_array[$pos+4];
 			$limitstart 			= $url_array[$pos+5];
@@ -87,8 +114,8 @@ if ($mosConfig_sef) {
 			// pass data onto global variables
 			$_GET['task'] 			= $task;
 			$_REQUEST['task'] 		= $task;
-			$_GET['id'] 			= $sectionid;
-			$_REQUEST['id'] 		= $sectionid;
+			$_GET['id'] 			= $id;
+			$_REQUEST['id'] 		= $id;
 			$_GET['Itemid'] 		= $Itemid;
 			$_REQUEST['Itemid'] 	= $Itemid;
 			$_GET['limit'] 			= $limit;
@@ -100,9 +127,9 @@ if ($mosConfig_sef) {
 			$_GET['month'] 			= $month;
 			$_REQUEST['month'] 		= $month;
 
-			$QUERY_STRING = "option=com_content&task=$task&sectionid=$sectionid&Itemid=$Itemid&limit=$limit&limitstart=$limitstart&year=$year&month=$month";			
+			$QUERY_STRING = "option=com_content&task=$task&id=$id&Itemid=$Itemid&limit=$limit&limitstart=$limitstart&year=$year&month=$month";			
 		} else if (isset($url_array[$pos+7]) && $url_array[$pos+7] != '' && in_array('category', $url_array) && ( strpos( $url_array[$pos+5], 'order,' ) !== false )) {
-		// $option/$task/$sectionid/$id/$Itemid/$order/$limit/$limitstart
+			// $option/$task/$sectionid/$id/$Itemid/$order/$limit/$limitstart
 			$task 					= $url_array[$pos+1];
 			$sectionid				= $url_array[$pos+2];
 			$id 					= $url_array[$pos+3];
@@ -368,7 +395,7 @@ function sefRelToAbs( $string ) {
 		
 		// break link into url component parts
 		$url = parse_url( $string );
-		
+
 		// check if link contained fragment identifiers (ex. #foo)
 		$fragment = '';
 		if ( isset($url['fragment']) ) {
@@ -377,24 +404,26 @@ function sefRelToAbs( $string ) {
 				$fragment = '#'. $url['fragment'];
 			}
 		}
-		
+
 		// check if link contained a query component
 		if ( isset($url['query']) ) {
 			// special handling for javascript
 			$url['query'] = stripslashes( str_replace( '+', '%2b', $url['query'] ) );
+			// clean possible xss attacks
+			$url['query'] = preg_replace( "'%3Cscript[^%3E]*%3E.*?%3C/script%3E'si", '', $url['query'] );
 
 			// break url into component parts			
 			parse_str( $url['query'], $parts );
-			
+
 			// special handling for javascript
 			foreach( $parts as $key => $value) {
 				if ( strpos( $value, '+' ) !== false ) {
 					$parts[$key] = stripslashes( str_replace( '%2b', '+', $value ) );
 				}
 			}
-			
+			//var_dump($parts);
 			$sefstring = '';
-			
+
 			// Component com_content urls
 			if ( ( $parts['option'] == 'com_content' || $parts['option'] == 'content' ) && ( $parts['task'] != 'new' ) && ( $parts['task'] != 'edit' ) ) {
 			// index.php?option=com_content [&task=$task] [&sectionid=$sectionid] [&id=$id] [&Itemid=$Itemid] [&limit=$limit] [&limitstart=$limitstart] [&year=$year] [&month=$month] [&module=$module]
@@ -460,6 +489,8 @@ function sefRelToAbs( $string ) {
 				$sefstring 	= 'component/';
 				
 				foreach($parts as $key => $value) {
+					// remove slashes automatically added by parse_str
+					$value		= stripslashes($value);
 					$sefstring .= $key .','. $value.'/';
 				}
 				
@@ -471,7 +502,7 @@ function sefRelToAbs( $string ) {
 		return $mosConfig_live_site .'/'. $string . $fragment;
 
 		// allows SEF without mod_rewrite
-		// uncomment Line 348 and comment out Line 354	
+		// uncomment Line 508 and comment out Line 510	
 	
 		// uncomment line below if you dont have mod_rewrite
 		// return $mosConfig_live_site .'/index.php/'. $string . $fragment;
@@ -488,13 +519,6 @@ function sefRelToAbs( $string ) {
 				eregi("^(https?:[\/]+[^\/]+)(.*$)", $mosConfig_live_site, $live_site_parts);
 				
 				$string = $live_site_parts[1] . $string;
-			/*
-			// check that url does not contain `http`, `https`, `ftp`, `mailto` or `javascript` at start of string
-			} else if ( ( strpos( $string, 'http' ) !== 0 ) && ( strpos( $string, 'https' ) !== 0 ) && ( strpos( $string, 'ftp' ) !== 0 ) && ( strpos( $string, 'file' ) !== 0 ) && ( strpos( $string, 'mailto' ) !== 0 ) && ( strpos( $string, 'javascript' ) !== 0 ) && ( strpos( $string, 'irc' ) !== 0 ) ) {
-				// URI doesn't start with a "/" so relative to the page (live-site):
-				$string = $mosConfig_live_site .'/'. $string;
-			}
-			*/
 			} else {
 				$check = 1;
 				

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.html.php 3723 2006-05-29 16:14:03Z stingrey $
+* @version $Id: admin.typedcontent.html.php 4002 2006-06-12 17:30:34Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -129,7 +129,7 @@ class HTML_typedcontent {
 				} else {
 					$times .= "<tr><td>Commence: $row->publish_up</td></tr>";
 				}
-			if ($row->publish_down == $nullDate || $row->publish_down = 'Jamais') {
+			if ($row->publish_down == $nullDate || $row->publish_down == 'Jamais') {
 					$times .= "<tr><td>Expire: Jamais</td></tr>";
 				} else {
 					$times .= "<tr><td>Expire: $row->publish_down</td></tr>";
@@ -263,7 +263,7 @@ class HTML_typedcontent {
 		$tabs = new mosTabs( 1 );
 		// used to hide "Reset Hits" when hits = 0
 		if ( !$row->hits ) {
-			$visibility = "style='display: none; visbility: hidden;'";
+			$visibility = "style='display: none; visibility: hidden;'";
 		} else {
 			$visibility = "";
 		}

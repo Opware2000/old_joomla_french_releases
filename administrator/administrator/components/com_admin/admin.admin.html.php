@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.admin.html.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.admin.html.php 4086 2006-06-21 16:36:16Z stingrey $
 * @package Joomla
 * @subpackage Admin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -52,7 +52,7 @@ class HTML_admin_misc {
 	function get_server_software() {
 		if (isset($_SERVER['SERVER_SOFTWARE'])) {
 			return $_SERVER['SERVER_SOFTWARE'];
-		} else if (($sf = getenv('SERVER_SOFTWARE'))) {
+		} else if (($sf = phpversion() <= '4.2.1' ? getenv('SERVER_SOFTWARE') : $_SERVER['SERVER_SOFTWARE'])) {
 			return $sf;
 		} else {
 			return 'n/a';
@@ -62,8 +62,8 @@ class HTML_admin_misc {
 	function system_info( $version ) {
 		global $mosConfig_absolute_path, $database, $mosConfig_cachepath, $my;
 
-		$width = 400;	// width of 100%
-		$tabs = new mosTabs(0);
+		$width 	= 400;	// width of 100%
+		$tabs 	= new mosTabs(0);
 		?>
 
 		<table class="adminheading">
@@ -293,7 +293,7 @@ class HTML_admin_misc {
 			</table>
 		<?php
 		$tabs->endTab();
-		$tabs->startTab("Info. PHP","php-page");
+		$tabs->startTab("PHP Info","php-page");
 		?>
 			<table class="adminform">
 			<tr>
@@ -347,12 +347,13 @@ class HTML_admin_misc {
 					mosHTML::writableCell( 'mambots/editors' );
 					mosHTML::writableCell( 'mambots/editors-xtd' );
 					mosHTML::writableCell( 'mambots/search' );
+					mosHTML::writableCell( 'mambots/system' );
 					mosHTML::writableCell( 'media' );
 					mosHTML::writableCell( 'modules' );
-					mosHTML::writableCell( 'templates' );				
+					mosHTML::writableCell( 'templates' );
 					mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ' );
 					mosHTML::writableCell( $sp, 0, '<strong>Session Directory</strong> ' );
-					?>
+					?>					
 				</td>
 			</tr>
 			</table>

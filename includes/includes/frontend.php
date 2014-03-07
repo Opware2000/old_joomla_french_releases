@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.php 3830 2006-06-03 15:53:37Z stingrey $
+* @version $Id: frontend.php 4115 2006-06-24 00:27:27Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,6 +16,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 * Displays the capture output of the main element
 */
 function mosMainBody() {
+	global $mosConfig_live_site;
 	// message passed via the url
 	$mosmsg = strval( mosGetParam( $_REQUEST, 'mosmsg', '' ) );
 
@@ -23,7 +24,7 @@ function mosMainBody() {
 	
 	// Browser Check
 	$browserCheck = 0;
-	if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+	if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && isset( $_SERVER['HTTP_REFERER'] ) && strpos($_SERVER['HTTP_REFERER'], $mosConfig_live_site) !== false ) {
 		$browserCheck = 1;
 	}
 	
@@ -58,8 +59,10 @@ function mosMainBody() {
 * Utility functions and classes
 */
 function mosLoadComponent( $name ) {
-	// set up some global variables for use by the frontend component
-	global $mainframe, $database;
+	// set up some global variables for use by frontend components
+	global $mainframe, $database, $my, $acl;
+	global $task, $Itemid, $id, $option, $gid;
+
 	include( $mainframe->getCfg( 'absolute_path' )."/components/com_$name/$name.php" );
 }
 /**
@@ -70,13 +73,18 @@ function &initModules() {
 	global $database, $my, $Itemid;
 
 	if (!isset( $GLOBALS['_MOS_MODULES'] )) {
+		$check_Itemid = '';
+		if ($Itemid) {
+			$check_Itemid = "OR mm.menuid = $Itemid";
+		}
+		
 		$query = "SELECT id, title, module, position, content, showtitle, params"
 		. "\n FROM #__modules AS m"
 		. "\n INNER JOIN #__modules_menu AS mm ON mm.moduleid = m.id"
 		. "\n WHERE m.published = 1"
 		. "\n AND m.access <= $my->gid"
 		. "\n AND m.client_id != 1"
-		. "\n AND ( mm.menuid = $Itemid OR mm.menuid = 0 )"
+		. "\n AND ( mm.menuid = 0 $check_Itemid )"
 		. "\n ORDER BY ordering";
 
 		$database->setQuery( $query );
@@ -149,13 +157,17 @@ function mosLoadModules( $position='left', $style=0 ) {
 		echo $prepend;
 
 		if ((substr("$module->module",0,4))=='mod_') {
+		// normal modules
 			if ($params->get('cache') == 1 && $mosConfig_caching == 1) {
+			// module caching
 				$cache->call('modules_html::module2', $module, $params, $Itemid, $style, $my->gid  );
 			} else {
 				modules_html::module2( $module, $params, $Itemid, $style, $count );
 			}
 		} else {
+		// custom or new modules
 			if ($params->get('cache') == 1 && $mosConfig_caching == 1) {
+			// module caching
 				$cache->call('modules_html::module', $module, $params, $Itemid, $style, 0, $my->gid );
 			} else {
 				modules_html::module( $module, $params, $Itemid, $style );
@@ -163,6 +175,7 @@ function mosLoadModules( $position='left', $style=0 ) {
 		}
 
 		echo $postpend;
+		
 		$count++;
 	}
 	if ($style == 1) {
@@ -173,7 +186,7 @@ function mosLoadModules( $position='left', $style=0 ) {
 * Assembles head tags
 */
 function mosShowHead() {
-	global $database, $option, $my, $mainframe, $_VERSION, $task;
+	global $database, $option, $my, $mainframe, $_VERSION, $task, $id;
 	global $mosConfig_MetaDesc, $mosConfig_MetaKeys, $mosConfig_live_site, $mosConfig_sef, $mosConfig_absolute_path, $mosConfig_sitename, $mosConfig_favicon;
 
 	if ($my->id || $mainframe->get( 'joomlaJavascript' )) {
@@ -187,8 +200,11 @@ function mosShowHead() {
 	$mainframe->addMetaTag( 'Generator', $_VERSION->PRODUCT . ' - ' . $_VERSION->COPYRIGHT);
 	$mainframe->addMetaTag( 'robots', 'index, follow' );
 
-	echo $mainframe->getHead();
-	
+	// cache activation
+	// echo $mainframe->getHead();
+	$cache =& mosCache::getCache('com_content');
+	echo $cache->call('mainframe->getHead', $_SERVER['QUERY_STRING'], $id);
+
 	if ( isset($mosConfig_sef) && $mosConfig_sef ) {
 		echo "<base href=\"$mosConfig_live_site/\" />\r\n";
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: version.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: version.php 4128 2006-06-25 20:37:34Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,26 +23,26 @@ class joomlaVersion {
 	/** @var string Development Status */
 	var $DEV_STATUS = 'Stable';
 	/** @var int Sub Release Level */
-	var $DEV_LEVEL 	= '9';
+	var $DEV_LEVEL 	= '10';
 	/** @var int build Number */
-	var $BUILD	 	= '$Revision: 3876 $';
+	var $BUILD	 	= '$Revision: 4128 $';
 	/** @var string Codename */
-	var $CODENAME 	= 'Sunshine';
+	var $CODENAME 	= 'Sundown';
 	/** @var string Date */
-	var $RELDATE 	= '05 June 2006';
+	var $RELDATE 	= '26 June 2006';
 	/** @var string Time */
-	var $RELTIME 	= '16:00';
+	var $RELTIME 	= '00:00';
 	/** @var string Timezone */
 	var $RELTZ 		= 'UTC';
 	/** @var string Copyright Text */
 	var $COPYRIGHT 	= "Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.";
 	/** @var string URL */
-	var $URL 		= '<a href="http://www.joomla.org">Joomla!</a> is Free Software released under the GNU/GPL License.';
-	/** @var string Whether site is a production = 1 or demo site = 0 */
+	var $URL 		= '<a href="http://www.joomla.org">Joomla!</a> est un logiciel libre distribué sous licence GNU/GPL.';
+	/** @var string Whether site is a production = 1 or demo site = 0: 1 is default */
 	var $SITE 		= 1;
 	/** @var string Whether site has restricted functionality mostly used for demo sites: 0 is default */
 	var $RESTRICT	= 0;
-	/** @var string Whether site is still in development phase (disables checks for /installation folder) - should be set to 0 for package release */
+	/** @var string Whether site is still in development phase (disables checks for /installation folder) - should be set to 0 for package release: 0 is default */
 	var $SVN		= 0;
 
 	

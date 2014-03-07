@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: login.php 3752 2006-05-31 11:42:32Z stingrey $
+* @version $Id: login.php 4055 2006-06-19 20:00:59Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -19,9 +19,10 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'front_html' ) );
 
 global $database, $my, $mainframe;
-global $mosConfig_live_site, $mosConfig_frontend_login;
+global $mosConfig_live_site, $mosConfig_frontend_login, $mosConfig_db;
 
 if ( $mosConfig_frontend_login != NULL && ($mosConfig_frontend_login === 0 || $mosConfig_frontend_login === '0')) {
+	header( "HTTP/1.0 403 Forbidden" );
 	echo _NOT_AUTH;
 	return;
 }

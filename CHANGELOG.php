@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: CHANGELOG.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: CHANGELOG.php 4128 2006-06-25 20:37:34Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -37,6 +37,132 @@ Legend:
 ! -> Note
 
 
+---------------- 1.0.10 Stable Released -- [26-June-2006 00:00 UTC] ------------------
+
+
+This Release Contains following Security Fixes
+
+Joomla! utilizes the Open Web Application Security Project (OWASP) web application security system to categorize security vunerabilities found within Joomla!
+http://www.owasp.org/index.php/OWASP_Top_Ten_Project
+
+
+03 HIGH Level Threats fixed in 1.0.10 
+
+A1 Unvalidated Input
+ * A1 - Secured `Remember Me` functionality against SQL injection attacks
+ * A1 - Secured `Related Items` module against SQL injection attacks
+ * A1 - Secured `Weblinks` submission against SQL injection attacks
+ 
+ 
+01 MEDIUM Level Threats fixed in 1.0.10 
+
+A4 Cross Site Scripting
+ * A4 - Secured SEF from XSS vulnerability
+
+
+05 LOW Level Threats fixed in 1.0.10 
+
+A1 Unvalidated Input
+ * A1 - Hardened frontend submission forms against spoofing
+ * A1 - Secured mosmsg from misuse
+ * A1 - Hardened mosgetparam by setting variable type to integer if default value is detected as numeric
+
+A4 Cross Site Scripting
+ * A4 - Secured com_messages from XSS vulnerability
+ * A4 - Secured getUserStateFromRequest() from XSS vulnerability
+
+-- -- --
+
+
+25-June-2006 Rey Gigataras
+ # SECURITY A1 [ Low Level ]: mosgetparam sets variable type to integer if default value is detected as numeric
+ 
+ # Fixed [artf5091] : Missing closing "}" in one of PatFactory templates
+ # Fixed [topic,71858] : Content Archive issue when caching on
+ # Fixed [topic,71859] : Unable to login frontend
+ # Fixed [topic,67902] : SEF.php breaking community builder homepages
+
+
+23-June-2006 Rey Gigataras
+ # SECURITY A1 [ Low Level ]: mosmsg hardened
+ 
+ # Fixed [artf5059] : Blog ordering, items by - most hits 
+ # Fixed [artf4969] : Missing Itemid in readmore with multi category blog
+ # Fixed [artf5083] : Problem with Description/Description Image parameters of "List - Content Section"
+ # Fixed [topic,67719] : Email Cloaking Ads extra space after cloaked address
+ # Fixed [topic,66966] : E-mailing Cloaking Issue
+ # Fixed [topic,67141] : pathway empty when showing poll results
+ # Fixed [topic,67068] : Caching of Custom Heads still not working (not a full fix)
+
+
+21-June-2006 Alex Kempkens
+ # Fixed [artf5051] : Making cache aware of different languages
+ ! Be aware that it is now important to include all parameters, even optional once, in the cached calls.
+
+
+21-June-2006 David Gal
+ # Fixed [topic,66858] : Can't set language 
+
+
+21-June-2006 Rey Gigataras
+ # SECURITY A4 [ Medium Level ]: XSS vulerability when using SEF
+ # SECURITY A4 [ Low Level ]: XSS vulerability in com_messages
+ # SECURITY A4 [ Low Level ]: XSS vulerability in getUserStateFromRequest()
+
+ # Fixed [artf4976] : htaccess file instructions confusing users
+ # Fixed [artf4917] : PHP getenv function fails in ISAPI mode
+ # Fixed [topic,69083] : mambots not being applied to `User` Module content 
+ # Fixed [topic,69894] : Filter doesn't work when cache on
+
+
+20-June-2006 Rey Gigataras
+ # Fixed [artf5025] : Category Titles with an Apostraphe leave a leading slash
+ # Fixed [artf4927] : blocked user receives wrong error message
+ # Fixed [topic,70612] : Very small text error in file sample_data.sql
+ # Fixed [topic,69871] : mossef notice 
+ # Fixed [topic,68031] : Problems with banner.php
+ # Fixed [topic,67826] : content.html weblinks.html display issues in Opera
+ # Fixed [topic,67594] : Extra space in content.html.php
+ # Fixed [topic,67016] : ATOM 0.3 Always enable even I disable ATOM 0.3 in Administrator Panel
+
+
+19-June-2006 Rey Gigataras
+ # SECURITY A1 [ High Level ]: `Remember Me` functionality SQL injection vulnerability
+ # SECURITY A1 [ High Level ]: `Related Items` module SQL injection vulnerability
+ # SECURITY A1 [ High Level ]: `weblinks` submission SQL injection vulnerability
+ # SECURITY A1 [ Low Level ]: frontend submission forms hardened against spoofing
+
+ # Fixed [artf5031] : Frontend Editing of Content Changes Start Publishing Time
+ # Fixed [artf4951] : author submitting content gets error message
+ # Fixed [artf5028] : Page navigation incorrect on pages viewed through archive module
+
+
+16-June-2006 Rey Gigataras
+ # Fixed [artf5006] : Contact-item print button
+ # Fixed [artf4925] : alt="" not always output 1.0.9
+ # Fixed [artf4921] : anchor links break
+ # Fixed [artf4888] : too many columns in table layout of params
+ # Fixed [topic,66859] : Table views of content category in backend
+ # Fixed [topic,68201] : Permissions check page missing /mambots/system/
+ # Fixed [topic,67115] : Error warning frontend.php
+ # Fixed [topic,67144] : Check for status of SEF in mossef incorrectly commented out
+ # Fixed [topic,67279] : Voting/Rating not working when disabled globally, but enabled locally for selected items
+ 
+ # PERFORMANCE [topic,63468] : mod_fullmenu unnecessary count of archived items in section query
+
+
+12-June-2006 Rey Gigataras
+ # Fixed [artf4913] : Poll Module breaks "Add Article"
+ # Fixed [artf4929] : Finish date not shown
+ # Fixed [artf4881] : Extra space in English email text string
+ # Fixed [topic,68467] : If 2 polls published - voiting on second poll not work
+
+
+10-June-2006 Robin Muilwijk
+ # Fixed [topic,68168] : Typo /administrator/components/com_content/admin.content.html.php - line 478
+ # Fixed [topic,68168] : Typo /administrator/components/com_typedcontent/admin.typedcontent.html.php - line 266
+
+
 ---------------- 1.0.9 Stable Released -- [05-June-2006 16:00 UTC] ------------------
 
 
@@ -46,7 +172,7 @@ Joomla! utilizes the Open Web Application Security Project (OWASP) web applicati
 http://www.owasp.org/index.php/OWASP_Top_Ten_Project
 
 
-12 Low Level Threats in 1.0.9 
+12 Low Level Threats fixed in 1.0.9 
 
 A1 Unvalidated Input
  * A1 - Harden mosmsg

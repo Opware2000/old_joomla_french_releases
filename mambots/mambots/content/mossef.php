@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mossef.php 3536 2006-05-17 15:49:40Z stingrey $
+* @version $Id: mossef.php 4068 2006-06-20 15:31:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -31,9 +31,9 @@ function botMosSef( $published, &$row, &$params, $page=0 ) {
 	}
 	
 	// check whether SEF is off
-	//if ( !$mosConfig_sef ) {
-	//	return true;
-	//}
+	if ( !$mosConfig_sef ) {
+		return true;
+	}
 	
 	// simple performance check to determine whether bot should process further
 	if ( strpos( $row->text, 'href="' ) === false ) {
@@ -55,8 +55,6 @@ function botMosSef( $published, &$row, &$params, $page=0 ) {
 * @return string
 */
 function botMosSef_replacer( &$matches ) {
-	global $mosConfig_live_site;
-
 	// original text that might be replaced
 	$original = 'href="'. $matches[1] .'"';
 
@@ -70,11 +68,26 @@ function botMosSef_replacer( &$matches ) {
 		}
 	}
 
-	// will only process links containing 'index.php?option or links starting with '#'	
-	if ( strpos( $matches[1], 'index.php?option' ) !== false || strpos( $matches[1], '#' ) === 0  ) {
+	if ( strpos( $matches[1], 'index.php?option' ) !== false  ) {
+	// links containing 'index.php?option
 		// convert url to SEF link
 		$link 		= sefRelToAbs( $matches[1] );
+		// reconstruct html output
+		$replace 	= 'href="'. $link .'"';
 		
+		return $replace;
+	} else if ( strpos( $matches[1], '#' ) === 0 ) {
+	// special handling for anchor only links
+		$url = $_SERVER['REQUEST_URI'];
+		$url = explode( '?option', $url );
+		
+		if (is_array($url) && isset($url[1])) {
+			$link = 'index.php?option'. $url[1] . $matches[1];
+		} else {
+			$link = $matches[1];
+		}		
+		// convert url to SEF link
+		$link 		= sefRelToAbs( $link );
 		// reconstruct html output
 		$replace 	= 'href="'. $link .'"';
 		

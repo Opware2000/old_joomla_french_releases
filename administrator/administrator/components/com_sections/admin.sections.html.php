@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.html.php 3585 2006-05-22 07:28:29Z stingrey $
+* @version $Id: admin.sections.html.php 4070 2006-06-20 16:09:29Z stingrey $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -224,7 +224,7 @@ class sections_html {
 			<?php echo $row->id ? 'Editer' : 'Nouvelle';?>
 			</small>
 			<small><small>
-			[ <?php echo $name ; ?> ]
+			[ <?php echo stripslashes($name); ?> ]
 			</small></small>
 			</th>
 		</tr>

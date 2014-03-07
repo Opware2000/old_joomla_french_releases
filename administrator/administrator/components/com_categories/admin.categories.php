@@ -455,10 +455,10 @@ function editCategory( $uid=0, $section='' ) {
 		$imgFiles 	= recursive_listdir( COM_IMAGE_BASE );
 		$len 		= strlen( COM_IMAGE_BASE );
 		
-		$folders[] 	= mosHTML::makeOption( '*2*', 'Use Section settings'  );
+		$folders[] 	= mosHTML::makeOption( '*2*', 'Utiliser les paramètres de la section'  );
 		$folders[] 	= mosHTML::makeOption( '*#*', '---------------------' );
-		$folders[] 	= mosHTML::makeOption( '*1*', 'All'  );
-		$folders[] 	= mosHTML::makeOption( '*0*', 'None' );
+		$folders[] 	= mosHTML::makeOption( '*1*', 'Tous'  );
+		$folders[] 	= mosHTML::makeOption( '*0*', 'Aucun' );
 		$folders[] 	= mosHTML::makeOption( '*#*', '---------------------' );
 		$folders[] 	= mosHTML::makeOption( '/' );
 		foreach ($imgFiles as $file) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.content.html.php 3723 2006-05-29 16:14:03Z stingrey $
+* @version $Id: admin.content.html.php 4070 2006-06-20 16:09:29Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -167,7 +167,7 @@ class HTML_content {
 				} else {
 					$times .= "<tr><td>Commence: $row->publish_up</td></tr>";
 				}
-			if ($row->publish_down == $nullDate || $row->publish_down = 'Never') {
+			if ($row->publish_down == $nullDate || $row->publish_down == 'Jamais') {
 					$times .= "<tr><td>Expire: Jamais</td></tr>";
 				} else {
 					$times .= "<tr><td>Expire: $row->publish_down</td></tr>";
@@ -475,7 +475,7 @@ class HTML_content {
 
 		// used to hide "Reset Hits" when hits = 0
 		if ( !$row->hits ) {
-			$visibility = "style='display: none; visbility: hidden;'";
+			$visibility = "style='display: none; visibility: hidden;'";
 		} else {
 			$visibility = "";
 		}
@@ -558,7 +558,7 @@ class HTML_content {
 			if ( $row->id ) {
 				?>
 				<small><small>
-				[ Section: <?php echo $section?> ]
+				[ Section: <?php echo $section; ?> ]
 				</small></small>
 				<?php
 			}

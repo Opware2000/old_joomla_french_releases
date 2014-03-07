@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 3583 2006-05-22 05:20:08Z stingrey $
+* @version $Id: admin.categories.html.php 4070 2006-06-20 16:09:29Z stingrey $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -289,7 +289,7 @@ class categories_html {
 			<?php echo $row->id ? 'Editer' : 'Nouvelle';?>
 			</small>
 			<small><small>
-			[ <?php echo $component; ?>: <?php echo $row->name; ?> ]
+			[ <?php echo $component; ?>: <?php echo stripslashes($row->name); ?> ]
 			</small></small>
 			</th>
 		</tr>

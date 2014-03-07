@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.php 3752 2006-05-31 11:42:32Z stingrey $
+* @version $Id: registration.php 4054 2006-06-19 19:47:14Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -54,10 +54,13 @@ function lostPassForm( $option ) {
 }
 
 function sendNewPass( $option ) {
-	global $database, $Itemid;
+	global $database;
 	global $mosConfig_live_site, $mosConfig_sitename;
 	global $mosConfig_mailfrom, $mosConfig_fromname;
 
+	// simple spoof check security
+	josSpoofCheck();	
+	
 	$_live_site = $mosConfig_live_site;
 	$_sitename 	= $mosConfig_sitename;
 
@@ -121,6 +124,9 @@ function saveRegistration() {
 		return;
 	}
 
+	// simple spoof check security
+	josSpoofCheck();	
+	
 	$row = new mosUser( $database );
 
 	if (!$row->bind( $_POST, 'usertype' )) {

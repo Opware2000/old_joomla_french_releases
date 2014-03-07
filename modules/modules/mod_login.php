@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_login.php 3753 2006-05-31 11:46:58Z stingrey $
+* @version $Id: mod_login.php 4055 2006-06-19 20:00:59Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -87,6 +87,8 @@ if ( $my->id ) {
 } else {
 // Login output
 // ie HTML when not logged in and trying to login
+	// used for spoof hardening
+	$validate = josSpoofValue(1);
 	?>
 	<form action="<?php echo sefRelToAbs( 'index.php' ); ?>" method="post" name="login" >
 	<?php
@@ -145,6 +147,7 @@ if ( $my->id ) {
 	<input type="hidden" name="lang" value="<?php echo $mosConfig_lang; ?>" />
 	<input type="hidden" name="return" value="<?php echo sefRelToAbs( $login ); ?>" />
 	<input type="hidden" name="message" value="<?php echo $message_login; ?>" />
+	<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 	</form>
 	<?php
 }

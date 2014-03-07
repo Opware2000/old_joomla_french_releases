@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.html.php 1741 2006-01-11 15:28:29Z stingrey $
+* @version $Id: weblinks.html.php 4054 2006-06-19 19:47:14Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -238,10 +238,14 @@ class HTML_weblinks {
 	* @param string The html for the categories select list
 	*/
 	function editWeblink( $option, &$row, &$lists ) {
+		global $mainframe;
 		
 		require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/HTML_toolbar.php' );
 		
 		$Returnid = intval( mosGetParam( $_REQUEST, 'Returnid', 0 ) );
+		
+		// used for spoof hardening
+		$validate = josSpoofValue();
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
@@ -324,6 +328,7 @@ class HTML_weblinks {
 		<input type="hidden" name="approved" value="<?php echo $row->approved; ?>" />
 		<input type="hidden" name="Returnid" value="<?php echo $Returnid; ?>" />
 		<input type="hidden" name="referer" value="<?php echo $_SERVER['HTTP_REFERER']; ?>" />
+		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>
 		<?php
 	}

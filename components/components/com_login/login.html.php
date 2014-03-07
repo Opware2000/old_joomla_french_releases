@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: login.html.php 1352 2005-12-07 20:12:44Z Saka $
+* @version $Id: login.html.php 4055 2006-06-19 20:00:59Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,6 +23,9 @@ class loginHTML {
 
 	function loginpage ( &$params, $image ) {
 		global $mosConfig_lang;
+		
+		// used for spoof hardening
+		$validate = josSpoofValue(1);
 
 		$return = $params->get('login');
 		?>
@@ -123,6 +126,7 @@ class loginHTML {
 		<input type="hidden" name="return" value="<?php echo sefRelToAbs( $return ); ?>" />
 		<input type="hidden" name="lang" value="<?php echo $mosConfig_lang; ?>" />
 		<input type="hidden" name="message" value="<?php echo $params->get( 'login_message' ); ?>" />
+		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>
 		<?php
   	}
@@ -177,7 +181,7 @@ class loginHTML {
 		<input type="hidden" name="lang" value="<?php echo $mosConfig_lang; ?>" />
 		<input type="hidden" name="message" value="<?php echo $params->get( 'logout_message' ); ?>" />
 		</form>
-	<?php
+		<?php
 	}
 }
 ?>
