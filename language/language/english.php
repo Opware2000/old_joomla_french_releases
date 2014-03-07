@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: english.php 1269 2005-12-01 00:26:27Z Jinx $
+* @version $Id: english.php 1570 2005-12-29 05:53:33Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,7 +14,11 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-/** common */
+// Site page note found
+define( '_404', 'We\'re sorry but the page you requested could not be found.' );
+define( '_404_RTS', 'Return to site' );
+
+// common
 DEFINE('_LANGUAGE','en');
 DEFINE('_NOT_AUTH','You are not authorized to view this resource.');
 DEFINE('_DO_LOGIN','You need to login.');

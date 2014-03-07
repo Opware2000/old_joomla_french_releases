@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sef.php 1553 2005-12-24 17:04:09Z Saka $
+* @version $Id: sef.php 1822 2006-01-14 21:22:37Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -44,8 +44,8 @@ if ($mosConfig_sef) {
 			}
 		}
 
-		// $option/$task/$sectionid/$id/$Itemid/$limit/$limitstart
 		if (isset($url_array[$pos+6]) && $url_array[$pos+6]!='') {
+		// $option/$task/$sectionid/$id/$Itemid/$limit/$limitstart
 			$task 					= $url_array[$pos+1];
 			$sectionid				= $url_array[$pos+2];
 			$id 					= $url_array[$pos+3];
@@ -68,8 +68,8 @@ if ($mosConfig_sef) {
 			$_REQUEST['limitstart'] = $limitstart;
 
 			$QUERY_STRING = "option=com_content&task=$task&sectionid=$sectionid&id=$id&Itemid=$Itemid&limit=$limit&limitstart=$limitstart";
-			// $option/$task/$id/$Itemid/$limit/$limitstart
 		} else if (isset($url_array[$pos+5]) && $url_array[$pos+5]!='') {
+		// $option/$task/$id/$Itemid/$limit/$limitstart
 			$task 					= $url_array[$pos+1];
 			$id 					= $url_array[$pos+2];
 			$Itemid 				= $url_array[$pos+3];
@@ -89,8 +89,26 @@ if ($mosConfig_sef) {
 			$_REQUEST['limitstart'] = $limitstart;
 
 			$QUERY_STRING = "option=com_content&task=$task&id=$id&Itemid=$Itemid&limit=$limit&limitstart=$limitstart";
-			// $option/$task/$sectionid/$id/$Itemid
+		} else if (isset($url_array[$pos+4]) && $url_array[$pos+4]!='' && ( in_array('archivecategory', $url_array) || in_array('archivesection', $url_array) )) {
+			// $option/$task/$Itemid/$year/$month/$module
+			$task 					= $url_array[$pos+1];
+			$year 					= $url_array[$pos+2];
+			$month 					= $url_array[$pos+3];
+			$module 				= $url_array[$pos+4];
+			
+			// pass data onto global variables
+			$_GET['task'] 			= $task;
+			$_REQUEST['task'] 		= $task;
+			$_GET['year'] 			= $year;
+			$_REQUEST['year'] 		= $year;
+			$_GET['month'] 			= $month;
+			$_REQUEST['month'] 		= $month;
+			$_GET['module'] 		= $module;
+			$_REQUEST['module']		= $module;
+			
+			$QUERY_STRING = "option=com_content&task=$task&year=$year&month=$month&module=$module";
 		} else if (!(isset($url_array[$pos+5]) && $url_array[$pos+5]!='') && isset($url_array[$pos+4]) && $url_array[$pos+4]!='') {
+		// $option/$task/$sectionid/$id/$Itemid
 			$task 					= $url_array[$pos+1];
 			$sectionid 				= $url_array[$pos+2];
 			$id 					= $url_array[$pos+3];
@@ -107,8 +125,8 @@ if ($mosConfig_sef) {
 			$_REQUEST['Itemid'] 	= $Itemid;
 
 			$QUERY_STRING = "option=com_content&task=$task&sectionid=$sectionid&id=$id&Itemid=$Itemid";
-			// $option/$task/$id/$Itemid
 		} else if (!(isset($url_array[$pos+4]) && $url_array[$pos+4]!='') && (isset($url_array[$pos+3]) && $url_array[$pos+3]!='')) {
+		// $option/$task/$id/$Itemid
 			$task 					= $url_array[$pos+1];
 			$id 					= $url_array[$pos+2];
 			$Itemid 				= $url_array[$pos+3];
@@ -122,8 +140,8 @@ if ($mosConfig_sef) {
 			$_REQUEST['Itemid'] 	= $Itemid;
 
 			$QUERY_STRING = "option=com_content&task=$task&id=$id&Itemid=$Itemid";
-			// $option/$task/$id
 		} else if (!(isset($url_array[$pos+3]) && $url_array[$pos+3]!='') && (isset($url_array[$pos+2]) && $url_array[$pos+2]!='')) {
+		// $option/$task/$id
 			$task 					= $url_array[$pos+1];
 			$id 					= $url_array[$pos+2];
 
@@ -134,8 +152,8 @@ if ($mosConfig_sef) {
 			$_REQUEST['id'] 		= $id;
 
 			$QUERY_STRING = "option=com_content&task=$task&id=$id";
-			// $option/$task
 		} else if (!(isset($url_array[$pos+2]) && $url_array[$pos+2]!='') && (isset($url_array[$pos+1]) && $url_array[$pos+1]!='')) {
+		// $option/$task
 			$task = $url_array[$pos+1];
 
 			$_GET['task'] 			= $task;
@@ -192,21 +210,23 @@ if ($mosConfig_sef) {
 		Unknown content
 		http://www.domain.com/unknown
 		*/
-		$jdir = str_replace ('index.php', '', $_SERVER['PHP_SELF']);
-		$juri = str_replace ($jdir, '', $_SERVER['REQUEST_URI']);
+		$jdir = str_replace( 'index.php', '', $_SERVER['PHP_SELF'] );
+		$juri = str_replace( $jdir, '', $_SERVER['REQUEST_URI'] );
 
-		if ($juri != "" &&
-			!eregi("index\.php", $_SERVER['REQUEST_URI']) &&
-			!eregi("index2\.php", $_SERVER['REQUEST_URI']) &&
-			!eregi("/\?", $_SERVER['REQUEST_URI'])
-			) {
-			header("HTTP/1.0 404 Not Found");
+		if ($juri != "" && !eregi( "index\.php", $_SERVER['REQUEST_URI'] ) && !eregi( "index2\.php", $_SERVER['REQUEST_URI'] ) && !eregi( "/\?", $_SERVER['REQUEST_URI'] ) ) {
+			header( 'HTTP/1.0 404 Not Found' );
+			require_once( $mosConfig_absolute_path . '/templates/404.php' );
+			exit( 404 );
 		}
-
 	}
 
 }
 
+/**
+ * Converts an absolute URL to SEF format
+ * @param string The URL
+ * @return string
+ */
 function sefRelToAbs( $string ) {
 	global $mosConfig_live_site, $mosConfig_sef, $mosConfig_mbf_content;
 	global $iso_client_lang;
@@ -232,7 +252,7 @@ function sefRelToAbs( $string ) {
 		if ( (eregi('option=com_content',$string) || eregi('option=content',$string) ) && !eregi('task=new',$string) && !eregi('task=edit',$string) ) {
 			/*
 			Content
-			index.php?option=com_content&task=$task&sectionid=$sectionid&id=$id&Itemid=$Itemid&limit=$limit&limitstart=$limitstart
+			index.php?option=com_content&task=$task&sectionid=$sectionid&id=$id&Itemid=$Itemid&limit=$limit&limitstart=$limitstart&year=$year&month=$month&module=$module
 			*/
 			$sefstring .= 'content/';
 			if (eregi('&task=',$string)) {
@@ -279,6 +299,35 @@ function sefRelToAbs( $string ) {
 
 				$sefstring .= 'lang,'.$temp[0].'/';
 			}
+			if (eregi('&year=',$string)) {
+				$temp = split('&year=', $string);
+				$temp = split('&', $temp[1]);
+				
+				$sefstring .= $temp[0].'/';
+			}
+			if (eregi('&month=',$string)) {
+				$temp = split('&month=', $string);
+				$temp = split('&', $temp[1]);
+				
+				$sefstring .= $temp[0].'/';
+			}
+			if (eregi('&module=',$string)) {
+				$temp = split('&module=', $string);
+				$temp = split('&', $temp[1]);
+				
+				$sefstring .= $temp[0].'/';
+			}
+			// Handle fragment identifiers (ex. #foo)
+			if (eregi('#', $string)) {
+				$temp = split('#', $string, 2);
+				$string = $temp[0];
+				// ensure fragment identifiers are compatible with HTML4
+				if (preg_match('@^[A-Za-z][A-Za-z0-9:_.-]*$@', $temp[1])) {
+					$fragment = '#'. $temp[1];
+					$sefstring .= $fragment .'/';
+				}
+			}
+
 			$string = $sefstring;
 		} else if (eregi('option=com_',$string) && !eregi('task=new',$string) && !eregi('task=edit',$string)) {
 			/*
@@ -295,10 +344,13 @@ function sefRelToAbs( $string ) {
 			$string = str_replace( '=', ',', $sefstring );
 		}
 
+		// comment line below if you dont have mod_rewrite
 		return $mosConfig_live_site.'/'.$string;
 
 		// allows SEF without mod_rewrite
-		// uncomment Line 273 and comment out Line 269
+		// uncomment Line 348 and comment out Line 354	
+	
+		// comment out line below if you dont have mod_rewrite
 		//return $mosConfig_live_site.'/index.php/'.$string;
 	} else {
 		return $string;

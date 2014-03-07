@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.php 1495 2005-12-20 18:11:19Z Jinx $
+* @version $Id: content.php 1825 2006-01-14 21:48:43Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -37,8 +37,7 @@ $cache =& mosCache::getCache( 'com_content' );
 
 // loads function for frontpage component
 if ( $option == 'com_frontpage' ) {
-	//$cache->call( 'frontpage', $gid, $access, $pop, $now );
-	frontpage($gid, $access, $pop, $now );
+	$cache->call( 'frontpage', $gid, $access, $pop, $now, $limit, $limitstart );
 	return;
 }
 
@@ -60,12 +59,12 @@ switch ( strtolower( $task ) ) {
 		break;
 
 	case 'blogsection':
-		$cache->call('showBlogSection', $id, $gid, $access, $pop, $now );
+		$cache->call('showBlogSection', $id, $gid, $access, $pop, $now, $limit, $limitstart );
 		break;
 
 	case 'blogcategorymulti':
 	case 'blogcategory':
-		$cache->call( 'showBlogCategory', $id, $gid, $access, $pop, $now );
+		$cache->call( 'showBlogCategory', $id, $gid, $access, $pop, $now, $limit, $limitstart );
 		break;
 
 	case 'archivesection':
@@ -159,7 +158,7 @@ function frontpage( $gid, &$access, $pop, $now ) {
 
 	// query records
 //	$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
-	$query = "SELECT a.id, a.title, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
+	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access, a.hits,"
 	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
 	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
@@ -522,7 +521,7 @@ function showBlogSection( $id=0, $gid, &$access, $pop, $now=NULL ) {
 
 	// Main data query
 	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, cc.name AS category, g.name AS groups"
-	$query = "SELECT a.id, a.title, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
+	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
 	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
 	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
@@ -580,7 +579,7 @@ function showBlogCategory( $id=0, $gid, &$access, $pop, $now ) {
 
 	// Main data query
 	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, g.name AS groups, cc.name AS category"
-	$query = "SELECT a.id, a.title, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
+	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
 	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
 	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
@@ -656,7 +655,7 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 
 	// Main Query
 	//$query = "SELECT a.*, ROUND(v.rating_sum/v.rating_count) AS rating, v.rating_count, u.name AS author, u.usertype, cc.name AS category, g.name AS groups"
-	$query = "SELECT a.id, a.title, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
+	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
 	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
 	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
@@ -744,7 +743,7 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	$archives = count( $items );
 
 	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, g.name AS groups"
-	$query = "SELECT a.id, a.title, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
+	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
 	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
 	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
@@ -869,7 +868,7 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 	// checks to see if there are there any items to display
 	if ( $total ) {
 		$col_with = 100 / $columns;			// width of each column
-		$width = 'width="'. $col_with .'%"';
+		$width = 'width="'. intval( $col_with ) .'%"';
 
 		if ( $archive ) {
 			// Search Success message
@@ -940,19 +939,35 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 
 				echo '</td>';
 
-				if ( !( ( $z + 1 ) % $columns ) || $columns == 1 ) {
-					echo '</tr>';
-				}
+//				if ( !( ( $z + 1 ) % $columns ) || $columns == 1 ) {
+//					echo '</tr>';
+//				}
+//
+//				$i++;
+//			}
+//
+//			// this is required to output a final closing </tr> tag when the number of items does not fully
+//			// fill the last row of output - a blank column is left
+//			if ( $intro % $columns ) {
+//				echo '</tr>';
+//			}
+				
+                $i++;
 
-				$i++;
-			}
+                // this is required to output a closing </tr> tag if one of the 3 conditions are met
+                // 1. No of intro story output = number of columns
+                // 2. Total number of items is reached before the number set to display
+                // 3. Reached the last item but it does not fully fill the last row of output - a blank column is left
+                if ( !( ( $z + 1 ) % $columns ) || $columns == 1 ) {
+                    echo '</tr>';
+                } else if ($i >= $total) {
+                    echo '</tr>';
+                } else if ( ( ( $z + 1 )==$intro ) && ( $intro % $columns ) ) {
+                    echo '</tr>';
+                }
 
-			// this is required to output a final closing </tr> tag when the number of items does not fully
-			// fill the last row of output - a blank column is left
-			if ( $intro % $columns ) {
-				echo '</tr>';
-			}
-
+            }
+		
 			echo '</table>';
 			echo '</td>';
 			echo '</tr>';
@@ -1021,7 +1036,7 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 
 
 function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
-	global $database, $mainframe;
+	global $database, $mainframe, $Itemid;
 	global $mosConfig_MetaTitle, $mosConfig_MetaAuthor;
 
 	$nullDate = $database->getNullDate();
@@ -1068,34 +1083,60 @@ function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
 		} else {
 			$params->set( 'item_navigation', $mainframe->getCfg( 'item_navigation' ) );
 		}
+		
 		// loads the links for Next & Previous Button
-		if ( $params->get( 'item_navigation' ) ) {
-			$query = "SELECT a.id"
-			. "\n FROM #__content AS a"
-			. "\n WHERE a.catid = $row->catid"
-			. "\n AND a.state = $row->state"
-			. "\n AND ordering < $row->ordering"
-			. ($access->canEdit ? '' : "\n AND a.access <= $gid" )
-			. $xwhere
-			. "\n ORDER BY a.ordering DESC"
-			. "\n LIMIT 1"
-			;
-			$database->setQuery( $query );
-			$row->prev = $database->loadResult();
+		if ( $params->get( 'item_navigation' ) ) {				
+			// Paramters for menu item as determined by controlling Itemid
+			$menu = new mosMenu( $database );
+			$menu->load( $Itemid );
+			$mparams = new mosParameters( $menu->params );
 
+			// the following is needed as different menu items types utilise a different param to control ordering
+			// for Blogs the `orderby_sec` param is the order controlling param
+			// for Table and List views it is the `orderby` param
+			$mparams_list = $mparams->toArray();
+			if ( array_key_exists( 'orderby_sec', $mparams_list ) ) {
+				$order_method = $mparams->get( 'orderby_sec', '' );
+			} else {
+				$order_method = $mparams->get( 'orderby', '' );
+			}
+			// additional check for invalid sort ordering
+			if ( $order_method == 'front' ) {
+				$order_method = '';
+			}
+			$orderby = _orderby_sec( $order_method );			
+
+			// array of content items in same category correctly ordered
 			$query = "SELECT a.id"
 			. "\n FROM #__content AS a"
 			. "\n WHERE a.catid = $row->catid"
 			. "\n AND a.state = $row->state"
-			. "\n AND ordering > $row->ordering"
 			. ($access->canEdit ? '' : "\n AND a.access <= $gid" )
 			. $xwhere
-			. "\n ORDER BY a.ordering"
-			. "\n LIMIT 1"
+			. "\n ORDER BY $orderby"
 			;
 			$database->setQuery( $query );
-			$row->next = $database->loadResult();
+			$list = $database->loadResultArray();
+
+			// this check needed if incorrect Itemid is given resulting in an incorrect result
+			if ( !is_array($list) ) {
+				$list = array();
+			}
+			// location of current content item in array list
+			$location = array_search( $uid, $list );
+
+			$row->prev = '';
+			$row->next = '';
+			if ( $location - 1 >= 0 ) {
+			// the previous content item cannot be in the array position -1
+				$row->prev = $list[$location - 1]; 
+			}
+			if ( ( $location + 1 ) < count( $list ) ) {
+			// the next content item cannot be in an array position greater than the number of array postions
+				$row->next = $list[$location + 1];
+			}
 		}
+		
 		// page title
 		$mainframe->setPageTitle( $row->title );
 		if ($mosConfig_MetaTitle=='1') {
@@ -1412,6 +1453,28 @@ function saveContent( &$access, $task ) {
 
 	$row->title = ampReplace( $row->title );
 
+	// Publishing state hardening for Authors
+	if ( !$access->canPublish ) {     
+		if ( $isNew ) {
+		// For new items - author is not allowed to publish - prevent them from doing so
+			$row->state = 0;                 
+		} else {
+		// For existing items keep existing state - author is not allowed to change status
+			$query = "SELECT state"
+			. "\n FROM #__content"
+			. "\n WHERE id = $row->id"
+			;
+			$database->setQuery( $query);
+			$state = $database->loadResult();          
+
+			if ( $state ) {
+				$row->state = 1;
+			} else {
+				$row->state = 0;
+			}
+		}
+	}
+	
 	if (!$row->check()) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
@@ -1577,7 +1640,6 @@ function emailContentForm( $uid ) {
 function emailContentSend( $uid ) {
 	global $database, $mainframe;
 	global $mosConfig_live_site, $mosConfig_sitename;
-	global $mosConfig_mailfrom, $mosConfig_fromname;
 
 	$validate = mosGetParam( $_POST, mosHash( 'validate' ), 0 );
 	if (!$validate) {
@@ -1586,6 +1648,47 @@ function emailContentSend( $uid ) {
 		return;
 	}
 
+	// First, make sure the form was posted from a browser.
+	// For basic web-forms, we don't care about anything
+	// other than requests from a browser:   
+	if (!isset( $_SERVER['HTTP_USER_AGENT'] )) {
+		header( "HTTP/1.0 403 Forbidden" );
+		die( _NOT_AUTH );
+		exit;
+	}
+	
+	// Make sure the form was indeed POST'ed:
+	//  (requires your html form to use: action="post")
+	if (!$_SERVER['REQUEST_METHOD'] == 'POST' ) {
+		header("HTTP/1.0 403 Forbidden");
+		die( _NOT_AUTH );
+		exit;   
+	}
+	
+	// Attempt to defend against header injections:
+	$badStrings = array(
+	'Content-Type:',
+	'MIME-Version:',
+	'Content-Transfer-Encoding:',
+	'bcc:',
+	'cc:'
+	);
+	
+	// Loop through each POST'ed value and test if it contains
+	// one of the $badStrings:
+	foreach ($_POST as $k => $v){
+		foreach ($badStrings as $v2) {
+			if (strpos( $v, $v2 ) !== false) {
+				header( "HTTP/1.0 403 Forbidden" );
+				die( _NOT_AUTH );
+			}
+		}
+	}   
+	
+	// Made it past spammer test, free up some memory
+	// and continue rest of script:   
+	unset($k, $v, $v2, $badStrings);
+	
 	$_Itemid 			= $mainframe->getItemid( $uid, 0, 0  );
 	$email 				= mosGetParam( $_POST, 'email', '' );
 	$yourname 			= mosGetParam( $_POST, 'yourname', '' );

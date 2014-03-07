@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: COPYRIGHT.php 70 2005-09-15 20:45:51Z spacemonkey $
+* @version $Id: COPYRIGHT.php 1642 2006-01-04 01:20:09Z rhuk $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -122,6 +122,6 @@ License:	GNU Lesser General Public License (LGPL)
 
 FOOOD Icons (Administrator Toolbar)
 ----
-Copyright:	2004 FOOOD's Icons
-License:	http://www.foood.net/joomla.htm
+Copyright:	2004 iCandy Junior Icons
+License:	http://www.iconaholic.com/help/joomla.html
 Notes:		Please note these icons are NOT OPEN SOURCE but used with permission

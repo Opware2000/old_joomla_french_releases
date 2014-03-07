@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 1261 2005-11-30 19:02:55Z Saka $
+* @version $Id: index2.php 1782 2006-01-13 02:29:37Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -38,7 +38,7 @@ require_once( 'includes/frontend.php' );
 
 // retrieve some expected url (or form) arguments
 $option 	= strtolower( mosGetParam( $_REQUEST, 'option' ) );
-$Itemid 	= strtolower( mosGetParam( $_REQUEST, 'Itemid',0 ) );
+$Itemid 	= intval( mosGetParam( $_REQUEST, 'Itemid', 0 ) );
 $no_html 	= intval( mosGetParam( $_REQUEST, 'no_html', 0 ) );
 $act 		= mosGetParam( $_REQUEST, 'act', '' );
 $do_pdf 	= intval( mosGetParam( $_REQUEST, 'do_pdf', 0 ) );
@@ -136,6 +136,9 @@ if ( $no_html == 0 ) {
 		<link rel="shortcut icon" href="<?php echo $mosConfig_live_site; ?>/images/favicon.ico" />
 		<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
 		<meta name="robots" content="noindex, nofollow" />
+		<?php if ($my->id || $mainframe->get( 'joomlaJavascript' )) { ?>
+		<script language="JavaScript" src="<?php echo $mosConfig_live_site;?>/includes/js/joomla.javascript.js" type="text/javascript"></script>
+		<?php } ?>
 	</head>
 	<body class="contentpane">
 		<?php mosMainBody(); ?>

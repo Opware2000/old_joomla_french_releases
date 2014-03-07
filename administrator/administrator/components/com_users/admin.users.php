@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.users.php 1389 2005-12-09 02:36:01Z eddieajau $
+* @version $Id: admin.users.php 1747 2006-01-11 18:00:21Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -315,9 +315,12 @@ function saveUser( $option, $task ) {
 	}
 	$row->checkin();
 
-	session_start();
-	$_SESSION['session_user_params']= $row->params;
-	session_write_close();
+	// updates the current users param settings
+	if ( $my->id == $row->id ) {
+		//session_start();
+		$_SESSION['session_user_params']= $row->params;
+		session_write_close();
+	}
 
 	// update the ACL
 	if (!$isNew) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.html.php 1545 2005-12-23 07:25:26Z eddieajau $
+* @version $Id: content.html.php 1673 2006-01-06 16:49:32Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -154,50 +154,55 @@ class HTML_content {
 		?>
 		<form action="<?php echo sefRelToAbs($link); ?>" method="post" name="adminForm">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td colspan="4">
-				<table>
-				<tr>
-					<?php
-					if ( $params->get( 'filter' ) ) {
-						?>
-						<td align="right" width="100%" nowrap="nowrap">
-						<?php
-						echo _FILTER .'&nbsp;';
-						?>
-						<input type="text" name="filter" value="<?php echo $lists['filter'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-						</td>
-						<?php
-					}
-
-					if ( $params->get( 'order_select' ) ) {
-						?>
-						<td align="right" width="100%" nowrap="nowrap">
-						<?php
-						echo '&nbsp;&nbsp;&nbsp;'. _ORDER_DROPDOWN .'&nbsp;';
-						echo $lists['order'];
-						?>
-						</td>
-						<?php
-					}
-
-					if ( $params->get( 'display' ) ) {
-						?>
-						<td align="right" width="100%" nowrap="nowrap">
-						<?php
-						echo '&nbsp;&nbsp;&nbsp;'. _PN_DISPLAY_NR .'&nbsp;';
-						$link = 'index.php?option=com_content&amp;task=category&amp;sectionid='. $sectionid .'&amp;id='. $catid .'&amp;Itemid='. $Itemid;
-						echo $pageNav->getLimitBox( $link );
-						?>
-						</td>
-						<?php
-					}
-					?>
-				</tr>
-				</table>
-			</td>
-		</tr>
 		<?php
+		if ( $params->get( 'filter' ) || $params->get( 'order_select' ) || $params->get( 'display' ) ) {
+			?>
+			<tr>
+				<td colspan="4">
+					<table>
+					<tr>
+						<?php
+						if ( $params->get( 'filter' ) ) {
+							?>
+							<td align="right" width="100%" nowrap="nowrap">
+							<?php
+							echo _FILTER .'&nbsp;';
+							?>
+							<input type="text" name="filter" value="<?php echo $lists['filter'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+							</td>
+							<?php
+						}
+	
+						if ( $params->get( 'order_select' ) ) {
+							?>
+							<td align="right" width="100%" nowrap="nowrap">
+							<?php
+							echo '&nbsp;&nbsp;&nbsp;'. _ORDER_DROPDOWN .'&nbsp;';
+							echo $lists['order'];
+							?>
+							</td>
+							<?php
+						}
+	
+						if ( $params->get( 'display' ) ) {
+							?>
+							<td align="right" width="100%" nowrap="nowrap">
+							<?php
+							echo '&nbsp;&nbsp;&nbsp;'. _PN_DISPLAY_NR .'&nbsp;';
+							$link = 'index.php?option=com_content&amp;task=category&amp;sectionid='. $sectionid .'&amp;id='. $catid .'&amp;Itemid='. $Itemid;
+							echo $pageNav->getLimitBox( $link );
+							?>
+							</td>
+							<?php
+						}
+						?>
+					</tr>
+					</table>
+				</td>
+			</tr>
+			<?php
+		}
+		
 		if ( $params->get( 'headings' ) ) {
 			?>
 			<tr>
@@ -410,8 +415,7 @@ class HTML_content {
 			// checks if the item is a public or registered/special item
 			if ( $row->access <= $gid ) {
 				if ($task != "view") {
-					//Fixed artifact 1410
-					//$_Itemid = $mainframe->getItemid( $row->id, 0, 0, $ItemidCount['bs'], $ItemidCount['bc'], $ItemidCount['gbs'] );
+					$_Itemid = $mainframe->getItemid( $row->id, 0, 0, $ItemidCount['bs'], $ItemidCount['bc'], $ItemidCount['gbs'] );
 				}
 				$link_on = sefRelToAbs("index.php?option=com_content&amp;task=view&amp;id=".$row->id."&amp;Itemid=".$_Itemid);
 				//if ( strlen( trim( $row->fulltext ) )) {
@@ -528,7 +532,9 @@ class HTML_content {
 		HTML_content::ReadMore( $params, $link_on, $link_text );
 		?>
 		</table>
-		<span class="article_seperator"></span>
+		
+		<span class="article_seperator">&nbsp;</span>
+		
 		<?php
 		$results = $_MAMBOTS->trigger( 'onAfterDisplayContent', array( &$row, &$params, $page ) );
 		echo trim( implode( "\n", $results ) );
@@ -633,7 +639,7 @@ class HTML_content {
 			}
 			?>
 			<td align="right" width="100%" class="buttonheading">
-			<a href="javascript: void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_PDF;?>">
+			<a href="javascript:void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_PDF;?>">
 			<?php echo $image; ?>
 			</a>
 			</td>
@@ -657,7 +663,7 @@ class HTML_content {
 			}
 			?>
 			<td align="right" width="100%" class="buttonheading">
-			<a href="javascript: void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_EMAIL;?>">
+			<a href="javascript:void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_EMAIL;?>">
 			<?php echo $image; ?>
 			</a>
 			</td>

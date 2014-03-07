@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.php 1389 2005-12-09 02:36:01Z eddieajau $
+* @version $Id: admin.banners.php 1596 2005-12-31 05:40:31Z stingrey $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -174,14 +174,23 @@ function saveBanner( $task ) {
 	$row = new mosBanner($database);
 
 	$msg = 'Saved Banner info';
-	if ( $task == 'resethits' ) {
-		$row->clicks = 0;
-		$msg = 'Reset Banner clicks';
-	}
 	if (!$row->bind( $_POST )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+	
+	// Resets clicks when `Reset Clicks` button is used instead of `Save` button
+	if ( $task == 'resethits' ) {
+		$row->clicks = 0;
+		$msg = 'Reset Banner clicks';
+	}
+	
+	// Sets impressions to unlimited when `unlimited` checkbox ticked
+	$unlimited = mosGetParam( $_POST, 'unlimited', 0 );
+	if ( $unlimited ) {
+		$row->imptotal = 0;
+	}
+	
 	if (!$row->check()) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();

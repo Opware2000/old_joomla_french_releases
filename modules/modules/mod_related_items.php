@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_related_items.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: mod_related_items.php 1650 2006-01-04 05:40:49Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,6 +17,8 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 $option = mosGetParam( $_REQUEST, 'option' );
 $task 	= mosGetParam( $_REQUEST, 'task' );
 $id 	= intval( mosGetParam( $_REQUEST, 'id', null ) );
+
+$now 	= date( 'Y-m-d H:i:s', time() + $mosConfig_offset * 60 * 60 );
 
 if ($option == 'com_content' && $task == 'view' && $id) {
 	// select the meta keywords from the item
@@ -46,6 +48,8 @@ if ($option == 'com_content' && $task == 'view' && $id) {
 			. "\n AND state = 1"
 			. "\n AND access <= $my->gid"
 			. "\n AND ( metakey LIKE '%" . implode( "%' OR metakey LIKE '%", $likes ) ."%' )"
+			. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now' )"
+			. "\n AND ( publish_down = '$nullDate' OR publish_down >= '$now' )"
 			;
 			$database->setQuery( $query );
 			if ( $related = $database->loadObjectList() ) {

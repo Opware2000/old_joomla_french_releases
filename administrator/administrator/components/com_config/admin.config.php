@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.php 691 2005-10-27 16:01:01Z predator $
+* @version $Id: admin.config.php 1843 2006-01-15 19:41:35Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -294,16 +294,19 @@ function showconfig( $option) {
  * Save the configuration
  */
 function saveconfig( $task ) {
-	global $database, $mosConfig_absolute_path;
+	global $database, $mosConfig_absolute_path, $mosConfig_password;
 
 	$row = new mosConfig();
 	if (!$row->bind( $_POST )) {
 		mosRedirect( 'index2.php', $row->getError() );
 	}
 	
-	$server_time 		= date( 'O' ) / 100;
-	$offset 			= $_POST['config_offset_user'] - $server_time;
-	$row->config_offset = $offset;	
+	$server_time 			= date( 'O' ) / 100;
+	$offset 				= $_POST['config_offset_user'] - $server_time;
+	$row->config_offset 	= $offset;	
+	
+	//override any possible database password change
+	$row->config_password 	= $mosConfig_password;
 	
 	$config = "<?php \n";
 	$config .= $row->getVarText();

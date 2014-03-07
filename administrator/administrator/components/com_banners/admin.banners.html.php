@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.html.php 1305 2005-12-06 18:29:41Z Jinx $
+* @version $Id: admin.banners.html.php 1596 2005-12-31 05:40:31Z stingrey $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -41,7 +41,7 @@ class HTML_banners {
 			#
 			</th>
 			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
+			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th align="left" nowrap>
 			Banner Name
@@ -108,7 +108,7 @@ class HTML_banners {
 				?>
 				</td>
 				<td align="center">
-				<a href="javascript: void(0);" onClick="return listItemTask('cb<?php echo $i;?>','<?php echo $task;?>')">
+				<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','<?php echo $task;?>')">
 				<img src="images/<?php echo $img;?>" width="12" height="12" border="0" alt="<?php echo $alt; ?>" />
 				</a>
 				</td>
@@ -132,10 +132,10 @@ class HTML_banners {
 		</table>
 		<?php echo $pageNav->getListFooter(); ?>
 
-		<input type="hidden" name="option" value="<?php echo $option; ?>">
-		<input type="hidden" name="task" value="">
-		<input type="hidden" name="boxchecked" value="0">
-		<input type="hidden" name="hidemainmenu" value="0">
+		<input type="hidden" name="option" value="<?php echo $option; ?>" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="hidemainmenu" value="0" />
 		</form>
 		<?php
 	}
@@ -143,7 +143,7 @@ class HTML_banners {
 	function bannerForm( &$_row, &$lists, $_option ) {
 		mosMakeHtmlSafe( $_row, ENT_QUOTES, 'custombannercode' );
 		?>
-		<script language="javascript">
+		<script language="javascript" type="text/javascript">
 		<!--
 		function changeDisplayImage() {
 			if (document.adminForm.imageurl.value !='') {
@@ -196,7 +196,7 @@ class HTML_banners {
 			Banner Name:
 			</td>
 			<td width="80%">
-			<input class="inputbox" type="text" name="name" value="<?php echo $_row->name;?>">
+			<input class="inputbox" type="text" name="name" value="<?php echo $_row->name;?>" />
 			</td>
 		</tr>
 		<tr>
@@ -212,17 +212,16 @@ class HTML_banners {
 			Impressions Purchased:
 			</td>
 			<?php
+			$unlimited = '';
 			if ($_row->imptotal == 0) {
-				$unlimited = 'checked';
+				$unlimited = 'checked="checked"';
 				$_row->imptotal = '';
-			} else {
-				$unlimited = '';
 			}
 			?>
 			<td>
-			<input class="inputbox" type="text" name="imptotal" size="12" maxlength="11" value="<?php echo $_row->imptotal;?>">
+			<input class="inputbox" type="text" name="imptotal" size="12" maxlength="11" value="<?php echo $_row->imptotal;?>" />
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			Unlimited <input type="checkbox" name="unlimited" <?php echo $unlimited;?>>
+			Unlimited <input type="checkbox" name="unlimited" <?php echo $unlimited;?> />
 			</td>
 		</tr>
 		<tr>
@@ -238,7 +237,7 @@ class HTML_banners {
 			Click URL:
 			</td>
 			<td>
-			<input class="inputbox" type="text" name="clickurl" size="100" maxlength="200" value="<?php echo $_row->clickurl;?>">
+			<input class="inputbox" type="text" name="clickurl" size="100" maxlength="200" value="<?php echo $_row->clickurl;?>" />
 			</td>
 		</tr>
 		<tr >
@@ -248,7 +247,7 @@ class HTML_banners {
 			<td colspan="2">
 			<?php echo $_row->clicks;?>
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input name="reset_hits" type="button" class="button" value="Reset Clicks" onClick="submitbutton('resethits');">
+			<input name="reset_hits" type="button" class="button" value="Reset Clicks" onclick="submitbutton('resethits');" />
 			</td>
 		</tr>
 		<tr>
@@ -279,11 +278,11 @@ class HTML_banners {
 				<?php
 			} elseif (eregi("gif|jpg|png", $_row->imageurl)) {
 				?>
-				<img src="../images/banners/<?php echo $_row->imageurl; ?>" name="imagelib">
+				<img src="../images/banners/<?php echo $_row->imageurl; ?>" name="imagelib" />
 				<?php
 			} else {
 				?>
-				<img src="images/blank.png" name="imagelib">
+				<img src="images/blank.png" name="imagelib" />
 				<?php
 			}
 			?>
@@ -295,10 +294,11 @@ class HTML_banners {
 		</tr>
 		</table>
 
-		<input type="hidden" name="option" value="<?php echo $_option; ?>">
-		<input type="hidden" name="bid" value="<?php echo $_row->bid; ?>">
-		<input type="hidden" name="task" value="">
-		<input type="hidden" name="impmade" value="<?php echo $_row->impmade; ?>">
+		<input type="hidden" name="option" value="<?php echo $_option; ?>" />
+		<input type="hidden" name="bid" value="<?php echo $_row->bid; ?>" />
+		<input type="hidden" name="clicks" value="<?php echo $_row->clicks; ?>" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="impmade" value="<?php echo $_row->impmade; ?>" />
 		</form>
 		<?php
 	}
@@ -330,7 +330,7 @@ class HTML_bannerClient {
 			#
 			</th>
 			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
+			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th align="left" nowrap>
 			Client Name
@@ -385,10 +385,11 @@ class HTML_bannerClient {
 		?>
 		</table>
 		<?php echo $pageNav->getListFooter(); ?>
-		<input type="hidden" name="option" value="<?php echo $option; ?>">
-		<input type="hidden" name="task" value="listclients">
-		<input type="hidden" name="boxchecked" value="0">
-		<input type="hidden" name="hidemainmenu" value="0">
+		
+		<input type="hidden" name="option" value="<?php echo $option; ?>" />
+		<input type="hidden" name="task" value="listclients" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="hidemainmenu" value="0" />
 		</form>
 		<?php
 	}
@@ -396,7 +397,7 @@ class HTML_bannerClient {
 	function bannerClientForm( &$row, $option ) {
 		mosMakeHtmlSafe( $row, ENT_QUOTES, 'extrainfo' );
 		?>
-		<script language="javascript">
+		<script language="javascript" type="text/javascript">
 		<!--
 		function submitbutton(pressbutton) {
 			var form = document.adminForm;
@@ -440,7 +441,7 @@ class HTML_bannerClient {
 			Client Name:
 			</td>
 			<td>
-			<input class="inputbox" type="text" name="name" size="30" maxlength="60" valign="top" value="<?php echo $row->name; ?>">
+			<input class="inputbox" type="text" name="name" size="30" maxlength="60" valign="top" value="<?php echo $row->name; ?>" />
 			</td>
 		</tr>
 		<tr>
@@ -448,7 +449,7 @@ class HTML_bannerClient {
 			Contact Name:
 			</td>
 			<td>
-			<input class="inputbox" type="text" name="contact" size="30" maxlength="60" value="<?php echo $row->contact; ?>">
+			<input class="inputbox" type="text" name="contact" size="30" maxlength="60" value="<?php echo $row->contact; ?>" />
 			</td>
 		</tr>
 		<tr>
@@ -456,7 +457,7 @@ class HTML_bannerClient {
 			Contact Email:
 			</td>
 			<td>
-			<input class="inputbox" type="text" name="email" size="30" maxlength="60" value="<?php echo $row->email; ?>">
+			<input class="inputbox" type="text" name="email" size="30" maxlength="60" value="<?php echo $row->email; ?>" />
 			</td>
 		</tr>
 		<tr>
@@ -473,9 +474,9 @@ class HTML_bannerClient {
 		</tr>
 		</table>
 
-		<input type="hidden" name="option" value="<?php echo $option; ?>">
-		<input type="hidden" name="cid" value="<?php echo $row->cid; ?>">
-		<input type="hidden" name="task" value="">
+		<input type="hidden" name="option" value="<?php echo $option; ?>" />
+		<input type="hidden" name="cid" value="<?php echo $row->cid; ?>" />
+		<input type="hidden" name="task" value="" />
 		</form>
 		<?php
 	}

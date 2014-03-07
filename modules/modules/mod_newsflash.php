@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_newsflash.php 1290 2005-12-05 07:56:43Z eddieajau $
+* @version $Id: mod_newsflash.php 1790 2006-01-13 18:25:54Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,7 +16,27 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'front_html', 'com_content') );
 
-global $my, $mosConfig_shownoauth, $mosConfig_offset, $acl;
+if (!defined( '_JOS_NEWSFLASH_MODULE' )) {
+	/** ensure that functions are declared only once */
+	define( '_JOS_NEWSFLASH_MODULE', 1 );
+	
+	function output_newsflash( &$row, &$params, &$access ) {	
+		global $mainframe;
+		
+		$row->text 		= $row->introtext;
+		$row->groups 	= '';
+		$row->readmore 	= (trim( $row->fulltext ) != '');
+		
+		$bs 			= $mainframe->getBlogSectionCount();
+		$bc 			= $mainframe->getBlogCategoryCount();
+		$gbs 			= $mainframe->getGlobalBlogSectionCount();
+		$ItemidCount 	= $mainframe->getItemid( $row->id, 0, 0, $bs, $bc, $gbs );
+		
+		HTML_content::show( $row, $params, $access, 0, 'com_content', $ItemidCount );
+	}
+}
+
+global $my, $mosConfig_shownoauth, $mosConfig_offset, $mosConfig_link_titles, $acl;
 
 // Disable edit ability icon
 $access = new stdClass();
@@ -28,14 +48,15 @@ $now = date( 'Y-m-d H:i:s', time()+$mosConfig_offset*60*60 );
 
 $catid 				= intval( $params->get( 'catid' ) );
 $style 				= $params->get( 'style' );
-$image 				= $params->get( 'image' );
-$readmore 			= $params->get( 'readmore' );
 $items 				= intval( $params->get( 'items' ) );
+$moduleclass_sfx    = $params->get( 'moduleclass_sfx' );
+$link_titles		= $params->get( 'link_titles', $mosConfig_link_titles );
 
 $params->set( 'intro_only', 1 );
 $params->set( 'hide_author', 1 );
 $params->set( 'hide_createdate', 0 );
 $params->set( 'hide_modifydate', 1 );
+$params->set( 'link_titles', $link_titles );
 
 if ( $items ) {
 	$limit = "LIMIT $items";
@@ -70,11 +91,11 @@ switch ($style) {
 		echo '<tr>';
 		foreach ($rows as $id) {
 			$row->load( $id );
-			$row->text = $row->introtext;
-			$row->groups = '';
-			$row->readmore = (trim( $row->fulltext ) != '');
+			
 			echo '<td>';
-			HTML_content::show( $row, $params, $access, 0, 'com_content' );
+			
+			output_newsflash( $row, $params, $access );
+			
 			echo '</td>';
 		}
 		echo '</tr></table>';
@@ -83,28 +104,22 @@ switch ($style) {
 	case 'vert':
 		foreach ($rows as $id) {
 			$row->load( $id );
-			$row->text = $row->introtext;
-			$row->groups = '';
-			$row->readmore = (trim( $row->fulltext ) != '');
-
-			HTML_content::show( $row, $params, $access, 0, 'com_content' );
+			
+			output_newsflash( $row, $params, $access );
 		}
 		break;
 
 	case 'flash':
-		default:
-			if ($numrows > 0) {
-				srand ((double) microtime() * 1000000);
-				$flashnum = $rows[rand( 0, $numrows-1 )];
-			} else {
-				$flashnum = 0;
-			}
-			$row->load( $flashnum );
-			$row->text = $row->introtext;
-			$row->groups = '';
-			$row->readmore = (trim( $row->fulltext ) != '');
+	default:
+		if ($numrows > 0) {
+			srand ((double) microtime() * 1000000);
+			$flashnum = $rows[rand( 0, $numrows-1 )];
+		} else {
+			$flashnum = 0;
+		}
+		$row->load( $flashnum );
 
-			HTML_content::show( $row, $params, $access, 0, 'com_content' );
-			break;
+		output_newsflash( $row, $params, $access );
+		break;
 }
 ?>

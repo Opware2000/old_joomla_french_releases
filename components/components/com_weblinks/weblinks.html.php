@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.html.php 593 2005-10-23 16:49:05Z stingrey $
+* @version $Id: weblinks.html.php 1741 2006-01-11 15:28:29Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -87,7 +87,7 @@ class HTML_weblinks {
 		global $mosConfig_live_site;
 		// icon in table display
 		if ( $params->get( 'weblink_icons' ) != -1 ) {
-			$img = mosAdminMenus::ImageCheck( 'weblink.png', '/images/M_images/', $params->get( 'weblink_icons' ), NULL, 'Link', 'Link' );
+			$img = mosAdminMenus::ImageCheck( 'weblink.png', '/images/M_images/', $params->get( 'weblink_icons' ), '/images/M_images/', 'Link', 'Link' );
 		} else {
 			$img = NULL;
 		}

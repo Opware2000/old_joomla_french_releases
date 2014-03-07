@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pathway.php 234 2005-09-25 19:54:52Z Saka $
+* @version $Id: pathway.php 1696 2006-01-07 17:00:03Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -54,8 +54,14 @@ function showPathway( $Itemid ) {
 	$database->setQuery( $query );
 	$mitems = $database->loadObjectList( 'id' );
 
-	$isWin = (substr(PHP_OS, 0, 3) == 'WIN');
-	$optionstring = $isWin ? $_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'];
+	//$isWin = (substr(PHP_OS, 0, 3) == 'WIN');
+	//$optionstring = $isWin ? $_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'];
+	$optionstring = '';
+	if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+		$optionstring = $_SERVER['REQUEST_URI'];
+	} else if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+		$optionstring = $_SERVER['QUERY_STRING'];
+	}
 
 	// are we at the home page or not
 	$homekeys 	= array_keys( $mitems );

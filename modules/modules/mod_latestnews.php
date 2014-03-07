@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_latestnews.php 1500 2005-12-20 19:56:44Z Jinx $
+* @version $Id: mod_latestnews.php 1765 2006-01-12 18:00:20Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -18,7 +18,6 @@ global $mosConfig_offset, $mosConfig_live_site, $mainframe;
 
 $type 		= intval( $params->get( 'type', 1 ) );
 $count 		= intval( $params->get( 'count', 5 ) );
-$count 		= intval( $params->get( 'count', 5 ) );
 $catid 		= trim( $params->get( 'catid' ) );
 $secid 		= trim( $params->get( 'secid' ) );
 $show_front	= $params->get( 'show_front', 1 );
@@ -32,7 +31,7 @@ switch ( $type ) {
 	//Static Content only
 		$query = "SELECT a.id, a.title"
 		. "\n FROM #__content AS a"
-		. "\n WHERE ( a.state = 1 AND a.checked_out = 0 AND a.sectionid = 0 )"
+		. "\n WHERE ( a.state = 1 AND a.sectionid = 0 )"
 		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		. ( $access ? "\n AND a.access <= $my->gid" : '' )
@@ -48,7 +47,7 @@ switch ( $type ) {
 		. "\n LEFT JOIN #__content_frontpage AS f ON f.content_id = a.id"
 		. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 		. "\n INNER JOIN #__sections AS s ON s.id = a.sectionid"
-		. "\n WHERE ( a.state = 1 AND a.checked_out = 0  )"
+		. "\n WHERE a.state = 1"
 		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		. ( $access ? "\n AND a.access <= '$my->gid'" : '' )
@@ -70,7 +69,7 @@ switch ( $type ) {
 		. "\n LEFT JOIN #__content_frontpage AS f ON f.content_id = a.id"
 		. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 		. "\n INNER JOIN #__sections AS s ON s.id = a.sectionid"
-		. "\n WHERE ( a.state = 1 AND a.checked_out = 0 AND a.sectionid > 0 )"
+		. "\n WHERE ( a.state = 1 AND a.sectionid > 0 )"
 		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		. ( $access ? "\n AND a.access <= '$my->gid'" : '' )

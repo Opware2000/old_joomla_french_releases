@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.php 484 2005-10-13 01:24:50Z Jinx $
+* @version $Id: weblinks.php 1817 2006-01-14 19:54:33Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -29,7 +29,10 @@ switch ($task) {
 		break;
 
 	case 'edit':
-		/** disabled until permissions system can handle it */
+		/*
+		* Disabled until ACL system is implemented.  When enabled the $id variable
+		* will be passed instead of a 0
+		*/
 		editWebLink( 0, $option );
 		break;
 
@@ -59,7 +62,6 @@ function listWeblinks( $catid ) {
 	$query = "SELECT *, COUNT(a.id) AS numlinks FROM #__categories AS cc"
 	. "\n LEFT JOIN #__weblinks AS a ON a.catid = cc.id"
 	. "\n WHERE a.published = 1"
-	//. "\n AND a.approved = 1"
 	. "\n AND section = 'com_weblinks'"
 	. "\n AND cc.published = 1"
 	. "\n AND cc.access <= $my->gid"
@@ -77,7 +79,6 @@ function listWeblinks( $catid ) {
 		. "\n FROM #__weblinks"
 		. "\n WHERE catid = $catid"
 		. "\n AND published = 1"
-		//. "\n AND approved = 1"
 		. "\n AND archived = 0"
 		. "\n ORDER BY ordering"
 		;
@@ -162,24 +163,27 @@ function showItem ( $id, $catid ) {
 	global $database;
 
 	//Record the hit
-	$sql= "UPDATE #__weblinks"
+	$query = "UPDATE #__weblinks"
 	. "\n SET hits = hits + 1"
 	. "\n WHERE id = $id"
 	;
-	$database->setQuery( $sql );
+	$database->setQuery( $query );
 	$database->query();
 
 	$query = "SELECT url"
 	. "\n FROM #__weblinks"
 	. "\n WHERE id = $id"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query );	
 	$url = $database->loadResult();
-
-	mosRedirect ( $url );
-
-	listWeblinks( $catid );
-
+	
+	if ( $url ) {
+		// redirects to url if matching id found
+		mosRedirect ( $url );
+	} else {		
+		// redirects to weblink category page if no matching id found
+		listWeblinks( $catid );
+	}
 }
 
 function editWebLink( $id, $option ) {
@@ -250,6 +254,7 @@ function cancelWebLink( $option ) {
 * @param database A database connector object
 */
 function saveWeblink( $option ) {
+	global $mosConfig_mailfrom, $mosConfig_fromname;
 	global $database, $my;
 
 	if ($my->gid < 1) {
@@ -258,13 +263,17 @@ function saveWeblink( $option ) {
 	}
 
 	$row = new mosWeblink( $database );
-	if (!$row->bind( $_POST, "published" )) {
+	if (!$row->bind( $_POST, 'published' )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
 	$isNew = $row->id < 1;
 
 	$row->date = date( 'Y-m-d H:i:s' );
+	
+	// until full edit capabilities are given for weblinks - limit saving to new weblinks only
+	$row->id = 0;
+
 	if (!$row->check()) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
@@ -275,21 +284,25 @@ function saveWeblink( $option ) {
 	}
 	$row->checkin();
 
-	/** Notify admin's */
+	// admin users gid
+	$gid = 25;
+
+	// list of admins	
 	$query = "SELECT email, name"
 	. "\n FROM #__users"
-	. "\n WHERE gid = 25"
-	. "\n AND sendemail = 1"
+	. "\n WHERE gid = $gid"
+	. "\n AND sendEmail = 1"
 	;
 	$database->setQuery( $query );
 	if(!$database->query()) {
 		echo $database->stderr( true );
 		return;
 	}
-
 	$adminRows = $database->loadObjectList();
-	foreach( $adminRows as $adminRow) {
-		mosSendAdminMail($adminRow->name, $adminRow->email, "", "Weblink", $row->title, $my->username );
+	
+	// send email notification to admins
+	foreach($adminRows as $adminRow) {			
+		mosSendAdminMail($adminRow->name, $adminRow->email, '', 'Weblink', $row->title, $my->username );
 	}
 
 	$msg 	= $isNew ? _THANK_SUB : '';

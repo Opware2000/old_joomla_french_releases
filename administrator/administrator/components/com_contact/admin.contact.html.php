@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.contact.html.php 1007 2005-11-13 17:45:15Z stingrey $
+* @version $Id: admin.contact.html.php 1815 2006-01-14 18:58:18Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -313,14 +313,6 @@ class HTML_contact {
 					Publishing Info
 					</th>
 				<tr>
-				<tr>
-					<td width="20%" align="right">
-					Site Default:
-					</td>
-					<td >
-					<?php echo $lists['default_con']; ?>
-					</td>
-				</tr>
 				<tr>
 					<td valign="top" align="right">
 					Published:

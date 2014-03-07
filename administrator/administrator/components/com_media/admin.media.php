@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.php 1230 2005-11-28 10:13:57Z eddieajau $
+* @version $Id: admin.media.php 1758 2006-01-12 13:58:21Z stingrey $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -145,20 +145,22 @@ function delete_folder($listdir) {
 
 function upload() {
 	if (isset($_FILES['upload']) && is_array($_FILES['upload']) && isset($_POST['dirPath'])) {
-		$dirPathPost = $_POST['dirPath'];
-
-		if(strlen($dirPathPost) > 0) {
-			if(substr($dirPathPost,0,1)=='/')
+		$dirPathPost 	= $_POST['dirPath'];
+		$file 			= $_FILES['upload'];
+		
+		if (strlen($dirPathPost) > 0) {
+			if (substr($dirPathPost,0,1) == '/') {
 				$IMG_ROOT .= $dirPathPost;
-			else
+			} else {
 				$IMG_ROOT = $dirPathPost;
+			}
 		}
 
-		if (strrpos( $IMG_ROOT, '/' )!= strlen( $IMG_ROOT )-1) {
+		if (strrpos( $IMG_ROOT, '/' ) != strlen( $IMG_ROOT )-1) {
 			$IMG_ROOT .= '/';
 		}
 
-		do_upload( $_FILES['upload'], COM_MEDIA_BASE . $dirPathPost . '/' );
+		do_upload( $file, COM_MEDIA_BASE . $dirPathPost . '/' );
 	}
 }
 
@@ -172,23 +174,24 @@ function do_upload($file, $dest_dir) {
 		$format = substr( $file['name'], -3 );
 
 		$allowable = array (
-			'xcf',
-			'odg',
-			'gif',
-			'jpg',
-			'epg',
-			'png',
 			'bmp',
-			'doc',
-			'txt',
-			'xls',
 			'csv',
+			'doc',
+			'epg',
+			'gif',
+			'ico',
+			'jpg',
+			'odg',
+			'odp',
+			'ods',
+			'odt',
+			'pdf',
+			'png',
 			'ppt',
 			'swf',
-			'pdf',
-			'odt',
-			'ods',
-			'odp'
+			'txt',
+			'xcf',
+			'xls'
 		);
 
         $noMatch = 0;

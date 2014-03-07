@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: menubar.html.php 1056 2005-11-16 18:34:33Z stingrey $
+* @version $Id: menubar.html.php 1574 2005-12-29 15:31:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -105,7 +105,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function addNew( $task='new', $alt='New' ) {
+	function addNew( $task='new', $alt='Nouveau' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'new_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -122,7 +122,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function addNewX( $task='new', $alt='New' ) {
+	function addNewX( $task='new', $alt='Nouveau' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'new_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -138,7 +138,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function publish( $task='publish', $alt='Publish' ) {
+	function publish( $task='publish', $alt='Publier' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'publish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -154,7 +154,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function publishList( $task='publish', $alt='Publish' ) {
+	function publishList( $task='publish', $alt='Publier' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'publish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 	 	<td>
@@ -170,7 +170,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function makeDefault( $task='default', $alt='Default' ) {
+	function makeDefault( $task='default', $alt='D&eacute;faut' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'publish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -186,7 +186,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function assign( $task='assign', $alt='Assign' ) {
+	function assign( $task='assign', $alt='Assigner' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'publish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -202,7 +202,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function unpublish( $task='unpublish', $alt='Unpublish' ) {
+	function unpublish( $task='unpublish', $alt='D&eacute;publier' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'unpublish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -218,7 +218,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function unpublishList( $task='unpublish', $alt='Unpublish' ) {
+	function unpublishList( $task='unpublish', $alt='D&eacute;publier' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'unpublish_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -250,7 +250,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function unarchiveList( $task='unarchive', $alt='Unarchive' ) {
+	function unarchiveList( $task='unarchive', $alt='D&eacute;sarchiver' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'unarchive_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -266,7 +266,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editList( $task='edit', $alt='Edit' ) {
+	function editList( $task='edit', $alt='Editer' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'edit_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -283,7 +283,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editListX( $task='edit', $alt='Edit' ) {
+	function editListX( $task='edit', $alt='Editer' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'edit_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -299,7 +299,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editHtml( $task='edit_source', $alt='Edit&nbsp;HTML' ) {
+	function editHtml( $task='edit_source', $alt='Editer&nbsp;HTML' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'html_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -316,7 +316,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editHtmlX( $task='edit_source', $alt='Edit&nbsp;HTML' ) {
+	function editHtmlX( $task='edit_source', $alt='Editer&nbsp;HTML' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'html_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -332,7 +332,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editCss( $task='edit_css', $alt='Edit&nbsp;CSS' ) {
+	function editCss( $task='edit_css', $alt='Editer&nbsp;CSS' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'css_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -349,7 +349,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function editCssX( $task='edit_css', $alt='Edit&nbsp;CSS' ) {
+	function editCssX( $task='edit_css', $alt='Editer&nbsp;CSS' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'css_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -366,7 +366,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function deleteList( $msg='', $task='remove', $alt='Delete' ) {
+	function deleteList( $msg='', $task='remove', $alt='Supprimer' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'delete_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -384,7 +384,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function deleteListX( $msg='', $task='remove', $alt='Delete' ) {
+	function deleteListX( $msg='', $task='remove', $alt='Supprimer' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'delete_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -398,7 +398,7 @@ class mosMenuBar {
 	/**
 	* Write a trash button that will move items to Trash Manager
 	*/
-	function trash( $task='remove', $alt='Trash', $check=true ) {
+	function trash( $task='remove', $alt='Corbeille', $check=true ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'delete_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		
 		if ( $check ) {
@@ -442,7 +442,7 @@ class mosMenuBar {
 			</script>
 		 	<a class="toolbar" href="#" onclick="popup();">
 				<?php echo $image2; ?>
-				<br />Preview</a>
+				<br />Aper&ccedil;u</a>
 		</td>
 		<?php
 	}
@@ -460,7 +460,7 @@ class mosMenuBar {
 		if ( $helpUrl == 'http://help.mamboserver.com' ) {
 			$helpUrl = 'http://help.joomla.org';
 		}
-				
+
 		if ($com) {
 	   // help file for 3PD Components
 			$url = $mosConfig_live_site . '/administrator/components/' . $GLOBALS['option'] . '/help/';
@@ -482,7 +482,7 @@ class mosMenuBar {
 		<td>
 			<a class="toolbar" href="#" onclick="window.open('<?php echo $url;?>', 'mambo_help_win', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');">
 				<?php echo $image2; ?>
-				<br />Help</a>
+				<br />Aide</a>
 		</td>
 		<?php
 	}
@@ -493,7 +493,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function apply( $task='apply', $alt='Apply' ) {
+	function apply( $task='apply', $alt='Appliquer' ) {
 		$image 	= mosAdminMenus::ImageCheckAdmin( 'apply.png', '/administrator/images/', NULL, NULL, $alt, $task );
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'apply_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
@@ -511,7 +511,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function save( $task='save', $alt='Save' ) {
+	function save( $task='save', $alt='Sauver' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'save_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -555,7 +555,7 @@ class mosMenuBar {
 	* @param string An override for the task
 	* @param string An override for the alt text
 	*/
-	function cancel( $task='cancel', $alt='Cancel' ) {
+	function cancel( $task='cancel', $alt='Annuler' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'cancel_f2.png', '/administrator/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
@@ -570,7 +570,7 @@ class mosMenuBar {
 	* Writes a cancel button that will go back to the previous page without doing
 	* any other operation
 	*/
-	function back( $alt='Back', $href='' ) {
+	function back( $alt='Retour', $href='' ) {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'back_f2.png', '/administrator/images/', NULL, NULL, 'back', 'cancel', 1 );
 		if ( $href ) {
 			$link = $href;
@@ -616,7 +616,7 @@ class mosMenuBar {
 		$image2 = mosAdminMenus::ImageCheckAdmin( 'upload_f2.png', '/administrator/images/', NULL, NULL, 'Upload Image', 'uploadPic', 1 );
 		?>
 		<td>
-			<a class="toolbar" href="#" onclick="popupWindow('popups/uploadimage.php?directory=<?php echo $directory; ?>&t=<?php echo $cur_template; ?>','win1',250,100,'no');">
+			<a class="toolbar" href="#" onclick="popupWindow('popups/uploadimage.php?directory=<?php echo $directory; ?>&amp;t=<?php echo $cur_template; ?>','win1',250,100,'no');">
 				<?php echo $image2; ?>
 				<br /><?php echo $alt;?></a>
 		</td>

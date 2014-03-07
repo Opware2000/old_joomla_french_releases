@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact.php 1347 2005-12-07 19:51:49Z Jinx $
+* @version $Id: contact.php 1810 2006-01-14 17:11:39Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -45,7 +45,6 @@ switch( $op ) {
 	case 'sendmail':
 		sendmail( $con_id, $option );
 		break;
-
 }
 
 
@@ -82,26 +81,26 @@ function listContacts( $option, $catid ) {
 		$menu->load( $Itemid );
 		$params = new mosParameters( $menu->params );
 
-		$params->def( 'page_title', 1 );
-		$params->def( 'header', $menu->name );
-		$params->def( 'pageclass_sfx', '' );
-		$params->def( 'headings', 1 );
-		$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
-		$params->def( 'description_text', _CONTACTS_DESC );
-		$params->def( 'image', -1 );
-		$params->def( 'image_align', 'right' );
-		$params->def( 'other_cat_section', 1 );
+		$params->def( 'page_title', 		1 );
+		$params->def( 'header', 			$menu->name );
+		$params->def( 'pageclass_sfx', 		'' );
+		$params->def( 'headings', 			1 );
+		$params->def( 'back_button', 		$mainframe->getCfg( 'back_button' ) );
+		$params->def( 'description_text', 	_CONTACTS_DESC );
+		$params->def( 'image', 				-1 );
+		$params->def( 'image_align', 		'right' );
+		$params->def( 'other_cat_section', 	1 );
 		// Category List Display control
-		$params->def( 'other_cat', 1 );
-		$params->def( 'cat_description', 1 );
-		$params->def( 'cat_items', 1 );
+		$params->def( 'other_cat', 			1 );
+		$params->def( 'cat_description', 	1 );
+		$params->def( 'cat_items', 			1 );
 		// Table Display control
-		$params->def( 'headings', 1 );
-		$params->def( 'position', '1' );
-		$params->def( 'email', '0' );
-		$params->def( 'phone', '1' );
-		$params->def( 'fax', '1' );
-		$params->def( 'telephone', '1' );
+		$params->def( 'headings', 			1 );
+		$params->def( 'position', 			1 );
+		$params->def( 'email', 				0 );
+		$params->def( 'phone', 				1 );
+		$params->def( 'fax', 				1 );
+		$params->def( 'telephone', 			1 );
 
 		if( $catid == 0 ) {
 			$catid = $params->get( 'catid', 0 );
@@ -224,36 +223,36 @@ function contactpage( $contact_id ) {
 		// Adds parameter handling
 		$params = new mosParameters( $contact->params );
 
-		$params->set( 'page_title', 0 );
-		$params->def( 'pageclass_sfx', '' );
-		$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
-		$params->def( 'print', !$mainframe->getCfg( 'hidePrint' ) );
-		$params->def( 'name', '1' );
-		$params->def( 'email', '0' );
-		$params->def( 'street_address', '1' );
-		$params->def( 'suburb', '1' );
-		$params->def( 'state', '1' );
-		$params->def( 'country', '1' );
-		$params->def( 'postcode', '1' );
-		$params->def( 'telephone', '1' );
-		$params->def( 'fax', '1' );
-		$params->def( 'misc', '1' );
-		$params->def( 'image', '1' );
-		$params->def( 'email_description', '1' );
+		$params->set( 'page_title', 			0 );
+		$params->def( 'pageclass_sfx', 			'' );
+		$params->def( 'back_button', 			$mainframe->getCfg( 'back_button' ) );
+		$params->def( 'print', 					!$mainframe->getCfg( 'hidePrint' ) );
+		$params->def( 'name', 					1 );
+		$params->def( 'email', 					0 );
+		$params->def( 'street_address', 		1 );
+		$params->def( 'suburb', 				1 );
+		$params->def( 'state', 					1 );
+		$params->def( 'country', 				1 );
+		$params->def( 'postcode', 				1 );
+		$params->def( 'telephone', 				1 );
+		$params->def( 'fax', 					1 );
+		$params->def( 'misc', 					1 );
+		$params->def( 'image', 					1 );
+		$params->def( 'email_description', 		1 );
 		$params->def( 'email_description_text', _EMAIL_DESCRIPTION );
-		$params->def( 'email_form', '1' );
-		$params->def( 'email_copy', '1' );
+		$params->def( 'email_form', 			1 );
+		$params->def( 'email_copy', 			0 );
 		// global pront|pdf|email
-		$params->def( 'icons', $mainframe->getCfg( 'icons' ) );
+		$params->def( 'icons', 					$mainframe->getCfg( 'icons' ) );
 		// contact only icons
-		$params->def( 'contact_icons', 0 );
-		$params->def( 'icon_address', '' );
-		$params->def( 'icon_email', '' );
-		$params->def( 'icon_telephone', '' );
-		$params->def( 'icon_fax', '' );
-		$params->def( 'icon_misc', '' );
-		$params->def( 'drop_down', '0' );
-		$params->def( 'vcard', '1' );
+		$params->def( 'contact_icons', 			0 );
+		$params->def( 'icon_address', 			'' );
+		$params->def( 'icon_email', 			'' );
+		$params->def( 'icon_telephone', 		'' );
+		$params->def( 'icon_fax', 				'' );
+		$params->def( 'icon_misc', 				'' );
+		$params->def( 'drop_down', 				0 );
+		$params->def( 'vcard', 					0 );
 
 
 		if ( $contact->email_to && $params->get( 'email' )) {
@@ -342,11 +341,50 @@ function sendmail( $con_id, $option ) {
 	global $mosConfig_sitename, $mosConfig_live_site, $mosConfig_mailfrom, $mosConfig_fromname;
 
 	$validate = mosGetParam( $_POST, mosHash( 'validate' ), 0 );
+	// probably a spoofing attack
 	if (!$validate) {
-		// probably a spoofing attack
 		echo _NOT_AUTH;
 		return;
 	}
+	
+	// First, make sure the form was posted from a browser.
+	// For basic web-forms, we don't care about anything
+	// other than requests from a browser:   
+	if (!isset( $_SERVER['HTTP_USER_AGENT'] )) {
+		echo _NOT_AUTH;
+		return;
+	}
+	
+	// Make sure the form was indeed POST'ed:
+	//  (requires your html form to use: action="post")
+	if (!$_SERVER['REQUEST_METHOD'] == 'POST' ) {
+		echo _NOT_AUTH;
+		return;
+	}
+	
+	// Attempt to defend against header injections:
+	$badStrings = array(
+			'Content-Type:',
+			'MIME-Version:',
+			'Content-Transfer-Encoding:',
+			'bcc:',
+			'cc:'
+		);
+	
+	// Loop through each POST'ed value and test if it contains
+	// one of the $badStrings:
+	foreach ($_POST as $k => $v){
+		foreach ($badStrings as $v2) {
+			if (strpos( $v, $v2 ) !== false) {
+				echo _NOT_AUTH;
+				return;
+			}
+		}
+	}   
+	
+	// Made it past spammer test, free up some memory
+	// and continue rest of script:   
+	unset($k, $v, $v2, $badStrings);
 
 	$query = "SELECT *"
 	. "\n FROM #__contact_details"
@@ -357,13 +395,51 @@ function sendmail( $con_id, $option ) {
 
 	if (count( $contact ) > 0) {
 		$default 	= $mosConfig_sitename.' '. _ENQUIRY;
-		$email 		= mosGetParam( $_POST, 'email', '' );
-		$text 		= mosGetParam( $_POST, 'text', '' );
-		$name 		= mosGetParam( $_POST, 'name', '' );
-		$subject 	= mosGetParam( $_POST, 'subject', $default );
-		$email_copy = mosGetParam( $_POST, 'email_copy', 0 );
-	
-		if ( !$email || !$text || ( is_email( $email )==false ) ) {
+		$email 		= mosGetParam( $_POST, 'email', 		'' );
+		$text 		= mosGetParam( $_POST, 'text', 			'' );
+		$name 		= mosGetParam( $_POST, 'name', 			'' );
+		$subject 	= mosGetParam( $_POST, 'subject', 		$default );
+		$email_copy = mosGetParam( $_POST, 'email_copy', 	0 );
+
+		$menu = new mosMenu( $database );
+		$menu->load( $Itemid );
+		$mparams = new mosParameters( $menu->params );		
+		$bannedEmail 	= $mparams->get( 'bannedEmail', 	'' );		
+		$bannedSubject 	= $mparams->get( 'bannedSubject', 	'' );		
+		$bannedText 	= $mparams->get( 'bannedText', 		'' );
+		
+		// Prevent form submission if one of the banned text is discovered in the email field
+		if ( $bannedEmail ) {
+			$bannedEmail = explode( ';', $bannedEmail );
+			foreach ($bannedEmail as $value) {
+				if ( stristr($email, $value) ) {
+					echo _NOT_AUTH;
+					return;
+				}
+			}
+		}
+		// Prevent form submission if one of the banned text is discovered in the subject field		
+		if ( $bannedSubject ) {
+			$bannedSubject = explode( ';', $bannedSubject );
+			foreach ($bannedSubject as $value) {
+				if ( stristr($subject, $value) ) {
+					echo _NOT_AUTH;
+					return;
+				}
+			}
+		}
+		// Prevent form submission if one of the banned text is discovered in the text field		
+		if ( $bannedText ) {
+			$bannedText = explode( ';', $bannedText );
+			foreach ($bannedText as $value) {
+				if ( stristr($text, $value) ) {
+					echo _NOT_AUTH;
+					return;
+				}
+			}
+		}
+		
+		if ( !$email || !$text || ( is_email( $email ) == false ) ) {
 			mosErrorAlert( _CONTACT_FORM_NC );
 		}
 		$prefix = sprintf( _ENQUIRY_TEXT, $mosConfig_live_site );
@@ -371,21 +447,23 @@ function sendmail( $con_id, $option ) {
 	
 		mosMail( $email, $name , $contact[0]->email_to, $mosConfig_fromname .': '. $subject, $text );
 	
-		if ( $email_copy ) {
+		// parameter check
+		$params = new mosParameters( $contact[0]->params );		
+		$emailcopyCheck = $params->get( 'email_copy', 0 );
+			
+		if ( $email_copy && $emailcopyCheck ) {
 			$copy_text = sprintf( _COPY_TEXT, $contact[0]->name, $mosConfig_sitename );
 			$copy_text = $copy_text ."\n\n". $text .'';
 			$copy_subject = _COPY_SUBJECT . $subject;
+			
 			mosMail( $mosConfig_mailfrom, $mosConfig_fromname, $email, $copy_subject, $copy_text );
 		}
-		?>
-		<script>
-		alert( "<?php echo _THANK_MESSAGE; ?>" );
-		document.location.href='<?php echo sefRelToAbs( 'index.php?option='. $option .'&Itemid='. $Itemid ); ?>';
-		</script>
-	<?php
+		
+		$link = 'index.php?option=com_contact&task=view&contact_id='. $contact[0]->id .'&Itemid='. $Itemid;
+
+		mosRedirect( $link, _THANK_MESSAGE );
 	}
 }
-
 
 function is_email($email){
 	$rBool=false;
@@ -401,60 +479,69 @@ function vCard( $id ) {
 	global $mosConfig_sitename, $mosConfig_live_site;
 
 	$contact	= new mosContact( $database );
-	$contact->load( $id );
-	$name 	= explode( ' ', $contact->name );
-	$count 	= count( $name );
-
-	// handles conversion of name entry into firstname, surname, middlename distinction
-	$surname	= '';
-	$middlename	= '';
-
-	switch( $count ) {
-		case 1:
-			$firstname		= $name[0];
-			break;
-
-		case 2:
-			$firstname 		= $name[0];
-			$surname		= $name[1];
-			break;
-
-		default:
-			$firstname 		= $name[0];
-			$surname		= $name[$count-1];
-			for ( $i = 1; $i < $count - 1 ; $i++ ) {
-				$middlename	.= $name[$i] .' ';
-			}
-			break;
+	$contact->load( $id );	
+	$params = new mosParameters( $contact->params );
+	
+	$show = $params->get( 'vcard', 0 );	
+	if ( $show ) {	
+	// check to see if VCard option hsa been activated
+		$name 	= explode( ' ', $contact->name );
+		$count 	= count( $name );
+	
+		// handles conversion of name entry into firstname, surname, middlename distinction
+		$surname	= '';
+		$middlename	= '';
+	
+		switch( $count ) {
+			case 1:
+				$firstname		= $name[0];
+				break;
+	
+			case 2:
+				$firstname 		= $name[0];
+				$surname		= $name[1];
+				break;
+	
+			default:
+				$firstname 		= $name[0];
+				$surname		= $name[$count-1];
+				for ( $i = 1; $i < $count - 1 ; $i++ ) {
+					$middlename	.= $name[$i] .' ';
+				}
+				break;
+		}
+		$middlename	= trim( $middlename );
+	
+		$v 	= new MambovCard();
+	
+		$v->setPhoneNumber( $contact->telephone, 'PREF;WORK;VOICE' );
+		$v->setPhoneNumber( $contact->fax, 'WORK;FAX' );
+		$v->setName( $surname, $firstname, $middlename, '' );
+		$v->setAddress( '', '', $contact->address, $contact->suburb, $contact->state, $contact->postcode, $contact->country, 'WORK;POSTAL' );
+		$v->setEmail( $contact->email_to );
+		$v->setNote( $contact->misc );
+		$v->setURL( $mosConfig_live_site, 'WORK' );
+		$v->setTitle( $contact->con_position );
+		$v->setOrg( $mosConfig_sitename );
+	
+		$filename	= str_replace( ' ', '_', $contact->name );
+		$v->setFilename( $filename );
+	
+		$output 	= $v->getVCard( $mosConfig_sitename );
+		$filename 	= $v->getFileName();
+	
+		// header info for page
+		header( 'Content-Disposition: attachment; filename='. $filename );
+		header( 'Content-Length: '. strlen( $output ) );
+		header( 'Connection: close' );
+		header( 'Content-Type: text/x-vCard; name='. $filename );	
+		header( 'Cache-Control: store, cache' );
+		header( 'Pragma: cache' );
+	
+		print $output;
+	} else {
+		mosNotAuth();  
+		return;
 	}
-	$middlename	= trim( $middlename );
-
-	$v 	= new MambovCard();
-
-	$v->setPhoneNumber( $contact->telephone, 'PREF;WORK;VOICE' );
-	$v->setPhoneNumber( $contact->fax, 'WORK;FAX' );
-	$v->setName( $surname, $firstname, $middlename, '' );
-	$v->setAddress( '', '', $contact->address, $contact->suburb, $contact->state, $contact->postcode, $contact->country, 'WORK;POSTAL' );
-	$v->setEmail( $contact->email_to );
-	$v->setNote( $contact->misc );
-	$v->setURL( $mosConfig_live_site, 'WORK' );
-	$v->setTitle( $contact->con_position );
-	$v->setOrg( $mosConfig_sitename );
-
-	$filename	= str_replace( ' ', '_', $contact->name );
-	$v->setFilename( $filename );
-
-	$output 	= $v->getVCard( $mosConfig_sitename );
-	$filename 	= $v->getFileName();
-
-	// header info for page
-	header( 'Content-Disposition: attachment; filename='. $filename );
-	header( 'Content-Length: '. strlen( $output ) );
-	header( 'Connection: close' );
-	header( 'Content-Type: text/x-vCard; name='. $filename );	
-	header( 'Cache-Control: store, cache' );
-	header( 'Pragma: cache' );
-
-	print $output;
 }
 ?>

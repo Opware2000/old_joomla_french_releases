@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: database.mysqli.php 1440 2005-12-14 01:14:50Z eddieajau $
+* @version $Id: database.mysqli.php 1782 2006-01-13 02:29:37Z eddieajau $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -89,22 +89,6 @@ class database {
 		$this->_table_prefix = $table_prefix;
 		$this->_ticker = 0;
 		$this->_log = array();
-	}
-	/**
-	 * Returns an array of public properties
-	 * @return array
-	 */
-	function getPublicProperties() {
-		static $cache = null;
-		if (is_null( $cache )) {
-			$cache = array();
-			foreach (get_class_vars( get_class( $this ) ) as $key=>$val) {
-				if (substr( $key, 0, 1 ) != '_') {
-					$cache[] = $key;
-				}
-			}
-		}
-		return $cache;
 	}
 	/**
 	 * @param int
@@ -513,7 +497,7 @@ class database {
 			return null;
 		}
 		$array = array();
-		while ($row = mysqli_fetch_array( $cur )) {
+		while ($row = mysqli_fetch_row( $cur )) {
 			if ($key) {
 				$array[$row[$key]] = $row;
 			} else {
@@ -534,14 +518,14 @@ class database {
 	function insertObject( $table, &$object, $keyName = NULL, $verbose=false ) {
 		$fmtsql = "INSERT INTO $table ( %s ) VALUES ( %s ) ";
 		$fields = array();
-		$vars = $object->getPublicProperties();
-
-		foreach ($vars as $k) {
-			$v =& $object->$k;
-			if (is_array( $v ) or is_object( $v ) or $v === NULL) {
+		foreach (get_object_vars( $object ) as $k => $v) {
+			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
 			}
-			$fields[] = $this->NameQuote( $k );;
+			if ($k[0] == '_') { // internal field
+				continue;
+			}
+			$fields[] = $this->NameQuote( $k );
 			$values[] = $this->Quote( $v );
 		}
 		$this->setQuery( sprintf( $fmtsql, implode( ",", $fields ) ,  implode( ",", $values ) ) );

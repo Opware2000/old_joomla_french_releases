@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.php 1484 2005-12-20 14:12:51Z Jinx $
+* @version $Id: joomla.php 1817 2006-01-14 19:54:33Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -1694,7 +1694,7 @@ class mosHTML {
 				// Print Preview button - used when viewing page
 				?>
 				<td align="right" width="100%" class="buttonheading">
-				<a href="javascript: void(0)" onclick="javascript:window.print(); return false" title="<?php echo _CMN_PRINT;?>">
+				<a href="javascript:void(0)" onclick="javascript:window.print(); return false" title="<?php echo _CMN_PRINT;?>">
 				<?php echo $image;?>
 				</a>
 				</td>
@@ -1703,7 +1703,7 @@ class mosHTML {
 				// Print Button - used in pop-up window
 				?>
 				<td align="right" width="100%" class="buttonheading">
-				<a href="javascript: void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_PRINT;?>">
+				<a href="javascript:void(0)" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>');" title="<?php echo _CMN_PRINT;?>">
 				<?php echo $image;?>
 				</a>
 				</td>
@@ -1743,7 +1743,7 @@ class mosHTML {
 					$text_parts	= explode( '.', $text[1] );
 					$replacement 	.= "var addy_text". $rand ." = '". @$text[0] ."' + '&#64;' + '". implode( "' + '&#46;' + '", @$text_parts ) ."'; \n";
 				} else {
-					$text 	= mosHTML::encoding_converter( $text );
+					//$text 	= mosHTML::encoding_converter( $text );
 					$replacement 	.= "var addy_text". $rand ." = '". $text ."';\n";
 				}
 				$replacement 	.= "document.write( '<a ' + path + '\'' + prefix + ':' + addy". $rand ." + '\'>' ); \n";
@@ -3003,13 +3003,13 @@ function mosMenuCheck( $Itemid, $menu_option, $task, $gid ) {
 * @param offset time offset if different than global one
 * @returns formated date
 */
-function mosFormatDate( $date, $format="", $offset="" ){
+function mosFormatDate( $date, $format="", $offset=NULL ){
 	global $mosConfig_offset;
 	if ( $format == '' ) {
 		// %Y-%m-%d %H:%M:%S
 		$format = _DATE_FORMAT_LC;
 	}
-	if ( $offset == '' ) {
+	if ( is_null($offset) ) {
 		$offset = $mosConfig_offset;
 	}
 	if ( $date && ereg( "([0-9]{4})-([0-9]{2})-([0-9]{2})[ ]([0-9]{2}):([0-9]{2}):([0-9]{2})", $date, $regs ) ) {
@@ -3083,7 +3083,7 @@ function mosWarning($warning, $title='Joomla! Warning') {
 	$mouseover 	= 'return overlib(\''. $warning .'\', CAPTION, \'$title\', BELOW, RIGHT);';
 
 	$tip 		= "<!-- Warning -->\n";
-	$tip 		.= '<a href="javascript: void(0)" onmouseover="'. $mouseover .'" onmouseout="return nd();">';
+	$tip 		.= '<a href="javascript:void(0)" onmouseover="'. $mouseover .'" onmouseout="return nd();">';
 	$tip 		.= '<img src="'. $mosConfig_live_site .'/includes/js/ThemeOffice/warning.png" border="0"  alt="warning"/></a>';
 
 	return $tip;
@@ -3631,47 +3631,50 @@ class mosAdminMenus {
 	function Parent( &$row ) {
 		global $database;
 
+		$id = '';
+		if ( $row->id ) {
+			$id = "\n AND id != $row->id";
+		}
+		
 		// get a list of the menu items
+		// excluding the current menu item and its child elements
 		$query = "SELECT m.*"
 		. "\n FROM #__menu m"
 		. "\n WHERE menutype = '$row->menutype'"
 		. "\n AND published != -2"
-		. "\n ORDER BY ordering"
+		. $id
+		. "\n ORDER BY parent, ordering"
 		;
 		$database->setQuery( $query );
 		$mitems = $database->loadObjectList();
 
 		// establish the hierarchy of the menu
 		$children = array();
-		// first pass - collect children
-		foreach ( $mitems as $v ) {
-			$pt = $v->parent;
-			$list = @$children[$pt] ? $children[$pt] : array();
-			array_push( $list, $v );
-			$children[$pt] = $list;
-		}
-		// second pass - get an indent list of the items
-		$list = mosTreeRecurse( 0, '', array(), $children, 9999, 0, 0 );
-
-		// assemble menu items to the array
-		$mitems = array();
-		$mitems[] = mosHTML::makeOption( '0', 'Top' );
-		$this_treename = '';
-		foreach ( $list as $item ) {
-			if ( $this_treename ) {
-				if ( $item->id != $row->id && strpos( $item->treename, $this_treename ) === false) {
-					$mitems[] = mosHTML::makeOption( $item->id, $item->treename );
-				}
-			} else {
-				if ( $item->id != $row->id ) {
-					$mitems[] = mosHTML::makeOption( $item->id, $item->treename );
-				} else {
-					$this_treename = "$item->treename/";
-				}
+			
+		if ( $mitems ) {
+			// first pass - collect children
+			foreach ( $mitems as $v ) {
+				$pt 	= $v->parent;
+				$list 	= @$children[$pt] ? $children[$pt] : array();
+				array_push( $list, $v );
+				$children[$pt] = $list;
 			}
 		}
-		$parent = mosHTML::selectList( $mitems, 'parent', 'class="inputbox" size="1"', 'value', 'text', $row->parent );
-		return $parent;
+
+		// second pass - get an indent list of the items
+		$list = mosTreeRecurse( 0, '', array(), $children, 9999, 0, 0 );
+			
+		// assemble menu items to the array
+		$mitems 	= array();
+		$mitems[] 	= mosHTML::makeOption( '0', 'Top' );
+		
+		foreach ( $list as $item ) {
+			$mitems[] = mosHTML::makeOption( $item->id, '&nbsp;&nbsp;&nbsp;'. $item->treename );
+		}
+
+		$output = mosHTML::selectList( $mitems, 'parent', 'class="inputbox" size="10"', 'value', 'text', $row->parent );
+		
+		return $output;
 	}
 
 	/**
@@ -4178,12 +4181,15 @@ class mosAdminMenus {
 	*/
 	function ImageCheck( $file, $directory='/images/M_images/', $param=NULL, $param_directory='/images/M_images/', $alt=NULL, $name='image', $type=1, $align='middle' ) {
 		global $mosConfig_absolute_path, $mosConfig_live_site, $mainframe;
+
 		$cur_template = $mainframe->getTemplate();
 
+		$name = ( $name ? 'name="'. $name .'"' : '' );
+		
 		if ( $param ) {
 			$image = $mosConfig_live_site. $param_directory . $param;
 			if ( $type ) {
-				$image = '<img src="'. $image .'" align="'. $align .'" alt="'. $alt .'" name="'. $name .'" border="0" />';
+				$image = '<img src="'. $image .'" align="'. $align .'" alt="'. $alt .'" '. $name .' border="0" />';
 			}
 		} else if ( $param == -1 ) {
 			$image = '';
@@ -4197,7 +4203,7 @@ class mosAdminMenus {
 
 			// outputs actual html <img> tag
 			if ( $type ) {
-				$image = '<img src="'. $image .'" alt="'. $alt .'" align="'. $align .'" name="'. $name .'" border="0" />';
+				$image = '<img src="'. $image .'" alt="'. $alt .'" align="'. $align .'" '. $name .' border="0" />';
 			}
 		}
 
@@ -4212,12 +4218,15 @@ class mosAdminMenus {
 	*/
 	function ImageCheckAdmin( $file, $directory='/administrator/images/', $param=NULL, $param_directory='/administrator/images/', $alt=NULL, $name=NULL, $type=1, $align='middle' ) {
 		global $mosConfig_absolute_path, $mosConfig_live_site, $mainframe;
+		
 		$cur_template = $mainframe->getTemplate();
 
+		$name = ( $name ? 'name="'. $name .'"' : '' );
+		
 		if ( $param ) {
 			$image = $mosConfig_live_site. $param_directory . $param;
 			if ( $type ) {
-				$image = '<img src="'. $image .'" align="'. $align .'" alt="'. $alt .'" name="'. $name .'" border="0" />';
+				$image = '<img src="'. $image .'" align="'. $align .'" alt="'. $alt .'" '. $name .' border="0" />';
 			}
 		} else if ( $param == -1 ) {
 			$image = '';
@@ -4230,7 +4239,7 @@ class mosAdminMenus {
 
 			// outputs actual html <img> tag
 			if ( $type ) {
-				$image = '<img src="'. $image .'" alt="'. $alt .'" align="'. $align .'" name="'. $name .'" border="0" />';
+				$image = '<img src="'. $image .'" alt="'. $alt .'" align="'. $align .'" '. $name .' border="0" />';
 			}
 		}
 
@@ -4658,11 +4667,12 @@ function SortArrayObjects( &$a, $k, $sort_direction=1 ) {
 * Sends mail to admin
 */
 function mosSendAdminMail( $adminName, $adminEmail, $email, $type, $title, $author ) {
-	global $mosConfig_live_site;
+	global $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_live_site;
 
 	$subject = _MAIL_SUB." '$type'";
 	$message = _MAIL_MSG;
 	eval ("\$message = \"$message\";");
+	
 	mosMail($mosConfig_mailfrom, $mosConfig_fromname, $adminEmail, $subject, $message);
 }
 

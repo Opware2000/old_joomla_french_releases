@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_fullmenu-fr.php 001 2005-10-01 02:53:14Z joomlabs $
+* @version $Id: mod_fullmenu.php 1782 2006-01-13 02:29:37Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,6 +16,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 /**
 * Full DHTML Admnistrator Menus
+* @package Joomla
 */
 class mosFullAdminMenu {
 	/**
@@ -68,7 +69,7 @@ class mosFullAdminMenu {
 			_cmSplit,
 			<?php
 	// Site Sub-Menu
-?>			[null,'Gestion du Site',null,null,'Site Management',
+?>			[null,'Gestion du site',null,null,'Site Management',
 <?php
 			if ($canConfig) {
 ?>				['<img src="../includes/js/ThemeOffice/config.png" />','Configuration du Site','index2.php?option=com_config&hidemainmenu=1',null,'Configuration'],
@@ -76,11 +77,11 @@ class mosFullAdminMenu {
 			}
 			if ($manageLanguages) {
 ?>				['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues',null,null,'Manage languages',
-  					['<img src="../includes/js/ThemeOffice/language.png" />','Langue du Site','index2.php?option=com_languages',null,'Manage Languages'],
+  					['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues','index2.php?option=com_languages',null,'Manage Languages'],
    				],
 <?php
 			}
-?>				['<img src="../includes/js/ThemeOffice/media.png" />','Gestion des Medias','index2.php?option=com_media',null,'Manage Media Files'],
+?>				['<img src="../includes/js/ThemeOffice/media.png" />','Gestion des M&eacute;dias','index2.php?option=com_media',null,'Manage Media Files'],
 					['<img src="../includes/js/ThemeOffice/preview.png" />', 'Aper&ccedil;u', null, null, 'Preview',
 					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans une nouvelle fen&ecirc;tre','<?php echo $mosConfig_live_site; ?>/index.php','_blank','<?php echo $mosConfig_live_site; ?>'],
 					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans cette fen&ecirc;tre','index2.php?option=com_admin&task=preview',null,'<?php echo $mosConfig_live_site; ?>'],
@@ -111,14 +112,14 @@ class mosFullAdminMenu {
 <?php
 			}
 			if ($canManageUsers || $canMassMail) {
-?>				['<img src="../includes/js/ThemeOffice/users.png" />','Gestion des Membres','index2.php?option=com_users&task=view',null,'Manage users'],
+?>				['<img src="../includes/js/ThemeOffice/users.png" />','Gestion des utilisateurs','index2.php?option=com_users&task=view',null,'Manage users'],
 <?php
 				}
 ?>			],
 <?php
 	// Menu Sub-Menu
 ?>			_cmSplit,
-			[null,'Menu',null,null,'Gestion des Menus',
+			[null,'Menu',null,null,'Menu Management',
 <?php
 			if ($manageMenuMan) {
 ?>				['<img src="../includes/js/ThemeOffice/menus.png" />','Gestionnaire de Menu','index2.php?option=com_menumanager',null,'Menu Manager'],
@@ -193,7 +194,7 @@ class mosFullAdminMenu {
 				$subs[$row->parent][] = $row;
 			}
 		}
-		$topLevelLimit = 25; //You can get 19 top levels on a 800x600 Resolution
+		$topLevelLimit = 19; //You can get 19 top levels on a 800x600 Resolution
 		$topLevelCount = 0;
 		foreach ($comps as $row) {
 			if ($editAllComponents | $acl->acl_check( 'administration', 'edit', 'users', $usertype, 'components', $row->option )) {
@@ -220,7 +221,7 @@ class mosFullAdminMenu {
 			}
 		}
 		if ($topLevelLimit < $topLevelCount) {
-			echo "\t\t\t\t['<img src=\"../includes/js/ThemeOffice/sections.png\" />','Tout les composants...','index2.php?option=com_admin&task=listcomponents',null,'More Components'],\n";
+			echo "\t\t\t\t['<img src=\"../includes/js/ThemeOffice/sections.png\" />','Tous les composants...','index2.php?option=com_admin&task=listcomponents',null,'More Components'],\n";
 		}
 ?>
 			],
@@ -278,13 +279,13 @@ class mosFullAdminMenu {
 	if ($canConfig) {
 ?>			_cmSplit,
   			[null,'Messages',null,null,'Messaging Management',
-  				['<img src="../includes/js/ThemeOffice/messaging_inbox.png" />','Boite de r&eacute;ception','index2.php?option=com_messages',null,'Private Messages'],
+  				['<img src="../includes/js/ThemeOffice/messaging_inbox.png" />','Inbox','index2.php?option=com_messages',null,'Boite de r&eacute;ception'],
   				['<img src="../includes/js/ThemeOffice/messaging_config.png" />','Configuration','index2.php?option=com_messages&task=config&hidemainmenu=1',null,'Configuration']
   			],
 <?php
 	// System Sub-Menu
 ?>			_cmSplit,
-  			[null,'Syst&eacute;me',null,null,'System Management',
+  			[null,'Syst&egrave;me',null,null,'System Management',
   			   ['<img src="../includes/js/ThemeOffice/sysinfo.png" />', 'Information Syst&egrave;me', 'index2.php?option=com_admin&task=sysinfo', null,'System Information'],
 
 <?php
@@ -293,7 +294,7 @@ class mosFullAdminMenu {
 <?php
 			if ($mosConfig_caching) {
 ?>				['<img src="../includes/js/ThemeOffice/config.png" />','Vider le cache du contenu','index2.php?option=com_admin&task=clean_cache',null,'Clean the content items cache'],
-				['<img src="../includes/js/ThemeOffice/config.png" />','Vider tout le cache','index2.php?option=com_admin&task=clean_all_cache',null,'Clean all caches'],
+				['<img src="../includes/js/ThemeOffice/config.png" />','Vider tous les caches','index2.php?option=com_admin&task=clean_all_cache',null,'Clean all caches'],
 <?php
 			}
 		}
@@ -306,11 +307,10 @@ class mosFullAdminMenu {
 ?>			[null,'Aide','index2.php?option=com_admin&task=help',null,null]
 		];
 		cmDraw ('myMenuID', myMenu, 'hbr', cmThemeOffice, 'ThemeOffice');
-
 		</script>
-		
 <?php
 	}
+
 
 	/**
 	* Show an disbaled version of the menu, used in edit pages
@@ -417,7 +417,7 @@ class mosFullAdminMenu {
 			if ( $canConfig) {
 				?>
 				_cmSplit,
-	  			[null,'<?php echo 'Système'; ?>',null,null,'<?php echo $text; ?>'
+	  			[null,'<?php echo 'Syst&egrave;me'; ?>',null,null,'<?php echo $text; ?>'
 				],
 				<?php
 			}

@@ -2,7 +2,7 @@
 /**
  * patTemplate modfifier Translate
  *
- * $Id: Translate.php 1544 2005-12-23 07:01:01Z eddieajau $
+ * $Id: Translate.php 1782 2006-01-13 02:29:37Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -27,9 +27,8 @@ class patTemplate_Modifier_Translate extends patTemplate_Modifier
 	*/
 	function modify( $value, $params = array() )
 	{
-		global $_LANG;
-		if (is_object( $_LANG )) {
-			return $_LANG->_( $value );
+		if (class_exists( 'JText' )) {
+			return JText::_( $value );
 		} else {
 			if (defined( $value )) {
 				$value = constant( $value );

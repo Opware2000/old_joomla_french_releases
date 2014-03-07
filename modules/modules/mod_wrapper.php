@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_wrapper.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_wrapper.php 1782 2006-01-13 02:29:37Z eddieajau $
 * @package Joomla_1.0.0
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -13,8 +13,6 @@
 
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
-
-global $_CONFIG, $_LANG;
 
 $params->def( 'url', '' );
 $params->def( 'scrolling', 'auto' );

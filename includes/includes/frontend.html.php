@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.html.php 1361 2005-12-07 22:53:36Z Jinx $
+* @version $Id: frontend.html.php 1624 2006-01-02 17:52:28Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -208,7 +208,7 @@ class modules_html {
 							$content_buffer .= "      " . str_replace('&apos;', "'", html_entity_decode( $currItem->getTitle() ) ) . "</a><br/>\n";
 							$content_buffer .= "        <a href=\"" . ampReplace( $eUrl ) . "\" target=\"_blank\"><u>Download</u></a>\n";
 						}
-						$content_buffer .= "	<strong>\n";
+						$content_buffer .= "	</strong>\n";
 						// END fix for RSS enclosure tag url not showing
 						
 							// item description

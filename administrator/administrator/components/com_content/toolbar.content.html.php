@@ -31,7 +31,7 @@ class TOOLBAR_content {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -44,7 +44,7 @@ class TOOLBAR_content {
 		mosMenuBar::startTable();
 		mosMenuBar::unarchiveList();
 		mosMenuBar::spacer();
-		mosMenuBar::custom( 'remove', 'delete.png', 'delete_f2.png', 'Trash', false );
+		mosMenuBar::custom( 'remove', 'delete.png', 'delete_f2.png', 'Corbeille', false );
 		mosMenuBar::spacer();
 		mosMenuBar::help( 'screen.content.archive' );
 		mosMenuBar::endTable();
@@ -52,7 +52,7 @@ class TOOLBAR_content {
 
 	function _MOVE() {
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'movesectsave', 'save.png', 'save_f2.png', 'Save', false );
+		mosMenuBar::custom( 'movesectsave', 'save.png', 'save_f2.png', 'Sauver', false );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::endTable();
@@ -60,7 +60,7 @@ class TOOLBAR_content {
 
 	function _COPY() {
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'copysave', 'save.png', 'save_f2.png', 'Save', false );
+		mosMenuBar::custom( 'copysave', 'save.png', 'save_f2.png', 'Sauver', false );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::endTable();
@@ -74,9 +74,9 @@ class TOOLBAR_content {
 		mosMenuBar::spacer();
 		mosMenuBar::unpublishList();
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'movesect', 'move.png', 'move_f2.png', 'Move' );
+		mosMenuBar::customX( 'movesect', 'move.png', 'move_f2.png', 'D&eacute;placer' );
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'copy', 'copy.png', 'copy_f2.png', 'Copy' );
+		mosMenuBar::customX( 'copy', 'copy.png', 'copy_f2.png', 'Copier' );
 		mosMenuBar::spacer();
 		mosMenuBar::trash();
 		mosMenuBar::spacer();

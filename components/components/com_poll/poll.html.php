@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: poll.html.php 1830 2006-01-15 12:45:17Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -143,7 +143,7 @@ class poll_html {
 			?>
 			<tr class="<?php echo $tabclass_arr[$tabcnt]; ?>">
 				<td width='100%' colspan='2'>
-				<?php echo $text; ?>
+				<?php echo stripslashes($text); ?>
 				</td>
 			</tr>
 			<tr class="<?php echo $tabclass_arr[$tabcnt]; ?>">

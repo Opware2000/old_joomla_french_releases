@@ -14,6 +14,10 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
+// Site page note found
+define( '_404', 'Nous sommes désolés mais la page demandée n\'a pu être trouvée.' );
+define( '_404_RTS', 'Retour au site' );
+
 /** common */
 DEFINE('_LANGUAGE','fr'); // Paramètre initial 'en'
 DEFINE('_NOT_AUTH','Vous n\'êtes pas autorisé(e) à accéder à cette ressource.<br />Vous devez vous connecter.');

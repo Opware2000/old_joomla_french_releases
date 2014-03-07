@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.php 1516 2005-12-21 02:16:16Z eddieajau $
+* @version $Id: admin.poll.php 1830 2006-01-15 12:45:17Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -171,16 +171,17 @@ function savePoll( $option ) {
 	$options = mosGetParam( $_POST, 'polloption', array() );
 
 	foreach ($options as $i=>$text) {
+		$text = $database->Quote($text);
 		if ($isNew) {
 			$query = "INSERT INTO #__poll_data"
 			. "\n ( pollid, text )"
-			. "\n VALUES ( $row->id, " . $database->Quote( $text ) . " )"
+			. "\n VALUES ( $row->id, $text )"
 			;
 			$database->setQuery( $query );
 			$database->query();
 		} else {
 			$query = "UPDATE #__poll_data"
-			. "\n SET text = " . $database->Quote( $text )
+			. "\n SET text = $text"
 			. "\n WHERE id = $i"
 			. "\n AND pollid = $row->id"
 			;

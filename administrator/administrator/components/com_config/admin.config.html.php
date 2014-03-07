@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 475 2005-10-12 18:57:19Z stingrey $
+* @version $Id: admin.config.html.php 1835 2006-01-15 13:42:38Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -372,10 +372,6 @@ class HTML_config {
 			<tr>
 				<td>MySQL Username:</td>
 				<td><input class="text_area" type="text" name="config_user" size="25" value="<?php echo $row->config_user; ?>"/></td>
-			</tr>
-			<tr>
-				<td>MySQL Password:</td>
-				<td><input class="text_area" type="text" name="config_password" size="25" value="<?php echo $row->config_password; ?>"/></td>
 			</tr>
 			<tr>
 				<td>MySQL Database:</td>

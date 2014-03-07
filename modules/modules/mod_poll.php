@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_poll.php 1334 2005-12-07 05:32:52Z eddieajau $
+* @version $Id: mod_poll.php 1830 2006-01-15 12:45:17Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -88,7 +88,7 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 								</td>
 								<td class="<?php echo $tabclass_arr[$tabcnt]; ?><?php echo $moduleclass_sfx; ?>" valign="top">
 									<label for="voteid<?php echo $options[$i]->id;?>">
-										<?php echo $options[$i]->text; ?>
+										<?php echo stripslashes($options[$i]->text); ?>
 									</label>
 								</td>
 							</tr>

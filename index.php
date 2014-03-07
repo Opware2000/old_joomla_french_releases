@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 1550 2005-12-23 16:54:11Z Jinx $
+* @version $Id: index.php 1838 2006-01-15 14:01:27Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -151,10 +151,12 @@ if ($option == 'login') {
 		<?php
 	}
 
-	if ($return) {
+	if ( $return && !( strpos( $return, 'com_registration' ) || strpos( $return, 'com_login' ) ) ) {
+	// checks for the presence of a return url 
+	// and ensures that this url is not the registration or login pages
 		mosRedirect( $return );
 	} else {
-		mosRedirect( $mosConfig_live_site );
+		mosRedirect( $mosConfig_live_site .'/index.php' );
 	}
 
 } else if ($option == 'logout') {
@@ -171,10 +173,12 @@ if ($option == 'login') {
 		<?php
 	}
 
-	if ($return) {
+	if ( $return && !( strpos( $return, 'com_registration' ) || strpos( $return, 'com_login' ) ) ) {
+	// checks for the presence of a return url 
+	// and ensures that this url is not the registration or logout pages
 		mosRedirect( $return );
 	} else {
-		mosRedirect( $mosConfig_live_site );
+		mosRedirect( $mosConfig_live_site.'/index.php' );
 	}
 }
 
