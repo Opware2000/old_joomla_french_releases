@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 1176 2005-11-22 22:13:32Z Levis $
+* @version $Id: pageNavigation.php 3243 2006-04-24 09:15:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -44,10 +44,9 @@ class mosPageNav {
 		$limits[] = mosHTML::makeOption( "50" );
 
 		// build the html select list
-		$link = sefRelToAbs($link.'&amp;limit=\' + this.options[selectedIndex].value + \'&amp;limitstart='.$this->limitstart);
-		return mosHTML::selectList( $limits, 'limit',
-		'class="inputbox" size="1" onchange="document.location.href=\''.$link.'\';"',
-		'value', 'text', $this->limit );
+		$link = $link ."&amp;limit=' + this.options[selectedIndex].value + '&amp;limitstart=". $this->limitstart;
+		$link = sefRelToAbs( $link );
+		return mosHTML::selectList( $limits, 'limit', 'class="inputbox" size="1" onchange="document.location.href=\''. $link .'\';"', 'value', 'text', $this->limit );
 	}
 	/**
 	* Writes the html limit # input box
@@ -113,8 +112,8 @@ class mosPageNav {
 
 		if ($this_page > 1) {
 			$page = ($this_page - 2) * $this->limit;
-			$txt .= '<a href="'. sefRelToAbs( "$link&amp;limitstart=0" ) .'" class="pagenav" title="first page">'. _PN_LT . _PN_LT . $pnSpace . _PN_START .'</a> ';
-			$txt .= '<a href="'. sefRelToAbs( "$link&amp;limitstart=$page" ) .'" class="pagenav" title="previous page">'. _PN_LT . $pnSpace . _PN_PREVIOUS .'</a> ';
+			$txt .= '<a href="'. sefRelToAbs( "$link&amp;limitstart=0" ) .'" class="pagenav" title="'. _PN_START .'">'. _PN_LT . _PN_LT . $pnSpace . _PN_START .'</a> ';
+			$txt .= '<a href="'. sefRelToAbs( "$link&amp;limitstart=$page" ) .'" class="pagenav" title="'. _PN_PREVIOUS .'">'. _PN_LT . $pnSpace . _PN_PREVIOUS .'</a> ';
 		} else {
 			$txt .= '<span class="pagenav">'. _PN_LT . _PN_LT . $pnSpace . _PN_START .'</span> ';
 			$txt .= '<span class="pagenav">'. _PN_LT . $pnSpace . _PN_PREVIOUS .'</span> ';
@@ -132,8 +131,8 @@ class mosPageNav {
 		if ($this_page < $total_pages) {
 			$page = $this_page * $this->limit;
 			$end_page = ($total_pages-1) * $this->limit;
-			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $page ) .' " class="pagenav" title="next page">'. _PN_NEXT . $pnSpace . _PN_RT .'</a> ';
-			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $end_page ) .' " class="pagenav" title="end page">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</a>';
+			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $page ) .' " class="pagenav" title="'. _PN_NEXT .'">'. _PN_NEXT . $pnSpace . _PN_RT .'</a> ';
+			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $end_page ) .' " class="pagenav" title="'. _PN_END .'">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</a>';
 		} else {
 			$txt .= '<span class="pagenav">'. _PN_NEXT . $pnSpace . _PN_RT .'</span> ';
 			$txt .= '<span class="pagenav">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</span>';

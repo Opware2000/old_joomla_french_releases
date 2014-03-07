@@ -74,9 +74,9 @@ class mosPageNav {
 			$to_result = $this->total;
 		}
 		if ($this->total > 0) {
-			$html .= "\nResults " . $from_result . " - " . $to_result . " of " . $this->total;
+			$html .= "\nResultats " . $from_result . " - " . $to_result . " de " . $this->total;
 		} else {
-			$html .= "\nNo records found.";
+			$html .= "\nAucun Enregistrement.";
 		}
 		return $html;
 	}
@@ -103,11 +103,11 @@ class mosPageNav {
 
 		if ($this_page > 1) {
 			$page = ($this_page - 2) * $this->limit;
-			$html .= "\n<a href=\"#beg\" class=\"pagenav\" title=\"first page\" onclick=\"javascript: document.adminForm.limitstart.value=0; document.adminForm.submit();return false;\"><< Start</a>";
-			$html .= "\n<a href=\"#prev\" class=\"pagenav\" title=\"previous page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\">< Previous</a>";
+			$html .= "\n<a href=\"#beg\" class=\"pagenav\" title=\"first page\" onclick=\"javascript: document.adminForm.limitstart.value=0; document.adminForm.submit();return false;\"><< Première</a>";
+			$html .= "\n<a href=\"#prev\" class=\"pagenav\" title=\"previous page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\">< Précédente</a>";
 		} else {
-			$html .= "\n<span class=\"pagenav\"><< Start</span>";
-			$html .= "\n<span class=\"pagenav\">< Previous</span>";
+			$html .= "\n<span class=\"pagenav\">< Première</span>";
+			$html .= "\n<span class=\"pagenav\"><< Précédente</span>";
 		}
 
 		for ($i=$start_loop; $i <= $stop_loop; $i++) {
@@ -122,11 +122,11 @@ class mosPageNav {
 		if ($this_page < $total_pages) {
 			$page = $this_page * $this->limit;
 			$end_page = ($total_pages-1) * $this->limit;
-			$html .= "\n<a href=\"#next\" class=\"pagenav\" title=\"next page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\"> Next ></a>";
-			$html .= "\n<a href=\"#end\" class=\"pagenav\" title=\"end page\" onclick=\"javascript: document.adminForm.limitstart.value=$end_page; document.adminForm.submit();return false;\"> End >></a>";
+			$html .= "\n<a href=\"#next\" class=\"pagenav\" title=\"next page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\"> Suivante ></a>";
+			$html .= "\n<a href=\"#end\" class=\"pagenav\" title=\"end page\" onclick=\"javascript: document.adminForm.limitstart.value=$end_page; document.adminForm.submit();return false;\"> Dernière >></a>";
 		} else {
-			$html .= "\n<span class=\"pagenav\">Next ></span>";
-			$html .= "\n<span class=\"pagenav\">End >></span>";
+			$html .= "\n<span class=\"pagenav\">Suivante ></span>";
+			$html .= "\n<span class=\"pagenav\">Dernière >></span>";
 		}
 		return $html;
 	}
@@ -135,7 +135,7 @@ class mosPageNav {
 		$html = '<table class="adminlist"><tr><th colspan="3">';
 		$html .= $this->getPagesLinks();
 		$html .= '</th></tr><tr>';
-		$html .= '<td nowrap="true" width="48%" align="right">Display #</td>';
+		$html .= '<td nowrap="true" width="48%" align="right">Eléments par page</td>';
 		$html .= '<td>' .$this->getLimitBox() . '</td>';
 		$html .= '<td nowrap="true" width="48%" align="left">' . $this->getPagesCounter() . '</td>';
 		$html .= '</tr></table>';
@@ -154,7 +154,7 @@ class mosPageNav {
 * @param string The alt text for the icon
 * @return string
 */
-	function orderUpIcon( $i, $condition=true, $task='orderup', $alt='Move Up' ) {
+	function orderUpIcon( $i, $condition=true, $task='orderup', $alt='En Haut' ) {
 		if (($i > 0 || ($i+$this->limitstart > 0)) && $condition) {
 			return '<a href="#reorder" onClick="return listItemTask(\'cb'.$i.'\',\''.$task.'\')" title="'.$alt.'">
 				<img src="images/uparrow.png" width="12" height="12" border="0" alt="'.$alt.'">
@@ -170,7 +170,7 @@ class mosPageNav {
 * @param string The alt text for the icon
 * @return string
 */
-	function orderDownIcon( $i, $n, $condition=true, $task='orderdown', $alt='Move Down' ) {
+	function orderDownIcon( $i, $n, $condition=true, $task='orderdown', $alt='En Bas' ) {
 		if (($i < $n-1 || $i+$this->limitstart < $this->total-1) && $condition) {
 			return '<a href="#reorder" onClick="return listItemTask(\'cb'.$i.'\',\''.$task.'\')" title="'.$alt.'">
 				<img src="images/downarrow.png" width="12" height="12" border="0" alt="'.$alt.'">
@@ -189,7 +189,7 @@ class mosPageNav {
 	function orderUpIcon2( $id, $order, $condition=true, $task='orderup', $alt='#' ) {
 		// handling of default value
 		if ($alt = '#') {
-			$alt = 'Move Up';
+			$alt = 'En Haut';
 		}
 
 		if ($order == 0) {
@@ -222,7 +222,7 @@ class mosPageNav {
 	function orderDownIcon2( $id, $order, $condition=true, $task='orderdown', $alt='#' ) {
 		// handling of default value
 		if ($alt = '#') {
-			$alt = 'Move Down';
+			$alt = 'En Bas';
 		}
 
 		if ($order == 0) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact.html.php 1349 2005-12-07 19:56:22Z Jinx $
+* @version $Id: contact.html.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -133,7 +133,6 @@ class HTML_contact {
 					<?php
 				}
 				?>
-				<td width="100%"></td>
 			</tr>
 			<?php
 		}
@@ -143,7 +142,7 @@ class HTML_contact {
 			$link = 'index.php?option=com_contact&amp;task=view&amp;contact_id='. $row->id .'&amp;Itemid='. $Itemid;
 			?>
 			<tr>
-				<td width="25%" height="20" class="<?php echo $tabclass[$k]; ?>">
+				<td height="20" class="<?php echo $tabclass[$k]; ?>">
 					<a href="<?php echo sefRelToAbs( $link ); ?>" class="category<?php echo $params->get( 'pageclass_sfx' ); ?>">
 						<?php echo $row->name; ?></a>
 				</td>
@@ -186,7 +185,6 @@ class HTML_contact {
 					<?php
 				}
 				?>
-				<td width="100%"></td>
 			</tr>
 			<?php
 			$k = 1 - $k;
@@ -256,16 +254,18 @@ class HTML_contact {
 		
 		$template 		= $mainframe->getTemplate();
 		$sitename 		= $mainframe->getCfg( 'sitename' );
-		$hide_js 		= mosGetParam($_REQUEST,'hide_js', 0 );
+		$hide_js 		= intval( mosGetParam($_REQUEST,'hide_js', 0 ) );
 				?>
 		<script language="JavaScript" type="text/javascript">
 		<!--
 		function validate(){
 			if ( ( document.emailForm.text.value == "" ) || ( document.emailForm.email.value.search("@") == -1 ) || ( document.emailForm.email.value.search("[.*]" ) == -1 ) ) {
 				alert( "<?php echo _CONTACT_FORM_NC; ?>" );
+			} else if ( ( document.emailForm.email.value.search(";") != -1 ) || ( document.emailForm.email.value.search(",") != -1 ) || ( document.emailForm.email.value.search(" ") != -1 ) ) {
+				alert( "<?php echo _CONTACT_ONE_EMAIL; ?>" );			
 			} else {
-			document.emailForm.action = "<?php echo sefRelToAbs("index.php?option=com_contact&Itemid=$Itemid"); ?>"
-			document.emailForm.submit();
+				document.emailForm.action = "<?php echo sefRelToAbs("index.php?option=com_contact&Itemid=$Itemid"); ?>"
+				document.emailForm.submit();
 			}
 		}
 		//-->
@@ -293,7 +293,7 @@ class HTML_contact {
 		<?php
 		// For the pop window opened for print preview
 		if ( $params->get( 'popup' ) ) {
-			$mainframe->setPageTitle( $sitename .' :: '. $contact->name );
+			$mainframe->setPageTitle( $contact->name );
 			$mainframe->addCustomHeadTag( '<link rel="stylesheet" href="templates/'. $template .'/css/template_css.css" type="text/css" />' );
 		}
 		if ( $menu_params->get( 'page_title' ) ) {
@@ -483,6 +483,17 @@ class HTML_contact {
 				</tr>
 				<?php
 			}
+			if ( $contact->postcode && $params->get( 'postcode' ) ) {
+				?>
+				<tr>
+					<td valign="top">
+					<?php
+					echo $contact->postcode;
+					?>
+					</td>
+				</tr>
+				<?php
+			}
 			if ( $contact->suburb && $params->get( 'suburb' ) ) {
 				?>
 				<tr>
@@ -511,17 +522,6 @@ class HTML_contact {
 					<td valign="top">
 					<?php
 					echo $contact->country;
-					?>
-					</td>
-				</tr>
-				<?php
-			}
-			if ( $contact->postcode && $params->get( 'postcode' ) ) {
-				?>
-				<tr>
-					<td valign="top">
-					<?php
-					echo $contact->postcode;
 					?>
 					</td>
 				</tr>
@@ -644,9 +644,11 @@ class HTML_contact {
 	* Writes Email form
 	*/
 	function _writeEmailForm( &$contact, &$params, $sitename, &$menu_params ) {
-		global $Itemid;
+		global $Itemid, $mainframe;
 		
 		if ( $contact->email_to && !$params->get( 'popup' ) && $params->get( 'email_form' ) ) {
+			// used for spoof hardening
+			$validate = mosHash( $mainframe->getCfg( 'db' ) );
 			?>
 			<tr>
 				<td colspan="2">
@@ -697,7 +699,7 @@ class HTML_contact {
 				<input type="hidden" name="con_id" value="<?php echo $contact->id; ?>" />
 				<input type="hidden" name="sitename" value="<?php echo $sitename; ?>" />
 				<input type="hidden" name="op" value="sendmail" />
-				<input type="hidden" name="<?php echo mosHash( 'validate' );?>" value="1" />
+				<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 				</form>
 				<br />
 				</td>

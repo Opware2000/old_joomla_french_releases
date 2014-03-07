@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content_item_link.class.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: content_item_link.class.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -153,7 +153,7 @@ class content_item_link_menu {
 
 		$menu = new mosMenu( $database );
 		$menu->bind( $_POST );
-		$menuid = mosGetParam( $_POST, 'menuid', 0 );
+		$menuid = intval( mosGetParam( $_POST, 'menuid', 0 ) );
 		if ( $menuid ) {
 			$menu->id = $menuid;
 		}

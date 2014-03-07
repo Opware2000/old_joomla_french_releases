@@ -28,7 +28,7 @@ class TOOLBAR_media {
 		mosMenuBar::startTable();
 		mosMenuBar::custom('upload','upload.png','upload_f2.png','Upload',false);
 		mosMenuBar::spacer();
-		mosMenuBar::custom('newdir','new.png','new_f2.png','Create' ,false);
+		mosMenuBar::custom('newdir','new.png','new_f2.png','Cr&eacute;er' ,false);
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();

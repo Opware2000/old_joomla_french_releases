@@ -31,7 +31,7 @@ class separator_menu_html {
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
-			if (pressbutton == 'cancel') {
+			if (pressbutton == 'annuler') {
 				submitform( pressbutton );
 				return;
 			}
@@ -45,7 +45,7 @@ class separator_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Separator / Placeholder
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Séparateur
 			</th>
 		</tr>
 		</table>
@@ -56,12 +56,12 @@ class separator_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
 					<td align="right">
-					Pattern/Name:
+					Symboles de séparation:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo $menu->name; ?>" />
@@ -69,7 +69,7 @@ class separator_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td>
 					<?php echo $lists['parent']; ?>
@@ -77,7 +77,7 @@ class separator_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -85,14 +85,14 @@ class separator_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -106,7 +106,7 @@ class separator_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install4.php 1505 2005-12-20 21:02:16Z Saka $
+* @version $Id: install4.php 3773 2006-06-01 09:49:10Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -96,7 +96,7 @@ if($DBhostname && $DBuserName && $DBname) {
 		<input type=\"hidden\" name=\"dirPerms\" value=\"$dirPerms\" />
 		</form>";
 
-	echo "<script>alert('The database details provided are incorrect and/or empty'); document.stepBack.submit(); </script>";
+	echo "<script>alert('Les paramètres de connexion à la base de données sont incorrects ou manquants.'); document.stepBack.submit(); </script>";
 	return;
 }
 
@@ -122,7 +122,7 @@ if ($sitename) {
 		<input type=\"hidden\" name=\"dirPerms\" value=\"$dirPerms\" />
 		</form>";
 
-	echo "<script>alert('The sitename has not been provided'); document.stepBack2.submit();</script>";
+	echo "<script>alert('Le nom du site est manquant'); document.stepBack2.submit();</script>";
 	return;
 }
 
@@ -154,11 +154,13 @@ if ($siteUrl) {
 	$config .= "\$mosConfig_shownoauth = '0';\n";
 	$config .= "\$mosConfig_useractivation = '1';\n";
 	$config .= "\$mosConfig_uniquemail = '1';\n";
-	$config .= "\$mosConfig_offline_message = 'This site is down for maintenance.<br /> Please check back again soon.';\n";
-	$config .= "\$mosConfig_error_message = 'This site is temporarily unavailable.<br /> Please notify the System Administrator';\n";
+	$config .= "\$mosConfig_offline_message = 'Le site est en cours de maintenance.<br /> Merci de repasser plus tard.';\n";
+	$config .= "\$mosConfig_error_message = 'Le site est momentanément indisponible.<br /> Veuillez notifier le webmaster.';\n";
 	$config .= "\$mosConfig_debug = '0';\n";
 	$config .= "\$mosConfig_lifetime = '900';\n";
-	$config .= "\$mosConfig_MetaDesc = 'Joomla - the dynamic portal engine and content management system';\n";
+	$config .= "\$mosConfig_session_life_admin = '1800';\n";
+	$config .= "\$mosConfig_session_type = '0';\n";
+	$config .= "\$mosConfig_MetaDesc = 'Joomla - le portail dynamique de gestion de contenu';\n";
 	$config .= "\$mosConfig_MetaKeys = 'Joomla, joomla';\n";
 	$config .= "\$mosConfig_MetaTitle = '1';\n";
 	$config .= "\$mosConfig_MetaAuthor = '1';\n";
@@ -203,9 +205,12 @@ if ($siteUrl) {
 	$config .= "\$mosConfig_favicon = 'favicon.ico';\n";
 	$config .= "\$mosConfig_fileperms = '".$configArray['filePerms']."';\n";
 	$config .= "\$mosConfig_dirperms = '".$configArray['dirPerms']."';\n";
-	$config .= "\$mosConfig_helpurl = 'http://help.joomla.org';\n";
+	$config .= "\$mosConfig_helpurl = 'http://www.joomlafacile.com';\n";
 	$config .= "\$mosConfig_mbf_content = '0';\n";
 	$config .= "\$mosConfig_editor = 'tinymce';\n";
+	$config .= "\$mosConfig_admin_expired = '1';\n";
+	$config .= "\$mosConfig_frontend_login = '1';\n";
+	$config .= "\$mosConfig_frontend_userparams = '1';\n";
 	$config .= "setlocale (LC_TIME, \$mosConfig_locale);\n";
 	$config .= "?>";
 
@@ -293,6 +298,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 </head>
 <body>
@@ -305,17 +311,17 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 	<form action="dummy" name="form" id="form">
 	<div class="install">
 		<div id="stepbar">
-			<div class="step-off">pre-installation check</div>
-			<div class="step-off">license</div>
-			<div class="step-off">step 1</div>
-			<div class="step-off">step 2</div>
-			<div class="step-off">step 3</div>
-			<div class="step-on">step 4</div>
+			<div class="step-off">Pré-installation</div>
+			<div class="step-off">Licence</div>
+			<div class="step-off">Etape 1</div>
+			<div class="step-off">Etape 2</div>
+			<div class="step-off">Etape 3</div>
+			<div class="step-on">Etape 4</div>
 		</div>
 		<div id="right">
-			<div id="step">step 4</div>
+			<div id="step">Etape 4</div>
 			<div class="far-right">
-				<input class="button" type="button" name="runSite" value="View Site"
+				<input class="button" type="button" name="runSite" value="Site"
 <?php
 				if ($siteUrl) {
 					echo "onClick=\"window.location.href='$siteUrl/index.php' \"";
@@ -323,7 +329,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 					echo "onClick=\"window.location.href='".$configArray['siteURL']."/index.php' \"";
 				}
 ?>/>
-				<input class="button" type="button" name="Admin" value="Administration"
+				<input class="button" type="button" name="Admin" value="Admin"
 <?php
 				if ($siteUrl) {
 					echo "onClick=\"window.location.href='$siteUrl/administrator/index.php' \"";
@@ -333,27 +339,24 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 ?>/>
 			</div>
 			<div class="clr"></div>
-			<h1>Congratulations! Joomla is installed</h1>
+			<h1> Félicitations! Joomla est installé.</h1>
 			<div class="install-text">
-				<p>Click the "View Site" button to start Joomla site or "Administration"
-					to take you to administrator login.</p>
+				<p>Cliquez sur le bouton "Site" pour afficher le site Joomla ou bien cliquez sur le bouton "Admin" pour aller à la page de connexion de l'administration.</p>
 			</div>
 			<div class="install-form">
 				<div class="form-block">
 					<table width="100%">
-						<tr><td class="error" align="center">PLEASE REMEMBER TO COMPLETELY<br/>REMOVE THE INSTALLATION DIRECTORY</td></tr>
-						<tr><td align="center"><h5>Administration Login Details</h5></td></tr>
-						<tr><td align="center" class="notice"><b>Username : admin</b></td></tr>
-						<tr><td align="center" class="notice"><b>Password : <?php echo $adminPassword; ?></b></td></tr>
+						<tr><td class="error" align="center">ATTENTION!<br/>VOUS DEVEZ SUPPRIMER LE REPERTOIRE 'installation'</td></tr>
+						<tr><td align="center"><h5>Détails de connexion à l'administration</h5></td></tr>
+						<tr><td align="center" class="notice"><b>Nom d'utilisateur : admin</b></td></tr>
+						<tr><td align="center" class="notice"><b>Mot de passe : <?php echo $adminPassword; ?></b></td></tr>
 						<tr><td>&nbsp;</td></tr>
 						<tr><td align="right">&nbsp;</td></tr>
 <?php						if (!$canWrite) { ?>
 						<tr>
 							<td class="small">
-								Your configuration file or directory is not writeable,
-								or there was a problem creating the configuration file. You'll have to
-								upload the following code by hand. Click in the textarea to highlight
-								all of the code.
+								Le fichier de configuration ou le répertoire n'est pas modifiable,
+								ou il y a eu un problème à la création du fichier de configuration. Vous devrez créer un fichier configuration.php et y copier le code suivant, puis l'uploader à la racine de votre site.
 							</td>
 						</tr>
 						<tr>

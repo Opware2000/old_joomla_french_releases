@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.html.php 1830 2006-01-15 12:45:17Z stingrey $
+* @version $Id: admin.poll.html.php 2613 2006-02-25 01:44:55Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -29,7 +29,7 @@ class HTML_poll {
 		<form action="index2.php" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
-			<th>Poll Manager</th>
+			<th>Gestionnaire de sondages </th>
 		</tr>
 		</table>
 
@@ -42,16 +42,16 @@ class HTML_poll {
 			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th align="left">
-			Poll Title
+			Titre du sondage
 			</th>
 			<th width="10%" align="center">
-			Published
+			Publi&eacute;
 			</th>
 			<th width="10%" align="center">
 			Options
 			</th>
 			<th width="10%" align="center">
-			Lag
+			Intervalle
 			</th>
 		</tr>
 		<?php
@@ -63,7 +63,7 @@ class HTML_poll {
 
 			$task 	= $row->published ? 'unpublish' : 'publish';
 			$img 	= $row->published ? 'publish_g.png' : 'publish_x.png';
-			$alt 	= $row->published ? 'Published' : 'Unpublished';
+			$alt 	= $row->published ? 'Publié' : 'Non Publié';
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 			?>
@@ -135,9 +135,9 @@ class HTML_poll {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Poll:
+			Sondage:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -146,12 +146,12 @@ class HTML_poll {
 		<table class="adminform">
 		<tr>
 			<th colspan="4">
-			Details
+			D&eacute;tails
 			</th>
 		</tr>
 		<tr>
 			<td width="10%">
-			Title:
+			Titre:
 			</td>
 			<td>
 			<input class="inputbox" type="text" name="title" size="60" value="<?php echo $row->title; ?>" />
@@ -160,22 +160,30 @@ class HTML_poll {
 
 			</td>
 			<td width="100%" rowspan="20" valign="top">
-			Show on menu items:
+			Afficher sur les pages:
 			<br />
 			<?php echo $lists['select']; ?>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			Lag:
+			Intervalle:
 			</td>
 			<td>
-			<input class="inputbox" type="text" name="lag" size="10" value="<?php echo $row->lag; ?>" /> (seconds between votes)
+			<input class="inputbox" type="text" name="lag" size="10" value="<?php echo $row->lag; ?>" /> 
+			(secondes entre les votes)
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			Publi&eacute;:
+			</td>
+			<td>
+			<?php echo $lists['published']; ?>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="3">
-			<br /><br />
 			Options:
 			</td>
 		</tr>

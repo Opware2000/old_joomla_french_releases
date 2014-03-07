@@ -28,7 +28,7 @@ class TOOLBAR_weblinks {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}

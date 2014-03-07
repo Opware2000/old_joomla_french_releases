@@ -22,7 +22,7 @@ if ( !$acl->acl_check( 'administration', 'install', 'users', $my->usertype, $ele
 
 require_once( $mainframe->getPath( 'installer_html', 'component' ) );
 
-HTML_installer::showInstallForm( 'Install new Component', $option, 'component', '', dirname(__FILE__) );
+HTML_installer::showInstallForm( 'Installer un nouveau Composant', $option, 'component', '', dirname(__FILE__) );
 ?>
 <table class="content">
 <?php

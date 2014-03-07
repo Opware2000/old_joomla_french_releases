@@ -26,7 +26,7 @@ class TOOLBAR_installer
 
 	function _DEFAULT2()	{
 		mosMenuBar::startTable();
-		mosMenuBar::deleteList( '', 'remove', 'Uninstall' );
+		mosMenuBar::deleteList( '', 'remove', 'D&eacute;sinstaller' );
 		mosMenuBar::spacer();
 		mosMenuBar::help( 'screen.installer2' );
 		mosMenuBar::endTable();

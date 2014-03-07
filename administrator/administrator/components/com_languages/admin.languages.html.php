@@ -28,7 +28,7 @@ class HTML_languages {
 		<table class="adminheading">
 		<tr>
 			<th class="langmanager">
-			Language Manager <small><small>[ Site ]</small></small>
+			Gestionnaire de Langues <small><small>[ Site ]</small></small>
 			</th>
 		</tr>
 		</table>
@@ -38,14 +38,14 @@ class HTML_languages {
 			<th width="20">
 			#
 			</th>
-			<th width="30">
-			&nbsp;
+			<th width="30">&nbsp;
+			
 			</th>
 			<th width="25%" class="title">
-			Language
+			Langue
 			</th>
 			<th width="5%">
-			Published
+			Publi&eacute;e
 			</th>
 			<th width="10%">
 			Version
@@ -54,10 +54,10 @@ class HTML_languages {
 			Date
 			</th>
 			<th width="20%">
-			Author
+			Auteur
 			</th>
 			<th width="25%">
-			Author Email
+			Email de l'auteur
 			</th>
 		</tr>
 		<?php
@@ -75,7 +75,7 @@ class HTML_languages {
 				<td width="5%" align="center">
 				<?php
 				if ($row->published == 1) {	 ?>
-					<img src="images/tick.png" alt="Published"/>
+					<img src="images/tick.png" alt="Publié"/>
 					<?php
 				} else {
 					?>
@@ -118,26 +118,28 @@ class HTML_languages {
 		<form action="index2.php" method="post" name="adminForm">
 		<table cellpadding="1" cellspacing="1" border="0" width="100%">
 		<tr>
-			<td width="270"><table class="adminheading"><tr><th class="langmanager">Language Editor</th></tr></table></td>
+			<td width="270"><table class="adminheading"><tr>
+			  <th class="langmanager">Editeur de Langue </th>
+			</tr></table></td>
 			<td width="240">
-				<span class="componentheading"><?php echo $language; ?>.php is :
-				<b><?php echo is_writable($language_path) ? '<font color="green"> Writeable</font>' : '<font color="red"> Unwriteable</font>' ?></b>
+				<span class="componentheading"><?php echo $language; ?>.php est :
+				<b><?php echo is_writable($language_path) ? '<font color="green"> Modifiable</font>' : '<font color="red"> Non Modifiable</font>' ?></b>
 				</span>
 			</td>
-<?php
+            <?php
 			if (mosIsChmodable($language_path)) {
 				if (is_writable($language_path)) {
 ?>
 			<td>
 				<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-				<label for="disable_write">Make unwriteable after saving</label>
+				<label for="disable_write">Rendre non modifiable apr&egrave;s la sauvegarde </label>
 			</td>
 <?php
 				} else {
 ?>
 			<td>
 				<input type="checkbox" id="enable_write" name="enable_write" value="1"/>
-				<label for="enable_write">Override write protection while saving</label>
+				<label for="enable_write">Ignorer le statut modifiable/non modifiable en sauvegardant </label>
 			</td>
 <?php
 				} // if

@@ -30,10 +30,10 @@ class HTML_weblinks {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Weblink Manager
+			Gestionnaire de liens web
 			</th>
 			<td>
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
@@ -53,16 +53,16 @@ class HTML_weblinks {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th class="title">
-			Title
+			Titre
 			</th>
 			<th width="5%">
-			Published
+			Publi&eacute;
 			</th>
 			<th colspan="2" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th width="25%" align="left">
-			Category
+			Cat&eacute;gorie
 			</th>
 			<th width="5%">
 			Hits
@@ -77,7 +77,7 @@ class HTML_weblinks {
 
 			$task 	= $row->published ? 'unpublish' : 'publish';
 			$img 	= $row->published ? 'publish_g.png' : 'publish_x.png';
-			$alt 	= $row->published ? 'Published' : 'Unpublished';
+			$alt 	= $row->published ? 'Publié' : 'Non Publié';
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 
@@ -176,9 +176,9 @@ class HTML_weblinks {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Weblink:
+			Lien web:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -190,12 +190,12 @@ class HTML_weblinks {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					D&eacute;tails
 					</th>
 				</tr>
 				<tr>
 					<td width="20%" align="right">
-					Name:
+					Nom:
 					</td>
 					<td width="80%">
 					<input class="text_area" type="text" name="title" size="50" maxlength="250" value="<?php echo $row->title;?>" />
@@ -203,7 +203,7 @@ class HTML_weblinks {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Category:
+					Cat&eacute;gorie:
 					</td>
 					<td>
 					<?php echo $lists['catid']; ?>
@@ -228,7 +228,7 @@ class HTML_weblinks {
 
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -236,7 +236,7 @@ class HTML_weblinks {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
@@ -248,7 +248,7 @@ class HTML_weblinks {
 				<table class="adminform">
 				<tr>
 					<th colspan="1">
-					Parameters
+					Param&egrave;tres
 					</th>
 				</tr>
 				<tr>

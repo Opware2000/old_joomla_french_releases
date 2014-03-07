@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: geshi.php 427 2005-10-09 18:59:01Z stingrey $
+* @version $Id: geshi.php 2970 2006-03-30 08:01:32Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,6 +24,11 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botGeshi' );
 function botGeshi( $published, &$row, &$params, $page=0 ) {
 	require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/domit/xml_saxy_shared.php' );
 
+	// simple performance check to determine whether bot should process further
+	if ( strpos( $row->text, 'pre>' ) === false ) {
+		return true;
+	}
+	
 	// define the regular expression for the bot
 	$regex = "#<pre\s*(.*?)>(.*?)</pre>#s";
 
@@ -63,12 +68,6 @@ function botGeshi_replacer( &$matches ) {
 	$text = str_replace('&lt;', '<', $text);
 	$text = str_replace('&gt;', '>', $text);
 
-/*
-	// Replace 2 spaces with "&nbsp; " so non-tabbed code indents without making huge long lines.
-	$text = str_replace("  ", "&nbsp; ", $text);
-	// now Replace 2 spaces with " &nbsp;" to catch odd #s of spaces.
-	$text = str_replace("  ", " &nbsp;", $text);
-*/
 	// Replace tabs with "&nbsp; &nbsp;" so tabbed code indents sorta right without making huge long lines.
 	//$text = str_replace("\t", "&nbsp; &nbsp;", $text);
 	$text = str_replace( "\t", '  ', $text );

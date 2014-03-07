@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.trash.html.php 212 2005-09-21 07:50:23Z stingrey $
+* @version $Id: admin.trash.html.php 3310 2006-04-26 19:22:43Z stingrey $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -53,20 +53,20 @@ class HTML_trash {
 			}
 		}
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
+		<form action="index2.php?option=com_trash" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
-			<th class="trash">Trash Manager</th>
+			<th class="trash">Gestionnaire de Corbeille </th>
 		</tr>
 		</table>
 
 		<?php
 		$tabs->startPane("content-pane");
-		$tabs->startTab("Content Items","content_items");
+		$tabs->startTab("Articles","content_items");
 		?>
 		<table class="adminheading" width="90%">
 		<tr>
-			<th><small>Content Items</small></th>
+			<th><small>Articles</small></th>
 		</tr>
 		</table>
 
@@ -78,13 +78,13 @@ class HTML_trash {
 			</th>
 			<th width="20px">&nbsp;</th>
 			<th class="title">
-			Title
+			Titre
 			</th>
 			<th>
 			Section
 			</th>
 			<th>
-			Category
+			Cat&eacute;gorie
 			</th>
 			<th width="70px">
 			ID
@@ -132,11 +132,11 @@ class HTML_trash {
 		<?php echo $pageNav_content->getListFooter(); ?>
 		<?php
 		$tabs->endTab();
-		$tabs->startTab("Menu Items","menu_items");
+		$tabs->startTab("Menus","menu_items");
 		?>
 		<table class="adminheading" width="90%">
 		<tr>
-			<th><small>Menu Items</small></th>
+			<th><small>El&eacute;ments de Menu</small></th>
 		</tr>
 		</table>
 
@@ -148,7 +148,7 @@ class HTML_trash {
 			</th>
 			<th width="20px">&nbsp;</th>
 			<th class="title">
-			Title
+			Titre
 			</th>
 			<th>
 			Menu
@@ -207,7 +207,7 @@ class HTML_trash {
 		$tabs->endPane();
 		?>
 
-		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="option" value="com_trash" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		</form>
@@ -224,7 +224,7 @@ class HTML_trash {
 		<form action="index2.php" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
-			<th>Delete Items</th>
+			<th>Supprimer les &eacute;l&eacute;ments </th>
 		</tr>
 		</table>
 
@@ -233,13 +233,13 @@ class HTML_trash {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="20%">
-			<strong>Number of Items:</strong>
+			<strong>Nombre d'&eacute;l&eacute;ments :</strong>
 			<br />
 			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
 			<br /><br />
 			</td>
 			<td align="left" valign="top" width="25%">
-			<strong>Items being Deleted:</strong>
+			<strong>El&eacute;ment &agrave; supprimer :</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -250,15 +250,17 @@ class HTML_trash {
 			?>
 			</td>
 			 <td valign="top">
-			* This will <strong><font color="#FF0000">Permanently Delete</font></strong> <br />these Items from the Database *
-			<br /><br /><br />
+			* Ces &eacute;l&eacute;ments seront <strong><font color="#FF0000">supprim&eacute;s d&eacute;finitivement</font></strong>
+			de la base *
+			<br />
+			<br /><br />
 			<div style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 50px;">
-			<a class="toolbar" href="javascript:if (confirm('Are you sure you want to Deleted the listed items? \nThis will Permanently Delete them from the database.')){ submitbutton('delete');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('remove','','images/delete_f2.png',1);">
-			<img name="remove" src="images/delete.png" alt="Delete" border="0" align="middle" />
-			&nbsp;Delete
+			<a class="toolbar" href="javascript:if (confirm('Etes vous sûr de vouloir supprimer ces éléments? \nCes éléments seront supprimés définitivement de la base.')){ submitbutton('delete');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('remove','','images/delete_f2.png',1);">
+			<img name="remove" src="images/delete.png" alt="Supprimer" border="0" align="middle" />
+			Supprimer
 			</a>
 			</div>
-			</td>
+		  </td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -289,7 +291,7 @@ class HTML_trash {
 		<form action="index2.php" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
-			<th>Restore Items</th>
+			<th>Restaurer les &eacute;l&eacute;ments </th>
 		</tr>
 		</table>
 
@@ -298,13 +300,13 @@ class HTML_trash {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="20%">
-			<strong>Number of Items:</strong>
+			<strong>Nombre d'&eacute;l&eacute;ments :</strong>
 			<br />
 			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
 			<br /><br />
 			</td>
 			<td align="left" valign="top" width="25%">
-			<strong>Items being Restored:</strong>
+			<strong>El&eacute;ment &agrave; restaurer :</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -315,15 +317,16 @@ class HTML_trash {
 			?>
 			</td>
 			 <td valign="top">
-			* This will <strong><font color="#FF0000">Restore</font></strong> these Items,<br />they will be returned to their orignial places as Unpublished items *
-			<br /><br /><br />
+			* Ceci <strong><font color="#FF0000">restaurera</font></strong> ces &eacute;l&eacute;ments &agrave; leur emplacement d'origine comme non publi&eacute;s*
+			<br />
+			<br /><br />
 			<div style="border: 1px dotted gray; width: 80px; padding: 10px; margin-left: 50px;">
-			<a class="toolbar" href="javascript:if (confirm('Are you sure you want to Restore the listed items?.')){ submitbutton('restore');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('restore','','images/restore_f2.png',1);">
-			<img name="restore" src="images/restore.png" alt="Restore" border="0" align="middle" />
-			&nbsp;Restore
+			<a class="toolbar" href="javascript:if (confirm('Etes vous certain de vouloir restaurer les éléments listés?.')){ submitbutton('restore');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('restore','','images/restore_f2.png',1);">
+			<img name="restore" src="images/restore.png" alt="Restaurer" border="0" align="middle" />
+			Restaurer
 			</a>
 			</div>
-			</td>
+		  </td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>

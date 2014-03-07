@@ -28,7 +28,7 @@ $rows = $database->loadObjectList();
 <table class="adminlist">
 <tr>
 	<th colspan="3">
-	Most Recently Added Content
+	Articles les plus r&eacute;cents
 	</th>
 </tr>
 <?php
@@ -44,7 +44,7 @@ foreach ($rows as $row) {
 			$author = $row->created_by_alias;
 		} else {
 			$linkA 	= 'index2.php?option=com_users&task=editA&amp;hidemainmenu=1&id='. $row->created_by;
-			$author = '<a href="'. $linkA .'" title="Edit User">'. htmlspecialchars( $row->name, ENT_QUOTES ) .'</a>';
+			$author = '<a href="'. $linkA .'" title="Editer Utilisateur">'. htmlspecialchars( $row->name, ENT_QUOTES ) .'</a>';
 		}
 	} else {
 		if ( $row->created_by_alias ) {

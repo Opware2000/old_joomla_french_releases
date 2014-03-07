@@ -33,7 +33,7 @@ class TOOLBAR_users {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Annuler' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -44,7 +44,7 @@ class TOOLBAR_users {
 
 	function _DEFAULT() {
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'logout', 'cancel.png', 'cancel_f2.png', '&nbsp;Logout' );
+		mosMenuBar::custom( 'logout', 'cancel.png', 'cancel_f2.png', 'Annuler' );
 		mosMenuBar::spacer();
 		mosMenuBar::deleteList();
 		mosMenuBar::spacer();

@@ -31,7 +31,7 @@ class content_section_menu_html {
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
-			if (pressbutton == 'cancel') {
+			if (pressbutton == 'annuler') {
 				submitform( pressbutton );
 				return;
 			}
@@ -40,7 +40,7 @@ class content_section_menu_html {
 			if ( !$menu->id ) {
 				?>
 				if ( getSelectedValue( 'adminForm', 'componentid' ) < 1 ) {
-					alert( 'You must select a Section' );
+					alert( 'Vous devez sélectionner une section' );
 					return;
 				}
 
@@ -53,7 +53,7 @@ class content_section_menu_html {
 			} else {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 				} else {
 					submitform( pressbutton );
 				}
@@ -69,7 +69,7 @@ class content_section_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: List - Content Section
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Liste - Section de contenu
 			</th>
 		</tr>
 		</table>
@@ -80,7 +80,7 @@ class content_section_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
@@ -91,13 +91,13 @@ class content_section_menu_html {
 					<td>
 					<?php
 					if ( !$menu->id ) {
-						echo mosToolTip( 'If you leave this blank the Section name will be automatically used' );
+						echo mosToolTip( 'si ce champ est vierge, le nom de la section sélectionnée sera automatiquement utilisé' );
 					}
 					?>
 					</td>
 				</tr>
 				<tr>
-					<td align="right" valign="top">Section:</td>
+					<td align="right" valign="top">Sections:</td>
 					<td colspan="2">
 					<?php echo $lists['componentid']; ?>
 					</td>
@@ -109,25 +109,25 @@ class content_section_menu_html {
 					</td>
 				</tr>
 				<tr>
-					<td align="right">Parent Item:</td>
+					<td align="right">Lien parent:</td>
 					<td colspan="2">
 					<?php echo $lists['parent'];?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Ordering:</td>
+					<td valign="top" align="right">Ordre:</td>
 					<td colspan="2">
 					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Access Level:</td>
+					<td valign="top" align="right">Niveau d'accès:</td>
 					<td colspan="2">
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td colspan="2">
 					<?php echo $lists['published']; ?>
 					</td>
@@ -141,7 +141,7 @@ class content_section_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.php 1830 2006-01-15 12:45:17Z stingrey $
+* @version $Id: admin.poll.php 2613 2006-02-25 01:44:55Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -35,7 +35,7 @@ switch( $task ) {
 		break;
 
 	case 'edit':
-		editPoll( $cid[0], $option );
+		editPoll( intval( $cid[0] ), $option );
 		break;
 
 	case 'editA':
@@ -70,8 +70,8 @@ switch( $task ) {
 function showPolls( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 
 	$query = "SELECT COUNT(*)"
 	. "\n FROM #__polls"
@@ -110,7 +110,7 @@ function editPoll( $uid=0, $option='com_poll' ) {
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
-		mosRedirect( 'index2.php?option='. $option, 'The poll '. $row->title .' is currently being edited by another administrator.' );
+		mosRedirect( 'index2.php?option='. $option, 'Le sondage '. $row->title .' est actuellement édité par un autre administrateur.' );
 	}
 
 	$options = array();
@@ -141,8 +141,11 @@ function editPoll( $uid=0, $option='com_poll' ) {
 	}
 
 	// build the html select list
-	$lists['select'] = mosAdminMenus::MenuLinks( $lookup, 1, 1 );
+	$lists['select'] 	= mosAdminMenus::MenuLinks( $lookup, 1, 1 );
 
+	// build the html select list for published
+	$lists['published'] = mosAdminMenus::Published( $row );
+	
 	HTML_poll::editPoll($row, $options, $lists );
 }
 

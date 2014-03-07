@@ -109,24 +109,24 @@ CREATE TABLE `#__components` (
 # Dumping data for table `#__components`
 #
 
-INSERT INTO `#__components` VALUES (1, 'Banners', '', 0, 0, '', 'Banner Management', 'com_banners', 0, 'js/ThemeOffice/component.png', 0, '');
-INSERT INTO `#__components` VALUES (2, 'Manage Banners', '', 0, 1, 'option=com_banners', 'Active Banners', 'com_banners', 1, 'js/ThemeOffice/edit.png', 0, '');
-INSERT INTO `#__components` VALUES (3, 'Manage Clients', '', 0, 1, 'option=com_banners&task=listclients', 'Manage Clients', 'com_banners', 2, 'js/ThemeOffice/categories.png', 0, '');
-INSERT INTO `#__components` VALUES (4, 'Web Links', 'option=com_weblinks', 0, 0, '', 'Manage Weblinks', 'com_weblinks', 0, 'js/ThemeOffice/globe2.png', 0, '');
-INSERT INTO `#__components` VALUES (5, 'Weblink Items', '', 0, 4, 'option=com_weblinks', 'View existing weblinks', 'com_weblinks', 1, 'js/ThemeOffice/edit.png', 0, '');
-INSERT INTO `#__components` VALUES (6, 'Weblink Categories', '', 0, 4, 'option=categories&section=com_weblinks', 'Manage weblink categories', '', 2, 'js/ThemeOffice/categories.png', 0, '');
-INSERT INTO `#__components` VALUES (7, 'Contacts', 'option=com_contact', 0, 0, '', 'Edit contact details', 'com_contact', 0, 'js/ThemeOffice/user.png', 1, '');
-INSERT INTO `#__components` VALUES (8, 'Manage Contacts', '', 0, 7, 'option=com_contact', 'Edit contact details', 'com_contact', 0, 'js/ThemeOffice/edit.png', 1, '');
-INSERT INTO `#__components` VALUES (9, 'Contact Categories', '', 0, 7, 'option=categories&section=com_contact_details', 'Manage contact categories', '', 2, 'js/ThemeOffice/categories.png', 1, '');
-INSERT INTO `#__components` VALUES (10, 'FrontPage', 'option=com_frontpage', 0, 0, '', 'Manage Front Page Items', 'com_frontpage', 0, 'js/ThemeOffice/component.png', 1, '');
-INSERT INTO `#__components` VALUES (11, 'Polls', 'option=com_poll', 0, 0, 'option=com_poll', 'Manage Polls', 'com_poll', 0, 'js/ThemeOffice/component.png', 0, '');
-INSERT INTO `#__components` VALUES (12, 'News Feeds', 'option=com_newsfeeds', 0, 0, '', 'News Feeds Management', 'com_newsfeeds', 0, 'js/ThemeOffice/component.png', 0, '');
-INSERT INTO `#__components` VALUES (13, 'Manage News Feeds', '', 0, 12, 'option=com_newsfeeds', 'Manage News Feeds', 'com_newsfeeds', 1, 'js/ThemeOffice/edit.png', 0, '');
-INSERT INTO `#__components` VALUES (14, 'Manage Categories', '', 0, 12, 'option=com_categories&section=com_newsfeeds', 'Manage Categories', '', 2, 'js/ThemeOffice/categories.png', 0, '');
-INSERT INTO `#__components` VALUES (15, 'Login', 'option=com_login', 0, 0, '', '', 'com_login', 0, '', 1, '');
-INSERT INTO `#__components` VALUES (16, 'Search', 'option=com_search', 0, 0, '', '', 'com_search', 0, '', 1, '');
-INSERT INTO `#__components` VALUES (17, 'Syndicate','',0,0,'option=com_syndicate&hidemainmenu=1','Manage Syndication Settings','com_syndicate',0,'js/ThemeOffice/component.png',0,'');
-INSERT INTO `#__components` VALUES (18, 'Mass Mail', '', 0, 0, 'option=com_massmail&hidemainmenu=1', 'Send Mass Mail', 'com_massmail', 0, 'js/ThemeOffice/mass_email.png', 0, '');
+INSERT INTO `#__components` VALUES (1, 'Bannières', '', 0, 0, '', 'Gestion des bannières', 'com_banners', 0, 'js/ThemeOffice/component.png', 0, '');
+INSERT INTO `#__components` VALUES (2, 'Gérer les bannières', '', 0, 1, 'option=com_banners', 'Bannières actives', 'com_banners', 1, 'js/ThemeOffice/edit.png', 0, '');
+INSERT INTO `#__components` VALUES (3, 'Gérer les clients', '', 0, 1, 'option=com_banners&task=listclients', 'Manage Clients', 'com_banners', 2, 'js/ThemeOffice/categories.png', 0, '');
+INSERT INTO `#__components` VALUES (4, 'Liens web', 'option=com_weblinks', 0, 0, '', 'Gestion des liens web', 'com_weblinks', 0, 'js/ThemeOffice/globe2.png', 0, '');
+INSERT INTO `#__components` VALUES (5, 'Liens web', '', 0, 4, 'option=com_weblinks', 'Voir les liens web existantss', 'com_weblinks', 1, 'js/ThemeOffice/edit.png', 0, '');
+INSERT INTO `#__components` VALUES (6, 'Catégories de liens web', '', 0, 4, 'option=categories&section=com_weblinks', 'Gestion des catégories de liens web', '', 2, 'js/ThemeOffice/categories.png', 0, '');
+INSERT INTO `#__components` VALUES (7, 'Contacts', 'option=com_contact', 0, 0, '', 'Gestion des contacts', 'com_contact', 0, 'js/ThemeOffice/user.png', 1, '');
+INSERT INTO `#__components` VALUES (8, 'Gérer les contacts', '', 0, 7, 'option=com_contact', 'Editer les contacts', 'com_contact', 0, 'js/ThemeOffice/edit.png', 1, '');
+INSERT INTO `#__components` VALUES (9, 'Catégories de contacts', '', 0, 7, 'option=categories&section=com_contact_details', 'Gestion des catégories de contacts', '', 2, 'js/ThemeOffice/categories.png', 1, '');
+INSERT INTO `#__components` VALUES (10, 'Page d&#146;accueil', 'option=com_frontpage', 0, 0, '', 'Gestion des articles de la page d&#146;accueil', 'com_frontpage', 0, 'js/ThemeOffice/component.png', 1, '');
+INSERT INTO `#__components` VALUES (11, 'Sondage', 'option=com_poll', 0, 0, 'option=com_poll', 'Gestion des sondages', 'com_poll', 0, 'js/ThemeOffice/component.png', 0, '');
+INSERT INTO `#__components` VALUES (12, 'Flux RSS', 'option=com_newsfeeds', 0, 0, '', 'Gestion des Flux RSS', 'com_newsfeeds', 0, 'js/ThemeOffice/component.png', 0, '');
+INSERT INTO `#__components` VALUES (13, 'Gérer les flux RSS', '', 0, 12, 'option=com_newsfeeds', 'Gestion des Flux RSS', 'com_newsfeeds', 1, 'js/ThemeOffice/edit.png', 0, '');
+INSERT INTO `#__components` VALUES (14, 'Gérer les catégories', '', 0, 12, 'option=com_categories&section=com_newsfeeds', 'Gestion des catégories', '', 2, 'js/ThemeOffice/categories.png', 0, '');
+INSERT INTO `#__components` VALUES (15, 'Identification', 'option=com_login', 0, 0, '', '', 'com_login', 0, '', 1, '');
+INSERT INTO `#__components` VALUES (16, 'Recherche', 'option=com_search', 0, 0, '', '', 'com_search', 0, '', 1, '');
+INSERT INTO `#__components` VALUES (17, 'Syndication','',0,0,'option=com_syndicate&hidemainmenu=1','Paramètres de syndication','com_syndicate',0,'js/ThemeOffice/component.png',0,'');
+INSERT INTO `#__components` VALUES (18, 'Mailing', '', 0, 0, 'option=com_massmail&hidemainmenu=1', 'Envoyer un mailing', 'com_massmail', 0, 'js/ThemeOffice/mass_email.png', 0, '');
 # --------------------------------------------------------
 
 #
@@ -261,7 +261,7 @@ CREATE TABLE `#__groups` (
 #
 
 INSERT INTO `#__groups` VALUES (0, 'Public');
-INSERT INTO `#__groups` VALUES (1, 'Registered');
+INSERT INTO `#__groups` VALUES (1, 'Membre');
 INSERT INTO `#__groups` VALUES (2, 'Special');
 # --------------------------------------------------------
 
@@ -291,20 +291,20 @@ INSERT INTO `#__mambots` VALUES (2,'MOS Pagination','mospaging','content',0,1000
 INSERT INTO `#__mambots` VALUES (3,'Legacy Mambot Includer','legacybots','content',0,1,0,1,0,0,'0000-00-00 00:00:00','');
 INSERT INTO `#__mambots` VALUES (4,'SEF','mossef','content',0,3,1,0,0,0,'0000-00-00 00:00:00','');
 INSERT INTO `#__mambots` VALUES (5,'MOS Rating','mosvote','content',0,4,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (6,'Search Content','content.searchbot','search',0,1,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (7,'Search Weblinks','weblinks.searchbot','search',0,2,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (6,'Recherche dans les articles','content.searchbot','search',0,1,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (7,'Recherche dans les liens web','weblinks.searchbot','search',0,2,1,1,0,0,'0000-00-00 00:00:00','');
 INSERT INTO `#__mambots` VALUES (8,'Code support','moscode','content',0,2,0,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (9,'No WYSIWYG Editor','none','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (10,'TinyMCE WYSIWYG Editor','tinymce','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','theme=advanced');
-INSERT INTO `#__mambots` VALUES (11,'MOS Image Editor Button','mosimage.btn','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (12,'MOS Pagebreak Editor Button','mospage.btn','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (13,'Search Contacts','contacts.searchbot','search',0,3,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__mambots` VALUES (14, 'Search Categories', 'categories.searchbot', 'search', 0, 4, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__mambots` VALUES (15, 'Search Sections', 'sections.searchbot', 'search', 0, 5, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__mambots` VALUES (9,'Aucun éditeur WYSIWYG','none','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (10,'Editeur TinyMCE WYSIWYG','tinymce','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','theme=advanced');
+INSERT INTO `#__mambots` VALUES (11,'Bouton MOS Image éditeur','mosimage.btn','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (12,'Bouton MOS Pagebreak éditeur','mospage.btn','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (13,'Recherche dans les contacts','contacts.searchbot','search',0,3,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__mambots` VALUES (14, 'Recherche dans les catégories', 'categories.searchbot', 'search', 0, 4, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__mambots` VALUES (15, 'Recherche dans les sections', 'sections.searchbot', 'search', 0, 5, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
 INSERT INTO `#__mambots` VALUES (16, 'Email Cloaking', 'mosemailcloak', 'content', 0, 5, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
 INSERT INTO `#__mambots` VALUES (17, 'GeSHi', 'geshi', 'content', 0, 5, 0, 0, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__mambots` VALUES (18, 'Search Newsfeeds', 'newsfeeds.searchbot', 'search', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__mambots` VALUES (19, 'Load Module Positions', 'mosloadposition', 'content', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__mambots` VALUES (18, 'Recherche dans les flux RSS', 'newsfeeds.searchbot', 'search', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__mambots` VALUES (19, 'Chargeur de positions de module', 'mosloadposition', 'content', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', '');
 # --------------------------------------------------------
 
 #
@@ -334,7 +334,7 @@ CREATE TABLE `#__menu` (
   KEY `menutype` (`menutype`)
 ) TYPE=MyISAM;
 
-INSERT INTO `#__menu` VALUES (1, 'mainmenu', 'Home', 'index.php?option=com_frontpage', 'components', 1, 0, 10, 0, 1, 0, '0000-00-00 00:00:00', 0, 0, 0, 3, 'leading=1\r\nintro=2\r\nlink=1\r\nimage=1\r\npage_title=0\r\nheader=Welcome to the Frontpage\r\norderby_sec=front\r\nprint=0\r\npdf=0\r\nemail=0\r\nback_button=0');
+INSERT INTO `#__menu` VALUES (1, 'mainmenu', 'Accueil', 'index.php?option=com_frontpage', 'components', 1, 0, 10, 0, 1, 0, '0000-00-00 00:00:00', 0, 0, 0, 3, 'leading=1\r\nintro=2\r\nlink=1\r\nimage=1\r\npage_title=0\r\nheader=Bienvenue sur la page d\'accueil\r\norderby_sec=front\r\nprint=0\r\npdf=0\r\nemail=0\r\nback_button=0');
 # --------------------------------------------------------
 
 #
@@ -394,38 +394,38 @@ CREATE TABLE `#__modules` (
 # Dumping data for table `#__modules`
 #
 
-INSERT INTO `#__modules` VALUES (0, 'Polls', '', 1, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_poll', 0, 0, 1, '', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'User Menu', '', 2, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 1, 1, 'menutype=usermenu', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Main Menu', '', 1, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 1, 'menutype=mainmenu', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Login Form', '', 3, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_login', 0, 0, 1, '', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Syndicate', '', 4, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_rssfeed', 0, 0, 1, '', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Latest News', '', 4, 'user1', 0, '0000-00-00 00:00:00', 1, 'mod_latestnews', 0, 0, 1, '', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Statistics', '', 4, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_stats', 0, 0, 1, 'serverinfo=1\nsiteinfo=1\ncounter=1\nincrease=0\nmoduleclass_sfx=', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Who\'s Online', '', 1, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_whosonline', 0, 0, 1, 'online=1\nusers=1\nmoduleclass_sfx=', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Popular', '', 6, 'user2', 0, '0000-00-00 00:00:00', 1, 'mod_mostread', 0, 0, 1, '', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Template Chooser','',6,'left',0,'0000-00-00 00:00:00',0,'mod_templatechooser', 0, 0, 1, 'show_preview=1', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Sondage', '', 1, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_poll', 0, 0, 1, '', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Menu utilisateur', '', 2, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 1, 1, 'menutype=usermenu', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Menu principal', '', 1, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 1, 'menutype=mainmenu', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Identification', '', 3, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_login', 0, 0, 1, '', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Syndication', '', 4, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_rssfeed', 0, 0, 1, '', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Derniers articles', '', 4, 'user1', 0, '0000-00-00 00:00:00', 1, 'mod_latestnews', 0, 0, 1, '', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Statistiques', '', 4, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_stats', 0, 0, 1, 'serverinfo=1\nsiteinfo=1\ncounter=1\nincrease=0\nmoduleclass_sfx=', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Qui est en ligne', '', 1, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_whosonline', 0, 0, 1, 'online=1\nusers=1\nmoduleclass_sfx=', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Articles les plus lus', '', 6, 'user2', 0, '0000-00-00 00:00:00', 1, 'mod_mostread', 0, 0, 1, '', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Sélecteur de template','',6,'left',0,'0000-00-00 00:00:00',0,'mod_templatechooser', 0, 0, 1, 'show_preview=1', 0, 0);
 INSERT INTO `#__modules` VALUES (0, 'Archive', '', 7, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_archive', 0, 0, 1, '', 1, 0);
 INSERT INTO `#__modules` VALUES (0, 'Sections', '', 8, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_sections', 0, 0, 1, '', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Newsflash', '', 1, 'top', 0, '0000-00-00 00:00:00', 1, 'mod_newsflash', 0, 0, 1, 'catid=3\r\nstyle=random\r\nitems=\r\nmoduleclass_sfx=', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Related Items', '', 9, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_related_items', 0, 0, 1, '', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Search', '', 1, 'user4', 0, '0000-00-00 00:00:00', 1, 'mod_search', 0, 0, 0, '', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Random Image', '', 9, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_random_image', 0, 0, 1, '', 0, 0);
-INSERT INTO `#__modules` VALUES (0, 'Top Menu', '', 1, 'user3', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 0, 'menutype=topmenu\nmenu_style=list_flat\nmenu_images=n\nmenu_images_align=left\nexpand_menu=n\nclass_sfx=-nav\nmoduleclass_sfx=\nindent_image1=0\nindent_image2=0\nindent_image3=0\nindent_image4=0\nindent_image5=0\nindent_image6=0', 1, 0);
-INSERT INTO `#__modules` VALUES (0, 'Banners', '', 1, 'banner', 0, '0000-00-00 00:00:00', 1, 'mod_banners', 0, 0, 0, 'banner_cids=\nmoduleclass_sfx=\n', 1, 0);
-INSERT INTO `#__modules` VALUES (0,'Components','',2,'cpanel',0,'0000-00-00 00:00:00',1,'mod_components',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Popular','',3,'cpanel',0,'0000-00-00 00:00:00',1,'mod_popular',0,99,1,'',0, 1);
-INSERT INTO `#__modules` VALUES (0,'Latest Items','',4,'cpanel',0,'0000-00-00 00:00:00',1,'mod_latest',0,99,1,'',0, 1);
-INSERT INTO `#__modules` VALUES (0,'Menu Stats','',5,'cpanel',0,'0000-00-00 00:00:00',1,'mod_stats',0,99,1,'',0, 1);
-INSERT INTO `#__modules` VALUES (0,'Unread Messages','',1,'header',0,'0000-00-00 00:00:00',1,'mod_unread',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Online Users','',2,'header',0,'0000-00-00 00:00:00',1,'mod_online',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Full Menu','',1,'top',0,'0000-00-00 00:00:00',1,'mod_fullmenu',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Pathway','',1,'pathway',0,'0000-00-00 00:00:00',1,'mod_pathway',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Toolbar','',1,'toolbar',0,'0000-00-00 00:00:00',1,'mod_toolbar',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'System Message','',1,'inset',0,'0000-00-00 00:00:00',1,'mod_mosmsg',0,99,1,'',1, 1);
-INSERT INTO `#__modules` VALUES (0,'Quick Icons','',1,'icon',0,'0000-00-00 00:00:00',1,'mod_quickicon',0,99,1,'',1,1);
-INSERT INTO `#__modules` VALUES (0, 'Other Menu', '', 2, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 0, 'menutype=othermenu\nmenu_style=vert_indent\ncache=0\nmenu_images=0\nmenu_images_align=0\nexpand_menu=0\nclass_sfx=\nmoduleclass_sfx=\nindent_image=0\nindent_image1=\nindent_image2=\nindent_image3=\nindent_image4=\nindent_image5=\nindent_image6=', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Flash info', '', 1, 'top', 0, '0000-00-00 00:00:00', 1, 'mod_newsflash', 0, 0, 1, 'catid=3\r\nstyle=random\r\nitems=\r\nmoduleclass_sfx=', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Articles similaires', '', 9, 'left', 0, '0000-00-00 00:00:00', 0, 'mod_related_items', 0, 0, 1, '', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Recherche', '', 1, 'user4', 0, '0000-00-00 00:00:00', 1, 'mod_search', 0, 0, 0, '', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Image aléatoire', '', 9, 'right', 0, '0000-00-00 00:00:00', 1, 'mod_random_image', 0, 0, 1, '', 0, 0);
+INSERT INTO `#__modules` VALUES (0, 'Menu top', '', 1, 'user3', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 0, 'menutype=topmenu\nmenu_style=list_flat\nmenu_images=n\nmenu_images_align=left\nexpand_menu=n\nclass_sfx=-nav\nmoduleclass_sfx=\nindent_image1=0\nindent_image2=0\nindent_image3=0\nindent_image4=0\nindent_image5=0\nindent_image6=0', 1, 0);
+INSERT INTO `#__modules` VALUES (0, 'Bannières', '', 1, 'banner', 0, '0000-00-00 00:00:00', 1, 'mod_banners', 0, 0, 0, 'banner_cids=\nmoduleclass_sfx=\n', 1, 0);
+INSERT INTO `#__modules` VALUES (0,'Composants','',2,'cpanel',0,'0000-00-00 00:00:00',1,'mod_components',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Les plus lus','',3,'cpanel',0,'0000-00-00 00:00:00',1,'mod_popular',0,99,1,'',0, 1);
+INSERT INTO `#__modules` VALUES (0,'Derniers articles','',4,'cpanel',0,'0000-00-00 00:00:00',1,'mod_latest',0,99,1,'',0, 1);
+INSERT INTO `#__modules` VALUES (0,'Stats des menus','',5,'cpanel',0,'0000-00-00 00:00:00',1,'mod_stats',0,99,1,'',0, 1);
+INSERT INTO `#__modules` VALUES (0,'Messages non lus','',1,'header',0,'0000-00-00 00:00:00',1,'mod_unread',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Utilisateurs en ligne','',2,'header',0,'0000-00-00 00:00:00',1,'mod_online',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Menu entier','',1,'top',0,'0000-00-00 00:00:00',1,'mod_fullmenu',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Chemin','',1,'pathway',0,'0000-00-00 00:00:00',1,'mod_pathway',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Barre d&#146;outils','',1,'toolbar',0,'0000-00-00 00:00:00',1,'mod_toolbar',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Message système','',1,'inset',0,'0000-00-00 00:00:00',1,'mod_mosmsg',0,99,1,'',1, 1);
+INSERT INTO `#__modules` VALUES (0,'Icônes raccourcis','',1,'icon',0,'0000-00-00 00:00:00',1,'mod_quickicon',0,99,1,'',1,1);
+INSERT INTO `#__modules` VALUES (0, 'Autre menu', '', 2, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 0, 'menutype=othermenu\nmenu_style=vert_indent\ncache=0\nmenu_images=0\nmenu_images_align=0\nexpand_menu=0\nclass_sfx=\nmoduleclass_sfx=\nindent_image=0\nindent_image1=\nindent_image2=\nindent_image3=\nindent_image4=\nindent_image5=\nindent_image6=', 0, 0);
 INSERT INTO `#__modules` VALUES (0,'Wrapper','',10,'left',0,'0000-00-00 00:00:00',0,'mod_wrapper',0,0,1,'',0, 0);
-INSERT INTO `#__modules` VALUES (0,'Logged','',0,'cpanel',0,'0000-00-00 00:00:00',1,'mod_logged',0,99,1,'',0,1);
+INSERT INTO `#__modules` VALUES (0,'Connectés','',0,'cpanel',0,'0000-00-00 00:00:00',1,'mod_logged',0,99,1,'',0,1);
 
 # --------------------------------------------------------
 

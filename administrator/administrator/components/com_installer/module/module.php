@@ -22,7 +22,7 @@ if ( !$acl->acl_check( 'administration', 'install', 'users', $my->usertype, $ele
 
 require_once( $mainframe->getPath( 'installer_html', 'module' ) );
 
-HTML_installer::showInstallForm( 'Install new Modules', $option, 'module', '', dirname(__FILE__) );
+HTML_installer::showInstallForm( 'Installer un nouveau module', $option, 'module', '', dirname(__FILE__) );
 ?>
 <table class="content">
 <?php

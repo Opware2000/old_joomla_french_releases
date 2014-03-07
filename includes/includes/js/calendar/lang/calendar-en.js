@@ -1,45 +1,45 @@
 // ** I18N
 Calendar._DN = new Array
-("Sunday",
- "Monday",
- "Tuesday",
- "Wednesday",
- "Thursday",
- "Friday",
- "Saturday",
- "Sunday");
+("Dimanche",
+ "Lundi",
+ "Mardi",
+ "Mercredi",
+ "Jeudi",
+ "Vendredi",
+ "Samedi",
+ "Dimanche");
 Calendar._MN = new Array
-("January",
- "February",
- "March",
- "April",
- "May",
- "June",
- "July",
- "August",
- "September",
- "October",
- "November",
- "December");
+("Janvier",
+ "Février",
+ "Mars",
+ "Avril",
+ "Mai",
+ "Juin",
+ "Juillet",
+ "Août",
+ "Septembre",
+ "Octobre",
+ "Novembre",
+ "Décembre");
 
 // tooltips
 Calendar._TT = {};
-Calendar._TT["TOGGLE"] = "Toggle first day of week";
-Calendar._TT["PREV_YEAR"] = "Prev. year (hold for menu)";
-Calendar._TT["PREV_MONTH"] = "Prev. month (hold for menu)";
-Calendar._TT["GO_TODAY"] = "Go Today";
-Calendar._TT["NEXT_MONTH"] = "Next month (hold for menu)";
-Calendar._TT["NEXT_YEAR"] = "Next year (hold for menu)";
-Calendar._TT["SEL_DATE"] = "Select date";
-Calendar._TT["DRAG_TO_MOVE"] = "Drag to move";
-Calendar._TT["PART_TODAY"] = " (today)";
-Calendar._TT["MON_FIRST"] = "Display Monday first";
-Calendar._TT["SUN_FIRST"] = "Display Sunday first";
-Calendar._TT["CLOSE"] = "Close";
-Calendar._TT["TODAY"] = "Today";
+Calendar._TT["TOGGLE"] = "Changer le premier jour de la semaine";
+Calendar._TT["PREV_YEAR"] = "Année préc. (maintenir pour menu)";
+Calendar._TT["PREV_MONTH"] = "Mois préc. (maintenir pour menu)";
+Calendar._TT["GO_TODAY"] = "Aujourd\'hui";
+Calendar._TT["NEXT_MONTH"] = "Mois suiv. (maintenir pour menu)";
+Calendar._TT["NEXT_YEAR"] = "Année suiv. (maintenir pour menu)";
+Calendar._TT["SEL_DATE"] = "Sélectionner une date";
+Calendar._TT["DRAG_TO_MOVE"] = "Glisser pour déplacer";
+Calendar._TT["PART_TODAY"] = " (Aujourd\'hui)";
+Calendar._TT["MON_FIRST"] = "Afficher Lundi en premier";
+Calendar._TT["SUN_FIRST"] = "Afficher Dimanche en premier";
+Calendar._TT["CLOSE"] = "Fermer";
+Calendar._TT["TODAY"] = "Aujourd\'hui";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "y-mm-dd";
 Calendar._TT["TT_DATE_FORMAT"] = "D, M d";
 
-Calendar._TT["WK"] = "wk";
+Calendar._TT["WK"] = "sem.";

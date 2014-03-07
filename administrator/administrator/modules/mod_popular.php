@@ -28,11 +28,10 @@ $rows = $database->loadObjectList();
 <table class="adminlist">
 <tr>
 	<th class="title">
-		Most Popular Items
+		Articles les plus populaires
 	</th>
 	<th class="title">
-		Created
-	</th>
+		Cr&eacute;&eacute;s	</th>
 	<th class="title">
 		Hits
 	</th>

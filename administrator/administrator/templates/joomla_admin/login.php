@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: login.php 119 2005-09-16 20:05:35Z stingrey $
+* @version $Id: login.php 3551 2006-05-18 20:23:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -40,23 +40,27 @@ $tstart = mosProfiler::getmicrotime();
 	</div>
 </div>
 <div id="ctr" align="center">
+	<?php
+	// handling of mosmsg text in url
+	include_once( $mosConfig_absolute_path .'/administrator/modules/mod_mosmsg.php' ); 
+	?>
 	<div class="login">
 		<div class="login-form">
-			<img src="templates/joomla_admin/images/login.gif" alt="Login" />
+			<img src="templates/joomla_admin/images/login.gif" alt="identification" />
 			<form action="index.php" method="post" name="loginForm" id="loginForm">
 			<div class="form-block">
-				<div class="inputlabel">Username</div>
+				<div class="inputlabel">Identifiant</div>
 				<div><input name="usrname" type="text" class="inputbox" size="15" /></div>
-				<div class="inputlabel">Password</div>
+				<div class="inputlabel">Mot de passe</div>
 				<div><input name="pass" type="password" class="inputbox" size="15" /></div>
-				<div align="left"><input type="submit" name="submit" class="button" value="Login" /></div>
+				<div align="left"><input type="submit" name="submit" class="button" value="Valider" /></div>
 			</div>
 			</form>
 		</div>
 		<div class="login-text">
 			<div class="ctr"><img src="templates/joomla_admin/images/security.png" width="64" height="64" alt="security" /></div>
-			<p>Welcome to Joomla!</p>
-			<p>Use a valid username and password to gain access to the administration console.</p>
+			<p>Bienvenue sur Joomla!</p>
+			<p>Utilisez un identifiant et un mot de passe corrects pour accéder à l'interface d'administration de votre site.</p>
 		</div>
 		<div class="clr"></div>
 	</div>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <mosinstall type="menu" version="1.0.0">
-	<name>Component</name>
+	<name>Composant</name>
 	<group>Component</group>
 	<author>Joomla! Project</author>
 	<creationDate>July 2004</creationDate>
@@ -9,6 +9,6 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-	<description>Displays the frontend interface for a Component</description>
+	<description>Permet d afficher l\'interface publique d un composant que vous avez installé</description>
 	<params/>
 </mosinstall>

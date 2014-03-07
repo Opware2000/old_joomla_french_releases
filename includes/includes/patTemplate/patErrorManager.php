@@ -4,7 +4,7 @@
  * application-internal error management. Creates patError objects for
  * any errors for precise error management.
  *
- *	$Id: patErrorManager.php 47 2005-09-15 02:55:27Z rhuk $
+ *	$Id: patErrorManager.php 3163 2006-04-19 23:53:40Z eddieajau $
  *
  * @package	patError
  */
@@ -197,7 +197,7 @@ class patErrorManager
 		}
 
 		// build error object
-		$error			=&	new	$class( $level, $code, $msg, $info );
+		$error			= new $class( $level, $code, $msg, $info );
 
 		// see what to do with this kind of error
 		$handling	=	patErrorManager::getErrorHandling( $level );
@@ -691,7 +691,8 @@ class patErrorManager
     function &handleErrorCallback( &$error, $options )
     {
 		$opt	=	$options['options'];
-		return call_user_func( $opt, $error );
+		$result =	call_user_func( $opt, $error );
+		return $result;
     }
 }
 ?>

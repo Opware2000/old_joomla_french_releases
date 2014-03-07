@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: install.php 2510 2006-02-21 04:59:41Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -31,7 +31,7 @@ function writableCell( $folder ) {
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 </head>
 <body>
@@ -44,20 +44,20 @@ function writableCell( $folder ) {
 	<form action="install1.php" method="post" name="adminForm" id="adminForm">
 	<div class="install">
 	<div id="stepbar">
-		<div class="step-off">pre-installation check</div>
-		<div class="step-on">license</div>
-		<div class="step-off">step 1</div>
-		<div class="step-off">step 2</div>
-		<div class="step-off">step 3</div>
-		<div class="step-off">step 4</div>
+		<div class="step-off">Pré-installation</div>
+		<div class="step-on">Licence</div>
+		<div class="step-off">Etape 1</div>
+		<div class="step-off">Etape 2</div>
+		<div class="step-off">Etape 3</div>
+		<div class="step-off">Etape 4</div>
 	</div>
 	<div id="right">
-		<div id="step">license</div>
+		<div id="step">Licence</div>
 		<div class="far-right">
-		<input class="button" type="submit" name="next" value="Next &gt;&gt;"/>
+		<input class="button" type="submit" name="next" value="Suivant &gt;&gt;"/>
 		</div>
 		<div class="clr"></div>
-		<h1>GNU/GPL License:</h1>
+		<h1>Licence GNU/GPL :</h1>
 		<div class="licensetext">
 				<a href="http://www.joomla.org">Joomla </a> is Free Software released under the GNU/GPL License.
 		</div>

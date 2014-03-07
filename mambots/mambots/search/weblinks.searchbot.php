@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.searchbot.php 1268 2005-11-30 22:55:50Z eddieajau $
+* @version $Id: weblinks.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,18 +26,26 @@ $_MAMBOTS->registerFunction( 'onSearch', 'botSearchWeblinks' );
 * @param string ordering option, newest|oldest|popular|alpha|category
 */
 function botSearchWeblinks( $text, $phrase='', $ordering='' ) {
-	global $database, $my;
+	global $database, $my, $_MAMBOTS;
 	
-	// load mambot params info
-	$query = "SELECT id"
-	. "\n FROM #__mambots"
-	. "\n WHERE element = 'weblinks.searchbot'"
-	. "\n AND folder = 'search'"
-	;
-	$database->setQuery( $query );
-	$id 	= $database->loadResult();
-	$mambot = new mosMambot( $database );
-	$mambot->load( $id );
+	// check if param query has previously been processed
+	if ( !isset($_MAMBOTS->_search_mambot_params['weblinks']) ) {
+		// load mambot params info
+		$query = "SELECT params"
+		. "\n FROM #__mambots"
+		. "\n WHERE element = 'weblinks.searchbot'"
+		. "\n AND folder = 'search'"
+		;
+		$database->setQuery( $query );
+		$database->loadObject($mambot);	
+			
+		// save query to class variable
+		$_MAMBOTS->_search_mambot_params['weblinks'] = $mambot;
+	}
+	
+	// pull query data from class variable
+	$mambot = $_MAMBOTS->_search_mambot_params['weblinks'];	
+	
 	$botParams = new mosParameters( $mambot->params );
 	
 	$limit = $botParams->def( 'search_limit', 50 );
@@ -104,9 +112,11 @@ function botSearchWeblinks( $text, $phrase='', $ordering='' ) {
 	. "\n '1' AS browsernav,"
 	. "\n a.url AS href"
 	. "\n FROM #__weblinks AS a"
-	. "\n INNER JOIN #__categories AS b ON b.id = a.catid AND b.access <= '$my->gid'"
+	. "\n INNER JOIN #__categories AS b ON b.id = a.catid"
 	. "\n WHERE ($where)"
 	. "\n AND a.published = 1"
+	. "\n AND b.published = 1"
+	. "\n AND b.access <= $my->gid"
 	. "\n ORDER BY $order"
 	;
 	$database->setQuery( $query, 0, $limit );

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 1838 2006-01-15 14:01:27Z stingrey $
+* @version $Id: index.php 3750 2006-05-31 10:39:39Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,7 +16,7 @@ define( '_VALID_MOS', 1 );
 
 // checks for configuration file, if none found loads installation page
 if (!file_exists( 'configuration.php' ) || filesize( 'configuration.php' ) < 10) {
-	$self = str_replace( '/index.php','', $_SERVER['PHP_SELF'] ). '/';
+	$self = str_replace( '/index.php','', strtolower( $_SERVER['PHP_SELF'] ) ). '/';
 	header("Location: http://" . $_SERVER['HTTP_HOST'] . $self . "installation/index.php" );
 	exit();
 }
@@ -26,16 +26,15 @@ require_once( 'configuration.php' );
 require_once( 'includes/joomla.php' );
 
 //Installation sub folder check, removed for work with SVN
-if (file_exists( 'installation/index.php' )) {
+if (file_exists( 'installation/index.php' ) && $_VERSION->SVN == 0) {
 	define( '_INSTALL_CHECK', 1 );
-	include ('offline.php');
+	include ( $mosConfig_absolute_path .'/offline.php');
 	exit();
 }
 
-
 // displays offline/maintanance page or bar
 if ($mosConfig_offline == 1) {
-	require( 'offline.php' );
+	require( $mosConfig_absolute_path .'/offline.php' );
 }
 
 // load system bot group
@@ -44,15 +43,15 @@ $_MAMBOTS->loadBotGroup( 'system' );
 // trigger the onStart events
 $_MAMBOTS->trigger( 'onStart' );
 
-if (file_exists( 'components/com_sef/sef.php' )) {
-	require_once( 'components/com_sef/sef.php' );
+if (file_exists( $mosConfig_absolute_path .'/components/com_sef/sef.php' )) {
+	require_once( $mosConfig_absolute_path .'/components/com_sef/sef.php' );
 } else {
-	require_once( 'includes/sef.php' );
+	require_once( $mosConfig_absolute_path .'/includes/sef.php' );
 }
-require_once( 'includes/frontend.php' );
+require_once( $mosConfig_absolute_path .'/includes/frontend.php' );
 
 // retrieve some expected url (or form) arguments
-$option = trim( strtolower( mosGetParam( $_REQUEST, 'option' ) ) );
+$option = strval( strtolower( mosGetParam( $_REQUEST, 'option' ) ) );
 $Itemid = intval( mosGetParam( $_REQUEST, 'Itemid', null ) );
 
 if ($option == '') {
@@ -105,7 +104,7 @@ $_MAMBOTS->trigger( 'onAfterStart' );
 
 // checking if we can find the Itemid thru the content
 if ( $option == 'com_content' && $Itemid === 0 ) {
-	$id = intval( mosGetParam( $_REQUEST, 'id', 0 ) );
+	$id 	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 	$Itemid = $mainframe->getItemid( $id );
 }
 
@@ -132,11 +131,11 @@ if ($option == 'search') {
 if ($mosConfig_lang=='') {
 	$mosConfig_lang = 'english';
 }
-include_once( 'language/' . $mosConfig_lang . '.php' );
+include_once( $mosConfig_absolute_path .'/language/' . $mosConfig_lang . '.php' );
 
 // frontend login & logout controls
-$return = mosGetParam( $_REQUEST, 'return', NULL );
-$message = mosGetParam( $_POST, 'message', 0 );
+$return 	= strval( mosGetParam( $_REQUEST, 'return', NULL ) );
+$message 	= intval( mosGetParam( $_POST, 'message', 0 ) );
 if ($option == 'login') {
 	$mainframe->login();
 
@@ -204,19 +203,23 @@ $_MOS_OPTION = array();
 require_once( $mosConfig_absolute_path . '/editor/editor.php' );
 
 ob_start();
+
 if ($path = $mainframe->getPath( 'front' )) {
-	$task 	= mosGetParam( $_REQUEST, 'task', '' );
+	$task 	= strval( mosGetParam( $_REQUEST, 'task', '' ) );
 	$ret 	= mosMenuCheck( $Itemid, $option, $task, $gid );
+	
 	if ($ret) {
 		require_once( $path );
 	} else {
 		mosNotAuth();
 	}
 } else {
-	header("HTTP/1.0 404 Not Found");
+	header( 'HTTP/1.0 404 Not Found' );
 	echo _NOT_EXIST;
 }
+
 $_MOS_OPTION['buffer'] = ob_get_contents();
+
 ob_end_clean();
 
 initGzip();
@@ -229,15 +232,15 @@ header( 'Pragma: no-cache' );
 
 // display the offline alert if an admin is logged in
 if (defined( '_ADMIN_OFFLINE' )) {
-	include( 'offlinebar.php' );
+	include( $mosConfig_absolute_path .'/offlinebar.php' );
 }
 
 // loads template file
-if ( !file_exists( 'templates/'. $cur_template .'/index.php' ) ) {
+if ( !file_exists( $mosConfig_absolute_path .'/templates/'. $cur_template .'/index.php' ) ) {
 	echo _TEMPLATE_WARN . $cur_template;
 } else {
-	require_once( 'templates/'. $cur_template .'/index.php' );
-	echo "<!-- ".time()." -->";
+	require_once( $mosConfig_absolute_path .'/templates/'. $cur_template .'/index.php' );
+	echo '<!-- '. time() .' -->';
 }
 
 // displays queries performed for page
@@ -247,6 +250,7 @@ if ($mosConfig_debug) {
  	foreach ($database->_log as $k=>$sql) {
  		echo $k+1 . "\n" . $sql . '<hr />';
 	}
+	echo '</pre>';
 }
 
 doGzip();

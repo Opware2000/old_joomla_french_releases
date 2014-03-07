@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menus.html.php 254 2005-09-29 17:10:05Z stingrey $
+* @version $Id: admin.menus.html.php 3457 2006-05-11 22:49:12Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -30,16 +30,16 @@ class HTML_menusections {
 		<table class="adminheading">
 		<tr>
 			<th class="menus">
-			Menu Manager <small><small>[ <?php echo $menutype;?> ]</small></small>
+			Gestion des menus <small><small>[ <?php echo $menutype;?> ]</small></small>
 			</th>
 			<td nowrap="true">
-			Max Levels
+			Niveaux max.
 			</td>
 			<td>
 			<?php echo $levellist;?>
 			</td>
 			<td>
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" />
@@ -71,22 +71,22 @@ class HTML_menusections {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($rows); ?>);" />
 			</th>
 			<th class="title" width="40%">
-			Menu Item
+			Liens
 			</th>
 			<th width="5%">
-			Published
+			Publié
 			</th>
 			<th colspan="2" width="5%">
-			Reorder
+			Retrier
 			</th>
 			<th width="2%">
-			Order
+			Ordre
 			</th>
 			<th width="1%">
 			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
 			</th>
 			<th width="10%">
-			Access
+			Accès
 			</th>
 			<th>
 			Itemid
@@ -196,11 +196,11 @@ class HTML_menusections {
 		<table class="adminheading">
 		<tr>
 			<th class="menus">
-			New Menu Item
+			Crée un nouveau lien dans le menu
 			</th>
 			<td valign="bottom" nowrap style="color: red;">
 			<?php //echo _MENU_GROUP; ?>
-			* Note that some menu types appear in more that one grouping, but they are still the same menu type.
+			* Veuillez noter que certains types de liens sont affichés plusieurs fois<br />dans des blocs différents, il s'agit toutefois des mêmes types de lien.
 			</td>
 		</tr>
 		</table>
@@ -209,7 +209,7 @@ class HTML_menusections {
 		<tr>
 			<td width="50%" valign="top">
 				<fieldset>
-					<legend>Content</legend>
+					<legend>Contenu</legend>
 					<table class="adminform">
 					<?php
 					$k 		= 0;
@@ -217,7 +217,7 @@ class HTML_menusections {
 						for ( $i=0; $i < $count; $i++ ) {
 						$row = &$types_content[$i];
 
-						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&hidemainmenu=1&type='. $row->type;
+						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type .'&hidemainmenu=1';
 						
 						HTML_menusections::htmlOptions( $row, $link, $k, $i );
 						
@@ -227,7 +227,7 @@ class HTML_menusections {
 					</table>
 				</fieldset>
 				<fieldset>
-					<legend>Miscellaneous</legend>
+					<legend>Divers</legend>
 					<table class="adminform">
 					<?php
 					$k 		= 0;
@@ -235,7 +235,7 @@ class HTML_menusections {
 						for ( $i=0; $i < $count; $i++ ) {
 						$row = &$types_other[$i];
 
-						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type;
+						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type.'&hidemainmenu=1';
 						
 						HTML_menusections::htmlOptions( $row, $link, $k, $i );
 							
@@ -245,7 +245,7 @@ class HTML_menusections {
 					</table>
 				</fieldset>
 				<fieldset>
-					<legend>Submit</legend>
+					<legend>Soumettre</legend>
 					<table class="adminform">
 					<?php
 					$k 		= 0;
@@ -253,7 +253,7 @@ class HTML_menusections {
 						for ( $i=0; $i < $count; $i++ ) {
 						$row = &$types_submit[$i];
 
-						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type;
+						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type.'&hidemainmenu=1';
 						
 						HTML_menusections::htmlOptions( $row, $link, $k, $i );
 							
@@ -265,7 +265,7 @@ class HTML_menusections {
 			</td>
 			<td width="50%" valign="top">
 				<fieldset>
-					<legend>Components</legend>
+					<legend>Composants</legend>
 					<table class="adminform">
 					<?php
 					$k 		= 0;
@@ -273,7 +273,7 @@ class HTML_menusections {
 						for ( $i=0; $i < $count; $i++ ) {
 						$row = &$types_component[$i];
 
-						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type;
+						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type.'&hidemainmenu=1';
 						
 						HTML_menusections::htmlOptions( $row, $link, $k, $i );
 							
@@ -283,7 +283,7 @@ class HTML_menusections {
 					</table>
 				</fieldset>
 				<fieldset>
-					<legend>Links</legend>
+					<legend>Liens</legend>
 					<table class="adminform">
 					<?php
 					$k 		= 0;
@@ -291,7 +291,7 @@ class HTML_menusections {
 						for ( $i=0; $i < $count; $i++ ) {
 						$row = &$types_link[$i];
 
-						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type;
+						$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=edit&type='. $row->type.'&hidemainmenu=1';
 						
 						HTML_menusections::htmlOptions( $row, $link, $k, $i );
 							
@@ -344,7 +344,7 @@ class HTML_menusections {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Move Menu Items
+			Déplacer des liens
 			</th>
 		</tr>
 		</table>
@@ -354,14 +354,14 @@ class HTML_menusections {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
-			<strong>Move to Menu:</strong>
+			<strong>Déplacer vers le menu:</strong>
 			<br />
 			<?php echo $MenuList ?>
 			<br /><br />
 			</td>
 			<td align="left" valign="top">
 			<strong>
-			Menu Items being moved:
+			Liens à copier:
 			</strong>
 			<br />
 			<ol>
@@ -404,7 +404,7 @@ class HTML_menusections {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Copy Menu Items
+			Copier les liens
 			</th>
 		</tr>
 		</table>
@@ -415,7 +415,7 @@ class HTML_menusections {
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
 			<strong>
-			Copy to Menu:
+			Copier vers le menu:
 			</strong>
 			<br />
 			<?php echo $MenuList ?>
@@ -423,7 +423,7 @@ class HTML_menusections {
 			</td>
 			<td align="left" valign="top">
 			<strong>
-			Menu Items being copied:
+			Liens à copier:
 			</strong>
 			<br />
 			<ol>

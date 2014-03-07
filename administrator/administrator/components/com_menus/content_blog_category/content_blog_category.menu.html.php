@@ -41,7 +41,7 @@ class content_blog_category_html {
 			if ( !$menu->id ) {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 					return;
 				} else {
 					submitform( pressbutton );
@@ -50,7 +50,7 @@ class content_blog_category_html {
 			} else {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 				} else {
 					submitform( pressbutton );
 				}
@@ -65,7 +65,7 @@ class content_blog_category_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Blog - Content Category
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Blog - Catégorie de contenu
 			</th>
 		</tr>
 		</table>
@@ -76,11 +76,11 @@ class content_blog_category_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
-					<td width="10%" align="right">Name:</td>
+					<td width="10%" align="right">Nom du lien:</td>
 					<td width="200px">
 					<input class="inputbox" type="text" name="name" size="30" maxlength="100" value="<?php echo $menu->name; ?>" />
 					</td>
@@ -89,14 +89,14 @@ class content_blog_category_html {
 				</tr>
 				<tr>
 			  		<td valign="top" align="right">
-			  		Category:
+			  		Catégories:
 			  		</td>
 			 		<td>
 			  		<?php echo $lists['categoryid']; ?>
 			 		</td>
 			 		<td valign="top">
 			 		<?php
-			 		echo mosToolTip( 'You can select multiple Categories' )
+			 		echo mosToolTip( 'Vous pouvez sélectionner plusieurs catégories' )
 			 		?>
 			  		</td>
 				</tr>
@@ -107,25 +107,25 @@ class content_blog_category_html {
 					</td>
 				</tr>
 				<tr>
-					<td align="right">Parent Item:</td>
+					<td align="right">Lien parent:</td>
 					<td colspan="2">
 					<?php echo $lists['parent'];?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Ordering:</td>
+					<td valign="top" align="right">Ordre:</td>
 					<td colspan="2">
 					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Access Level:</td>
+					<td valign="top" align="right">Niveau d'accès:</td>
 					<td colspan="2">
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td colspan="2">
 					<?php echo $lists['published']; ?>
 					</td>
@@ -139,7 +139,7 @@ class content_blog_category_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

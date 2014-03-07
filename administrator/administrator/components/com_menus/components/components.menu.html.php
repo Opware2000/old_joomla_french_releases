@@ -60,9 +60,9 @@ class components_menu_html {
 			}
 
 			if ( trim( form.name.value ) == "" ){
-				alert( "Item must have a name" );
+				alert( "Vous devez donner un nom à ce lien" );
 			} else if (form.componentid.value == ""){
-				alert( "Please select a Component" );
+				alert( "Vous devez sélectionner un composant dans la liste" );
 			} else {
 				submitform( pressbutton );
 			}
@@ -74,7 +74,7 @@ class components_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Component <small><small><?php echo $title; ?></small></small>
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Lien vers un composant <small><small><?php echo $title; ?></small></small>
 			</th>
 		</tr>
 		</table>
@@ -89,13 +89,13 @@ class components_menu_html {
 					</th>
 				</tr>
 				<tr>
-					<td width="10%" align="right">Name:</td>
+					<td width="10%" align="right">Nom du lien:</td>
 					<td width="80%">
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo htmlspecialchars( $menu->name, ENT_QUOTES ); ?>" />
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Component:</td>
+					<td valign="top" align="right">Composant:</td>
 					<td>
 					<?php echo $lists['componentid']; ?>
 					</td>
@@ -107,26 +107,26 @@ class components_menu_html {
 					</td>
 				</tr>
 				<tr>
-					<td align="right">Parent Item:</td>
+					<td align="right">Lien parent:</td>
 					<td>
 					<?php echo $lists['parent'];?>
 					</td>
 				</tr>
 
 				<tr>
-					<td valign="top" align="right">Ordering:</td>
+					<td valign="top" align="right">Ordre:</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Access Level:</td>
+					<td valign="top" align="right">Niveau d'accès:</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -140,7 +140,7 @@ class components_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>
@@ -150,7 +150,7 @@ class components_menu_html {
 						echo $params->render();
 					} else {
 						?>
-						<strong>Parameter list will be available once you save this New menu item</strong>
+						<strong>La liste des paramètres sera affichée après que vous ayez sauvegardé de nouveau lien</strong>
 						<?php
 					}
 					?>

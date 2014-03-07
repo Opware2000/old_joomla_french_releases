@@ -65,8 +65,8 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 		<script>document.write("<td valign=\"top\" height=\"90%\" colspan=\"2\">" + alltext + "</td>");</script>
 	</tr>
 	<tr>
-		<td align="right"><a href="#" onClick="window.close()">Close</a></td>
-		<td align="left"><a href="javascript:;" onClick="window.print(); return false">Print</a></td>
+		<td align="right"><a href="#" onClick="window.close()">Fermer</a></td>
+		<td align="left"><a href="javascript:;" onClick="window.print(); return false">Imprimer</a></td>
 	</tr>
 </table>
 </body>

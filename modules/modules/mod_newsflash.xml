@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <mosinstall type="module" version="1.0.0">
-	<name>Newsflash</name>
+	<name>Flash Info</name>
 	<author>Joomla! Project</author>
 	<creationDate>July 2004</creationDate>
 	<copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
@@ -8,39 +8,39 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-	<description>The Newsflash module randomly selects one of the published items from a category upon each page refresh.  It may also dislpay multiple items in horizontal or vertical configurations.</description>
+	<description>Ce module sélectionne aléatoirement un article publié d'une catégorie à cahque rafraichissement de page. Il peut aussi afficher plusieurs articles en configuration horizontale ou verticale.</description>
 	<files>
 		<filename module="mod_newsflash">mod_newsflash.php</filename>
 	</files>
 	<params>
-		<param name="catid" type="mos_category" default="0" label="Category" description="A content cateogry" />
-		<param name="style" type="list" default="random" label="Style" description="The style to display the category">
-			<option value="random">Randomly choose one at a time</option>
+		<param name="catid" type="mos_category" default="0" label="Catégorie" description="Une Catégorie d'articles" />
+		<param name="style" type="list" default="random" label="Style" description="Le style d'affichage">
+			<option value="random">Un seul aléatoirement</option>
 			<option value="horiz">Horizontal</option>
 			<option value="vert">Vertical</option>
 		</param>
-		<param name="image" type="radio" default="0" label="Show images" description="Display content item images">
-			<option value="1">Yes</option>
-			<option value="0">No</option>
+		<param name="image" type="radio" default="0" label="Afficher images" description="Afficher les images des articles">
+			<option value="1">Oui</option>
+			<option value="0">Non</option>
 		</param>
-		<param name="link_titles" type="list" default="" label="Linked Titles" description="Make the Item titles linkable">
-			<option value="">Use Global</option>
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+		<param name="link_titles" type="list" default="" label="Titres cliquables" description="Rendre les titres des articles cliquables">
+			<option value="">Paramètres du site</option>
+			<option value="0">Non</option>
+			<option value="1">Oui</option>
 		</param>
-        <param name="readmore" type="radio" default="0" label="Read More" description="Show/Hide the Read More button">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+        <param name="readmore" type="radio" default="0" label="Lire la suite" description="Afficher/Masque le lien Lire la suite">
+			<option value="0">Masquer</option>
+			<option value="1">Afficher</option>
         </param>
-        <param name="item_title" type="list" default="0" label="Item Title" description="Show item title">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+        <param name="item_title" type="list" default="0" label="Titre Article" description="Afficher/Masquer le titre des articles">
+			<option value="0">Non</option>
+			<option value="1">Oui</option>
         </param>
-		<param name="items" type="text" default="" label="No. of Items" description="No of items to display" />
-		<param name="cache" type="radio" default="0" label="Enable Cache" description="Select whether to cache the content of this module">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+		<param name="items" type="text" default="" label="# Articles" description="Nombre d'articles à afficher" />
+		<param name="cache" type="radio" default="0" label="Activer le Cache" description="Choisir de placer le contenu du module en cache">
+			<option value="0">Non</option>
+			<option value="1">Oui</option>
 		</param>
-		<param name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be aapplied to the css class of the module (table.moduletable), this allows individual module styling" />
+		<param name="moduleclass_sfx" type="text" default="" label="Suffixe CSS de module" description="Un suffixe à appliquer à la classe CSS du module (table.moduletable). Cela permet une mise en page individualisée." />
 	</params>
 </mosinstall>

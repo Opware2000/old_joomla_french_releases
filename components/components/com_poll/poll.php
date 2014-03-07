@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.php 743 2005-10-31 04:48:00Z stingrey $
+* @version $Id: poll.php 3594 2006-05-22 17:29:07Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,10 +24,7 @@ $polls_barheight 	= 2;
 $polls_maxcolors 	= 5;
 $polls_barcolor 	= 0;
 
-$poll = new mosPoll( $database );
-
 $id 	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
-$task 	= mosGetParam( $_REQUEST, 'task', '' );
 
 switch ($task) {
 	case 'vote':
@@ -44,7 +41,7 @@ function pollAddVote( $uid ) {
 
 	$redirect = 1;
 
-	$sessionCookieName 	= md5( 'site'.$GLOBALS['mosConfig_live_site'] );
+	$sessionCookieName 	= mosMainFrame::sessionCookieName();
 	$sessioncookie 		= mosGetParam( $_REQUEST, $sessionCookieName, '' );
 
 	if (!$sessioncookie) {
@@ -69,7 +66,7 @@ function pollAddVote( $uid ) {
 		return;
 	}
 
-	$voteid = mosGetParam( $_POST, 'voteid', 0 );
+	$voteid = intval( mosGetParam( $_POST, 'voteid', 0 ) );
 	if (!$voteid) {
 		echo "<h3>"._NO_SELECTION."</h3>";
 		echo '<input class="button" type="button" value="'. _CMN_CONTINUE .'" onClick="window.history.go(-1);">';
@@ -94,7 +91,8 @@ function pollAddVote( $uid ) {
 
 	$database->query();
 
-	$now = date( 'Y-m-d G:i:s' );
+	$now = _CURRENT_SERVER_TIME;
+	
 	$query = "INSERT INTO #__poll_date"
 	. "\n SET date = '$now', vote_id = $voteid, poll_id = $poll->id"
 	;
@@ -118,16 +116,26 @@ function pollresult( $uid ) {
 	$poll = new mosPoll( $database );
 	$poll->load( $uid );
 
-	if (empty($poll->title)) {
-		$poll->id = '';
-		$poll->title = _SELECT_POLL;
+	// if id value is passed and poll not published then exit
+	if ($poll->id != '' && !$poll->published) {
+		mosNotAuth();
+		return;
 	}
 
 	$first_vote = '';
 	$last_vote 	= '';
 	$votes		= '';
 	
-	if (isset($poll->id) && $poll->id != '') {
+	/*
+	Check if there is a poll corresponding to id
+	and if poll is published
+	*/
+	if (isset($poll->id) && $poll->id != '' && $poll->published == 1) {
+		if (empty($poll->title)) {
+			$poll->id = '';
+			$poll->title = _SELECT_POLL;
+		}
+		
 		$query = "SELECT MIN( date ) AS mindate, MAX( date ) AS maxdate"
 		. "\n FROM #__poll_date"
 		. "\n WHERE poll_id = $poll->id"
@@ -140,18 +148,19 @@ function pollresult( $uid ) {
 			$last_vote = mosFormatDate( $dates[0]->maxdate, _DATE_FORMAT_LC2 );
 		}
 		
-		$query = "SELECT a.id, a.text, count( DISTINCT b.id ) AS hits, count( DISTINCT b.id )/COUNT( DISTINCT a.id )*100.0 AS percent"
+		$query = "SELECT a.id, a.text, a.hits, b.voters"
 		. "\n FROM #__poll_data AS a"
-		. "\n LEFT JOIN #__poll_date AS b ON b.vote_id = a.id"
+		. "\n INNER JOIN #__polls AS b ON b.id = a.pollid"
 		. "\n WHERE a.pollid = $poll->id"
 		. "\n AND a.text != ''"
-		. "\n GROUP BY a.id"
-		. "\n ORDER BY a.id"
+		. "\n AND b.published = 1"
 		;
+
 		$database->setQuery( $query );
 		$votes = $database->loadObjectList();		
 	}
 
+	// list of polls for dropdown selection
 	$query = "SELECT id, title"
 	. "\n FROM #__polls"
 	. "\n WHERE published = 1"
@@ -159,9 +168,15 @@ function pollresult( $uid ) {
 	;
 	$database->setQuery( $query );
 	$polls = $database->loadObjectList();
-
-	reset( $polls );
-	$link = sefRelToAbs( 'index.php?option=com_poll&amp;task=results&amp;id=\' + this.options[selectedIndex].value + \'&amp;Itemid='. $Itemid .'\' + \'' );
+	
+	// Itemid for dropdown
+	$_Itemid = '';
+	if ( $Itemid && $Itemid != 99999999 ) {
+		$_Itemid = '&amp;Itemid='. $Itemid;
+	}
+	
+	// dropdown output
+	$link = sefRelToAbs( 'index.php?option=com_poll&amp;task=results&amp;id=\' + this.options[selectedIndex].value + \''. $_Itemid .'\' + \'' );
 	$pollist = '<select name="id" class="inputbox" size="1" style="width:200px" onchange="if (this.options[selectedIndex].value != \'\') {document.location.href=\''. $link .'\'}">';
 	$pollist .= '<option value="">'. _SELECT_POLL .'</option>';
 	for ($i=0, $n=count( $polls ); $i < $n; $i++ ) {
@@ -174,8 +189,7 @@ function pollresult( $uid ) {
 	$pollist .= '</select>';
 
 	// Adds parameter handling
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 
 	$params = new mosParameters( $menu->params );
 	$params->def( 'page_title', 1 );

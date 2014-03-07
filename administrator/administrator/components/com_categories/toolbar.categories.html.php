@@ -33,7 +33,7 @@ class TOOLBAR_categories {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -75,9 +75,9 @@ class TOOLBAR_categories {
 		mosMenuBar::unpublishList();
 		mosMenuBar::spacer();
 		if ( $section == 'content' || ( $section > 0 ) ) {
-			mosMenuBar::customX( 'moveselect', 'move.png', 'move_f2.png', 'Move', true );
+			mosMenuBar::customX( 'moveselect', 'move.png', 'move_f2.png', 'D&eacute;placer', true );
 			mosMenuBar::spacer();
-			mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
+			mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copier', true );
 			mosMenuBar::spacer();
 		}
 		mosMenuBar::deleteList();

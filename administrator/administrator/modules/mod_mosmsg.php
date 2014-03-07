@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_mosmsg.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_mosmsg.php 3551 2006-05-18 20:23:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,11 +14,18 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-$mosmsg = trim( strip_tags( mosGetParam( $_REQUEST, 'mosmsg', '' ) ) );
+$mosmsg = strval( ( strip_tags( mosGetParam( $_REQUEST, 'mosmsg', '' ) ) ) );
 
-if ($mosmsg) {
-	if (!get_magic_quotes_gpc()) {
-		$mosmsg = addslashes( $mosmsg );
+// Browser Check
+$browserCheck = 0;
+if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && isset( $_SERVER['HTTP_REFERER'] ) ) {
+	$browserCheck = 1;
+}
+
+if ($mosmsg && $browserCheck ) {	
+	// limit mosmsg to 200 characters
+	if ( strlen( $mosmsg ) > 200 ) {
+		$mosmsg = substr( $mosmsg, 0, 200 );
 	}
 	?>
 	<div class="message">

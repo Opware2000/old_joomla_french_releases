@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.mambots.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: admin.mambots.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Mambots
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,9 +23,8 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'mambot
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-$client = mosGetParam( $_REQUEST, 'client', '' );
+$client = strval( mosGetParam( $_REQUEST, 'client', '' ) );
 $cid 	= mosGetParam( $_POST, 'cid', array(0) );
-$id 	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 if (!is_array( $cid )) {
 	$cid = array(0);
 }
@@ -34,7 +33,7 @@ switch ( $task ) {
 
 	case 'new':
 	case 'edit':
-		editMambot( $option, $cid[0], $client );
+		editMambot( $option, intval( $cid[0] ), $client );
 		break;
 
 	case 'editA':
@@ -61,13 +60,13 @@ switch ( $task ) {
 
 	case 'orderup':
 	case 'orderdown':
-		orderMambot( $cid[0], ($task == 'orderup' ? -1 : 1), $option, $client );
+		orderMambot( intval( $cid[0] ), ($task == 'orderup' ? -1 : 1), $option, $client );
 		break;
 
 	case 'accesspublic':
 	case 'accessregistered':
 	case 'accessspecial':
-		accessMenu( $cid[0], $task, $option, $client );
+		accessMenu( intval( $cid[0] ), $task, $option, $client );
 		break;
 
 	case 'saveorder':
@@ -86,8 +85,8 @@ function viewMambots( $option, $client ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 	global $mosConfig_absolute_path;
 
-	$limit 			= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart 	= $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$limit 			= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart 	= intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 	$filter_type	= $mainframe->getUserStateFromRequest( "filter_type{$option}{$client}", 'filter_type', 1 );
 	$search 		= $mainframe->getUserStateFromRequest( "search{$option}{$client}", 'search', '' );
 	$search 		= $database->getEscaped( trim( strtolower( $search ) ) );
@@ -189,12 +188,12 @@ function saveMambot( $option, $client, $task ) {
 
 	switch ( $task ) {
 		case 'apply':
-			$msg = 'Successfully Saved changes to Mambot: '. $row->name;
+			$msg = 'Modifications appliquées pour le Mambot: '. $row->name;
 			mosRedirect( 'index2.php?option='. $option .'&client='. $client .'&task=editA&hidemainmenu=1&id='. $row->id, $msg );
 
 		case 'save':
 		default:
-			$msg = 'Successfully Saved Mambot: '. $row->name;
+			$msg = 'Modifications enregistrées pour le Mambot: '. $row->name;
 			mosRedirect( 'index2.php?option='. $option .'&client='. $client, $msg );
 			break;
 	}
@@ -217,7 +216,7 @@ function editMambot( $option, $uid, $client ) {
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
-		mosErrorAlert( "The module ".$row->title." is currently being edited by another administrator" );
+		mosErrorAlert( "Le module ".$row->title." est actuellement édité par un autre administrateur" );
 	}
 
 	if ($client == 'admin') {
@@ -449,7 +448,7 @@ function saveOrder( &$cid ) {
 		$row->updateOrder( $cond[1] );
 	} // foreach
 
-	$msg 	= 'New ordering saved';
+	$msg 	= 'Nouveau tri enregistré';
 	mosRedirect( 'index2.php?option=com_mambots', $msg );
 } // saveOrder
 ?>

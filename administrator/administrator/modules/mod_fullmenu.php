@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_fullmenu.php 1782 2006-01-13 02:29:37Z eddieajau $
+* @version $Id: mod_fullmenu.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -54,9 +54,13 @@ class mosFullAdminMenu {
 		$database->setQuery( $query );
 		$sections = $database->loadObjectList();
 		$nonemptySections = 0;
-		foreach ($sections as $section)
-			if ($section->numcat > 0)
-				$nonemptySections++;
+		if (count($sections) > 0) {
+			foreach ($sections as $section) {
+				if ($section->numcat > 0) {
+					$nonemptySections++;
+				}
+			}
+		}
 		$menuTypes = mosAdminMenus::menutypes();
 		?>
 		<div id="myMenuID"></div>
@@ -69,60 +73,59 @@ class mosFullAdminMenu {
 			_cmSplit,
 			<?php
 	// Site Sub-Menu
-?>			[null,'Gestion du site',null,null,'Site Management',
+?>			[null,'Gestion du site',null,null,'Gestion du site',
 <?php
 			if ($canConfig) {
 ?>				['<img src="../includes/js/ThemeOffice/config.png" />','Configuration du Site','index2.php?option=com_config&hidemainmenu=1',null,'Configuration'],
 <?php
 			}
 			if ($manageLanguages) {
-?>				['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues',null,null,'Manage languages',
-  					['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues','index2.php?option=com_languages',null,'Manage Languages'],
+?>				['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues',null,null,'Gérer les langues',
+  					['<img src="../includes/js/ThemeOffice/language.png" />','Gestion des Langues','index2.php?option=com_languages',null,'Gérer les langues'],
    				],
 <?php
 			}
-?>				['<img src="../includes/js/ThemeOffice/media.png" />','Gestion des M&eacute;dias','index2.php?option=com_media',null,'Manage Media Files'],
-					['<img src="../includes/js/ThemeOffice/preview.png" />', 'Aper&ccedil;u', null, null, 'Preview',
-					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans une nouvelle fen&ecirc;tre','<?php echo $mosConfig_live_site; ?>/index.php','_blank','<?php echo $mosConfig_live_site; ?>'],
-					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans cette fen&ecirc;tre','index2.php?option=com_admin&task=preview',null,'<?php echo $mosConfig_live_site; ?>'],
-					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans cette fen&ecirc;tre avec Positions','index2.php?option=com_admin&task=preview2',null,'<?php echo $mosConfig_live_site; ?>'],
+?>				['<img src="../includes/js/ThemeOffice/media.png" />','Gestion des Médias','index2.php?option=com_media',null,'Gérer les fichiers'],
+					['<img src="../includes/js/ThemeOffice/preview.png" />', 'Aperçu', null, null, 'Aperçu',
+					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans une nouvelle fenêtre','<?php echo $mosConfig_live_site; ?>/index.php','_blank','<?php echo $mosConfig_live_site; ?>'],
+					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans cette fenêtre','index2.php?option=com_admin&task=preview',null,'<?php echo $mosConfig_live_site; ?>'],
+					['<img src="../includes/js/ThemeOffice/preview.png" />','Dans cette fenêtre avec Positions','index2.php?option=com_admin&task=preview2',null,'<?php echo $mosConfig_live_site; ?>'],
 				],
-				['<img src="../includes/js/ThemeOffice/globe1.png" />', 'Statistiques', null, null, 'Site Statistics',
+				['<img src="../includes/js/ThemeOffice/globe1.png" />', 'Statistiques', null, null, 'Statistiques du site',
 <?php
 			if ($mosConfig_enable_stats == 1) {
-?>					['<img src="../includes/js/ThemeOffice/globe4.png" />', 'Navigateur, OS, Domain', 'index2.php?option=com_statistics', null, 'Browser, OS, Domain'],
-  					['<img src="../includes/js/ThemeOffice/globe3.png" />', 'Impressions de Page', 'index2.php?option=com_statistics&task=pageimp', null, 'Page Impressions'],
+?>					['<img src="../includes/js/ThemeOffice/globe4.png" />', 'Navigateur, OS, Domain', 'index2.php?option=com_statistics', null, 'Navigateur, OS, Domain'],
 <?php
 			}
-?>					['<img src="../includes/js/ThemeOffice/search_text.png" />', 'Texte recherch&eacute', 'index2.php?option=com_statistics&task=searches', null, 'Search Text']
+?>					['<img src="../includes/js/ThemeOffice/search_text.png" />', 'Texte recherch&eacute', 'index2.php?option=com_statistics&task=searches', null, 'Texte recherch&eacute']
 				],
 <?php
 			if ($manageTemplates) {
-?>				['<img src="../includes/js/ThemeOffice/template.png" />','Gestion des Templates',null,null,'Change site template',
-  					['<img src="../includes/js/ThemeOffice/template.png" />','Templates du Site','index2.php?option=com_templates',null,'Change site template'],
+?>				['<img src="../includes/js/ThemeOffice/template.png" />','Gestion des Templates',null,null,'Changer le template du site',
+  					['<img src="../includes/js/ThemeOffice/template.png" />','Templates du Site','index2.php?option=com_templates',null,'Changer le template du site'],
   					_cmSplit,
-  					['<img src="../includes/js/ThemeOffice/template.png" />','Templates Administrateur','index2.php?option=com_templates&client=admin',null,'Change admin template'],
+  					['<img src="../includes/js/ThemeOffice/template.png" />','Templates Administrateur','index2.php?option=com_templates&client=admin',null,'Changer le template administrateur'],
   					_cmSplit,
-  					['<img src="../includes/js/ThemeOffice/template.png" />','Positions des Modules','index2.php?option=com_templates&task=positions',null,'Template positions']
+  					['<img src="../includes/js/ThemeOffice/template.png" />','Positions des Modules','index2.php?option=com_templates&task=positions',null,'Positions des modules du template']
   				],
 <?php
 			}
 			if ($manageTrash) {
-?>				['<img src="../includes/js/ThemeOffice/trash.png" />','Gestion de la Corbeille','index2.php?option=com_trash',null,'Manage Trash'],
+?>				['<img src="../includes/js/ThemeOffice/trash.png" />','Gestion de la Corbeille','index2.php?option=com_trash',null,'Gérer la corbeille'],
 <?php
 			}
 			if ($canManageUsers || $canMassMail) {
-?>				['<img src="../includes/js/ThemeOffice/users.png" />','Gestion des utilisateurs','index2.php?option=com_users&task=view',null,'Manage users'],
+?>				['<img src="../includes/js/ThemeOffice/users.png" />','Gestion des utilisateurs','index2.php?option=com_users&task=view',null,'Gérer les utilisateurs'],
 <?php
 				}
 ?>			],
 <?php
 	// Menu Sub-Menu
 ?>			_cmSplit,
-			[null,'Menu',null,null,'Menu Management',
+			[null,'Menu',null,null,'Gestionnaire de menus',
 <?php
 			if ($manageMenuMan) {
-?>				['<img src="../includes/js/ThemeOffice/menus.png" />','Gestionnaire de Menu','index2.php?option=com_menumanager',null,'Menu Manager'],
+?>				['<img src="../includes/js/ThemeOffice/menus.png" />','Gestionnaire de Menu','index2.php?option=com_menumanager',null,'Gestionnaire de Menu'],
 				_cmSplit,
 <?php
 			}
@@ -134,20 +137,20 @@ class mosFullAdminMenu {
 			_cmSplit,
 <?php
 	// Content Sub-Menu
-?>			[null,'Contenu',null,null,'Gestion du Contenu',
+?>			[null,'Contenu',null,null,'Gestion des articles',
 <?php
 			if (count($sections) > 0) {
-?>				['<img src="../includes/js/ThemeOffice/edit.png" />','Contenu par Section',null,null,'Content Managers',
+?>				['<img src="../includes/js/ThemeOffice/edit.png" />','Articles par Section',null,null,'Gestion des articles',
 <?php
 				foreach ($sections as $section) {
 					$txt = addslashes( $section->title ? $section->title : $section->name );
 ?>					['<img src="../includes/js/ThemeOffice/document.png" />','<?php echo $txt;?>', null, null,'<?php echo $txt;?>',
 <?php
 					if ($section->numcat) {
-?>						['<img src="../includes/js/ThemeOffice/edit.png" />', '<?php echo $txt;?> Items', 'index2.php?option=com_content&sectionid=<?php echo $section->id;?>',null,null],
+?>						['<img src="../includes/js/ThemeOffice/edit.png" />', '<?php echo $txt;?> Articles', 'index2.php?option=com_content&sectionid=<?php echo $section->id;?>',null,null],
 <?php
 					}
-?>						['<img src="../includes/js/ThemeOffice/add_section.png" />', 'Add/Edit <?php echo $txt;?> Categories', 'index2.php?option=com_categories&section=<?php echo $section->id;?>',null, null],
+?>						['<img src="../includes/js/ThemeOffice/add_section.png" />', 'Ajouter/Editer <?php echo $txt;?> catégories', 'index2.php?option=com_categories&section=<?php echo $section->id;?>',null, null],
 <?php
 					if ($section->numarc) {
 ?>						['<img src="../includes/js/ThemeOffice/backup.png" />', '<?php echo $txt;?> Archive', 'index2.php?option=com_content&task=showarchive&sectionid=<?php echo $section->id;?>',null,null],
@@ -161,20 +164,21 @@ class mosFullAdminMenu {
 <?php
 			}
 ?>
-				['<img src="../includes/js/ThemeOffice/edit.png" />','Tout le Contenu','index2.php?option=com_content&sectionid=0',null,'Manage Content Items'],
-  				['<img src="../includes/js/ThemeOffice/edit.png" />','Gestion du Contenu Statique','index2.php?option=com_typedcontent',null,'Manage Typed Content Items'],
+				['<img src="../includes/js/ThemeOffice/edit.png" />','Tous les articles','index2.php?option=com_content&sectionid=0',null,'Gérer les articles'],
+  				['<img src="../includes/js/ThemeOffice/edit.png" />','Gestion des articles statiques','index2.php?option=com_typedcontent',null,'Gérer les articles statiques'],
   				_cmSplit,
-  				['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Sections','index2.php?option=com_sections&scope=content',null,'Manage Content Sections'],
-				['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Cat&eacute;gories','index2.php?option=com_categories&section=content',null,'Manage Content Categories'],
+  				['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Sections','index2.php?option=com_sections&scope=content',null,'Gérer les sections de contenu'],
+				['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Catégories','index2.php?option=com_categories&section=content',null,'Gérer les catégories de contenu'],
 				_cmSplit,
-  				['<img src="../includes/js/ThemeOffice/home.png" />','Gestion de la Frontpage','index2.php?option=com_frontpage',null,'Manage Frontpage Items'],
-  				['<img src="../includes/js/ThemeOffice/edit.png" />','Gestion des Archives','index2.php?option=com_content&task=showarchive&sectionid=0',null,'Manage Archive Items'],
+  				['<img src="../includes/js/ThemeOffice/home.png" />','Gestion de la page d\'accueil','index2.php?option=com_frontpage',null,'Gérer les articles en page d\'accuei'],
+  				['<img src="../includes/js/ThemeOffice/edit.png" />','Gestion des Archives','index2.php?option=com_content&task=showarchive&sectionid=0',null,'Gérer les articles archivés'],
+  				['<img src="../includes/js/ThemeOffice/globe3.png" />', 'Impressions de Page', 'index2.php?option=com_statistics&task=pageimp', null, 'Impressions de Page'],
 			],
 <?php
 	// Components Sub-Menu
 	if ($installComponents) {
 ?>			_cmSplit,
-			[null,'Composants',null,null,'Component Management',
+			[null,'Composants',null,null,'Gestion des composants',
 <?php
 		$query = "SELECT *"
 		. "\n FROM #__components"
@@ -221,7 +225,7 @@ class mosFullAdminMenu {
 			}
 		}
 		if ($topLevelLimit < $topLevelCount) {
-			echo "\t\t\t\t['<img src=\"../includes/js/ThemeOffice/sections.png\" />','Tous les composants...','index2.php?option=com_admin&task=listcomponents',null,'More Components'],\n";
+			echo "\t\t\t\t['<img src=\"../includes/js/ThemeOffice/sections.png\" />','Tous les composants...','index2.php?option=com_admin&task=listcomponents',null,'Tous les composants'],\n";
 		}
 ?>
 			],
@@ -229,11 +233,11 @@ class mosFullAdminMenu {
 	// Modules Sub-Menu
 		if ($installModules | $editAllModules) {
 ?>			_cmSplit,
-			[null,'Modules',null,null,'Module Management',
+			[null,'Modules',null,null,'Gestion des modules',
 <?php
 			if ($editAllModules) {
-?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Modules du Site', "index2.php?option=com_modules", null, 'Manage Site modules'],
-				['<img src="../includes/js/ThemeOffice/module.png" />', 'Modules Administrateur', "index2.php?option=com_modules&client=admin", null, 'Manage Administrator modules'],
+?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Modules du Site', "index2.php?option=com_modules", null, 'Gérer les modules du site'],
+				['<img src="../includes/js/ThemeOffice/module.png" />', 'Modules Administrateur', "index2.php?option=com_modules&client=admin", null, 'Gérer les modules Administrateur'],
 <?php
 			}
 ?>			],
@@ -246,7 +250,7 @@ class mosFullAdminMenu {
 			[null,'Mambots',null,null,'Gestion des Mambots',
 <?php
 		if ($editAllMambots) {
-?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Gestion des Mambots', "index2.php?option=com_mambots", null, 'Manage Site Mambots'],
+?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Gestion des Mambots', "index2.php?option=com_mambots", null, 'Gérer les mambots du site'],
 <?php
 		}
 ?>			],
@@ -260,41 +264,41 @@ class mosFullAdminMenu {
 			[null,'Installation',null,null,'Installer List',
 <?php
 		if ($manageTemplates) {
-?>				['<img src="../includes/js/ThemeOffice/install.png" />','Templates - Site','index2.php?option=com_installer&element=template&client=',null,'Install Site Templates'],
-				['<img src="../includes/js/ThemeOffice/install.png" />','Templates - Admin','index2.php?option=com_installer&element=template&client=admin',null,'Install Administrator Templates'],
+?>				['<img src="../includes/js/ThemeOffice/install.png" />','Templates - Site','index2.php?option=com_installer&element=template&client=',null,'Installer des templates pour le site'],
+				['<img src="../includes/js/ThemeOffice/install.png" />','Templates - Admin','index2.php?option=com_installer&element=template&client=admin',null,'Installer des templates pour l\'interface d\'administration'],
 <?php
 		}
 		if ($manageLanguages) {
-?>				['<img src="../includes/js/ThemeOffice/install.png" />','Langues','index2.php?option=com_installer&element=language',null,'Install Languages'],
+?>				['<img src="../includes/js/ThemeOffice/install.png" />','Langues','index2.php?option=com_installer&element=language',null,'Installer des langues'],
 				_cmSplit,
 <?php
 		}
-?>				['<img src="../includes/js/ThemeOffice/install.png" />', 'Composants','index2.php?option=com_installer&element=component',null,'Install/Uninstall Components'],
-				['<img src="../includes/js/ThemeOffice/install.png" />', 'Modules', 'index2.php?option=com_installer&element=module', null, 'Install/Uninstall Modules'],
-				['<img src="../includes/js/ThemeOffice/install.png" />', 'Mambots', 'index2.php?option=com_installer&element=mambot', null, 'Install/Uninstall Mambots'],
+?>				['<img src="../includes/js/ThemeOffice/install.png" />', 'Composants','index2.php?option=com_installer&element=component',null,'Installer/Désinstaller des Composants'],
+				['<img src="../includes/js/ThemeOffice/install.png" />', 'Modules', 'index2.php?option=com_installer&element=module', null, 'Installer/Désinstaller des Modules'],
+				['<img src="../includes/js/ThemeOffice/install.png" />', 'Mambots', 'index2.php?option=com_installer&element=mambot', null, 'Installer/Désinstaller des Mambots'],
 			],
 <?php
 	} // if ($installModules)
 	// Messages Sub-Menu
 	if ($canConfig) {
 ?>			_cmSplit,
-  			[null,'Messages',null,null,'Messaging Management',
-  				['<img src="../includes/js/ThemeOffice/messaging_inbox.png" />','Inbox','index2.php?option=com_messages',null,'Boite de r&eacute;ception'],
+  			[null,'Messages',null,null,'Gestion de la messagerie interne',
+  				['<img src="../includes/js/ThemeOffice/messaging_inbox.png" />','Bo&icirc;te de r&eacute;ception','index2.php?option=com_messages',null,'Boite de réception'],
   				['<img src="../includes/js/ThemeOffice/messaging_config.png" />','Configuration','index2.php?option=com_messages&task=config&hidemainmenu=1',null,'Configuration']
   			],
 <?php
 	// System Sub-Menu
 ?>			_cmSplit,
-  			[null,'Syst&egrave;me',null,null,'System Management',
-  			   ['<img src="../includes/js/ThemeOffice/sysinfo.png" />', 'Information Syst&egrave;me', 'index2.php?option=com_admin&task=sysinfo', null,'System Information'],
+  			[null,'Système',null,null,'Gestion du système',
+  			   ['<img src="../includes/js/ThemeOffice/sysinfo.png" />', 'Information Système', 'index2.php?option=com_admin&task=sysinfo', null,'Information Système'],
 
 <?php
   		if ($canConfig) {
 ?>				['<img src="../includes/js/ThemeOffice/checkin.png" />', 'Validation Globale', 'index2.php?option=com_checkin', null,'Check-in all checked-out items'],
 <?php
 			if ($mosConfig_caching) {
-?>				['<img src="../includes/js/ThemeOffice/config.png" />','Vider le cache du contenu','index2.php?option=com_admin&task=clean_cache',null,'Clean the content items cache'],
-				['<img src="../includes/js/ThemeOffice/config.png" />','Vider tous les caches','index2.php?option=com_admin&task=clean_all_cache',null,'Clean all caches'],
+?>				['<img src="../includes/js/ThemeOffice/config.png" />','Vider le cache du contenu','index2.php?option=com_admin&task=clean_cache',null,'Vider le cache du contenu'],
+				['<img src="../includes/js/ThemeOffice/config.png" />','Vider tous les caches','index2.php?option=com_admin&task=clean_all_cache',null,'Vider tous les caches'],
 <?php
 			}
 		}
@@ -317,7 +321,7 @@ class mosFullAdminMenu {
 	* @param string The current user type
 	*/
 	function showDisabled( $usertype='' ) {
-		global $acl, $_LANG;
+		global $acl;
 
 		$canConfig 			= $acl->acl_check( 'administration', 'config', 'users', $usertype );
 		$installModules 	= $acl->acl_check( 'administration', 'install', 'users', $usertype, 'modules', 'all' );
@@ -343,7 +347,7 @@ class mosFullAdminMenu {
 		<?php
 	/* Site Sub-Menu */
 		?>
-			[null,'<?php echo 'Site'; ?>',null,null,'<?php echo $text; ?>'
+			[null,'<?php echo 'Gestion du site'; ?>',null,null,'<?php echo $text; ?>'
 			],
 		<?php
 	/* Menu Sub-Menu */
@@ -417,7 +421,7 @@ class mosFullAdminMenu {
 			if ( $canConfig) {
 				?>
 				_cmSplit,
-	  			[null,'<?php echo 'Syst&egrave;me'; ?>',null,null,'<?php echo $text; ?>'
+	  			[null,'<?php echo 'Système'; ?>',null,null,'<?php echo $text; ?>'
 				],
 				<?php
 			}
@@ -435,7 +439,7 @@ class mosFullAdminMenu {
 }
 $cache =& mosCache::getCache( 'mos_fullmenu' );
 
-$hide = mosGetParam( $_REQUEST, 'hidemainmenu', 0 );
+$hide = intval( mosGetParam( $_REQUEST, 'hidemainmenu', 0 ) );
 
 if ( $hide ) {
 	mosFullAdminMenu::showDisabled( $my->usertype );

@@ -30,7 +30,7 @@ class HTML_banners {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Banner Manager
+			Gestionnaire de banni&egrave;res
 			</th>
 		</tr>
 		</table>
@@ -44,22 +44,22 @@ class HTML_banners {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th align="left" nowrap>
-			Banner Name
+			Nom de la banni&egrave;re
 			</th>
 			<th width="10%" nowrap>
-			Published
+			Publi&eacute;e
 			</th>
 			<th width="11%" nowrap>
-			Impressions Made
+			Impressions effectu&eacute;es
 			</th>
 			<th width="11%" nowrap>
-			Impressions Left
+			Impressions restantes
 			</th>
 			<th width="8%">
-			Clicks
+			Clics
 			</th>
 			<th width="8%" nowrap>
-			% Clicks
+			% Clics
 			</th>
 		</tr>
 		<?php
@@ -83,7 +83,7 @@ class HTML_banners {
 
 			$task 	= $row->showBanner ? 'unpublish' : 'publish';
 			$img 	= $row->showBanner ? 'publish_g.png' : 'publish_x.png';
-			$alt 	= $row->showBanner ? 'Published' : 'Unpublished';
+			$alt 	= $row->showBanner ? 'Publié' : 'Non Publié';
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 			?>
@@ -100,7 +100,7 @@ class HTML_banners {
 					echo $row->name;
 				} else {
 					?>
-					<a href="<?php echo $link; ?>" title="Edit Banner">
+					<a href="<?php echo $link; ?>" title="Editer banni&egrave;re">
 					<?php echo $row->name; ?>
 					</a>
 					<?php
@@ -160,13 +160,13 @@ class HTML_banners {
 			}
 			// do field validation
 			if (form.name.value == "") {
-				alert( "You must provide a banner name." );
+				alert( "Vous devez saisir un nom de bannière." );
 			} else if (getSelectedValue('adminForm','cid') < 1) {
-				alert( "Please select a client." );
+				alert( "Vous devez sélectionner un nom de client." );
 			} else if (!getSelectedValue('adminForm','imageurl')) {
-				alert( "Please select an image." );
+				alert( "Vous devez sélectionner une image." );
 			} else if (form.clickurl.value == "") {
-				alert( "Please fill in the URL for the banner." );
+				alert( "Vous devez renseigner l\'URL de la bannière." );
 			} else {
 				submitform( pressbutton );
 			}
@@ -177,9 +177,9 @@ class HTML_banners {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Banner:
+			Banni&egrave;re:
 			<small>
-			<?php echo $_row->cid ? 'Edit' : 'New';?>
+			<?php echo $_row->cid ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -188,12 +188,12 @@ class HTML_banners {
 		<table class="adminform">
 		<tr>
 			<th colspan="2">
-			Details
+			D&eacute;tails
 			</th>
 		</tr>
 		<tr>
 			<td width="20%">
-			Banner Name:
+			Nom de la banni&egrave;re:
 			</td>
 			<td width="80%">
 			<input class="inputbox" type="text" name="name" value="<?php echo $_row->name;?>" />
@@ -201,7 +201,7 @@ class HTML_banners {
 		</tr>
 		<tr>
 			<td>
-			Client Name:
+			Nom du Client:
 			</td>
 			<td align="left">
 			<?php echo $lists['cid']; ?>
@@ -209,7 +209,7 @@ class HTML_banners {
 		</tr>
 		<tr>
 			<td>
-			Impressions Purchased:
+			Impressions achet&eacute;es:
 			</td>
 			<?php
 			$unlimited = '';
@@ -221,12 +221,13 @@ class HTML_banners {
 			<td>
 			<input class="inputbox" type="text" name="imptotal" size="12" maxlength="11" value="<?php echo $_row->imptotal;?>" />
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			Unlimited <input type="checkbox" name="unlimited" <?php echo $unlimited;?> />
+			Illimit&eacute;es 
+			<input type="checkbox" name="unlimited" <?php echo $unlimited;?> />
 			</td>
 		</tr>
 		<tr>
 			<td>
-			Show Banner :
+			Afficher la banni&egrave;re :
 			</td>
 			<td>
 			<?php echo $lists['showBanner']; ?>
@@ -234,25 +235,24 @@ class HTML_banners {
 		</tr>
 		<tr>
 			<td>
-			Click URL:
-			</td>
+			 URL du lien:			</td>
 			<td>
 			<input class="inputbox" type="text" name="clickurl" size="100" maxlength="200" value="<?php echo $_row->clickurl;?>" />
 			</td>
 		</tr>
 		<tr >
 			<td valign="top" align="right">
-			Clicks
+			Nombre de Clics
 			</td>
 			<td colspan="2">
 			<?php echo $_row->clicks;?>
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input name="reset_hits" type="button" class="button" value="Reset Clicks" onclick="submitbutton('resethits');" />
+			<input name="reset_hits" type="button" class="button" value="Réinitialiser le compteur de clics" onclick="submitbutton('resethits');" />
 			</td>
 		</tr>
 		<tr>
 			<td valign="top">
-			Custom banner code:
+			Code personnalis&eacute; de banni&egrave;re :
 			</td>
 			<td>
 			<textarea class="inputbox" cols="70" rows="5" name="custombannercode"><?php echo $_row->custombannercode;?></textarea>
@@ -260,7 +260,7 @@ class HTML_banners {
 		</tr>
 		<tr>
 			<td valign="top">
-			Banner Image Selector:
+			S&eacute;lecteur d'image de banni&egrave;res:
 			</td>
 			<td align="left">
 			<?php echo $lists['imageurl']; ?>
@@ -268,7 +268,7 @@ class HTML_banners {
 		</tr>
 		<tr>
 			<td valign="top">
-			Banner Image:
+			Image de banni&egrave;re:
 			</td>
 			<td valign="top">
 			<?php
@@ -319,7 +319,7 @@ class HTML_bannerClient {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Banner Client Manager
+			Gestionnaire de clients
 			</th>
 		</tr>
 		</table>
@@ -333,13 +333,12 @@ class HTML_bannerClient {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th align="left" nowrap>
-			Client Name
-			</th>
+			Nom du client			</th>
 			<th align="left" nowrap>
 			Contact
 			</th>
 			<th align="center" nowrap>
-			No. of Active Banners
+			Nb. de banni&egrave;res actives
 			</th>
 		</tr>
 		<?php
@@ -407,11 +406,11 @@ class HTML_bannerClient {
 			}
 			// do field validation
 			if (form.name.value == "") {
-				alert( "Please fill in the Client Name." );
+				alert( "Vous devez saisir un nom de client." );
 			} else if (form.contact.value == "") {
-				alert( "Please fill in the Contact Name." );
+				alert( "Vous devez un nom de contact." );
 			} else if (form.email.value == "") {
-				alert( "Please fill in the Contact Email." );
+				alert( "Vous devez saisir l\'email du contact." );
 			} else {
 				submitform( pressbutton );
 			}
@@ -420,10 +419,9 @@ class HTML_bannerClient {
 		</script>
 		<table class="adminheading">
 		<tr>
-			<th>
-			Banner Client:
+			<th>Client de banni&egrave;res:
 			<small>
-			<?php echo $row->cid ? 'Edit' : 'New';?>
+			<?php echo $row->cid ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -433,12 +431,12 @@ class HTML_bannerClient {
 		<table class="adminform">
 		<tr>
 			<th colspan="2">
-			Details
+			D&eacute;tails
 			</th>
 		</tr>
 		<tr>
 			<td width="10%">
-			Client Name:
+			Nom du Client:
 			</td>
 			<td>
 			<input class="inputbox" type="text" name="name" size="30" maxlength="60" valign="top" value="<?php echo $row->name; ?>" />
@@ -446,24 +444,21 @@ class HTML_bannerClient {
 		</tr>
 		<tr>
 			<td width="10%">
-			Contact Name:
-			</td>
+			Nom du Contact:			</td>
 			<td>
 			<input class="inputbox" type="text" name="contact" size="30" maxlength="60" value="<?php echo $row->contact; ?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="10%">
-			Contact Email:
-			</td>
+			Email du Contact:			</td>
 			<td>
 			<input class="inputbox" type="text" name="email" size="30" maxlength="60" value="<?php echo $row->email; ?>" />
 			</td>
 		</tr>
 		<tr>
 			<td valign="top">
-			Extra Info:
-			</td>
+			Informations Suppl&eacute;mentaires:			</td>
 			<td>
 			<textarea class="inputbox" name="extrainfo" cols="60" rows="10"><?php echo str_replace('&','&amp;',$row->extrainfo);?></textarea>
 			</td>

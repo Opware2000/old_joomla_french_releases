@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: configuration.php-dist 506 2005-10-13 05:49:24Z stingrey $
+* @version $Id: configuration.php-dist 3754 2006-05-31 12:08:37Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -9,6 +9,8 @@
 * See COPYRIGHT.php for copyright notices and details.
 *
 * -------------------------------------------------------------------------
+* THIS SHOULD ONLY BE USED AS A LAST RESORT WHEN THE WEB INSTALLER FAILS
+*
 * If you are installing Joomla manually i.e. not using the web installer
 * then rename this file to configuration.php e.g.
 *
@@ -36,11 +38,12 @@ $mosConfig_lang = 'english';				// Site language
 $mosConfig_absolute_path = '/path/to/joomla/install';	// No trailing slash
 $mosConfig_live_site = 'http://your_joomla_site.com';	// No trailing slash
 $mosConfig_sitename = 'Joomla';				// Name of Joomla site
-$mosConfig_shownoauth = '1';				// Display links & categories users don't have access to
+$mosConfig_shownoauth = '0';				// Display links & categories users don't have access to
 $mosConfig_useractivation = '1';			// Send new registration passwords via e-mail
 $mosConfig_uniquemail = '1';				// Require unique email adress for each user
 $mosConfig_offline_message = 'This site is down for maintenance.<br /> Please check back again soon.';
-$mosConfig_lifetime = '900'; 				// Session time
+$mosConfig_lifetime = '900'; 				// Frontend Session time
+$mosConfig_session_life_admin = '1800';		// Admin Session Time
 $mosConfig_MetaDesc = 'Joomla - the dynamic portal engine and content management system';
 $mosConfig_MetaKeys = 'joomla';
 $mosConfig_MetaTitle = '1';
@@ -91,5 +94,8 @@ $mosConfig_dirperms = '';
 $mosConfig_helpurl = 'http://help.joomla.org';
 $mosConfig_mbf_content='0';
 $mosConfig_editor = 'tinymce';
-setlocale (LC_TIME, $mosConfig_locale);			// Country locale
+$mosConfig_admin_expired = '1';
+$mosConfig_frontend_login = '1';
+$mosConfig_frontend_userparams = '1';
+setlocale (LC_ALL, $mosConfig_locale);			// Country locale
 ?>

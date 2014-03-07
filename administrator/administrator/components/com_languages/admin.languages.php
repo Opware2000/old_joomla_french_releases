@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.languages.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: admin.languages.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Languages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -20,14 +20,11 @@ if (!$acl->acl_check( 'administration', 'config', 'users', $my->usertype )) {
 	mosRedirect( 'index2.php', _NOT_AUTH );
 }
 
-
 require_once( $mainframe->getPath( 'admin_html' ) );
 // XML library
 require_once( "$mosConfig_absolute_path/includes/domit/xml_domit_lite_include.php" );
 
-$task 	= trim( strtolower( mosGetParam( $_REQUEST, 'task', '' ) ) );
 $cid 	= mosGetParam( $_REQUEST, 'cid', array(0) );
-
 if (!is_array( $cid )) {
 	$cid = array(0);
 }
@@ -169,9 +166,9 @@ function publishLanguage( $p_lname, $option ) {
 	if ($fp = fopen("../configuration.php","w")){
 		fputs($fp, $config, strlen($config));
 		fclose($fp);
-		mosRedirect("index2.php","Configuration succesfully updated!");
+		mosRedirect("index2.php","La configuration du site a été mise à jour!");
 	} else {
-		mosRedirect("index2.php","Error! Make sure that configuration.php is writeable.");
+		mosRedirect("index2.php","Erreur! Assurez vous que le fichier configuration.php est modifiable.");
 	}
 
 }
@@ -187,7 +184,7 @@ function removeLanguage( $cid, $option, $client = 'admin' ) {
 	$cur_language = $mosConfig_lang;
 
 	if ($cur_language == $cid) {
-		mosErrorAlert( "You can not delete language in use." );
+		mosErrorAlert( "Vous ne pouvez pas supprimer la langue par défaut du site." );
 	}
 
 	/*$lang_path = "../language/$cid.php";

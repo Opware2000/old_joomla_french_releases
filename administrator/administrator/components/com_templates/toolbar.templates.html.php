@@ -23,7 +23,7 @@ class TOOLBAR_templates {
 	function _DEFAULT($client) {
 		mosMenuBar::startTable();
 		if ($client=="admin") {
-			mosMenuBar::custom('publish', 'publish.png', 'publish_f2.png', 'Default', true);
+			mosMenuBar::custom('publish', 'publish.png', 'publish_f2.png', 'Par d&eacute;faut', true);
 			mosMenuBar::spacer();
 		} else {
 			mosMenuBar::makeDefault();
@@ -66,7 +66,7 @@ class TOOLBAR_templates {
 
 	function _ASSIGN(){
 		mosMenuBar::startTable();
-		mosMenuBar::save( 'save_assign', 'Save' );
+		mosMenuBar::save( 'save_assign', 'Sauver' );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();

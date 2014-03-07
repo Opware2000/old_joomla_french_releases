@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: admin.categories.html.php 3583 2006-05-22 05:20:08Z stingrey $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -38,7 +38,7 @@ class categories_html {
 			if ( $section == 'content') {
 				?>
 				<th class="categories">
-				Category Manager <small><small>[ Content: All ]</small></small>
+				Gestionnaire de Cat&eacute;gories <small><small>[ Contenu: Toutes ]</small></small>
 				</th>
 				<td width="right">
 				<?php echo $lists['sectionid'];?>
@@ -55,9 +55,7 @@ class categories_html {
 					}
 				}
 				?>
-				<th class="categories">
-				Category Manager <small><small>[ <?php echo $section_name;?> ]</small></small>
-				</th>
+				<th class="categories">Gestionnaire de Cat&eacute;gories<small><small>[ <?php echo $section_name;?> ]</small></small>				</th>
 				<?php
 			}
 			?>
@@ -73,28 +71,28 @@ class categories_html {
 			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows );?>);" />
 			</th>
 			<th class="title">
-			Category Name
+			Nom de la cat&eacute;gorie
 			</th>
 			<th width="10%">
-			Published
+			Publi&eacute;e
 			</th>
 			<?php
 			if ( $section != 'content') {
 				?>
 				<th colspan="2" width="5%">
-				Reorder
+				R&eacute;organiser
 				</th>
 				<?php
 			}
 			?>
 			<th width="2%">
-			Order
+			Trier
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauvegarder le tri" /></a>
 			</th>
 			<th width="10%">
-			Access
+			Acc&egrave;s
 			</th>
 			<?php
 			if ( $section == 'content') {
@@ -106,16 +104,15 @@ class categories_html {
 			}
 			?>
 			<th width="5%" nowrap>
-			Category ID
-			</th>
+			ID	Cat&eacute;gorie		</th>
 			<?php
 			if ( $type == 'content') {
 				?>
 				<th width="5%">
-				# Active
+				# Actifs
 				</th>
 				<th width="5%">
-				# Trash
+				# Corbeille
 				</th>
 				<?php
 			} else {
@@ -149,11 +146,11 @@ class categories_html {
 				<td>
 				<?php
 				if ( $row->checked_out_contact_category && ( $row->checked_out_contact_category != $my->id ) ) {
-					echo $row->name .' ( '. $row->title .' )';
+					echo stripslashes( $row->name ) .' ( '. stripslashes( $row->title ) .' )';
 				} else {
 					?>
 					<a href="<?php echo $link; ?>">
-					<?php echo $row->name .' ( '. $row->title .' )'; ?>
+					<?php echo stripslashes( $row->name ) .' ( '. stripslashes( $row->title ) .' )'; ?>
 					</a>
 					<?php
 				}
@@ -184,7 +181,7 @@ class categories_html {
 				if ( $section == 'content' ) {
 					?>
 					<td align="left">
-					<a href="<?php echo $row->sect_link; ?>" title="Edit Section">
+					<a href="<?php echo $row->sect_link; ?>" title="Editer la section">
 					<?php echo $row->section_name; ?>
 					</a>
 					</td>
@@ -263,19 +260,19 @@ class categories_html {
 
 			if ( pressbutton == 'menulink' ) {
 				if ( form.menuselect.value == "" ) {
-					alert( "Please select a Menu" );
+					alert( "Merci de selectionner un menu" );
 					return;
 				} else if ( form.link_type.value == "" ) {
-					alert( "Please select a menu type" );
+					alert( "Merci de selectionner un type de menu" );
 					return;
 				} else if ( form.link_name.value == "" ) {
-					alert( "Please enter a Name for this menu item" );
+					alert( "Merci de donner un nom à cet élément de menu" );
 					return;
 				}
 			}
 
 			if ( form.name.value == "" ) {
-				alert("Category must have a name");
+				alert("La catégorie doit avoir un nom");
 			} else {
 				<?php getEditorContents( 'editor1', 'description' ) ; ?>
 				submitform(pressbutton);
@@ -287,9 +284,9 @@ class categories_html {
 		<table class="adminheading">
 		<tr>
 			<th class="categories">
-			Category:
+			Cat&eacute;gorie:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouvelle';?>
 			</small>
 			<small><small>
 			[ <?php echo $component; ?>: <?php echo $row->name; ?> ]
@@ -304,23 +301,19 @@ class categories_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Category Details
-					</th>
+					D&eacute;tails de la cat&eacute;gorie</th>
 				<tr>
 				<tr>
 					<td>
-					Category Title:
-					</td>
+					Titre de la Cat&eacute;gorie:					</td>
 					<td colspan="2">
-					<input class="text_area" type="text" name="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="A short name to appear in menus" />
+					<input class="text_area" type="text" name="title" value="<?php echo stripslashes( $row->title ); ?>" size="50" maxlength="50" title="Un nom court pour les menus" />
 					</td>
 				</tr>
 				<tr>
-					<td>
-					Category Name:
-					</td>
+					<td>Nom de la Cat&eacute;gorie:					</td>
 					<td colspan="2">
-					<input class="text_area" type="text" name="name" value="<?php echo $row->name; ?>" size="50" maxlength="255" title="A long name to be displayed in headings" />
+					<input class="text_area" type="text" name="name" value="<?php echo stripslashes( $row->name ); ?>" size="50" maxlength="255" title="Un nom long pour les titres" />
 					</td>
 				</tr>
 				<tr>
@@ -333,12 +326,20 @@ class categories_html {
 				</tr>
 				<tr>
 					<td>
+					Ordre:
+					</td>
+					<td colspan="2">
+					<?php echo $lists['ordering']; ?>
+					</td>
+				</tr>
+				<tr>
+					<td>
 					Image:
 					</td>
 					<td>
 					<?php echo $lists['image']; ?>
 					</td>
-					<td rowspan="4" width="50%">
+					<td rowspan="5" width="50%">
 					<script language="javascript" type="text/javascript">
 					if (document.forms[0].image.options.value!=''){
 					  jsimg='../images/stories/' + getSelectedValue( 'adminForm', 'image' );
@@ -351,7 +352,7 @@ class categories_html {
 				</tr>
 				<tr>
 					<td>
-					Image Position:
+					Position de l'image:
 					</td>
 					<td>
 					<?php echo $lists['image_position']; ?>
@@ -359,15 +360,7 @@ class categories_html {
 				</tr>
 				<tr>
 					<td>
-					Ordering:
-					</td>
-					<td>
-					<?php echo $lists['ordering']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Access Level:
+					Niveau d'acc&eagrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -375,17 +368,19 @@ class categories_html {
 				</tr>
 				<tr>
 					<td>
-					Published:
+					Publi&eacute;e:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">
+					<td valign="top" colspan="2">
 					Description:
 					</td>
-					<td colspan="2">
+				</tr>
+				<tr>
+					<td colspan="3">
 					<?php
 					// parameters : areaname, content, hidden field, width, height, rows, cols
 					editorArea( 'editor1',  $row->description , 'description', '100%;', '300', '60', '20' ) ; ?>
@@ -400,34 +395,35 @@ class categories_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Link to Menu
+					Lier au Menu
 					</th>
 				<tr>
 				<tr>
 					<td colspan="2">
-					This will create a new menu item in the menu you select
-					<br /><br />
+					Ceci va cr&eacute;er un nouvel &eacute;l&eacute;ment dans le menu s&eacute;lectionn&eacute;
+					<br />
+					<br />
 					</td>
 				<tr>
 				<tr>
-					<td valign="top" width="100px">
-					Select a Menu
+					<td valign="top" width="100">
+					S&eacute;lectionner un menu
 					</td>
 					<td>
 					<?php echo $lists['menuselect']; ?>
 					</td>
 				<tr>
 				<tr>
-					<td valign="top" width="100px">
-					Select Menu Type
+					<td valign="top" width="100">
+					S&eacute;lectionner un type de menu
 					</td>
 					<td>
 					<?php echo $lists['link_type']; ?>
 					</td>
 				<tr>
 				<tr>
-					<td valign="top" width="100px">
-					Menu Item Name
+					<td valign="top" width="100">
+					Nom de l'&eacute;l&eacute;ment de menu
 					</td>
 					<td>
 					<input type="text" name="link_name" class="inputbox" value="" size="25" />
@@ -437,12 +433,12 @@ class categories_html {
 					<td>
 					</td>
 					<td>
-					<input name="menu_link" type="button" class="button" value="Link to Menu" onClick="submitbutton('menulink');" />
+					<input name="menu_link" type="button" class="button" value="Lier au Menu" onClick="submitbutton('menulink');" />
 					</td>
 				<tr>
 				<tr>
 					<th colspan="2">
-					Existing Menu Links
+					El&eacute;ment de menu existants
 					</th>
 				</tr>
 				<?php
@@ -450,7 +446,7 @@ class categories_html {
 					?>
 					<tr>
 						<td colspan="2">
-						None
+						Aucun
 						</td>
 					</tr>
 					<?php
@@ -467,11 +463,37 @@ class categories_html {
 			} else {
 			?>
 			<table class="adminform" width="40%">
-				<tr><th>&nbsp;</th></tr>
-				<tr><td>Menu links available when saved</td></tr>
+				<tr>
+						<th>
+						&nbsp;
+						</th>
+					</tr>
+					<tr>
+						<td>
+						El&eacute;ment de menu disponibles apr&egrave;s l'enregistrement
+						</td>
+				</tr>
 			</table>
 			<?php
 			}
+				// content
+				if ( $row->section > 0 || $row->section == 'content' ) {
+					?>
+					<br />
+					<table class="adminform">
+					<tr>
+						<th colspan="2">
+						R&eacute;pertoires MOSImage
+						</th>
+					<tr>
+					<tr>
+						<td colspan="2">
+						<?php echo $lists['folders']; ?>
+						</td>
+					<tr>	
+					</table>		
+					<?php
+				}
 			?>
 			</td>
 		</tr>
@@ -499,7 +521,7 @@ class categories_html {
 		<table class="adminheading">
 		<tr>
 			<th class="categories">
-			Move Category
+			D&eacute;placer une Cat&eacute;gorie
 			</th>
 		</tr>
 		</table>
@@ -509,13 +531,13 @@ class categories_html {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
-			<strong>Move to Section:</strong>
+			<strong>D&eacute;placer dans la Section:</strong>
 			<br />
 			<?php echo $SectionList ?>
 			<br /><br />
 			</td>
 			<td align="left" valign="top" width="20%">
-			<strong>Categories being moved:</strong>
+			<strong>Cat&eacute;gories &agrave; d&eacute;placer:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -526,7 +548,7 @@ class categories_html {
 			?>
 			</td>
 			<td valign="top" width="20%">
-			<strong>Content Items being moved:</strong>
+			<strong>Articles &agrave; d&eacute;placer:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -537,11 +559,11 @@ class categories_html {
 			?>
 			</td>
 			<td valign="top">
-			This will move the Categories listed
+			Ceci d&eacute;placera les cat&eacute;gories s&eacute;lectionn&eacute;es
 			<br />
-			and all the items within the category (also listed)
+			et tous les articles qu'elles contiennent
 			<br />
-			to the selected Section.
+			dans la section s&eacute;lectionn&eacute;e.
 			</td>.
 		</tr>
 		</table>
@@ -582,13 +604,13 @@ class categories_html {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
-			<strong>Copy to Section:</strong>
+			<strong>Copier dans la Section:</strong>
 			<br />
 			<?php echo $SectionList ?>
 			<br /><br />
-			</td>
+		  </td>
 			<td align="left" valign="top" width="20%">
-			<strong>Categories being copied:</strong>
+			<strong>Cat&eacute;gories &agrave;  copier:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -597,9 +619,9 @@ class categories_html {
 			}
 			echo "</ol>";
 			?>
-			</td>
+		  </td>
 			<td valign="top" width="20%">
-			<strong>Content Items being copied:</strong>
+			<strong>Articles &agrave;  copier:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -609,13 +631,13 @@ class categories_html {
 			}
 			echo "</ol>";
 			?>
-			</td>
+		  </td>
 			<td valign="top">
-			This will copy the Categories listed
+			Ceci copiera les cat&eacute;gories s&eacute;lectionn&eacute;es
 			<br />
-			and all the items within the category (also listed)
+			et tous les articles qu'elles contiennent
 			<br />
-			to the selected Section.
+			dans la section s&eacute;lectionn&eacute;e.
 			</td>.
 		</tr>
 		</table>

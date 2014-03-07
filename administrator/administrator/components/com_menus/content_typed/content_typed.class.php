@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content_typed.class.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: content_typed.class.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -90,7 +90,7 @@ class content_typed_menu {
 		// build published button option
 		$lists['published'] 	= mosAdminMenus::Published( $menu );
 		// build the url link output
-		$lists['link'] 		= mosAdminMenus::Link( $menu, $uid );
+		$lists['link'] 			= mosAdminMenus::Link( $menu, $uid );
 
 		// get params definitions
 		$params = new mosParameters( $menu->params, $mainframe->getPath( 'menu_xml', $menu->type ), 'menu' );
@@ -103,7 +103,7 @@ class content_typed_menu {
 
 		$menu = new mosMenu( $database );
 		$menu->bind( $_POST );
-		$menuid = mosGetParam( $_POST, 'menuid', 0 );
+		$menuid = intval( mosGetParam( $_POST, 'menuid', 0 ) );
 		if ( $menuid ) {
 			$menu->id = $menuid;
 		}

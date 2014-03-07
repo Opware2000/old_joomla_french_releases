@@ -40,13 +40,13 @@ class content_archive_section_menu_html {
 			if ( !$menu->id ) {
 				?>
 				if ( getSelectedValue( 'adminForm', 'componentid' ) < 0 ) {
-					alert( 'You must select a Section' );
+					alert( 'Vous devez sélectionner une section' );
 					return;
 				}
 
 				if ( form.name.value == '' ) {
 					if ( form.componentid.value == 0 ) {
-						form.name.value = "All Sections";
+						form.name.value = "Toutes les sections";
 					} else {
 						form.name.value = form.componentid.options[form.componentid.selectedIndex].text;
 					}
@@ -57,7 +57,7 @@ class content_archive_section_menu_html {
 			} else {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 				} else {
 					submitform( pressbutton );
 				}
@@ -71,7 +71,7 @@ class content_archive_section_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Blog - Content Section Archive
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Blog - Archive de section
 			</th>
 		</tr>
 		</table>
@@ -82,18 +82,18 @@ class content_archive_section_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
-					<td width="10%" align="right" valign="top">Name:</td>
+					<td width="10%" align="right" valign="top">Nom du lien:</td>
 					<td width="200px">
 					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo $menu->name; ?>"/>
 					</td>
 					<td>
 					<?php
 					if ( !$menu->id ) {
-						echo mosToolTip( 'If you leave this blank the Section name will be automatically used' );
+						echo mosToolTip( 'si ce champ est vierge, le nom de la catégorie sélectionnée sera automatiquement utilisé' );
 					}
 					?>
 					</td>
@@ -111,25 +111,25 @@ class content_archive_section_menu_html {
 					</td>
 				</tr>
 				<tr>
-					<td align="right">Parent Item:</td>
+					<td align="right">Lien parent:</td>
 					<td colspan="2">
 					<?php echo $lists['parent']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Ordering:</td>
+					<td valign="top" align="right">Ordre:</td>
 					<td colspan="2">
 					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Access Level:</td>
+					<td valign="top" align="right">Niveau d'accès:</td>
 					<td colspan="2">
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td colspan="2">
 					<?php echo $lists['published']; ?>
 					</td>
@@ -143,7 +143,7 @@ class content_archive_section_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

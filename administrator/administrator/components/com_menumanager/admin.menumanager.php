@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menumanager.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: admin.menumanager.php 3876 2006-06-05 14:08:05Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,9 +22,8 @@ if (!$acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'compo
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-$menu 		= mosGetParam( $_GET, 'menu', '' );
-$task 		= mosGetParam( $_REQUEST, 'task', array(0) );
-$type 		= mosGetParam( $_POST, 'type', '' );
+$menu 		= strval( mosGetParam( $_GET, 'menu', '' ) );
+$type 		= strval( mosGetParam( $_POST, 'type', '' ) );
 $cid 		= mosGetParam( $_POST, 'cid', '' );
 
 switch ($task) {
@@ -75,8 +74,8 @@ switch ($task) {
 function showMenu( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{". $option ."}limitstart", 'limitstart', 0 );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{". $option ."}limitstart", 'limitstart', 0 ) );
 
 	$menuTypes 	= mosAdminMenus::menutypes();
 	$total		= count( $menuTypes );
@@ -199,9 +198,9 @@ function editMenu( $option, $menu ) {
 function saveMenu() {
 	global $database;
 
-	$menutype 		= mosGetParam( $_POST, 'menutype', '' );
-	$old_menutype 	= mosGetParam( $_POST, 'old_menutype', '' );
-	$new			= mosGetParam( $_POST, 'new', 1 );
+	$menutype 		= strval( mosGetParam( $_POST, 'menutype', '' ) );
+	$old_menutype 	= strval( mosGetParam( $_POST, 'old_menutype', '' ) );
+	$new			= intval( mosGetParam( $_POST, 'new', 1 ) );
 
 	// block to stop renaming of 'mainmenu' menutype
 	if ( $old_menutype == 'mainmenu' ) {
@@ -211,6 +210,12 @@ function saveMenu() {
 		}
 	}
 
+	// check for ' in menu name
+	if (strstr($menutype, '\'')) {
+		echo "<script> alert('The menu name cannot contain a \''); window.history.go(-1); </script>\n";
+		exit;
+	}
+	
 	// check for unique menutype for new menus
 	$query = "SELECT params"
 	. "\n FROM #__modules"
@@ -429,6 +434,9 @@ function deleteMenu( $option, $cid, $type ) {
 		$mod->updateOrder( "position='right'" );
 	}
 
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+	
 	$msg = 'Menu Deleted';
 	mosRedirect( 'index2.php?option=' . $option, $msg );
 }
@@ -459,8 +467,8 @@ function copyConfirm( $option, $type ) {
 function copyMenu( $option, $cid, $type ) {
 	global $database;
 
-	$menu_name 		= mosGetParam( $_POST, 'menu_name', 'New Menu' );
-	$module_name 	= mosGetParam( $_POST, 'module_name', 'New Module' );
+	$menu_name 		= strval( mosGetParam( $_POST, 'menu_name', 'New Menu' ) );
+	$module_name 	= strval( mosGetParam( $_POST, 'module_name', 'New Module' ) );
 
 	// check for unique menutype for new menu copy
 	$query = "SELECT params"
@@ -532,6 +540,9 @@ function copyMenu( $option, $cid, $type ) {
 		exit();
 	}
 
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+	
 	$msg = 'Copy of Menu `'. $type .'` created, consisting of '. $total .' items';
 	mosRedirect( 'index2.php?option=' . $option, $msg );
 }

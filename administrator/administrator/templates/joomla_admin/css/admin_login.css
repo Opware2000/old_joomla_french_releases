@@ -1,5 +1,5 @@
 /**
-* @version $Id: admin_login.css 47 2005-09-15 02:55:27Z rhuk $
+* @version $Id: admin_login.css 3551 2006-05-18 20:23:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -131,4 +131,15 @@ form {
 
 .footer {
 
+}
+
+.message {
+	margin-top: 10px; 
+	padding: 7px; 
+	width: 400px;
+	border: 1px solid #B22222;
+	background: #F1F3F5;
+	color: #B22222;	
+	font-weight: bold;
+	font-size: 13px;
 }

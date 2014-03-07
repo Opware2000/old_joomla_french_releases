@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <mosinstall type="module" version="1.0.0">
-	<name>Who's Online</name>
+	<name>Qui est en ligne</name>
 	<author>Joomla! Project</author>
 	<creationDate>July 2004</creationDate>
 	<copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
@@ -8,16 +8,16 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-	<description>The Who's Online module displays the number of anonymous (that is, Guest) users and Registered users, (those that are logged in) that are currently accessing the web site.</description>
+	<description>Ce module affiche le nombre d'utilisateurs en ligne.</description>
 	<files>
 		<filename module="mod_whosonline">mod_whosonline.php</filename>
 	</files>
 	<params>
-	  <param name="showmode" type="radio" default="0" label="Display" description="Select what shall be shown">
-		<option value="0"># of Guests/Members&lt;br&gt;</option>
-		<option value="1">Member Names&lt;br&gt;</option>
-		<option value="2">Both</option>
+	  <param name="showmode" type="radio" default="0" label="Affichage" description="Sélectionnez ce que vous voulez afficher">
+		<option value="0"># de Visiteurs/Membres</option>
+		<option value="1">Nom des membres</option>
+		<option value="2">Les deux</option>
 	  </param>
-	  <param name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (table.moduletable), this allows individual module styling" />
+	  <param name="moduleclass_sfx" type="text" default="" label="Suffixe CSS de module" description="Un suffixe à appliquer à la classe CSS du module (table.moduletable). Cela permet une mise en page individualisée." />
 	</params>
 </mosinstall>

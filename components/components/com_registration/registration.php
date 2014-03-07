@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.php 1489 2005-12-20 15:14:54Z Jinx $
+* @version $Id: registration.php 3752 2006-05-31 11:42:32Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,7 +14,14 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
+global $mosConfig_frontend_login;
+
 require_once( $mainframe->getPath( 'front_html' ) );
+
+if ( $mosConfig_frontend_login != NULL && ($mosConfig_frontend_login === 0 || $mosConfig_frontend_login === '0')) {
+	echo _NOT_AUTH;
+	return;
+}
 
 switch( $task ) {
 	case 'lostPassword':
@@ -30,7 +37,7 @@ switch( $task ) {
 		break;
 
 	case 'saveRegistration':
-		saveRegistration( $option );
+		saveRegistration();
 		break;
 
 	case 'activate':
@@ -88,7 +95,7 @@ function sendNewPass( $option ) {
 		die("SQL error" . $database->stderr(true));
 	}
 
-	mosRedirect( "index.php?option=com_registration&mosmsg="._NEWPASS_SENT );
+	mosRedirect( 'index.php?option=com_registration&mosmsg='. _NEWPASS_SENT );
 }
 
 function registerForm( $option, $useractivation ) {
@@ -104,12 +111,12 @@ function registerForm( $option, $useractivation ) {
 	HTML_registration::registerForm($option, $useractivation);
 }
 
-function saveRegistration( $option ) {
+function saveRegistration() {
 	global $database, $acl;
 	global $mosConfig_sitename, $mosConfig_live_site, $mosConfig_useractivation, $mosConfig_allowUserRegistration;
 	global $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_mailfrom, $mosConfig_fromname;
 
-	if ($mosConfig_allowUserRegistration=='0') {
+	if ( $mosConfig_allowUserRegistration == 0 ) {
 		mosNotAuth();
 		return;
 	}
@@ -122,26 +129,26 @@ function saveRegistration( $option ) {
 
 	mosMakeHtmlSafe($row);
 
-	$row->id = 0;
-	$row->usertype = '';
-	$row->gid = $acl->get_group_id( 'Registered', 'ARO' );
+	$row->id 		= 0;
+	$row->usertype 	= '';
+	$row->gid 		= $acl->get_group_id( 'Registered', 'ARO' );
 
-	if ($mosConfig_useractivation == '1') {
+	if ( $mosConfig_useractivation == 1 ) {
 		$row->activation = md5( mosMakePassword() );
 		$row->block = '1';
 	}
 
 	if (!$row->check()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+		echo "<script> alert('".html_entity_decode($row->getError())."'); window.history.go(-1); </script>\n";
 		exit();
 	}
 
 	$pwd 				= $row->password;
 	$row->password 		= md5( $row->password );
-	$row->registerDate 	= date('Y-m-d H:i:s');
+	$row->registerDate 	= date( 'Y-m-d H:i:s' );
 
 	if (!$row->store()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+		echo "<script> alert('".html_entity_decode($row->getError())."'); window.history.go(-1); </script>\n";
 		exit();
 	}
 	$row->checkin();
@@ -152,18 +159,21 @@ function saveRegistration( $option ) {
 
 	$subject 	= sprintf (_SEND_SUB, $name, $mosConfig_sitename);
 	$subject 	= html_entity_decode($subject, ENT_QUOTES);
-	if ($mosConfig_useractivation=="1"){
+	
+	if ($mosConfig_useractivation == 1){
 		$message = sprintf (_USEND_MSG_ACTIVATE, $name, $mosConfig_sitename, $mosConfig_live_site."/index.php?option=com_registration&task=activate&activation=".$row->activation, $mosConfig_live_site, $username, $pwd);
 	} else {
 		$message = sprintf (_USEND_MSG, $name, $mosConfig_sitename, $mosConfig_live_site);
 	}
 
 	$message = html_entity_decode($message, ENT_QUOTES);
-	// Send email to user
-	if ($mosConfig_mailfrom != "" && $mosConfig_fromname != "") {
-		$adminName2 = $mosConfig_fromname;
-		$adminEmail2 = $mosConfig_mailfrom;
+	
+	// check if Global Config `mailfrom` and `fromname` values exist
+	if ($mosConfig_mailfrom != '' && $mosConfig_fromname != '') {
+		$adminName2 	= $mosConfig_fromname;
+		$adminEmail2 	= $mosConfig_mailfrom;
 	} else {
+	// use email address and name of first superadmin for use in email sent to user
 		$query = "SELECT name, email"
 		. "\n FROM #__users"
 		. "\n WHERE LOWER( usertype ) = 'superadministrator'"
@@ -172,10 +182,12 @@ function saveRegistration( $option ) {
 		$database->setQuery( $query );
 		$rows = $database->loadObjectList();
 		$row2 			= $rows[0];
+		
 		$adminName2 	= $row2->name;
 		$adminEmail2 	= $row2->email;
 	}
 
+	// Send email to user
 	mosMail($adminEmail2, $adminName2, $email, $subject, $message);
 
 	// Send notification to all administrators
@@ -184,24 +196,21 @@ function saveRegistration( $option ) {
 	$subject2 = html_entity_decode($subject2, ENT_QUOTES);
 	$message2 = html_entity_decode($message2, ENT_QUOTES);
 
-	// get superadministrators id
-	$admins = $acl->get_group_objects( 25, 'ARO' );
-
-	foreach ( $admins['users'] AS $id ) {
-		$query = "SELECT email, sendEmail"
-		. "\n FROM #__users"
-		."\n WHERE id = $id"
-		;
-		$database->setQuery( $query );
-		$rows = $database->loadObjectList();
-
-		$row = $rows[0];
-
-		if ($row->sendEmail) {
-			mosMail($adminEmail2, $adminName2, $row->email, $subject2, $message2);
-		}
+	// get email addresses of all admins and superadmins set to recieve system emails
+	$query = "SELECT email, sendEmail"
+	. "\n FROM #__users"
+	. "\n WHERE ( gid = 24 OR gid = 25 )"
+	. "\n AND sendEmail = 1"
+	. "\n AND block = 0"
+	;
+	$database->setQuery( $query );
+	$admins = $database->loadObjectList();
+	
+	foreach ( $admins as $admin ) {
+		// send email to admin & super admin set to recieve system emails
+		mosMail($adminEmail2, $adminName2, $admin->email, $subject2, $message2);
 	}
-
+		
 	if ( $mosConfig_useractivation == 1 ){
 		echo _REG_COMPLETE_ACTIVATE;
 	} else {
@@ -210,8 +219,14 @@ function saveRegistration( $option ) {
 }
 
 function activate( $option ) {
-	global $database;
+	global $database, $my;
 	global $mosConfig_useractivation, $mosConfig_allowUserRegistration;
+
+	if($my->id) {
+		// They're already logged in, so redirect them to the home page
+		mosRedirect( 'index.php' );
+	}
+		
 
 	if ($mosConfig_allowUserRegistration == '0' || $mosConfig_useractivation == '0') {
 		mosNotAuth();

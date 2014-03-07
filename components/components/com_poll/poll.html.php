@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.html.php 1830 2006-01-15 12:45:17Z stingrey $
+* @version $Id: poll.html.php 3163 2006-04-19 23:53:40Z eddieajau $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -66,9 +66,11 @@ class poll_html {
 					$j=0;
 					$data_arr["text"]=null;
 					$data_arr["hits"]=null;
+$data_arr['voters']=null;
 					foreach ($votes as $vote) {
 						$data_arr["text"][$j]=trim($vote->text);
 						$data_arr["hits"][$j]=$vote->hits;
+                                                $data_arr["voters"][$j]=$vote->voters;
 						$j++;
 					}
 					?>
@@ -77,14 +79,6 @@ class poll_html {
 						<?php
 						poll_html::graphit( $data_arr, $poll->title, $first_vote, $last_vote );
 						?>
-						</td>
-					</tr>
-					<?php
-				} else {
-					?>
-					<tr>
-						<td valign="bottom">
-						<?php echo _NO_RESULTS; ?>
 						</td>
 					</tr>
 					<?php
@@ -119,10 +113,9 @@ class poll_html {
 				$maxval = $hits;
 			}
 		}
-		$sumval = array_sum( $data_arr["hits"] );
 		?>
 		<br />
-		<table class='pollstableborder' cellspacing="0" cellpadding="0" border="0">
+		<table class="pollstableborder" cellspacing="0" cellpadding="0" border="0">
 		<tr>
 			<td colspan="2" class="sectiontableheader">
 			<img src="<?php echo $mosConfig_live_site; ?>/components/com_poll/images/poll.png" align="middle" border="0" width="12" height="14" alt="" />
@@ -133,6 +126,7 @@ class poll_html {
 		for ($i=0, $n=count($data_arr["text"]); $i < $n; $i++) {
 			$text = &$data_arr["text"][$i];
 			$hits = &$data_arr["hits"][$i];
+			$sumval = &$data_arr['voters'][$i];
 			if ($maxval > 0 && $sumval > 0) {
 				$width = ceil( $hits*$polls_graphwidth/$maxval );
 				$percent = round( 100*$hits/$sumval, 1 );

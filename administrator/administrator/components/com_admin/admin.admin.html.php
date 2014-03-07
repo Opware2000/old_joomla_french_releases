@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.admin.html.php 310 2005-10-02 11:17:00Z stingrey $
+* @version $Id: admin.admin.html.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Admin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -30,7 +30,7 @@ class HTML_admin_misc {
 		<table class="adminheading" border="0">
 		<tr>
 			<th class="cpanel">
-			Control Panel
+			Panneau de contr&ocirc;le
 			</th>
 		</tr>
 		</table>
@@ -60,8 +60,8 @@ class HTML_admin_misc {
 	}
 
 	function system_info( $version ) {
-		global $mosConfig_absolute_path, $database;
-		//$tab = mosGetParam( $_REQUEST, 'tab', 'tab1' );
+		global $mosConfig_absolute_path, $database, $mosConfig_cachepath, $my;
+
 		$width = 400;	// width of 100%
 		$tabs = new mosTabs(0);
 		?>
@@ -76,17 +76,16 @@ class HTML_admin_misc {
 		
 		<?php
 		$tabs->startPane("sysinfo");
-		$tabs->startTab("System Info","system-page");
+		$tabs->startTab("Info. Syst&egrave;me","system-page");
 		?>
 			<table class="adminform">
 			<tr>
 				<th colspan="2">
-					System Information
-				</th>
+					Information	Syst&egrave;me			</th>
 			</tr>
 			<tr>
 				<td valign="top" width="250">
-					<strong>PHP built On:</strong>
+					<strong>PHP h&eacute;berg&eacute; sur:</strong>
 				</td>
 				<td>
 					<?php echo php_uname(); ?>
@@ -94,7 +93,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>Database Version:</strong>
+					<strong>Version Base de donn&eacute;es:</strong>
 				</td>
 				<td>
 					<?php echo $database->getVersion(); ?>
@@ -102,7 +101,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>PHP Version:</strong>
+					<strong>Version PHP:</strong>
 				</td>
 				<td>
 					<?php echo phpversion(); ?>
@@ -110,7 +109,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>Web Server:</strong>
+					<strong>Serveur Web:</strong>
 				</td>
 				<td>
 					<?php echo HTML_admin_misc::get_server_software(); ?>
@@ -118,7 +117,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>WebServer to PHP interface:</strong>
+					<strong>Interface serveur Web vers PHP:</strong>
 				</td>
 				<td>
 					<?php echo php_sapi_name(); ?>
@@ -126,7 +125,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>Joomla! Version:</strong>
+					<strong>Version Joomla!:</strong>
 				</td>
 				<td>
 					<?php echo $version; ?>
@@ -134,7 +133,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td>
-					<strong>User Agent:</strong>
+					<strong>Navigateur:</strong>
 				</td>
 				<td>
 					<?php echo phpversion() <= "4.2.1" ? getenv( "HTTP_USER_AGENT" ) : $_SERVER['HTTP_USER_AGENT'];?>
@@ -142,7 +141,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td valign="top">
-					<strong>Relevant PHP Settings:</strong>
+					<strong>Principaux param&egrave;trages PHP:</strong>
 				</td>
 				<td>
 					<table cellspacing="1" cellpadding="1" border="0">
@@ -270,8 +269,7 @@ class HTML_admin_misc {
 			</tr>
 			<tr>
 				<td valign="top">
-					<strong>Configuration File:</strong>
-				</td>
+					<strong>Fichier de Configuration:</strong>				</td>
 				<td>
 				<?php
 				$cf = file( $mosConfig_absolute_path . '/configuration.php' );
@@ -295,13 +293,12 @@ class HTML_admin_misc {
 			</table>
 		<?php
 		$tabs->endTab();
-		$tabs->startTab("PHP Info","php-page");
+		$tabs->startTab("Info. PHP","php-page");
 		?>
 			<table class="adminform">
 			<tr>
 				<th colspan="2">
-					PHP Information
-				</th>
+					Information PHP				</th>
 			</tr>
 			<tr>
 				<td>
@@ -327,18 +324,19 @@ class HTML_admin_misc {
 			<table class="adminform">
 			<tr>
 				<th colspan="2">
-					Directory Permissions
+					Autorisations R&eacute;pertoires
 				</th>
 			</tr>
 			<tr>
 				<td>
 					<strong>For all Joomla! functions and features to work ALL of the following directories should be writeable:</strong>
 					<?php
+					$sp = ini_get('session.save_path');
+										
 					mosHTML::writableCell( 'administrator/backups' );
 					mosHTML::writableCell( 'administrator/components' );
 					mosHTML::writableCell( 'administrator/modules' );
 					mosHTML::writableCell( 'administrator/templates' );
-					mosHTML::writableCell( 'cache' );
 					mosHTML::writableCell( 'components' );
 					mosHTML::writableCell( 'images' );
 					mosHTML::writableCell( 'images/banners' );
@@ -352,6 +350,8 @@ class HTML_admin_misc {
 					mosHTML::writableCell( 'media' );
 					mosHTML::writableCell( 'modules' );
 					mosHTML::writableCell( 'templates' );				
+					mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ' );
+					mosHTML::writableCell( $sp, 0, '<strong>Session Directory</strong> ' );
 					?>
 				</td>
 			</tr>
@@ -382,7 +382,7 @@ class HTML_admin_misc {
 	 */
 	function help() {
 		global $mosConfig_live_site;
-		$helpurl 	= mosGetParam( $GLOBALS, 'mosConfig_helpurl', '' );
+		$helpurl 	= strval( mosGetParam( $GLOBALS, 'mosConfig_helpurl', '' ) );
 		
 		if ( $helpurl == 'http://help.mamboserver.com' ) {
 			$helpurl = 'http://help.joomla.org';
@@ -390,8 +390,8 @@ class HTML_admin_misc {
 		
 		$fullhelpurl = $helpurl . '/index2.php?option=com_content&amp;task=findkey&pop=1&keyref=';
 
-		$helpsearch = mosGetParam( $_REQUEST, 'helpsearch', '' );
-		$page 		= mosGetParam( $_REQUEST, 'page', 'joomla.whatsnew100.html' );
+		$helpsearch = strval( mosGetParam( $_REQUEST, 'helpsearch', '' ) );
+		$page 		= strval( mosGetParam( $_REQUEST, 'page', 'joomla.whatsnew100.html' ) );
 		$toc 		= getHelpToc( $helpsearch );
 		if (!eregi( '\.html$', $page )) {
 			$page .= '.xml';
@@ -419,7 +419,7 @@ class HTML_admin_misc {
 		<table class="adminform" border="1">
 			<tr>
 				<th colspan="2" class="title">
-					Help
+					Aide (en Anglais)
 				</th>
 			</tr>
 			<tr>
@@ -427,21 +427,21 @@ class HTML_admin_misc {
 				<table width="100%">
 					<tr>
 						<td>
-							<strong>Search:</strong>
+							<strong>Rechercher:</strong>
 							<input class="text_area" type="hidden" name="option" value="com_admin" />
 							<input type="text" name="helpsearch" value="<?php echo $helpsearch;?>" class="inputbox" />
-							<input type="submit" value="Go" class="button" />
-							<input type="button" value="Clear Results" class="button" onclick="f=document.adminForm;f.helpsearch.value='';f.submit()" />
-							</td>
+							<input type="submit" value="Chercher" class="button" />
+							<input type="button" value="Effacer Resultats" class="button" onclick="f=document.adminForm;f.helpsearch.value='';f.submit()" />
+					  </td>
 							<td style="text-align:right">
 							<?php
 							if ($helpurl) {
 							?>
 							<a href="<?php echo $fullhelpurl;?>joomla.glossary" target="helpFrame">
-								Glossary</a>
+								Glossaire</a>
 							|
 							<a href="<?php echo $fullhelpurl;?>joomla.credits" target="helpFrame">
-								Credits</a>
+								Cr&eacute;dits</a>
 							|
 							<a href="<?php echo $fullhelpurl;?>joomla.support" target="helpFrame">
 								Support</a>
@@ -449,10 +449,10 @@ class HTML_admin_misc {
 							} else {
 							?>
 							<a href="<?php echo $mosConfig_live_site;?>/help/joomla.glossary.html" target="helpFrame">
-								Glossary</a>
+								Glossaire</a>
 							|
 							<a href="<?php echo $mosConfig_live_site;?>/help/joomla.credits.html" target="helpFrame">
-								Credits</a>
+								Cr&eacute;dits</a>
 							|
 							<a href="<?php echo $mosConfig_live_site;?>/help/joomla.support.html" target="helpFrame">
 								Support</a>
@@ -470,11 +470,10 @@ class HTML_admin_misc {
 								Changelog</a>
 							|
 							<a href="<?php echo $mosConfig_live_site;?>/administrator/index3.php?option=com_admin&task=sysinfo" target="helpFrame">
-								System Info</a>
+								Infos&nbsp;Syst&egrave;me</a>
 							|
 							<a href="http://www.joomla.org/content/blogcategory/32/66/" target="_blank">
-								Latest Version Check</a>
-						</td>
+								Derni&egrave;re&nbsp;Version </a>						</td>
 					</tr>
 				</table>
 			</td>
@@ -523,11 +522,11 @@ class HTML_admin_misc {
 		<table class="adminform">
 		<tr>
 			<th width="50%" class="title">
-			Site Preview
+			Pr&eacute;visualisation du site
 			</th>
 			<th width="50%" style="text-align:right">
 			<a href="<?php echo $mosConfig_live_site . '/index.php?tp=' . $tp;?>" target="_blank">
-			Open in new window
+			Ouvrir dans une nouvelle fen&ecirc;tre
 			</a>
 			</th>
 		</tr>
@@ -560,7 +559,7 @@ class HTML_admin_misc {
  */
 function getHelpTOC( $helpsearch ) {
 	global $mosConfig_absolute_path;
-	$helpurl = mosGetParam( $GLOBALS, 'mosConfig_helpurl', '' );
+	$helpurl = strval( mosGetParam( $GLOBALS, 'mosConfig_helpurl', '' ) );
 
 	$files = mosReadDirectory( $mosConfig_absolute_path . '/help/', '\.xml$|\.html$' );
 

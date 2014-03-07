@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.modules.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.modules.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,7 +22,7 @@ switch ($task) {
 	case 'edit':
 		$cid = mosGetParam( $_POST, 'cid', 0 );
 		if ( !is_array( $cid ) ){
-			$mid = mosGetParam( $_POST, 'id', 0 );;
+			$mid = intval( mosGetParam( $_POST, 'id', 0 ) );
 		} else {
 			$mid = $cid[0];
 		}

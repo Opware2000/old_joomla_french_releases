@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_search.php 1777 2006-01-12 20:56:35Z stingrey $
+* @version $Id: mod_search.php 3112 2006-04-14 03:47:46Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,6 +19,7 @@ $button_pos		= $params->get( 'button_pos', 'left' );
 $button_text	= $params->get( 'button_text', _SEARCH_TITLE );
 $width 			= intval( $params->get( 'width', 20 ) );
 $text 			= $params->get( 'text', _SEARCH_BOX );
+$set_Itemid		= intval( $params->get( 'set_itemid', 0 ) );
 
 $output = '<input name="searchword" id="mod_search_searchword" maxlength="20" alt="search" class="inputbox'. $moduleclass_sfx .'" type="text" size="'. $width .'" value="'. $text .'"  onblur="if(this.value==\'\') this.value=\''. $text .'\';" onfocus="if(this.value==\''. $text .'\') this.value=\'\';" />';
 
@@ -47,19 +48,29 @@ switch ( $button_pos ) {
 		break;
 }
 
-$query = "SELECT id"
-. "\n FROM #__menu"
-. "\n WHERE link = 'index.php?option=com_search'"
-;
-$database->setQuery( $query );
-$rows = $database->loadObjectList();
-
-if ( count( $rows ) ) {
-	$_Itemid	= $rows[0]->id;
-	$link 		= 'index.php?option=com_search&amp;Itemid='. $_Itemid;
+// set Itemid id for links
+if ( $set_Itemid ) {
+	// use param setting
+	$_Itemid	= $set_Itemid;
+	$link 		= 'index.php?option=com_search&amp;Itemid='. $set_Itemid;
 } else {
-	$_Itemid 	= '';
-	$link 		= 'index.php?option=com_search';	
+	$query = "SELECT id"
+	. "\n FROM #__menu"
+	. "\n WHERE link = 'index.php?option=com_search'"
+	. "\n AND published = 1"
+	;
+	$database->setQuery( $query );
+	$rows = $database->loadObjectList();
+	
+	// try to auto detect search component Itemid
+	if ( count( $rows ) ) {
+		$_Itemid	= $rows[0]->id;
+		$link 		= 'index.php?option=com_search&amp;Itemid='. $_Itemid;
+	} else {
+	// Assign no Itemid
+		$_Itemid 	= '';
+		$link 		= 'index.php?option=com_search';	
+	}
 }
 ?>
 

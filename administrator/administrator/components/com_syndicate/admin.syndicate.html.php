@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.syndicate.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.syndicate.html.php 2693 2006-03-07 18:13:12Z stingrey $
 * @package Joomla
 * @subpackage Syndicate
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,14 +22,14 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class HTML_syndicate {
 
 	function settings( $option, &$params, $id ) {
-		global $mosConfig_live_site;
+		global $mosConfig_live_site, $mosConfig_cachepath, $my;
 		?>
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<form action="index2.php" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
 			<th>
-			Syndication Settings
+			Param&egrave;tres de syndication
 			</th>
 		</tr>
 		</table>
@@ -37,7 +37,7 @@ class HTML_syndicate {
 		<table class="adminform">
 		<tr>
 			<th>
-			Parameters
+			Param&egrave;tres
 			</th>
 		</tr>
 		<tr>
@@ -49,10 +49,27 @@ class HTML_syndicate {
 		</tr>
 		</table>
 
+		<table class="adminform">
+		<tr>
+			<td>
+				<table align="center">
+				<?php
+				$visible = 0;
+				// check to hide certain paths if not super admin
+				if ( $my->gid == 25 ) {
+					$visible = 1;
+				}
+				mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ', $visible );
+				?>
+				</table>
+			</td>
+		</tr>
+		</table>
+
 		<input type="hidden" name="id" value="<?php echo $id; ?>" />
-		<input type="hidden" name="name" value="Syndicate" />
+		<input type="hidden" name="name" value="Syndication" />
 		<input type="hidden" name="admin_menu_link" value="option=com_syndicate" />
-		<input type="hidden" name="admin_menu_alt" value="Manage Syndication Settings" />
+		<input type="hidden" name="admin_menu_alt" value="Paramètres de syndication" />
 		<input type="hidden" name="option" value="com_syndicate" />
 		<input type="hidden" name="admin_menu_img" value="js/ThemeOffice/component.png" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />

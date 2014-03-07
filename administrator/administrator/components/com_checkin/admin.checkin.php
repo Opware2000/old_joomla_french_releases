@@ -23,20 +23,20 @@ $nullDate = $database->getNullDate();
 <table class="adminheading">
 	<tr>
 		<th class="checkin">
-			Global Check-in
+			Validation globale
 		</th>
 	</tr>
 </table>
 <table class="adminform">
 	<tr>
 		<th class="title">
-			Database Table
+			Tables de la base
 		</th>
 		<th class="title">
-			# of Items
+			# d'&eacute;l&eacute;ments
 		</th>
 		<th class="title">
-			Checked-In
+			Valid&eacute;s
 		</th>
 		<th class="title">
 		</th>
@@ -92,15 +92,15 @@ foreach ($tables as $tn) {
 		if ($res == 1) {
 			if ($num > 0) {
 				echo "<tr class=\"row$k\">";
-				echo "\n	<td width=\"350\">Checking table - $tn</td>";
-				echo "\n	<td width=\"150\">Checked in <b>$num</b> items</td>";
+				echo "\n	<td width=\"350\">V&eacute;rification de la table - $tn</td>";
+				echo "\n	<td width=\"150\"><b>$num</b> &eacute;l&eacute;ments d&eacute;verrouill&eacute;s</td>";
 				echo "\n	<td width=\"100\" align=\"center\"><img src=\"images/tick.png\" border=\"0\" alt=\"tick\" /></td>";
 				echo "\n	<td>&nbsp;</td>";
 				echo "\n</tr>";
 			} else {
 				echo "<tr class=\"row$k\">";
-				echo "\n	<td width=\"350\">Checking table - $tn</td>";
-				echo "\n	<td width=\"150\">Checked in <b>$num</b> items</td>";
+				echo "\n	<td width=\"350\">V&eacute;rification de la table - $tn</td>";
+				echo "\n	<td width=\"150\"><b>$num</b> &eacute;l&eacute;ments d&eacute;verrouill&eacute;s</td>";
 				echo "\n	<td width=\"100\">&nbsp;</td>";
 				echo "\n	<td>&nbsp;</td>";
 				echo "\n</tr>";
@@ -112,7 +112,7 @@ foreach ($tables as $tn) {
 ?>
 	<tr>
 		<td colspan="4">
-			<strong>Checked out items have now been all checked in</strong>
+			<strong>Les &eacute;l&eacute;ments verrouill&eacute;s ont tous &eacute;t&eacute; d&eacute;verrouill&eacute;s </strong>
 		</td>
 	</tr>
 </table>

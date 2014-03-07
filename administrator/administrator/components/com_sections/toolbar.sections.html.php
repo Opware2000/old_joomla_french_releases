@@ -35,7 +35,7 @@ class TOOLBAR_sections {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -63,7 +63,7 @@ class TOOLBAR_sections {
 		mosMenuBar::spacer();
 		mosMenuBar::unpublishList();
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
+		mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copier', true );
 		mosMenuBar::spacer();
 		mosMenuBar::deleteList();
 		mosMenuBar::spacer();

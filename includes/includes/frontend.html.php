@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.html.php 1624 2006-01-02 17:52:28Z stingrey $
+* @version $Id: frontend.html.php 3830 2006-06-03 15:53:37Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -106,8 +106,15 @@ class modules_html {
 
 	// feed output
 	function modoutput_feed( &$module, &$params, $moduleclass_sfx ) {
-		global $mosConfig_absolute_path, $rssfeed_content;
+		global $mosConfig_absolute_path, $mosConfig_cachepath;
 
+		// check if cache directory is writeable
+		$cacheDir 		= $mosConfig_cachepath .'/';	
+		if ( !is_writable( $cacheDir ) ) {	
+			$module->content = 'Cache Directory Unwriteable';
+			return;
+		}
+		
 		$rssurl 			= $params->get( 'rssurl' );
 		$rssitems 			= $params->get( 'rssitems', 5 );
 		$rssdesc 			= $params->get( 'rssdesc', 1 );
@@ -115,134 +122,148 @@ class modules_html {
 		$rssitemdesc		= $params->get( 'rssitemdesc', 1 );
 		$words 				= $params->def( 'word_count', 0 );
 		$rsstitle			= $params->get( 'rsstitle', 1 );
+		$rsscache			= $params->get( 'rsscache', 3600 );
 
 		$contentBuffer	= '';
-		$cacheDir 		= $mosConfig_absolute_path .'/cache/';
+		
 		$LitePath 		= $mosConfig_absolute_path .'/includes/Cache/Lite.php';
 		require_once( $mosConfig_absolute_path .'/includes/domit/xml_domit_rss.php' );
+		
 		$rssDoc = new xml_domit_rss_document();
-		$rssDoc->useCacheLite(true, $LitePath, $cacheDir, 3600);
-		$rssDoc->loadRSS( $rssurl );
-		$totalChannels 	= $rssDoc->getChannelCount();
+		$rssDoc->useCacheLite(true, $LitePath, $cacheDir, $rsscache);
+		$success = $rssDoc->loadRSS( $rssurl );
 
-		for ( $i = 0; $i < $totalChannels; $i++ ) {
-			$currChannel =& $rssDoc->getChannel($i);
-			$elements 	= $currChannel->getElementList();
-			$iUrl		= 0;
-			foreach ( $elements as $element ) {
-				//image handling
-				if ( $element == 'image' ) {
-					$image =& $currChannel->getElement( DOMIT_RSS_ELEMENT_IMAGE );
-					$iUrl	= $image->getUrl();
-					$iTitle	= $image->getTitle();
-				}
-			}
-
-			// feed title
-			$content_buffer = '<table cellpadding="0" cellspacing="0" class="moduletable'.$moduleclass_sfx.'">' . "\n";
-						
-			if ( $currChannel->getTitle() && $rsstitle ) {
-				
-				$content_buffer .= "<tr>\n";
-				$content_buffer .= "	<td>\n";
-				$content_buffer .= "		<strong>\n";
-				$content_buffer .= "		<a href=\"" . ampReplace( $currChannel->getLink() )  . "\" target=\"_blank\">\n";
-				$content_buffer .= 		$currChannel->getTitle() . "</a>\n";
-				$content_buffer .= "		</strong>\n";
-				$content_buffer .= "	</td>\n";
-				$content_buffer .= "</tr>\n";
-
-			}
-
-			// feed description
-			if ( $rssdesc ) {
-				$content_buffer .= "<tr>\n";
-				$content_buffer .= "	<td>\n";
-				$content_buffer .= $currChannel->getDescription();
-				$content_buffer .= "	</td>\n";
-				$content_buffer .= "</tr>\n";
-			}
-
-			// feed image
-			if ( $rssimage && $iUrl ) {
-				$content_buffer .= "<tr>\n";
-				$content_buffer .= "	<td align=\"center\">\n";
-				$content_buffer .= "		<image src=\"" . $iUrl . "\" alt=\"" . @$iTitle . "\"/>\n";
-				$content_buffer .= "	</td>\n";
-				$content_buffer .= "</tr>\n";
-			}
-
-			$actualItems = $currChannel->getItemCount();
-			$setItems = $rssitems;
-
-			if ($setItems > $actualItems) {
-				$totalItems = $actualItems;
-			} else {
-				$totalItems = $setItems;
-			}
-
-
-			$content_buffer .= "<tr>\n";
-			$content_buffer .= "	<td>\n";
-			$content_buffer .= "		<ul class=\"newsfeed" . $moduleclass_sfx . "\">\n";
-
-					for ($j = 0; $j < $totalItems; $j++) {
-						$currItem =& $currChannel->getItem($j);
-						// item title
-
-						// START fix for RSS enclosure tag url not showing
-						$content_buffer .= "<li class=\"newsfeed" . $moduleclass_sfx . "\">\n";
-						$content_buffer .= "	<strong>\n";
-						if ($currItem->getLink()) {
-							$content_buffer .= "        <a href=\"" . ampReplace( $currItem->getLink() ) . "\" target=\"_blank\">\n";
-							$content_buffer .= "      " . str_replace('&apos;', "'", html_entity_decode( $currItem->getTitle() ) ) . "</a>\n";
-						} else if ($currItem->getEnclosure()) {
-							$enclosure = $currItem->getEnclosure();
-							$eUrl	= $enclosure->getUrl();
-							$content_buffer .= "        <a href=\"" . ampReplace( $eUrl ) . "\" target=\"_blank\">\n";
-							$content_buffer .= "      " . str_replace('&apos;', "'", html_entity_decode( $currItem->getTitle() ) ) . "</a>\n";
-						}  else if (($currItem->getEnclosure()) && ($currItem->getLink())) {
-							$enclosure = $currItem->getEnclosure();
-							$eUrl	= $enclosure->getUrl();
-							$content_buffer .= "        <a href=\"" . ampReplace( $currItem->getLink() ) . "\" target=\"_blank\">\n";
-							$content_buffer .= "      " . str_replace('&apos;', "'", html_entity_decode( $currItem->getTitle() ) ) . "</a><br/>\n";
-							$content_buffer .= "        <a href=\"" . ampReplace( $eUrl ) . "\" target=\"_blank\"><u>Download</u></a>\n";
-						}
-						$content_buffer .= "	</strong>\n";
-						// END fix for RSS enclosure tag url not showing
-						
-							// item description
-							if ( $rssitemdesc ) {
-								// item description
-								$text = html_entity_decode( $currItem->getDescription() );
-								$text = str_replace('&apos;', "'", $text);
-                                
-								// word limit check
-								if ( $words ) {
-									$texts = explode( ' ', $text );
-									$count = count( $texts );
-									if ( $count > $words ) {
-										$text = '';
-										for( $i=0; $i < $words; $i++ ) {
-											$text .= ' '. $texts[$i];
-										}
-										$text .= '...';
-									}
-								}
-
-								$content_buffer .= "     <div>\n";
-								$content_buffer .= "        " . $text;
-								$content_buffer .= "		</div>\n";
-
-							}
-						$content_buffer .= "</li>\n";
+		if ( $success )	{		
+			$content_buffer = '';
+			$totalChannels 	= $rssDoc->getChannelCount();
+	
+			for ( $i = 0; $i < $totalChannels; $i++ ) {
+				$currChannel =& $rssDoc->getChannel($i);
+				$elements 	= $currChannel->getElementList();
+				$iUrl		= 0;
+				foreach ( $elements as $element ) {
+					//image handling
+					if ( $element == 'image' ) {
+						$image =& $currChannel->getElement( DOMIT_RSS_ELEMENT_IMAGE );
+						$iUrl	= $image->getUrl();
+						$iTitle	= $image->getTitle();
 					}
-			$content_buffer .= "    </ul>\n";
-			$content_buffer .= "	</td>\n";
-			$content_buffer .= "</tr>\n";
-			$content_buffer .= "</table>\n";
+				}
+	
+				// feed title
+				$content_buffer = '<table cellpadding="0" cellspacing="0" class="moduletable'.$moduleclass_sfx.'">' . "\n";
+							
+				if ( $currChannel->getTitle() && $rsstitle ) {
+					$feed_title 	= $currChannel->getTitle();
+					$feed_title 	= mosCommonHTML::newsfeedEncoding( $rssDoc, $feed_title );
+
+					$content_buffer .= "<tr>\n";
+					$content_buffer .= "	<td>\n";
+					$content_buffer .= "		<strong>\n";
+					$content_buffer .= "		<a href=\"" . ampReplace( $currChannel->getLink() )  . "\" target=\"_blank\">\n";
+					$content_buffer .= $feed_title . "</a>\n";
+					$content_buffer .= "		</strong>\n";
+					$content_buffer .= "	</td>\n";
+					$content_buffer .= "</tr>\n";
+	
+				}
+	
+				// feed description
+				if ( $rssdesc ) {
+					$feed_descrip 	= $currChannel->getDescription();
+					$feed_descrip 	= mosCommonHTML::newsfeedEncoding( $rssDoc, $feed_descrip );
+					
+					$content_buffer .= "<tr>\n";
+					$content_buffer .= "	<td>\n";
+					$content_buffer .= $feed_descrip;
+					$content_buffer .= "	</td>\n";
+					$content_buffer .= "</tr>\n";
+				}
+	
+				// feed image
+				if ( $rssimage && $iUrl ) {
+					$content_buffer .= "<tr>\n";
+					$content_buffer .= "	<td align=\"center\">\n";
+					$content_buffer .= "		<image src=\"" . $iUrl . "\" alt=\"" . @$iTitle . "\"/>\n";
+					$content_buffer .= "	</td>\n";
+					$content_buffer .= "</tr>\n";
+				}
+	
+				$actualItems 	= $currChannel->getItemCount();
+				$setItems 		= $rssitems;
+	
+				if ($setItems > $actualItems) {
+					$totalItems = $actualItems;
+				} else {
+					$totalItems = $setItems;
+				}
+	
+	
+				$content_buffer .= "<tr>\n";
+				$content_buffer .= "	<td>\n";
+				$content_buffer .= "		<ul class=\"newsfeed" . $moduleclass_sfx . "\">\n";
+	
+						for ($j = 0; $j < $totalItems; $j++) {
+							$currItem =& $currChannel->getItem($j);
+							// item title
+							
+							$item_title = $currItem->getTitle();
+							$item_title = mosCommonHTML::newsfeedEncoding( $rssDoc, $item_title );
+	
+							// START fix for RSS enclosure tag url not showing
+							$content_buffer .= "<li class=\"newsfeed" . $moduleclass_sfx . "\">\n";
+							$content_buffer .= "	<strong>\n";
+							if ($currItem->getLink()) {
+								$content_buffer .= "        <a href=\"" . ampReplace( $currItem->getLink() ) . "\" target=\"_blank\">\n";
+								$content_buffer .= "      " . $item_title . "</a>\n";
+							} else if ($currItem->getEnclosure()) {
+								$enclosure = $currItem->getEnclosure();
+								$eUrl	= $enclosure->getUrl();
+								$content_buffer .= "        <a href=\"" . ampReplace( $eUrl ) . "\" target=\"_blank\">\n";
+								$content_buffer .= "      " . $item_title . "</a>\n";
+							}  else if (($currItem->getEnclosure()) && ($currItem->getLink())) {
+								$enclosure = $currItem->getEnclosure();
+								$eUrl	= $enclosure->getUrl();
+								$content_buffer .= "        <a href=\"" . ampReplace( $currItem->getLink() ) . "\" target=\"_blank\">\n";
+								$content_buffer .= "      " . $item_title . "</a><br/>\n";
+								$content_buffer .= "        <a href=\"" . ampReplace( $eUrl ) . "\" target=\"_blank\"><u>Download</u></a>\n";
+							}
+							$content_buffer .= "	</strong>\n";
+							// END fix for RSS enclosure tag url not showing
+							
+								// item description
+								if ( $rssitemdesc ) {
+									// item description
+									$text = $currItem->getDescription();
+									$text = mosCommonHTML::newsfeedEncoding( $rssDoc, $text );
+
+									// word limit check
+									if ( $words ) {
+										$texts = explode( ' ', $text );
+										$count = count( $texts );
+										if ( $count > $words ) {
+											$text = '';
+											for( $i=0; $i < $words; $i++ ) {
+												$text .= ' '. $texts[$i];
+											}
+											$text .= '...';
+										}
+									}
+	
+									$content_buffer .= "     <div>\n";
+									$content_buffer .= "        " . $text;
+									$content_buffer .= "		</div>\n";
+	
+								}
+							$content_buffer .= "</li>\n";
+						}
+				$content_buffer .= "    </ul>\n";
+				$content_buffer .= "	</td>\n";
+				$content_buffer .= "</tr>\n";
+				$content_buffer .= "</table>\n";
+			}
+			$module->content = $content_buffer;
 		}
-		$module->content = $content_buffer;
 	}
 
 	/*

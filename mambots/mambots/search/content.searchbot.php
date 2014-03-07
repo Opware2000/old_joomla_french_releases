@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.searchbot.php 1490 2005-12-20 15:53:29Z Jinx $
+* @version $Id: content.searchbot.php 3723 2006-05-29 16:14:03Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,25 +26,33 @@ $_MAMBOTS->registerFunction( 'onSearch', 'botSearchContent' );
 * @param string ordering option, newest|oldest|popular|alpha|category
 */
 function botSearchContent( $text, $phrase='', $ordering='' ) {
-	global $my, $database;
-	global $mosConfig_offset;
-
-	// load mambot params info
-	$query = "SELECT id"
-	. "\n FROM #__mambots"
-	. "\n WHERE element = 'content.searchbot'"
-	. "\n AND folder = 'search'"
-	;
-	$database->setQuery( $query );
-	$id 	= $database->loadResult();
-	$mambot = new mosMambot( $database );
-	$mambot->load( $id );
+	global $database, $my, $_MAMBOTS;
+	
+	// check if param query has previously been processed
+	if ( !isset($_MAMBOTS->_search_mambot_params['content']) ) {
+		// load mambot params info
+		$query = "SELECT params"
+		. "\n FROM #__mambots"
+		. "\n WHERE element = 'content.searchbot'"
+		. "\n AND folder = 'search'"
+		;
+		$database->setQuery( $query );
+		$database->loadObject($mambot);	
+		
+		// save query to class variable
+		$_MAMBOTS->_search_mambot_params['content'] = $mambot;
+	}
+	
+	// pull query data from class variable
+	$mambot = $_MAMBOTS->_search_mambot_params['content'];	
+	
 	$botParams = new mosParameters( $mambot->params );
 	
 	$limit 		= $botParams->def( 'search_limit', 50 );
+	$nonmenu	= $botParams->def( 'nonmenu', 1 );
 
 	$nullDate 	= $database->getNullDate();
-	$now 		= date( 'Y-m-d H:i:s', time()+$mosConfig_offset*60*60 );
+	$now 		= _CURRENT_SERVER_TIME;
 	
 	$text = trim( $text );
 	if ($text == '') {
@@ -112,17 +120,20 @@ function botSearchContent( $text, $phrase='', $ordering='' ) {
 	. "\n CONCAT(a.introtext, a.fulltext) AS text,"
 	. "\n CONCAT_WS( '/', u.title, b.title ) AS section,"
 	. "\n CONCAT( 'index.php?option=com_content&task=view&id=', a.id ) AS href,"
-	. "\n '2' AS browsernav"
+	. "\n '2' AS browsernav,"
+	. "\n 'content' AS type"
 	. "\n FROM #__content AS a"
-	. "\n INNER JOIN #__categories AS b ON b.id=a.catid AND b.access <= '$my->gid'"
-	. "\n LEFT JOIN #__sections AS u ON u.id = a.sectionid"
+	. "\n INNER JOIN #__categories AS b ON b.id=a.catid"
+	. "\n INNER JOIN #__sections AS u ON u.id = a.sectionid"
 	. "\n WHERE ( $where )"
-	. "\n AND a.state = '1'"
-	. "\n AND a.access <= '$my->gid'"
-	. "\n AND u.published = '1'"
-	. "\n AND b.published = '1'"
-	. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now' )"
-	. "\n AND ( publish_down = '$nullDate' OR publish_down >= '$now' )"
+	. "\n AND a.state = 1"
+	. "\n AND u.published = 1"
+	. "\n AND b.published = 1"
+	. "\n AND a.access <= $my->gid"
+	. "\n AND b.access <= $my->gid"
+	. "\n AND u.access <= $my->gid"
+	. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
+	. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 	. "\n GROUP BY a.id"
 	. "\n ORDER BY $order"
 	;
@@ -130,18 +141,21 @@ function botSearchContent( $text, $phrase='', $ordering='' ) {
 	$list = $database->loadObjectList();
 
 	// search static content
-	$query = "SELECT a.title AS title, a.created AS created,"
+	$query = "SELECT a.title AS title,"
+	. "\n a.created AS created,"
 	. "\n a.introtext AS text,"
+	. "\n '". _STATIC_CONTENT ."' AS section,"
 	. "\n CONCAT( 'index.php?option=com_content&task=view&id=', a.id, '&Itemid=', m.id ) AS href,"
-	. "\n '2' as browsernav, 'Menu' AS section"
+	. "\n '2' AS browsernav," 
+	. "\n a.id"
 	. "\n FROM #__content AS a"
 	. "\n LEFT JOIN #__menu AS m ON m.componentid = a.id"
 	. "\n WHERE ($where)"
 	. "\n AND a.state = 1"
 	. "\n AND a.access <= $my->gid"
 	. "\n AND m.type = 'content_typed'"
-	. "\n AND ( publish_up = '0000-00-00 00:00:00' OR publish_up <= '$now' )"
-	. "\n AND ( publish_down = '0000-00-00 00:00:00' OR publish_down >= '$now' )"
+	. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
+	. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 	. "\n ORDER BY ". ($morder ? $morder : $order)
 	;
 	$database->setQuery( $query, 0, $limit );
@@ -153,20 +167,60 @@ function botSearchContent( $text, $phrase='', $ordering='' ) {
 	. "\n a.introtext AS text,"
 	. "\n CONCAT_WS( '/', '". _SEARCH_ARCHIVED ." ', u.title, b.title ) AS section,"
 	. "\n CONCAT('index.php?option=com_content&task=view&id=',a.id) AS href,"
-	. "\n '2' AS browsernav"
+	. "\n '2' AS browsernav,"
+	. "\n 'content' AS type"
 	. "\n FROM #__content AS a"
-	. "\n INNER JOIN #__categories AS b ON b.id=a.catid AND b.access <='$my->gid'"
-	. "\n LEFT JOIN #__sections AS u ON u.id = a.sectionid"
+	. "\n INNER JOIN #__categories AS b ON b.id=a.catid"
+	. "\n INNER JOIN #__sections AS u ON u.id = a.sectionid"
 	. "\n WHERE ( $where )"
 	. "\n AND a.state = -1"
+	. "\n AND u.published = 1"
+	. "\n AND b.published = 1"
 	. "\n AND a.access <= $my->gid"
-	. "\n AND ( publish_up = '0000-00-00 00:00:00' OR publish_up <= '$now' )"
-	. "\n AND ( publish_down = '0000-00-00 00:00:00' OR publish_down >= '$now' )"
+	. "\n AND b.access <= $my->gid"
+	. "\n AND u.access <= $my->gid"
+	. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
+	. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 	. "\n ORDER BY $order"
 	;
 	$database->setQuery( $query, 0, $limit );
 	$list3 = $database->loadObjectList();
 	
-	return array_merge( $list, $list2, $list3 );
+	// check if search of nonmenu linked static content is allowed
+	if ($nonmenu) {
+		// collect ids of static content items linked to menu items
+		// so they can be removed from query that follows
+		$ids = null;
+		if(count($list2)) {
+			foreach($list2 as $static) {
+				$ids[] = $static->id;
+			}
+			$ids = implode( '\',\'', $ids );
+		}
+	
+		// search static content not connected to a menu
+		$query = "SELECT a.title AS title,"
+		. "\n a.created AS created,"
+		. "\n a.introtext AS text,"
+		. "\n '2' as browsernav, '". _STATIC_CONTENT ."' AS section,"
+		. "\n CONCAT( 'index.php?option=com_content&task=view&id=', a.id ) AS href,"
+		. "\n a.id"
+		. "\n FROM #__content AS a"
+		. "\n WHERE ($where)"
+		. "\n AND a.id NOT IN ( '$ids' )"
+		. "\n AND a.state = 1"
+		. "\n AND a.access <= $my->gid"
+		. "\n AND a.sectionid = 0"
+		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
+		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
+		. "\n ORDER BY $order"
+		;
+		$database->setQuery( $query, 0, $limit );
+		$list4 = $database->loadObjectList();
+	} else {
+		$list4 = array();
+	}	
+
+	return array_merge( $list, $list2, $list3, $list4 );
 }
 ?>

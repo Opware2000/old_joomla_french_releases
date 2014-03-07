@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.templates.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.templates.html.php 2355 2006-02-14 10:05:00Z stingrey $
 * @package Joomla
 * @subpackage Templates
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -36,12 +36,12 @@ class HTML_templates {
 		?>
 		<script language="Javascript">
 		<!--
-		function showInfo(name) {
+		function showInfo(name, dir) {
 			var pattern = /\b \b/ig;
 			name = name.replace(pattern,'_');
 			name = name.toLowerCase();
 			if (document.adminForm.doPreview.checked) {
-				var src = '<?php echo $mosConfig_live_site . ($client == 'admin' ? '/administrator' : '');?>/templates/'+name+'/template_thumbnail.png';
+				var src = '<?php echo $mosConfig_live_site . ($client == 'admin' ? '/administrator' : '');?>/templates/'+dir+'/template_thumbnail.png';
 				var html=name;
 				html = '<br /><img border="1" src="'+src+'" name="imagelib" alt="No preview available" width="206" height="145" />';
 				return overlib(html, CAPTION, name)
@@ -56,11 +56,10 @@ class HTML_templates {
 		<table class="adminheading">
 		<tr>
 			<th class="templates">
-			Template Manager <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
+			Gestionnaire de Template <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
 			</th>
 			<td align="right" nowrap="true">
-			Preview Template
-			</td>
+			Pr&eacute;visualiser le template			</td>
 			<td align="right">
 			<input type="checkbox" name="doPreview" checked="checked"/>
 			</td>
@@ -71,28 +70,26 @@ class HTML_templates {
 			<th width="5%">#</th>
 			<th width="5%">&nbsp;</th>
 			<th width="25%" class="title">
-			Name
+			Nom
 			</th>
 			<?php
 			if ( $client == 'admin' ) {
 				?>
 				<th width="10%">
-				Default
+				Par d&eacute;faut
 				</th>
 				<?php
 			} else {
 				?>
+				<th width="5%">Par d&eacute;faut </th>
 				<th width="5%">
-				Default
-				</th>
-				<th width="5%">
-				Assigned
+				Assign&eacute;
 				</th>
 				<?php
 			}
 			?>
 			<th width="20%" align="left">
-			Author
+			Auteur
 			</th>
 			<th width="5%" align="center">
 			Version
@@ -101,8 +98,7 @@ class HTML_templates {
 			Date
 			</th>
 			<th width="20%" align="left">
-			Author URL
-			</th>
+			URL	de	l'auteur	</th>
 		</tr>
 		<?php
 		$k = 0;
@@ -127,7 +123,7 @@ class HTML_templates {
 				?>
 				</td>
 				<td>
-				<a href="#info" onmouseover="showInfo('<?php echo $row->name;?>')" onmouseout="return nd();">
+				<a href="#info" onmouseover="showInfo('<?php echo $row->name;?>','<?php echo $row->directory; ?>')" onmouseout="return nd();">
 				<?php echo $row->name;?>
 				</a>
 				</td>
@@ -138,7 +134,7 @@ class HTML_templates {
 					<?php
 					if ( $row->published == 1 ) {
 						?>
-					<img src="images/tick.png" alt="Published">
+					<img src="images/tick.png" alt="Publié">
 						<?php
 					} else {
 						?>
@@ -154,7 +150,7 @@ class HTML_templates {
 					<?php
 					if ( $row->published == 1 ) {
 						?>
-						<img src="images/tick.png" alt="Default">
+						<img src="images/tick.png" alt="Par défaut">
 						<?php
 					} else {
 						?>
@@ -167,7 +163,7 @@ class HTML_templates {
 					<?php
 					if ( $row->assigned == 1 ) {
 						?>
-						<img src="images/tick.png" alt="Assigned" />
+						<img src="images/tick.png" alt="Assigné" />
 						<?php
 					} else {
 						?>
@@ -224,27 +220,29 @@ class HTML_templates {
 		<form action="index2.php" method="post" name="adminForm">
 		<table cellpadding="1" cellspacing="1" border="0" width="100%">
 		<tr>
-			<td width="290"><table class="adminheading"><tr><th class="templates">Template HTML Editor</th></tr></table></td>
+			<td width="290"><table class="adminheading"><tr>
+			  <th class="templates">Editeur HTML du template</th>
+			</tr></table></td>
 			<td width="220">
-				<span class="componentheading">index.php is :
-				<b><?php echo is_writable($template_path) ? '<font color="green"> Writeable</font>' : '<font color="red"> Unwriteable</font>' ?></b>
+				<span class="componentheading">index.php est :
+				<b><?php echo is_writable($template_path) ? '<font color="green"> Modifiable</font>' : '<font color="red"> Non Modifiable</font>' ?></b>
 				</span>
 			</td>
 <?php
 			if (mosIsChmodable($template_path)) {
 				if (is_writable($template_path)) {
 ?>
-			<td>
+		  <td>
 				<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-				<label for="disable_write">Make unwriteable after saving</label>
-			</td>
+				<label for="disable_write"></label>
+				Rendre non modifiable
+				<label for="label">apr&egrave;s l'enregistrement</label></td>
 <?php
 				} else {
 ?>
-			<td>
+		  <td>
 				<input type="checkbox" id="enable_write" name="enable_write" value="1"/>
-				<label for="enable_write">Override write protection while saving</label>
-			</td>
+			  <label for="enable_write">Ignorer le statut modifiable / non modifiable</label>			</td>
 <?php
 				} // if
 			} // if
@@ -278,26 +276,29 @@ class HTML_templates {
 		<form action="index2.php" method="post" name="adminForm">
 		<table cellpadding="1" cellspacing="1" border="0" width="100%">
 		<tr>
-			<td width="280"><table class="adminheading"><tr><th class="templates">Template CSS Editor</th></tr></table></td>
+			<td width="280"><table class="adminheading"><tr>
+			  <th class="templates">Editeur CSS du template </th>
+			</tr></table></td>
 			<td width="260">
-				<span class="componentheading">template_css.css is :
-				<b><?php echo is_writable($css_path) ? '<font color="green"> Writeable</font>' : '<font color="red"> Unwriteable</font>' ?></b>
+				<span class="componentheading">template_css.css est :
+				<b><?php echo is_writable($css_path) ? '<font color="green"> Modifiable</font>' : '<font color="red"> Non Modifiable</font>' ?></b>
 				</span>
 			</td>
 <?php
 			if (mosIsChmodable($css_path)) {
 				if (is_writable($css_path)) {
 ?>
-			<td>
+		  <td>
 				<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-				<label for="disable_write">Make unwriteable after saving</label>
-			</td>
+			  <label for="disable_write">Rendre non modifiable </label>
+				<label for="label">apr&egrave;s l'enregistrement</label>
+				<label for="disable_write"> </label>			</td>
 <?php
 				} else {
 ?>
 			<td>
 				<input type="checkbox" id="enable_write" name="enable_write" value="1"/>
-				<label for="enable_write">Override write protection while saving</label>
+				<label for="enable_write">Ignorer le statut modifiable / non modifiable </label>
 			</td>
 <?php
 				} // if
@@ -329,8 +330,7 @@ class HTML_templates {
 		<table class="adminform">
 		<tr>
 			<th class="left" colspan="2">
-			Assign template <?php echo $template; ?> to menu items
-			</th>
+			Assigner le template <?php echo $template; ?> &agrave; une page </th>
 		</tr>
 		<tr>
 			<td valign="top" align="left">
@@ -362,8 +362,7 @@ class HTML_templates {
 		<table class="adminheading">
 		<tr>
 			<th class="templates">
-			Module Positions
-			</th>
+			Position des modules			</th>
 		</tr>
 		</table>
 

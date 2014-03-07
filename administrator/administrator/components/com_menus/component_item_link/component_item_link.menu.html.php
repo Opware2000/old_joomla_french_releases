@@ -49,7 +49,7 @@ class component_item_link_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Link - Component Item
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Lien - Composant Joomla!
 			</th>
 		</tr>
 		</table>
@@ -65,7 +65,7 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right">
-					Name:
+					Nom du lien:
 					</td>
 					<td width="80%">
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo $menu->name; ?>" />
@@ -73,7 +73,7 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Component to Link:
+					Composant vers lequel pointe le lien:
 					</td>
 					<td width="80%">
 					<?php echo $lists['components']; ?>
@@ -87,7 +87,7 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					On Click, Open in:
+					Ouvrir dans:
 					</td>
 					<td width="80%">
 					<?php echo $lists['target']; ?>
@@ -95,7 +95,7 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td>
 					<?php echo $lists['parent']; ?>
@@ -103,7 +103,7 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -111,14 +111,14 @@ class component_item_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -132,7 +132,7 @@ class component_item_link_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

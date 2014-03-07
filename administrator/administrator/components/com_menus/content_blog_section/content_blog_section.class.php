@@ -63,7 +63,7 @@ class content_blog_section {
 		}
 
 		// build the html select list for section
-		$rows[] = mosHTML::makeOption( '', 'All Sections' );
+		$rows[] = mosHTML::makeOption( '', 'Toutes les sections' );
 		$query = "SELECT s.id AS `value`, s.id AS `id`, s.title AS `text`"
 		. "\n FROM #__sections AS s"
 		. "\n WHERE s.scope = 'content'"
@@ -130,7 +130,7 @@ class content_blog_section {
 		$row->checkin();
 		$row->updateOrder( "menutype = '$row->menutype' AND parent = $row->parent" );
 
-		$msg = 'Menu item Saved';
+		$msg = 'Elément de menu sauvegardé.';
 		switch ( $task ) {
 			case 'apply':
 				mosRedirect( 'index2.php?option='. $option .'&menutype='. $row->menutype .'&task=edit&id='. $row->id, $msg );

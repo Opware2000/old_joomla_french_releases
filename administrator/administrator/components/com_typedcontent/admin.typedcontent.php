@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: admin.typedcontent.php 3876 2006-06-05 14:08:05Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -17,12 +17,10 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-$id 	= mosGetParam( $_REQUEST, 'id', '' );
 $cid 	= mosGetParam( $_POST, 'cid', array(0) );
 if (!is_array( $cid )) {
 	$cid = array(0);
 }
-
 
 switch ( $task ) {
 	case 'cancel':
@@ -38,7 +36,7 @@ switch ( $task ) {
 		break;
 
 	case 'editA':
-		edit( $cid[0], $option );
+		edit( intval( $cid[0] ), $option );
 		break;
 
 	case 'go2menu':
@@ -63,15 +61,15 @@ switch ( $task ) {
 		break;
 
 	case 'accesspublic':
-		changeAccess( $cid[0], 0, $option );
+		changeAccess( intval( $cid[0] ), 0, $option );
 		break;
 
 	case 'accessregistered':
-		changeAccess( $cid[0], 1, $option );
+		changeAccess( intval( $cid[0] ), 1, $option );
 		break;
 
 	case 'accessspecial':
-		changeAccess( $cid[0], 2, $option );
+		changeAccess( intval( $cid[0] ), 2, $option );
 		break;
 
 	case 'saveorder':
@@ -90,10 +88,10 @@ switch ( $task ) {
 function view( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$filter_authorid 	= $mainframe->getUserStateFromRequest( "filter_authorid{$option}", 'filter_authorid', 0 );
+	$filter_authorid 	= intval( $mainframe->getUserStateFromRequest( "filter_authorid{$option}", 'filter_authorid', 0 ) );
 	$order 				= $mainframe->getUserStateFromRequest( "zorder", 'zorder', 'c.ordering DESC' );
-	$limit 				= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart 		= $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$limit 				= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart 		= intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 	$search 			= $mainframe->getUserStateFromRequest( "search{$option}", 'search', '' );
 	$search 			= $database->getEscaped( trim( strtolower( $search ) ) );
 
@@ -155,20 +153,20 @@ function view( $option ) {
 		$rows[$i]->links = $database->loadResult();
 	}
 
-	$ordering[] = mosHTML::makeOption( 'c.ordering ASC', 'Ordering asc' );
-	$ordering[] = mosHTML::makeOption( 'c.ordering DESC', 'Ordering desc' );
-	$ordering[] = mosHTML::makeOption( 'c.id ASC', 'ID asc' );
-	$ordering[] = mosHTML::makeOption( 'c.id DESC', 'ID desc' );
-	$ordering[] = mosHTML::makeOption( 'c.title ASC', 'Title asc' );
-	$ordering[] = mosHTML::makeOption( 'c.title DESC', 'Title desc' );
-	$ordering[] = mosHTML::makeOption( 'c.created ASC', 'Date asc' );
-	$ordering[] = mosHTML::makeOption( 'c.created DESC', 'Date desc' );
-	$ordering[] = mosHTML::makeOption( 'z.name ASC', 'Author asc' );
-	$ordering[] = mosHTML::makeOption( 'z.name DESC', 'Author desc' );
-	$ordering[] = mosHTML::makeOption( 'c.state ASC', 'Published asc' );
-	$ordering[] = mosHTML::makeOption( 'c.state DESC', 'Published desc' );
-	$ordering[] = mosHTML::makeOption( 'c.access ASC', 'Access asc' );
-	$ordering[] = mosHTML::makeOption( 'c.access DESC', 'Access desc' );
+	$ordering[] = mosHTML::makeOption( 'c.ordering ASC', 'Numéro de tri croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.ordering DESC', 'Numéro de tri décroissant' );
+	$ordering[] = mosHTML::makeOption( 'c.id ASC', 'ID croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.id DESC', 'ID décroissant' );
+	$ordering[] = mosHTML::makeOption( 'c.title ASC', 'Titre croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.title DESC', 'Titre décroissant' );
+	$ordering[] = mosHTML::makeOption( 'c.created ASC', 'Date croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.created DESC', 'Date décroissant' );
+	$ordering[] = mosHTML::makeOption( 'z.name ASC', 'Auteur croissant' );
+	$ordering[] = mosHTML::makeOption( 'z.name DESC', 'Auteur décroissant' );
+	$ordering[] = mosHTML::makeOption( 'c.state ASC', 'Publication croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.state DESC', 'Publication décroissant' );
+	$ordering[] = mosHTML::makeOption( 'c.access ASC', 'Accès croissant' );
+	$ordering[] = mosHTML::makeOption( 'c.access DESC', 'Accès décroissant' );
 	$javascript = 'onchange="document.adminForm.submit();"';
 	$lists['order'] = mosHTML::selectList( $ordering, 'zorder', 'class="inputbox" size="1"'. $javascript, 'value', 'text', $order );
 
@@ -196,31 +194,36 @@ function view( $option ) {
 */
 function edit( $uid, $option ) {
 	global $database, $my, $mainframe;
-	global $mosConfig_absolute_path, $mosConfig_live_site;
+	global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_offset;
 
-	$nullDate = $database->getNullDate();
 	$row = new mosContent( $database );
+	$row->load( $uid );
 
 	$lists = array();
+	$nullDate 	= $database->getNullDate();
 
 	if ($uid) {
-		// load the row from the db table
-		$row->load( $uid );
-
 		// fail if checked out not by 'me'
 		if ($row->isCheckedOut( $my->id )) {
-			mosErrorAlert( "The module ".$row->title." is currently being edited by another administrator" );
+			mosErrorAlert( "The module ".$row->title." est actuellement édité par un autre administrateur" );
 		}
 
 		$row->checkout( $my->id );
+		
 		if (trim( $row->images )) {
 			$row->images = explode( "\n", $row->images );
 		} else {
 			$row->images = array();
 		}
-		if (trim( $row->publish_down ) == $nullDate) {
-			$row->publish_down = "Never";
+		
+		$row->created 		= mosFormatDate( $row->created, _CURRENT_SERVER_TIME_FORMAT );
+		$row->modified 		= $row->modified == $nullDate ? '' : mosFormatDate( $row->modified, _CURRENT_SERVER_TIME_FORMAT );
+		$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );
+		
+		if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
+			$row->publish_down = 'Jamais';
 		}
+		$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );		
 
 		$query = "SELECT name"
 		. "\n FROM #__users"
@@ -229,12 +232,17 @@ function edit( $uid, $option ) {
 		$database->setQuery( $query );
 		$row->creator = $database->loadResult();
 
-		$query = "SELECT name"
-		. "\n FROM #__users"
-		. "\n WHERE id = $row->modified_by"
-		;
-		$database->setQuery( $query );
-		$row->modifier = $database->loadResult();
+		// test to reduce unneeded query
+		if ( $row->created_by == $row->modified_by ) {
+			$row->modifier = $row->creator;
+		} else {
+			$query = "SELECT name"
+			. "\n FROM #__users"
+			. "\n WHERE id = $row->modified_by"
+			;
+			$database->setQuery( $query );
+			$row->modifier = $database->loadResult();
+		}
 
 		// get list of links to this item
 		$and 	= "\n AND componentid = ". $row->id;
@@ -244,11 +252,12 @@ function edit( $uid, $option ) {
 		$row->version 		= 0;
 		$row->state 		= 1;
 		$row->images 		= array();
-		$row->publish_up 	= date( "Y-m-d", time() );
-		$row->publish_down 	= "Never";
+		$row->publish_up 	= date( 'Y-m-d H:i:s', time() + ( $mosConfig_offset * 60 * 60 ) );
+		$row->publish_down 	= 'Jamais';
 		$row->sectionid 	= 0;
 		$row->catid 		= 0;
 		$row->creator 		= '';
+		$row->modified 		= $nullDate;
 		$row->modifier 		= '';
 		$row->ordering 		= 0;
 		$menus = array();
@@ -294,11 +303,11 @@ function edit( $uid, $option ) {
 * Saves the typed content item
 */
 function save( $option, $task ) {
-	global $database, $my;
+	global $database, $my, $mosConfig_offset;
 
 	$nullDate = $database->getNullDate();
-	$menu 		= mosGetParam( $_POST, 'menu', 'mainmenu' );
-	$menuid		= mosGetParam( $_POST, 'menuid', 0 );
+	$menu 		= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
+	$menuid		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
 
 	$row = new mosContent( $database );
 	if (!$row->bind( $_POST )) {
@@ -306,16 +315,33 @@ function save( $option, $task ) {
 		exit();
 	}
 
-	if ( $row->id ) {
-		$row->modified = date( 'Y-m-d H:i:s' );
-		$row->modified_by = $my->id;
-	} else {
-		$row->created = date( 'Y-m-d H:i:s' );
+	if ($row->id) {
+		$row->modified 		= date( 'Y-m-d H:i:s' );
+		$row->modified_by 	= $my->id;
+	}
+	
 		$row->created_by 	= $row->created_by ? $row->created_by : $my->id;
+	
+	if ($row->created && strlen(trim( $row->created )) <= 10) {
+		$row->created 	.= ' 00:00:00';
 	}
-	if (trim( $row->publish_down ) == 'Never') {
+	$row->created 		= $row->created ? mosFormatDate( $row->created, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset ) : date( 'Y-m-d H:i:s' );
+	
+	if (strlen(trim( $row->publish_up )) <= 10) {
+		$row->publish_up .= ' 00:00:00';
+	}
+	$row->publish_up = mosFormatDate($row->publish_up, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset );
+	
+	if (trim( $row->publish_down ) == 'Never' || trim( $row->publish_down ) == '') {
 		$row->publish_down = $nullDate;
+	} else {
+		if (strlen(trim( $row->publish_down )) <= 10) {
+			$row->publish_down .= ' 00:00:00';
+		}
+		$row->publish_down = mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset );
 	}
+	
+	$row->state = intval( mosGetParam( $_REQUEST, 'published', 0 ) );
 
 	// Save Parameters
 	$params = mosGetParam( $_POST, 'params', '' );
@@ -330,8 +356,6 @@ function save( $option, $task ) {
 	// code cleaner for xhtml transitional compliance
 	$row->introtext = str_replace( '<br>', '<br />', $row->introtext );
 
-	$row->state = mosGetParam( $_REQUEST, 'published', 0 );
-
 	$row->title = ampReplace( $row->title );
 	
 	if (!$row->check()) {
@@ -343,6 +367,9 @@ function save( $option, $task ) {
 		exit();
 	}
 	$row->checkin();
+
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
 
 	switch ( $task ) {
 		case 'go2menu':
@@ -362,13 +389,13 @@ function save( $option, $task ) {
 			break;
 
 		case 'save':
-			$msg = 'Typed Content Item saved';
+			$msg = 'Article statique sauvegardé';
 			mosRedirect( 'index2.php?option='. $option, $msg );
 			break;
 
 		case 'apply':
 		default:
-			$msg = 'Changes to Typed Content Item saved';
+			$msg = 'Modifications appliquées';
 			mosRedirect( 'index2.php?option='. $option .'&task=edit&hidemainmenu=1&id='. $row->id, $msg );
 			break;
 	}
@@ -400,7 +427,10 @@ function trash( &$cid, $option ) {
 		exit();
 	}
 
-	$msg = $total ." Item(s) sent to the Trash";
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+
+	$msg = $total ." élément(s) envoyé(s) vers la corbeille";
 	mosRedirect( 'index2.php?option='. $option, $msg );
 }
 
@@ -440,10 +470,13 @@ function changeState( $cid=null, $state=0, $option ) {
 		$row->checkin( $cid[0] );
 	}
 
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+
 	if ( $state == "1" ) {
-		$msg = $total ." Item(s) successfully Published";
+		$msg = $total ." Article(s) publié(s) avec succès";
 	} else if ( $state == "0" ) {
-		$msg = $total ." Item(s) successfully Unpublished";
+		$msg = $total ." Article(s) dépublié(s) avec succès";
 	}
 	mosRedirect( 'index2.php?option='. $option .'&msg='. $msg );
 }
@@ -466,6 +499,9 @@ function changeAccess( $id, $access, $option  ) {
 		return $row->getError();
 	}
 
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+
 	mosRedirect( 'index2.php?option='. $option );
 }
 
@@ -482,7 +518,7 @@ function resethits( $option, $id ) {
 	$row->store();
 	$row->checkin();
 
-	$msg = 'Successfully Reset Hit';
+	$msg = 'Compteur de hits remis à zéro avec succès';
 	mosRedirect( 'index2.php?option='. $option .'&task=edit&hidemainmenu=1&id='. $row->id, $msg );
 }
 
@@ -502,8 +538,10 @@ function cancel( $option ) {
 function menuLink( $option, $id ) {
 	global $database;
 
-	$menu 	= mosGetParam( $_POST, 'menuselect', '' );
-	$link 	= mosGetParam( $_POST, 'link_name', '' );
+	$menu 	= strval( mosGetParam( $_POST, 'menuselect', '' ) );
+	$link 	= strval( mosGetParam( $_POST, 'link_name', '' ) );
+
+	$link	= stripslashes( ampReplace($link) );
 
 	$row 				= new mosMenu( $database );
 	$row->menutype 		= $menu;
@@ -525,7 +563,10 @@ function menuLink( $option, $id ) {
 	$row->checkin();
 	$row->updateOrder( "menutype='$row->menutype' AND parent='$row->parent'" );
 
-	$msg = $link .' (Link - Static Content) in menu: '. $menu .' successfully created';
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+
+	$msg = $link .' (Lien - Article Statique) in menu: '. $menu .' créé avec succès';
 	mosRedirect( 'index2.php?option='. $option .'&task=edit&hidemainmenu=1&id='. $id, $msg );
 }
 
@@ -537,7 +578,7 @@ function go2menu() {
 	$row->bind( $_POST );
 	$row->checkin();
 
-	$menu = mosGetParam( $_POST, 'menu', 'mainmenu' );
+	$menu = strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
 
 	mosRedirect( 'index2.php?option=com_menus&menutype='. $menu );
 }
@@ -550,8 +591,8 @@ function go2menuitem() {
 	$row->bind( $_POST );
 	$row->checkin();
 
-	$menu 	= mosGetParam( $_POST, 'menu', 'mainmenu' );
-	$id		= mosGetParam( $_POST, 'menuid', 0 );
+	$menu 	= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
+	$id		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
 
 	mosRedirect( 'index2.php?option=com_menus&menutype='. $menu .'&task=edit&hidemainmenu=1&id='. $id );
 }
@@ -591,7 +632,10 @@ function saveOrder( &$cid ) {
 		$row->updateOrder( $cond[1] );
 	} // foreach
 
-	$msg 	= 'New ordering saved';
+	// clean any existing cache files
+	mosCache::cleanCache( 'com_content' );
+
+	$msg 	= 'Nouveau tri enregistré';
 	mosRedirect( 'index2.php?option=com_typedcontent', $msg );
 } // saveOrder
 ?>

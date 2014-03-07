@@ -30,19 +30,19 @@ class wrapper_menu_html {
 		<script language="Javascript" src="<?php echo $mosConfig_live_site;?>/includes/js/overlib_mini.js"></script>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
-			if ( pressbutton == 'cancel' ) {
+			if ( pressbutton == 'annuler' ) {
 				submitform( pressbutton );
 				return;
 			}
 			var form = document.adminForm;
 			if ( form.name.value == "" ) {
-				alert( 'This Menu item must have a title' );
+				alert( 'Le lien doit avoir un nom' );
 			} else {
 				<?php
 				if ( !$menu->id ) {
 					?>
 					if ( form.url.value == "" ){
-						alert( "You must provide a url." );
+						alert( "Vous devez saisir une URL." );
 					} else {
 						submitform( pressbutton );
 					}
@@ -60,7 +60,7 @@ class wrapper_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Wrapper
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Wrapper
 			</th>
 		</tr>
 		</table>
@@ -71,12 +71,12 @@ class wrapper_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Name:
+					Nom du lien:
 					</td>
 					<td width="200px">
 					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo $menu->name; ?>"/>
@@ -84,7 +84,7 @@ class wrapper_menu_html {
 				</tr>
 				<tr>
 					<td width="20%" align="right">
-					Wrapper Link:
+					Lien à Wrapper:
 					</td>
 					<td width="80%">
 					<input class="inputbox" type="text" name="url" size="50" maxlength="250" value="<?php echo @$menu->url; ?>" />
@@ -100,7 +100,7 @@ class wrapper_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['parent'];?>
@@ -108,7 +108,7 @@ class wrapper_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['ordering']; ?>
@@ -116,7 +116,7 @@ class wrapper_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['access']; ?>
@@ -124,7 +124,7 @@ class wrapper_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Published:
+					Publié:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['published']; ?>
@@ -139,7 +139,7 @@ class wrapper_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

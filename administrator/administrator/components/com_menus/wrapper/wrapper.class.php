@@ -98,7 +98,7 @@ class wrapper_menu {
 		$row->updateOrder( "menutype = '$row->menutype' AND parent = $row->parent" );
 
 
-		$msg = 'Menu item Saved';
+		$msg = 'Elément de menu sauvegardé.';
 		switch ( $task ) {
 			case 'apply':
 				mosRedirect( 'index2.php?option='. $option .'&menutype='. $row->menutype .'&task=edit&id='. $row->id, $msg );

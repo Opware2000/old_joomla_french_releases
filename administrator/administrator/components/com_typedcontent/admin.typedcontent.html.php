@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.html.php 199 2005-09-20 13:29:10Z stingrey $
+* @version $Id: admin.typedcontent.html.php 3723 2006-05-29 16:14:03Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -35,16 +35,16 @@ class HTML_typedcontent {
 		<table class="adminheading">
 		<tr>
 			<th class="edit">
-			Static Content Manager
-			</th>
+			Gestion
+			des articles statiques </th>
 			<td>
-			Filter:&nbsp;
+			Filtre:&nbsp;
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 			<td>
-			&nbsp;&nbsp;&nbsp;Order:&nbsp;
+			&nbsp;&nbsp;&nbsp;Ordre:&nbsp;
 			</td>
 			<td>
 			<?php echo $lists['order']; ?>
@@ -64,28 +64,28 @@ class HTML_typedcontent {
 			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th class="title">
-			Title
+			Titre
 			</th>
 			<th width="5%">
-			Published
+			Publi&eacute;
 			</th>
 			<th width="2%">
-			Order
+			Trier
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver Tri" /></a>
 			</th>
 			<th width="10%">
-			Access
+			Acc&egrave;s
 			</th>
 			<th width="5%">
 			ID
 			</th>
 			<th width="1%" align="left">
-			Links
+			Liens
 			</th>
 			<th width="20%" align="left">
-			Author
+			Auteur
 			</th>
 			<th align="center" width="10">
 			Date
@@ -97,35 +97,43 @@ class HTML_typedcontent {
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
 
-			$now = date( 'Y-m-d H:i:s' );
-			if ( $now <= $row->publish_up && $row->state == "1" ) {
+			$now = _CURRENT_SERVER_TIME;
+			if ( $now <= $row->publish_up && $row->state == 1 ) {
+			// Published
 				$img = 'publish_y.png';
-				$alt = 'Published';
-			} else if ( ( $now <= $row->publish_down || $row->publish_down == $nullDate ) && $row->state == "1" ) {
+				$alt = 'Publié';
+			} else if ( ( $now <= $row->publish_down || $row->publish_down == $nullDate ) && $row->state == 1 ) {
+			// Pending
 				$img = 'publish_g.png';
-				$alt = 'Published';
-			} else if ( $now > $row->publish_down && $row->state == "1" ) {
+				$alt = 'Publié';
+			} else if ( $now > $row->publish_down && $row->state == 1 ) {
+			// Expired
 				$img = 'publish_r.png';
-				$alt = 'Expired';
-			} elseif ( $row->state == "0" ) {
-				$img = "publish_x.png";
-				$alt = 'Unpublished';
+				$alt = 'Expiré';
+			} elseif ( $row->state == 0 ) {
+			// Unpublished
+				$img = 'publish_x.png';
+				$alt = 'Non Publié';
 			}
+			
+			// correct times to include server offset info
+			$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );			
+			if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
+				$row->publish_down = 'Never';
+			}
+			$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );		
+			
 			$times = '';
-			if (isset($row->publish_up)) {
 				if ($row->publish_up == $nullDate) {
-					$times .= "<tr><td>Start: Always</td></tr>";
+					$times .= "<tr><td>Commence: Toujours</td></tr>";
 				} else {
-					$times .= "<tr><td>Start: $row->publish_up</td></tr>";
+					$times .= "<tr><td>Commence: $row->publish_up</td></tr>";
 				}
-			}
-			if (isset($row->publish_down)) {
-				if ($row->publish_down == $nullDate) {
-					$times .= "<tr><td>Finish: No Expiry</td></tr>";
+			if ($row->publish_down == $nullDate || $row->publish_down = 'Jamais') {
+					$times .= "<tr><td>Expire: Jamais</td></tr>";
 				} else {
-					$times .= "<tr><td>Finish: $row->publish_down</td></tr>";
+					$times .= "<tr><td>Expire: $row->publish_down</td></tr>";
 				}
-			}
 
 			if ( !$row->access ) {
 				$color_access = 'style="color: green;"';
@@ -140,18 +148,14 @@ class HTML_typedcontent {
 
 			$link = 'index2.php?option=com_typedcontent&task=edit&hidemainmenu=1&id='. $row->id;
 
-			if ( $row->checked_out ) {
-				$checked	 		= mosCommonHTML::checkedOut( $row );
-			} else {
-				$checked	 		= mosHTML::idBox( $i, $row->id, ($row->checked_out && $row->checked_out != $my->id ) );
-			}
+			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 
 			if ( $acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_users' ) ) {
 				if ( $row->created_by_alias ) {
 					$author = $row->created_by_alias;
 				} else {
 					$linkA 	= 'index2.php?option=com_users&task=editA&hidemainmenu=1&id='. $row->created_by;
-					$author = '<a href="'. $linkA .'" title="Edit User">'. $row->creator .'</a>';
+					$author = '<a href="'. $linkA .'" title="Editer Utilisateur">'. $row->creator .'</a>';
 				}
 			} else {
 				if ( $row->created_by_alias ) {
@@ -179,7 +183,7 @@ class HTML_typedcontent {
 					}
 				} else {
 					?>
-					<a href="<?php echo $link; ?>" title="Edit Static Content">
+					<a href="<?php echo $link; ?>" title="Editer Article Statique">
 					<?php
 					echo $row->title;
 					if ( $row->title_alias ) {
@@ -195,7 +199,7 @@ class HTML_typedcontent {
 				if ( $times ) {
 					?>
 					<td align="center">
-					<a href="javascript: void(0);" onMouseOver="return overlib('<table><?php echo $times; ?></table>', CAPTION, 'Publish Information', BELOW, RIGHT);" onMouseOut="return nd();" onClick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? "unpublish" : "publish";?>')">
+					<a href="javascript: void(0);" onMouseOver="return overlib('<table><?php echo $times; ?></table>', CAPTION, 'Information de Publication', BELOW, RIGHT);" onMouseOut="return nd();" onClick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? "unpublish" : "publish";?>')">
 					<img src="images/<?php echo $img;?>" width="12" height="12" border="0" alt="<?php echo $alt; ?>" />
 					</a>
 					</td>
@@ -241,7 +245,21 @@ class HTML_typedcontent {
 	}
 
 	function edit( &$row, &$images, &$lists, &$params, $option, &$menus ) {
-		//mosMakeHtmlSafe( $row );
+		global $database;
+		
+		mosMakeHtmlSafe( $row );
+		
+		$create_date = null;
+		$mod_date 		= null;
+		$nullDate 		= $database->getNullDate();
+		
+		if ( $row->created != $nullDate ) {
+			$create_date 	= mosFormatDate( $row->created, '%A, %d %B %Y %H:%M', '0' );
+		}
+		if ( $row->modified != $nullDate ) {
+			$mod_date 		= mosFormatDate( $row->modified, '%A, %d %B %Y %H:%M', '0' );
+		}
+		
 		$tabs = new mosTabs( 1 );
 		// used to hide "Reset Hits" when hits = 0
 		if ( !$row->hits ) {
@@ -259,7 +277,7 @@ class HTML_typedcontent {
 		$i = 0;
 		foreach ($images as $k=>$items) {
 			foreach ($items as $v) {
-				echo "\n	folderimages[".$i++."] = new Array( '$k','".addslashes( $v->value )."','".addslashes( $v->text )."' );";
+				echo "folderimages[".$i++."] = new Array( '$k','".addslashes( $v->value )."','".addslashes( $v->text )."' );\t";
 			}
 		}
 		?>
@@ -271,7 +289,7 @@ class HTML_typedcontent {
 			}
 
 			if ( pressbutton ==' resethits' ) {
-				if (confirm('Are you sure you want to reset the Hits to Zero? \nAny unsaved changes to this content will be lost.')){
+				if (confirm('Etes vous certain de vouloir réintialiser le compteur de clics à zéro? \nLes changements non sauvegardés pour cet article seront perdus.')){
 					submitform( pressbutton );
 					return;
 				} else {
@@ -281,10 +299,10 @@ class HTML_typedcontent {
 
 			if ( pressbutton == 'menulink' ) {
 				if ( form.menuselect.value == "" ) {
-					alert( "Please select a Menu" );
+					alert( "Vous devez sélectionner un menu" );
 					return;
 				} else if ( form.link_name.value == "" ) {
-					alert( "Please enter a Name for this menu item" );
+					alert( "Vous devez saisir un nom pour cet élément de menu" );
 					return;
 				}
 			}
@@ -300,9 +318,9 @@ class HTML_typedcontent {
 			}
 			catch(e){}
 			if (trim(form.title.value) == ""){
-				alert( "Content item must have a title" );
+				alert( "Vous devez donner un titre à l'\article" );
 			} else if (trim(form.name.value) == ""){
-				alert( "Content item must have a name" );
+				alert( "L\article doit avoir un nom" );
 			} else {
 				if ( form.reset_hits.checked ) {
 					form.hits.value = 0;
@@ -317,9 +335,9 @@ class HTML_typedcontent {
 		<table class="adminheading">
 		<tr>
 			<th class="edit">
-			Static Content Item:
+			Article statique:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -333,12 +351,12 @@ class HTML_typedcontent {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Item Details
+					Propri&eacute;t&eacute;s de l'Article
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td align="left">
-					Title:
+					Titre:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="title" size="30" maxlength="100" value="<?php echo $row->title; ?>" />
@@ -346,15 +364,14 @@ class HTML_typedcontent {
 				</tr>
 				<tr>
 					<td align="left">
-					Title Alias:
-					</td>
+					Alias de titre:					</td>
 					<td>
 					<input class="inputbox" type="text" name="title_alias" size="30" maxlength="100" value="<?php echo $row->title_alias; ?>" />
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="left" colspan="2">
-					Text: (required)<br />
+					Texte: (obligatoire)<br />
 					<?php
 					// parameters : areaname, content, hidden field, width, height, rows, cols
 					editorArea( 'editor1',  $row->introtext, 'introtext', '100%;', '500', '75', '50' );
@@ -366,25 +383,25 @@ class HTML_typedcontent {
 			<td width="40%" valign="top">
 				<?php
 				$tabs->startPane("content-pane");
-				$tabs->startTab("Publishing","publish-page");
+				$tabs->startTab("Publication","publish-page");
 				?>
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Publishing Info
+					Informations de Publication
 					</th>
+				</tr>
 				<tr>
-				<tr>
-					<td valign="top" align="right">
-					State:
+					<td valign="top" align="right" width="120">
+					Statut:
 					</td>
 					<td>
-					<?php echo $row->state > 0 ? 'Published' : 'Draft Unpublished'; ?>
+					<?php echo $row->state > 0 ? 'Publié' : 'Non Publié'; ?>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<input type="checkbox" name="published" value="1" <?php echo $row->state ? 'checked="checked"' : ''; ?> />
@@ -392,7 +409,7 @@ class HTML_typedcontent {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'acc&egrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -400,7 +417,7 @@ class HTML_typedcontent {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Author Alias:
+					Alias de l'auteur:
 					</td>
 					<td>
 					<input type="text" name="created_by_alias" size="30" maxlength="100" value="<?php echo $row->created_by_alias; ?>" class="inputbox" />
@@ -408,35 +425,35 @@ class HTML_typedcontent {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Change Creator:
-					</td>
+Changer l'auteur:					
+</td>
 					<td>
 					<?php echo $lists['created_by']; ?>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Override Created Date
-					</td>
+Modifier la date de cr&eacute;ation
+</td>
 					<td>
 					<input class="inputbox" type="text" name="created" id="created" size="25" maxlength="19" value="<?php echo $row->created; ?>" />
 					<input name="reset" type="reset" class="button" onClick="return showCalendar('created', 'y-mm-dd');" value="...">
 					</td>
 				</tr>
 				<tr>
-					<td width="20%" align="right">
-					Start Publishing:
-					</td>
-					<td width="80%">
+					<td align="right">
+D&eacute;but de publication:					
+</td>
+					<td>
 					<input class="inputbox" type="text" name="publish_up" id="publish_up" size="25" maxlength="19" value="<?php echo $row->publish_up; ?>" />
 					<input type="reset" class="button" value="..." onclick="return showCalendar('publish_up', 'y-mm-dd');">
 					</td>
 				</tr>
 				<tr>
-					<td width="20%" align="right">
-					Finish Publishing:
-					</td>
-					<td width="80%">
+					<td align="right">
+Fin de publication:					
+</td>
+					<td>
 					<input class="inputbox" type="text" name="publish_down" id="publish_down" size="25" maxlength="19" value="<?php echo $row->publish_down; ?>" />
 					<input type="reset" class="button" value="..." onclick="return showCalendar('publish_down', 'y-mm-dd');">
 					</td>
@@ -449,7 +466,7 @@ class HTML_typedcontent {
 					?>
 					<tr>
 						<td>
-						<strong>Content ID:</strong>
+						<strong>ID de l'article:</strong>
 						</td>
 						<td>
 						<?php echo $row->id; ?>
@@ -459,11 +476,11 @@ class HTML_typedcontent {
 				}
 				?>
 				<tr>
-					<td width="90px" valign="top" align="right">
-					<strong>State</strong>
+					<td width="120" valign="top" align="right">
+					<strong>Statut</strong>
 					</td>
 					<td>
-					<?php echo $row->state > 0 ? 'Published' : ($row->state < 0 ? 'Archived' : 'Draft Unpublished');?>
+					<?php echo $row->state > 0 ? 'Publié' : ($row->state < 0 ? 'Archivé' : 'Non Publié');?>
 					</td>
 				</tr>
 				<tr>
@@ -473,37 +490,55 @@ class HTML_typedcontent {
 					<td>
 					<?php echo $row->hits;?>
 					<div <?php echo $visibility; ?>>
-					<input name="reset_hits" type="button" class="button" value="Reset Hit Count" onClick="submitbutton('resethits');">
+					<input name="reset_hits" type="button" class="button" value="R&eacute;initialiser le compteur de clics" onClick="submitbutton('resethits');">
 					</div>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					<strong>Version</strong>
+					<strong>R&eacute;vis&eacute;</strong>
 					</td>
 					<td>
-					<?php echo "$row->version";?>
+					<?php echo $row->version;?> fois
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					<strong>Created</strong>
+					<strong>Cr&eacute;&eacute; le </strong>
 					</td>
 					<td>
-					<?php echo $row->created ? "$row->created</td></tr><tr><td valign='top' align='right'><strong>By</strong></td><td>$row->creator" : "New document";?>
+						<?php
+						if ( !$create_date ) {
+							?>
+							Nouveau Document
+							<?php
+						} else {
+							echo $create_date;
+						}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top" align="right"><strong>Derni&egrave;re modification le</strong></td>
+					<td>
+						<?php
+						if ( !$mod_date ) {
+							?>
+							Non modifi&eacute;
+							<?php
+						} else {
+							echo $mod_date;
+							?>
+							<br />
+							<?php
+							echo $row->modifier;
+						}
+						?>
 					</td>
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					<strong>Last Modified</strong>
-					</td>
-					<td>
-					<?php echo $row->modified ? "$row->modified</td></tr><tr><td valign='top' align='right'><strong>By</strong></td><td>$row->modifier" : "Not modified";?>
-					</td>
-				</tr>
-				<tr>
-					<td valign="top" align="right">
-					<strong>Expires</strong>
+					<strong>Expiration</strong>
 					</td>
 					<td>
 					<?php echo "$row->publish_down";?>
@@ -516,21 +551,17 @@ class HTML_typedcontent {
 				?>
 				<table class="adminform">
 				<tr>
-					<th colspan="2">
-						MOSImage Control
-					</th>
+					<th colspan="2">Insertion d'image avec MOSImage</th>
 				</tr>
 				<tr>
 					<td colspan="2">
 						<table width="100%">
 						<tr>
-							<td width="48%">
+							<td width="48%" valign="top">
 								<div align="center">
-									Gallery Images:
+									Galerie d'image:
 									<br />
 									<?php echo $lists['imagefiles'];?>
-									<br />
-									Sub-folder: <?php echo $lists['folders'];?>
 								</div>
 							</td>
 							<td width="2%">
@@ -540,119 +571,107 @@ class HTML_typedcontent {
 							</td>
 							<td width="48%">
 								<div align="center">
-									Content Images:
+									Images de l'article:
 									<br />
 									<?php echo $lists['imagelist'];?>
 									<br />
-									<input class="button" type="button" value="Up" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,-1)" />
-									<input class="button" type="button" value="Down" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,+1)" />
-								</div>
+									<input class="button" type="button" value="Haut" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,-1)" />
+									<input class="button" type="button" value="Bas" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,+1)" />
+							  </div>
 							</td>
 						</tr>
 						</table>
+						Sub-folder: <?php echo $lists['folders'];?>
 					</td>
 				</tr>
 				<tr valign="top">
 					<td>
-						<div align="center">
-							Sample Image:<br/>
+						<div align="center">Pr&eacute;visualisation de l'image:<br/>
 							<img name="view_imagefiles" src="../images/M_images/blank.png" width="100" />
-						</div>
+					  </div>
 					</td>
 					<td valign="top">
-						<div align="center">
-							Active Image:<br/>
+						<div align="center">Image active:<br/>
 							<img name="view_imagelist" src="../images/M_images/blank.png" width="100" />
-						</div>
+					  </div>
 					</td>
 				</tr>
 				<tr>
-					<td>
-					Edit the image selected:
-						<table>
-						<tr>
-							<td align="right">
-							Source
-							</td>
-							<td>
-							<input type="text" name= "_source" value="" />
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Align
-							</td>
-							<td>
-							<?php echo $lists['_align']; ?>
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Alt Text
-							</td>
-							<td>
-							<input type="text" name="_alt" value="" />
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Border
-							</td>
-							<td>
-							<input type="text" name="_border" value="" size="3" maxlength="1" />
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Caption:
-							</td>
-							<td>
-							<input class="text_area" type="text" name="_caption" value="" size="30" />
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Caption Position:
-							</td>
-							<td>
-							<?php echo $lists['_caption_position']; ?>
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Caption Align:
-							</td>
-							<td>
-							<?php echo $lists['_caption_align']; ?>
-							</td>
-						</tr>
-						<tr>
-							<td align="right">
-							Width:
-							</td>
-							<td>
-							<input class="text_area" type="text" name="_width" value="" size="5" maxlength="5" />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-							<input class="button" type="button" value="Apply" onClick="applyImageProps()" />
-							</td>
-						</tr>
-						</table>
+					<td>Editer l'image s&eacute;lectionn&eacute;e:
+					  <table>
+					    <tr>
+					      <td align="right">
+					        Source
+				          </td>
+							  <td>
+							    <input type="text" name= "_source" value="" />
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">Alignement de l'image</td>
+							  <td>
+							    <?php echo $lists['_align']; ?>
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">Texte alternatif (Alt)</td>
+							  <td>
+							    <input type="text" name="_alt" value="" />
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">
+					        Bordure
+				          </td>
+							  <td>
+							    <input type="text" name="_border" value="" size="3" maxlength="1" />
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">L&eacute;gende de l'image:				          </td>
+							  <td>
+							    <input class="text_area" type="text" name="_caption" value="" size="30" />
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">Position de la l&eacute;gende:				          </td>
+							  <td>
+							    <?php echo $lists['_caption_position']; ?>
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">Alignement de la l&eacute;gende:				          </td>
+							  <td>
+							    <?php echo $lists['_caption_align']; ?>
+					      </td>
+					    </tr>
+					    <tr>
+					      <td align="right">
+					        Largeur:
+				          </td>
+							  <td>
+							    <input class="text_area" type="text" name="_width" value="" size="5" maxlength="5" />
+					      </td>
+					    </tr>
+					    <tr>
+					      <td colspan="2">
+					        <input class="button" type="button" value="Appliquer" onClick="applyImageProps()" />
+				          </td>
+					    </tr>
+				      </table>
 					</td>
 				</tr>
 				</table>
 				<?php
 				$tabs->endTab();
-				$tabs->startTab("Parameters","params-page");
+				$tabs->startTab("Param&egrave;tres","params-page");
 				?>
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Parameter Control
+					Param&egrave;tres d'affichage de l'article
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td>
 					<?php echo $params->render();?>
@@ -661,14 +680,14 @@ class HTML_typedcontent {
 				</table>
 				<?php
 				$tabs->endTab();
-				$tabs->startTab("Meta Info","metadata-page");
+				$tabs->startTab("Metas","metadata-page");
 				?>
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Meta Data
+					Meta Donn&eacute;es
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td align="left">
 					Description:<br />
@@ -677,53 +696,53 @@ class HTML_typedcontent {
 				</tr>
 				<tr>
 					<td align="left">
-					Keywords:<br />
+					Mots cl&eacute;s:<br />
 					<textarea class="inputbox" cols="40" rows="5" name="metakey" style="width:300px"><?php echo str_replace('&','&amp;',$row->metakey); ?></textarea>
-					</td>
+				  </td>
 				</tr>
 				</table>
 				<?php
 				$tabs->endTab();
-				$tabs->startTab("Link to Menu","link-page");
+				$tabs->startTab("Liens","link-page");
 				?>
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Link to Menu
+					Cr&eacute;er un lien vers l'article
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td colspan="2">
-					This will create a 'Link - Static Content' in the menu you select
+					Un lien de type 'Lien - Article statique' sera cr&eacute;&eacute; dans le menu s&eacute;lectionn&eacute;
 					<br /><br />
 					</td>
-				<tr>
+				</tr>
 				<tr>
 					<td valign="top" width="90px">
-					Select a Menu
-					</td>
+					S&eacute;lectionner un menu
+				  </td>
 					<td>
 					<?php echo $lists['menuselect']; ?>
 					</td>
-				<tr>
+				</tr>
 				<tr>
 					<td valign="top" width="90px">
-					Menu Item Name
+					Nom du lien
 					</td>
 					<td>
 					<input type="text" name="link_name" class="inputbox" value="" size="30" />
 					</td>
-				<tr>
+				</tr>
 				<tr>
 					<td>
 					</td>
 					<td>
-					<input name="menu_link" type="button" class="button" value="Link to Menu" onClick="submitbutton('menulink');" />
+					<input name="menu_link" type="button" class="button" value="Cr&eacute;er le lien" onClick="submitbutton('menulink');" />
 					</td>
-				<tr>
+				</tr>
 				<tr>
 					<th colspan="2">
-					Existing Menu Links
+					Liens existants
 					</th>
 				</tr>
 				<?php
@@ -731,7 +750,7 @@ class HTML_typedcontent {
 					?>
 					<tr>
 						<td colspan="2">
-						None
+						Aucun
 						</td>
 					</tr>
 					<?php

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 322 2005-10-02 14:32:15Z stingrey $
+* @version $Id: index.php 3478 2006-05-13 20:31:22Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -29,9 +29,11 @@ function writableCell( $folder ) {
 	echo '<tr>';
 	echo '<td class="item">' . $folder . '/</td>';
 	echo '<td align="left">';
-	echo is_writable( "../$folder" ) ? '<b><font color="green">Writeable</font></b>' : '<b><font color="red">Unwriteable</font></b>' . '</td>';
+	echo is_writable( "../$folder" ) ? '<b><font color="green">Modifiable</font></b>' : '<b><font color="red">Non modifiable</font></b>' . '</td>';
 	echo '</tr>';
 }
+
+$sp = ini_get( 'session.save_path' );
 
 echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 ?>
@@ -40,46 +42,43 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 </head>
 <body>
 
 <div id="wrapper">
 <div id="header">
-<div id="joomla"><img src="header_install.png" alt="Joomla Installation" /></div>
+<div id="joomla"><img src="header_install.png" alt="Installation Joomla" /></div>
 </div>
 </div>
 
 <div id="ctr" align="center">
 <div class="install">
 <div id="stepbar">
-<div class="step-on">pre-installation check</div>
-<div class="step-off">license</div>
-<div class="step-off">step 1</div>
-<div class="step-off">step 2</div>
-<div class="step-off">step 3</div>
-<div class="step-off">step 4</div>
+<div class="step-on">Pré-installation</div>
+<div class="step-off">Licence</div>
+<div class="step-off">Etape 1</div>
+<div class="step-off">Etape 2</div>
+<div class="step-off">Etape 3</div>
+<div class="step-off">Etape 4</div>
 </div>
 
 <div id="right">
 
-<div id="step">pre-installation check</div>
+<div id="step">Pré-installation</div>
 
 <div class="far-right">
-	<input name="Button2" type="submit" class="button" value="Next >>" onclick="window.location='install.php';" />
+	<input name="Button2" type="submit" class="button" value="Suivant >>" onclick="window.location='install.php';" />
 	<br/>
 	<br/>
-	<input type="button" class="button" value="Check Again" onclick="window.location=window.location" />
+	<input type="button" class="button" value="Vérifier à nouveau" onclick="window.location=window.location" />
 </div>
 <div class="clr"></div>
 
-<h1>Pre-installation check for:<br/><?php echo $version; ?></h1>
+<h1>Vérification de pré-installation pour:<br/><?php echo $version; ?></h1>
 <div class="install-text">
-If any of these items are highlighted
-in red then please take actions to correct them. Failure to do so
-could lead to your Joomla installation not functioning
-correctly.
+Si certains éléments sont écrits en rouge, alors veuillez prendre les mesures nécessaires pour les corriger. Sinon l'installation de Joomla peut ne pas fonctionner correctement.
 <div class="ctr"></div>
 </div>
 
@@ -92,31 +91,31 @@ correctly.
 	PHP version >= 4.1.0
 	</td>
 	<td align="left">
-	<?php echo phpversion() < '4.1' ? '<b><font color="red">No</font></b>' : '<b><font color="green">Yes</font></b>';?>
+	<?php echo phpversion() < '4.1' ? '<b><font color="red">Non</font></b>' : '<b><font color="green">Oui</font></b>';?>
 	</td>
 </tr>
 <tr>
 	<td>
-	&nbsp; - zlib compression support
+	&nbsp; - Compression ZLIB
 	</td>
 	<td align="left">
-	<?php echo extension_loaded('zlib') ? '<b><font color="green">Available</font></b>' : '<b><font color="red">Unavailable</font></b>';?>
+	<?php echo extension_loaded('zlib') ? '<b><font color="green">Oui</font></b>' : '<b><font color="red">Non</font></b>';?>
 	</td>
 </tr>
 <tr>
 	<td>
-	&nbsp; - XML support
+	&nbsp; - Support XML
 	</td>
 	<td align="left">
-	<?php echo extension_loaded('xml') ? '<b><font color="green">Available</font></b>' : '<b><font color="red">Unavailable</font></b>';?>
+	<?php echo extension_loaded('xml') ? '<b><font color="green">Oui</font></b>' : '<b><font color="red">Non</font></b>';?>
 	</td>
 </tr>
 <tr>
 	<td>
-	&nbsp; - MySQL support
+	&nbsp; - Support MySQL
 	</td>
 	<td align="left">
-	<?php echo function_exists( 'mysql_connect' ) ? '<b><font color="green">Available</font></b>' : '<b><font color="red">Unavailable</font></b>';?>
+	<?php echo function_exists( 'mysql_connect' ) ? '<b><font color="green">Oui</font></b>' : '<b><font color="red">Non</font></b>';?>
 	</td>
 </tr>
 <tr>
@@ -126,11 +125,11 @@ correctly.
 	<td align="left">
 	<?php
 	if (@file_exists('../configuration.php') &&  @is_writable( '../configuration.php' )){
-		echo '<b><font color="green">Writeable</font></b>';
+		echo '<b><font color="green">Modifiable</font></b>';
 	} else if (is_writable( '..' )) {
-		echo '<b><font color="green">Writeable</font></b>';
+		echo '<b><font color="green">Modifiable</font></b>';
 	} else {
-		echo '<b><font color="red">Unwriteable</font></b><br /><span class="small">You can still continue the install as the configuration will be displayed at the end, just copy & paste this and upload.</span>';
+		echo '<b><font color="red">Non modifiable</font></b><br /><span class="small">Vous pouvez poursuivre l\'installation, vous devrez toutefois copier et coller les données de configuration affichées à la fin de l\'installation dans un fichier configuration.php, que vous devrez ensuite uploader.</span>';
 	} ?>
 	</td>
 </tr>
@@ -138,9 +137,13 @@ correctly.
 	<td class="item">
 	Session save path
 	</td>
-	<td align="left">
-	<b><?php echo (($sp=ini_get('session.save_path'))?$sp:'Not set'); ?></b>,
+	<td align="left" valign="top">
 	<?php echo is_writable( $sp ) ? '<b><font color="green">Writeable</font></b>' : '<b><font color="red">Unwriteable</font></b>';?>
+	</td>
+</tr>
+<tr>
+	<td class="item" colspan="2">
+	<b><?php echo $sp ? $sp : 'Not set'; ?></b>
 	</td>
 </tr>
 </table>
@@ -148,13 +151,11 @@ correctly.
 </div>
 <div class="clr"></div>
 
-<h1>Recommended settings:</h1>
+<h1> Configuration recommandée:</h1>
 <div class="install-text">
-These settings are recommended for PHP in order to ensure full
-compatibility with Joomla.
+Ces paramètres PHP sont recommandés afin d'assurer une pleine compatibilité avec Joomla.
 <br />
-However, Joomla will still operate if your settings do not quite match the recommended
-<div class="ctr"></div>
+Toutefois, Joomla devrait quand même fonctionner correctement s'ils ne sont pas activés.<div class="ctr"></div>
 </div>
 
 <div class="install-form">
@@ -166,10 +167,10 @@ However, Joomla will still operate if your settings do not quite match the recom
 	Directive
 	</td>
 	<td class="toggle">
-	Recommended
+	Recommandé
 	</td>
 	<td class="toggle">
-	Actual
+	Actuel
 	</td>
 </tr>
 <?php
@@ -212,13 +213,9 @@ foreach ($php_recommended_settings as $phprec) {
 </div>
 <div class="clr"></div>
 
-<h1>Directory and File Permissions:</h1>
+<h1> Permissions des répertoires:</h1>
 <div class="install-text">
-In order for Joomla to function
-correctly it needs to be able to access or write to certain files
-or directories. If you see "Unwriteable" you need to change the
-permissions on the file or directory to allow Joomla
-to write to it.
+Pour que Joomla fonctionne correctement, certains répertoires doivent être accessibles en lecture et écriture. Si certains des répertoires listés co-contre sont dans l'état "Non modifiable", alors vous devrez changer les CHMODer pour les rendre "Modifiables".
 <div class="clr">&nbsp;&nbsp;</div>
 <div class="ctr"></div>
 </div>
@@ -243,6 +240,7 @@ writableCell( 'mambots/content' );
 writableCell( 'mambots/editors' );
 writableCell( 'mambots/editors-xtd' );
 writableCell( 'mambots/search' );
+writableCell( 'mambots/system' );
 writableCell( 'media' );
 writableCell( 'modules' );
 writableCell( 'templates' );

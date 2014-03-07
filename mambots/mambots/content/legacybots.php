@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: legacybots.php 427 2005-10-09 18:59:01Z stingrey $
+* @version $Id: legacybots.php 2695 2006-03-07 20:26:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -36,7 +36,7 @@ function botLegacyBots( $published, &$row, &$params, $page=0 ) {
 	$bots = mosReadDirectory( "$mosConfig_absolute_path/mambots", "\.php$" );
 	sort( $bots );
 	foreach ($bots as $bot) {
-		require "mambots/$bot";
+		require $mosConfig_absolute_path ."/mambots/$bot";
 	}
 }
 ?>

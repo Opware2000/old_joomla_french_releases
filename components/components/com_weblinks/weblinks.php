@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.php 1817 2006-01-14 19:54:33Z stingrey $
+* @version $Id: weblinks.php 3594 2006-05-22 17:29:07Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -45,7 +45,7 @@ switch ($task) {
 		break;
 
 	case 'view':
-		showItem( $id, $catid );
+		showItem( $id );
 		break;
 
 	default:
@@ -58,21 +58,8 @@ function listWeblinks( $catid ) {
 	global $mosConfig_live_site;
 	global $Itemid;
 
-	/* Query to retrieve all categories that belong under the web links section and that are published. */
-	$query = "SELECT *, COUNT(a.id) AS numlinks FROM #__categories AS cc"
-	. "\n LEFT JOIN #__weblinks AS a ON a.catid = cc.id"
-	. "\n WHERE a.published = 1"
-	. "\n AND section = 'com_weblinks'"
-	. "\n AND cc.published = 1"
-	. "\n AND cc.access <= $my->gid"
-	. "\n GROUP BY cc.id"
-	. "\n ORDER BY cc.ordering"
-	;
-	$database->setQuery( $query );
-	$categories = $database->loadObjectList();
-
-	$rows = array();
-	$currentcat = NULL;
+	$rows 		= array();
+	$currentcat = null;
 	if ( $catid ) {
 		// url links info for category
 		$query = "SELECT id, url, title, description, date, hits, params"
@@ -86,18 +73,40 @@ function listWeblinks( $catid ) {
 		$rows = $database->loadObjectList();
 
 		// current cate info
-		$query = "SELECT name, description, image, image_position"
+		$query = "SELECT *"
 		. "\n FROM #__categories"
 		. "\n WHERE id = $catid"
 		. "\n AND published = 1"
+		. "\n AND access <= $my->gid"
 		;
 		$database->setQuery( $query );
 		$database->loadObject( $currentcat );
+
+		/*
+		Check if the category is published or if access level allows access
+		*/
+		if (!$currentcat->name) {
+			mosNotAuth();
+			return;
+		}
 	}
 
+	/* Query to retrieve all categories that belong under the web links section and that are published. */
+	$query = "SELECT cc.*, a.catid, a.title, a.url, COUNT(a.id) AS numlinks"
+	. "\n FROM #__categories AS cc"
+	. "\n LEFT JOIN #__weblinks AS a ON a.catid = cc.id"
+	. "\n WHERE a.published = 1"
+	. "\n AND section = 'com_weblinks'"
+	. "\n AND cc.published = 1"
+	. "\n AND cc.access <= $my->gid"
+	. "\n GROUP BY cc.id"
+	. "\n ORDER BY cc.ordering"
+	;
+	$database->setQuery( $query );
+	$categories = $database->loadObjectList();
+	
 	// Parameters
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 	$params = new mosParameters( $menu->params );
 	$params->def( 'page_title', 1 );
 	$params->def( 'header', $menu->name );
@@ -159,10 +168,39 @@ function listWeblinks( $catid ) {
 }
 
 
-function showItem ( $id, $catid ) {
-	global $database;
+function showItem ( $id ) {
+	global $database, $my;
 
-	//Record the hit
+	$link = new mosWeblink($database);
+	$link->load($id);
+	
+	/*
+	* Check if link is published
+	*/
+	if (!$link->published) {
+		mosNotAuth();
+		return;
+	}
+	
+	$cat = new mosCategory($database);
+	$cat->load($link->catid);
+	
+	/*
+	* Check if category is published
+	*/
+	if (!$cat->published) {
+		mosNotAuth();
+		return;
+	}
+	/*
+	* check whether category access level allows access
+	*/
+	if ( $cat->access > $my->gid ) {	
+		mosNotAuth();  
+		return;
+	}
+
+	// Record the hit
 	$query = "UPDATE #__weblinks"
 	. "\n SET hits = hits + 1"
 	. "\n WHERE id = $id"
@@ -170,16 +208,9 @@ function showItem ( $id, $catid ) {
 	$database->setQuery( $query );
 	$database->query();
 
-	$query = "SELECT url"
-	. "\n FROM #__weblinks"
-	. "\n WHERE id = $id"
-	;
-	$database->setQuery( $query );	
-	$url = $database->loadResult();
-	
-	if ( $url ) {
+	if ( $link->url ) {
 		// redirects to url if matching id found
-		mosRedirect ( $url );
+		mosRedirect ( $link->url );
 	} else {		
 		// redirects to weblink category page if no matching id found
 		listWeblinks( $catid );
@@ -193,7 +224,21 @@ function editWebLink( $id, $option ) {
 		mosNotAuth();
 		return;
 	}
-
+		
+	// security check to see if link exists in a menu
+	$link = 'index.php?option=com_weblinks&task=new';
+	$query = "SELECT id"
+	. "\n FROM #__menu"
+	. "\n WHERE link LIKE '%$link%'"
+	. "\n AND published = 1"
+	;
+	$database->setQuery( $query );
+	$exists = $database->loadResult();
+	if ( !$exists ) {						
+		mosNotAuth();
+		return;
+	}		
+	
 	$row = new mosWeblink( $database );
 	// load the row from the db table
 	$row->load( $id );
@@ -211,20 +256,6 @@ function editWebLink( $id, $option ) {
 		$row->approved 		= 1;
 		$row->ordering 		= 0;
 	}
-/*
-	// make the select list for the image positions
-	$yesno[] = mosHTML::makeOption( '0', 'No' );
-	$yesno[] = mosHTML::makeOption( '1', 'Yes' );
-	// build the html select list
-	$applist = mosHTML::selectList( $yesno, 'approved', 'class="inputbox" size="2"', 'value', 'text', $row->approved );
-	// build the html select list for ordering
-	$query = "SELECT ordering AS value, title AS text"
-	. "\n FROM #__weblinks"
-	. "\n WHERE catid='$row->catid'"
-	. "\n ORDER BY ordering"
-	;
-	$lists['ordering'] 			= mosAdminMenus::SpecificOrdering( $row, $id, $query, 1 );
-*/
 
 	// build list of categories
 	$lists['catid'] 			= mosAdminMenus::ComponentCategory( 'catid', $option, intval( $row->catid ) );
@@ -243,9 +274,8 @@ function cancelWebLink( $option ) {
 	$row = new mosWeblink( $database );
 	$row->id = intval( mosGetParam( $_POST, 'id', 0 ) );
 	$row->checkin();
-	$Itemid = mosGetParam( $_POST, 'Returnid', '' );
 
-	$referer = mosGetParam( $_POST, 'referer', '' );
+	$referer = strval( mosGetParam( $_POST, 'referer', '' ) );
 	mosRedirect( $referer );
 }
 

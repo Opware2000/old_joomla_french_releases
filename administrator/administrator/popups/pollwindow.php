@@ -61,10 +61,10 @@ $options = $database->loadResultArray();
 		<?php }
 	} ?>
 	<tr>
-		<td valign="middle" height="50" colspan="2" align="center"><input type="button" name="submit" value="Vote">&nbsp;&nbsp;<input type="button" name="result" value="Results"></td>
+		<td valign="middle" height="50" colspan="2" align="center"><input type="button" name="submit" value="Voter">&nbsp;&nbsp;<input type="button" name="result" value="Resultats"></td>
 	</tr>
 	<tr>
-		<td align="center" colspan="2"><a href="#" onClick="window.close()">Close</a></td>
+		<td align="center" colspan="2"><a href="#" onClick="window.close()">Fermer</a></td>
 	</tr>
 </table>
 </form>

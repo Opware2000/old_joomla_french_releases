@@ -25,7 +25,7 @@ class TOOLBAR_massmail {
 	*/
 	function _DEFAULT() {
 		mosMenuBar::startTable();
-		mosMenuBar::custom('send','publish.png','publish_f2.png','Send Mail',false);
+		mosMenuBar::custom('send','publish.png','publish_f2.png','Envoyer',false);
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();

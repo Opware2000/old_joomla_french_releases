@@ -28,7 +28,7 @@ class TOOLBAR_FrontPage {
 		mosMenuBar::spacer();
 		mosMenuBar::unpublishList();
 		mosMenuBar::spacer();
-		mosMenuBar::custom('remove','delete.png','delete_f2.png','Remove', true);
+		mosMenuBar::custom('remove','delete.png','delete_f2.png','Supprimer', true);
 		mosMenuBar::spacer();
 		mosMenuBar::help( 'screen.frontpage' );
 		mosMenuBar::endTable();

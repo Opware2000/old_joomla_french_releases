@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.newsfeeds.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.newsfeeds.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,9 +24,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$task 	= mosGetParam( $_REQUEST, 'task', array(0) );
 $cid 	= mosGetParam( $_POST, 'cid', array(0) );
-$id 	= mosGetParam( $_GET, 'id', 0 );
 if (!is_array( $cid )) {
 	$cid = array(0);
 }
@@ -38,7 +36,7 @@ switch ($task) {
 		break;
 
 	case 'edit':
-		editNewsFeed( $cid[0], $option );
+		editNewsFeed( intval( $cid[0] ), $option );
 		break;
 
 	case 'editA':
@@ -66,11 +64,11 @@ switch ($task) {
 		break;
 
 	case 'orderup':
-		orderNewsFeed( $cid[0], -1, $option );
+		orderNewsFeed( intval( $cid[0] ), -1, $option );
 		break;
 
 	case 'orderdown':
-		orderNewsFeed( $cid[0], 1, $option );
+		orderNewsFeed( intval( $cid[0] ), 1, $option );
 		break;
 
 	default:
@@ -85,9 +83,9 @@ switch ($task) {
 function showNewsFeeds( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$catid = $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 );
-	$limit = $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$catid 		= intval( $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 ) );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 
 	// get the total number of records
 	$query = "SELECT COUNT(*)"
@@ -279,8 +277,8 @@ function cancelNewsFeed( $option ) {
 function orderNewsFeed( $id, $inc, $option ) {
 	global $database;
 
-	$limit 		= mosGetParam( $_REQUEST, 'limit', 0 );
-	$limitstart = mosGetParam( $_REQUEST, 'limitstart', 0 );
+	$limit 		= intval( mosGetParam( $_REQUEST, 'limit', 0 ) );
+	$limitstart = intval( mosGetParam( $_REQUEST, 'limitstart', 0 ) );
 	$catid 		= intval( mosGetParam( $_REQUEST, 'catid', 0 ) );
 
 	$row = new mosNewsFeed( $database );

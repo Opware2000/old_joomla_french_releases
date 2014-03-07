@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 1782 2006-01-13 02:29:37Z eddieajau $
+* @version $Id: index2.php 3592 2006-05-22 15:26:35Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -20,7 +20,7 @@ require_once( 'includes/joomla.php' );
 
 // displays offline/maintanance page or bar
 if ($mosConfig_offline == 1) {
-	require( 'offline.php' );
+	require( $mosConfig_absolute_path .'/offline.php' );
 }
 
 // load system bot group
@@ -29,18 +29,18 @@ $_MAMBOTS->loadBotGroup( 'system' );
 // trigger the onStart events
 $_MAMBOTS->trigger( 'onStart' );
 
-if (file_exists( 'components/com_sef/sef.php' )) {
-	require_once( 'components/com_sef/sef.php' );
+if (file_exists( $mosConfig_absolute_path .'/components/com_sef/sef.php' )) {
+	require_once( $mosConfig_absolute_path .'/components/com_sef/sef.php' );
 } else {
-	require_once( 'includes/sef.php' );
+	require_once( $mosConfig_absolute_path .'/includes/sef.php' );
 }
-require_once( 'includes/frontend.php' );
+require_once( $mosConfig_absolute_path .'/includes/frontend.php' );
 
 // retrieve some expected url (or form) arguments
-$option 	= strtolower( mosGetParam( $_REQUEST, 'option' ) );
+$option 	= strtolower( strval( mosGetParam( $_REQUEST, 'option' ) ) );
 $Itemid 	= intval( mosGetParam( $_REQUEST, 'Itemid', 0 ) );
 $no_html 	= intval( mosGetParam( $_REQUEST, 'no_html', 0 ) );
-$act 		= mosGetParam( $_REQUEST, 'act', '' );
+$act 		= strval( mosGetParam( $_REQUEST, 'act', '' ) );
 $do_pdf 	= intval( mosGetParam( $_REQUEST, 'do_pdf', 0 ) );
 
 // mainframe is an API workhorse, lots of 'core' interaction routines
@@ -61,7 +61,7 @@ if ($option == 'search') {
 if ($mosConfig_lang=='') {
 	$mosConfig_lang = 'english';
 }
-include_once( 'language/' . $mosConfig_lang . '.php' );
+include_once( $mosConfig_absolute_path .'/language/' . $mosConfig_lang . '.php' );
 
 
 if ($option == 'login') {
@@ -73,7 +73,7 @@ if ($option == 'login') {
 }
 
 if ( $do_pdf == 1 ){
-	include ('includes/pdf.php');
+	include $mosConfig_absolute_path .'/includes/pdf.php';
 	exit();
 }
 
@@ -89,8 +89,9 @@ $cur_template = $mainframe->getTemplate();
 require_once( $mosConfig_absolute_path . '/editor/editor.php' );
 
 ob_start();
+
 if ($path = $mainframe->getPath( 'front' )) {
-	$task 	= mosGetParam( $_REQUEST, 'task', '' );
+	$task 	= strval( mosGetParam( $_REQUEST, 'task', '' ) );
 	$ret 	= mosMenuCheck( $Itemid, $option, $task, $gid );
 	if ($ret) {
 		require_once( $path );
@@ -102,6 +103,7 @@ if ($path = $mainframe->getPath( 'front' )) {
 	echo _NOT_EXIST;
 }
 $_MOS_OPTION['buffer'] = ob_get_contents();
+
 ob_end_clean();
 
 initGzip();
@@ -114,7 +116,7 @@ header( 'Pragma: no-cache' );
 
 // display the offline alert if an admin is logged in
 if (defined( '_ADMIN_OFFLINE' )) {
-	include( 'offlinebar.php' );
+	include( $mosConfig_absolute_path .'/offlinebar.php' );
 }
 
 // start basic HTML
@@ -128,23 +130,23 @@ if ( $no_html == 0 ) {
 		// xml prolog
 		echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 	?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<?php echo $mainframe->getHead(); ?>
-		<link rel="stylesheet" href="templates/<?php echo $cur_template;?>/css/template_css.css" type="text/css" />
-		<link rel="shortcut icon" href="<?php echo $mosConfig_live_site; ?>/images/favicon.ico" />
-		<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
-		<meta name="robots" content="noindex, nofollow" />
-		<?php if ($my->id || $mainframe->get( 'joomlaJavascript' )) { ?>
-		<script language="JavaScript" src="<?php echo $mosConfig_live_site;?>/includes/js/joomla.javascript.js" type="text/javascript"></script>
-		<?php } ?>
-	</head>
-	<body class="contentpane">
-		<?php mosMainBody(); ?>
-	</body>
-</html>
-<?php
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<?php echo $mainframe->getHead(); ?>
+			<link rel="stylesheet" href="templates/<?php echo $cur_template;?>/css/template_css.css" type="text/css" />
+			<link rel="shortcut icon" href="<?php echo $mosConfig_live_site; ?>/images/favicon.ico" />
+			<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
+			<meta name="robots" content="noindex, nofollow" />
+			<?php if ($my->id || $mainframe->get( 'joomlaJavascript' )) { ?>
+			<script language="JavaScript" src="<?php echo $mosConfig_live_site;?>/includes/js/joomla.javascript.js" type="text/javascript"></script>
+			<?php } ?>
+		</head>
+		<body class="contentpane">
+			<?php mosMainBody(); ?>
+		</body>
+	</html>
+	<?php
 	}
 } else {
 	mosMainBody();

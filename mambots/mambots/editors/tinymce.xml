@@ -15,7 +15,15 @@
 			<option value="advanced">Advanced</option>
 		</param>
  		<param name="@spacer" type="spacer" default="" label="" description="" />
- 		<param name="cleanup" type="radio" default="1" label="Code Cleanup" description="By default TinyMCE will celan your code of certain html elements, like script and center tags, for security and XHTML compliance.  We recommend you do no deactivate this funcitonality">
+ 		<param name="cleanup" type="radio" default="1" label="Code Cleanup" description="By default TinyMCE will clean your code of certain html elements, like script and center tags, for security and XHTML compliance.  We recommend you do no deactivate this funcitonality">
+ 			<option value="0">Off</option>
+ 			<option value="1">On</option>
+ 		</param>
+ 		<param name="cleanup_startup" type="radio" default="0" label="Code Cleanup on startup" description="Cleans code on editor load">
+ 			<option value="0">Off</option>
+ 			<option value="1">On</option>
+ 		</param>
+ 		<param name="autosave" type="radio" default="0" label="Save Warning" description="Save warning - gives warning if you cancel without saving changes">
  			<option value="0">Off</option>
  			<option value="1">On</option>
  		</param>
@@ -27,6 +35,10 @@
  		<param name="text_direction" type="list" default="ltr" label="Text Direction" description="Ability to change text direction">
  			<option value="ltr">Left to Right</option>
  			<option value="rtl">Right to Left</option>
+ 		</param>
+  		<param name="relative_urls" type="list" default="0" label="Urls" description="URL behaviour">
+ 			<option value="0">Absolute</option>
+ 			<option value="1">Relative</option>
  		</param>
  		<param name="invalid_elements" type="text" default="applet" label="Prohibited Elements" description="Elements that will be cleaned from the text"/>
  		<param name="content_css" type="radio" default="1" label="Template CSS classes" description="By default the bot looks for an editor_content.css file.  If it cant find one it loads template_css.css.  However if you want to force loading of template_css.css than please select `yes`">
@@ -60,6 +72,14 @@
  			<option value="0">Hide</option>
  			<option value="1">Show</option>
  		</param>
+ 		<param name="style" type="radio" default="1" label="Style" description="Show/Hide the CSS Style control button. Only works in `Advanced` mode">
+ 			<option value="0">Hide</option>
+ 			<option value="1">Show</option>
+ 		</param>
+ 		<param name="layer" type="radio" default="1" label="Layer" description="Show/Hide the Layer control button. Only works in `Advanced` mode">
+ 			<option value="0">Hide</option>
+ 			<option value="1">Show</option>
+ 		</param>
  		<param name="@spacer" type="spacer" default="" label="" description="" />
  		<param name="fullscreen" type="radio" default="1" label="Fullscreen" description="Show/Hide the Fullscreen button. Only works in `Advanced` mode">
  			<option value="0">Hide</option>
@@ -67,7 +87,7 @@
  		</param>
  		<param name="html_height" type="text" default="550" label="HTML Height" description="Height of HTML mode pop-up window. Only works in `Advanced` mode"/>
  		<param name="html_width" type="text" default="750" label="HTML Width" description="Width of HTML mode pop-up window. Only works in `Advanced` mode"/>
- 		<param name="preview" type="radio" default="1" label="Preveiw" description="Show/Hide the Preview buttons. Only works in `Advanced` mode">
+ 		<param name="preview" type="radio" default="1" label="Preview" description="Show/Hide the Preview buttons. Only works in `Advanced` mode">
  			<option value="0">Hide</option>
  			<option value="1">Show</option>
  		</param>

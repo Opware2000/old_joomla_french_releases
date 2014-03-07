@@ -31,11 +31,11 @@ class HTML_massmail {
 				}
 				// do field validation
 				if (form.mm_subject.value == ""){
-					alert( "Please fill in the subject" );
+					alert( "Vous devez saisir un sujet" );
 				} else if (getSelectedValue('adminForm','mm_group') < 0){
-					alert( "Please select a group" );
+					alert( "Vous devez sélectionner un groupe" );
 				} else if (form.mm_message.value == ""){
-					alert( "Please fillin the message" );
+					alert( "Vous devez saisir un message" );
 				} else {
 					submitform( pressbutton );
 				}
@@ -46,20 +46,19 @@ class HTML_massmail {
 		<table class="adminheading">
 		<tr>
 			<th class="massemail">
-			Mass Mail
-			</th>
+			Mailing			</th>
 		</tr>
 		</table>
 
 		<table class="adminform">
 		<tr>
 			<th colspan="2">
-			Details
+			D&eacute;tails
 			</th>
 		</tr>
 		<tr>
 			<td width="150" valign="top">
-			Group:
+			Groupe:
 			</td>
 			<td width="85%">
 			<?php echo $lists['gid']; ?>
@@ -67,7 +66,7 @@ class HTML_massmail {
 		</tr>
 		<tr>
 			<td>
-			Mail to Child Groups:
+			Envoyer aux sous-groupes:
 			</td>
 			<td>
 			<input type="checkbox" name="mm_recurse" value="RECURSE" />
@@ -75,7 +74,7 @@ class HTML_massmail {
 		</tr>
 		<tr>
 			<td>
-			Send in HTML mode:
+			Envoyer en mode HTML:
 			</td>
 			<td>
 			<input type="checkbox" name="mm_mode" value="1" />
@@ -83,7 +82,7 @@ class HTML_massmail {
 		</tr>
 		<tr>
 			<td>
-			Subject:
+			Sujet:
 			</td>
 			<td>
 			<input class="inputbox" type="text" name="mm_subject" value="" size="50"/>

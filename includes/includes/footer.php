@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: footer.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: footer.php 3711 2006-05-29 03:25:07Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@ global $_VERSION;
 // NOTE - You may change this file to suit your site needs
 ?>
 <div align="center">
-	(C) <?php echo mosCurrentDate( '%Y' ) . ' ' . $GLOBALS['mosConfig_sitename'];?>
+	&copy; <?php echo mosCurrentDate( '%Y' ) . ' ' . $GLOBALS['mosConfig_sitename'];?>
 </div>
 
 <div align="center">

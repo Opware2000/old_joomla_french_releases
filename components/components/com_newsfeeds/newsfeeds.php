@@ -1,6 +1,6 @@
 <?php
 /** module to display newsfeeds
-* version $Id: newsfeeds.php 393 2005-10-08 13:37:52Z akede $
+* version $Id: newsfeeds.php 3594 2006-05-22 17:29:07Z stingrey $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,16 +24,16 @@ $catid 	= intval( mosGetParam( $_REQUEST ,'catid', 0 ) );
 
 switch( $task ) {
 	case 'view':
-		showFeed( $option, $feedid );
+		showFeed( $feedid );
 		break;
 
 	default:
-		listFeeds( $option, $catid );
+		listFeeds( $catid );
 		break;
 }
 
 
-function listFeeds( $option, $catid ) {
+function listFeeds( $catid ) {
 	global $mainframe, $database, $my;
 	global $mosConfig_live_site;
 	global $Itemid;
@@ -66,7 +66,7 @@ function listFeeds( $option, $catid ) {
 		$rows = $database->loadObjectList();
 
 		// current category info
-		$query = "SELECT name, description, image, image_position"
+		$query = "SELECT id, name, description, image, image_position"
 		. "\n FROM #__categories"
 		. "\n WHERE id = $catid"
 		. "\n AND published = 1"
@@ -74,31 +74,38 @@ function listFeeds( $option, $catid ) {
 		;
 		$database->setQuery( $query );
 		$database->loadObject( $currentcat );
+
+		/*
+		Check if the category is published or if access level allows access
+		*/
+		if (!$currentcat->name) {
+			mosNotAuth();
+			return;
+		}
 	}
 
 	// Parameters
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 	$params = new mosParameters( $menu->params );
 
-	$params->def( 'page_title', 1 );
-	$params->def( 'header', $menu->name );
-	$params->def( 'pageclass_sfx', '' );
-	$params->def( 'headings', 1 );
-	$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
-	$params->def( 'description_text', '' );
-	$params->def( 'image', -1 );
-	$params->def( 'image_align', 'right' );
-	$params->def( 'other_cat_section', 1 );
+	$params->def( 'page_title', 		1 );
+	$params->def( 'header', 			$menu->name );
+	$params->def( 'pageclass_sfx', 		'' );
+	$params->def( 'headings', 			1 );
+	$params->def( 'back_button', 		$mainframe->getCfg( 'back_button' ) );
+	$params->def( 'description_text', 	'' );
+	$params->def( 'image', 				-1 );
+	$params->def( 'image_align', 		'right' );
+	$params->def( 'other_cat_section', 	1 );
 	// Category List Display control
-	$params->def( 'other_cat', 1 );
-	$params->def( 'cat_description', 1 );
-	$params->def( 'cat_items', 1 );
+	$params->def( 'other_cat', 			1 );
+	$params->def( 'cat_description', 	1 );
+	$params->def( 'cat_items', 			1 );
 	// Table Display control
-	$params->def( 'headings', 1 );
-	$params->def( 'name', 1 );
-	$params->def( 'articles', '1' );
-	$params->def( 'link', '1' );
+	$params->def( 'headings', 			1 );
+	$params->def( 'name', 				1 );
+	$params->def( 'articles', 			1 );
+	$params->def( 'link', 				0 );
 
 	if ( $catid ) {
 		$params->set( 'type', 'category' );
@@ -147,27 +154,65 @@ function listFeeds( $option, $catid ) {
 }
 
 
-function showFeed( $option, $feedid ) {
-	global $database, $mainframe, $mosConfig_absolute_path, $Itemid;
+function showFeed( $feedid ) {
+	global $database, $mainframe, $mosConfig_absolute_path, $mosConfig_cachepath, $Itemid, $my;
+
+	// check if cache directory is writeable
+	$cacheDir = $mosConfig_cachepath .'/';
+	if ( !is_writable( $cacheDir ) ) {	
+		echo 'Cache Directory Unwriteable';
+		return;
+	}
+
+	require_once( $mainframe->getPath( 'class' ) );
+	
+	$newsfeed = new mosNewsFeed($database);
+	$newsfeed->load($feedid);
+
+	/*
+	* Check if newsfeed is published
+	*/
+	if(!$newsfeed->published) {
+		mosNotAuth();
+		return;
+	}
+	
+	$category = new mosCategory($database);
+	$category->load($newsfeed->catid);
+	
+	/*
+	* Check if newsfeed category is published
+	*/
+	if(!$category->published) {
+		mosNotAuth();
+		return;
+	}	
+	/*
+	* check whether category access level allows access
+	*/
+	if ( $category->access > $my->gid ) {	
+		mosNotAuth();  
+		return;
+	}
 
 	// full RSS parser used to access image information
 	require_once( $mosConfig_absolute_path . '/includes/domit/xml_domit_rss.php');
-	$cacheDir = $mosConfig_absolute_path . '/cache/';
 	$LitePath = $mosConfig_absolute_path . '/includes/Cache/Lite.php';
 
 	// Adds parameter handling
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 	$params = new mosParameters( $menu->params );
-	$params->def( 'page_title', 1 );
-	$params->def( 'header', $menu->name );
-	$params->def( 'pageclass_sfx', '' );
-	$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
+	$params->def( 'page_title', 	1 );
+	$params->def( 'header', 		$menu->name );
+	$params->def( 'pageclass_sfx', 	'' );
+	$params->def( 'back_button', 	$mainframe->getCfg( 'back_button' ) );
 	// Feed Display control
-	$params->def( 'feed_image', 1 );
-	$params->def( 'feed_descr', 1 );
-	$params->def( 'item_descr', 1 );
-	$params->def( 'word_count', 0 );
+	$params->def( 'feed_image', 	1 );
+	$params->def( 'feed_descr', 	1 );
+	$params->def( 'item_descr', 	1 );
+	$params->def( 'word_count', 	0 );
+	// Encoding
+	$params->def( 'utf8', 			1 );	
 
 	if ( !$params->get( 'page_title' ) ) {
 		$params->set( 'header', '' );
@@ -178,18 +223,8 @@ function showFeed( $option, $feedid ) {
 		$and = "\n AND id = $feedid";
 	}
 
-	$query = "SELECT name, link, numarticles, cache_time"
-	. "\n FROM #__newsfeeds"
-	. "\n WHERE published = 1"
-	. "\n AND checked_out = 0"
-	. $and
-	. "\n ORDER BY ordering"
-	;
-	$database->setQuery( $query );
-	$newsfeeds = $database->loadObjectList();
-
 	$mainframe->SetPageTitle($menu->name);
 
-	HTML_newsfeed::showNewsfeeds( $newsfeeds, $LitePath, $cacheDir, $params );
+	HTML_newsfeed::showNewsfeeds( $newsfeed, $LitePath, $cacheDir, $params );
 }
 ?>

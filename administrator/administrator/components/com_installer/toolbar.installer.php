@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.installer.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.installer.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,7 +23,7 @@ switch ($task){
 		break;
 
 	default:
-		$element = mosGetParam( $_REQUEST, 'element', '' );
+		$element = strval( mosGetParam( $_REQUEST, 'element', '' ) );
 		if ($element == 'component' || $element == 'module' || $element == 'mambot') {
 			TOOLBAR_installer::_DEFAULT2();
 		} else {

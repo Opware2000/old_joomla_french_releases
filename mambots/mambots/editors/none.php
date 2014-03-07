@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: none.php 1056 2005-11-16 18:34:33Z stingrey $
+* @version $Id: none.php 3549 2006-05-18 08:24:53Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -70,13 +70,16 @@ function botNoEditorEditorArea( $name, $content, $hiddenField, $width, $height, 
 	$buttons = array();
 	foreach ($results as $result) {
 		if ( $result[0] ) {
-			$buttons[] = '<img src="'.$mosConfig_live_site.'/mambots/editors-xtd/'.$result[0].'" onclick="insertAtCursor( document.adminForm.'.$hiddenField.', \''.$result[1].'\' )" alt="'.$result[1].'"/>';
+			$buttons[] = '<img src="'.$mosConfig_live_site.'/mambots/editors-xtd/'.$result[0].'" onclick="insertAtCursor( document.adminForm.'.$hiddenField.', \''.$result[1].'\' )" alt="'.$result[1].'" />';
 		}
 	}
 	$buttons = implode( "", $buttons );
-
+	
+	$width  = $width . 'px';
+	$height = $height . 'px';
+	
 	return <<<EOD
-<textarea name="$hiddenField" id="$hiddenField" cols="$col" rows="$row" style="width:$width;height:$height;">$content</textarea>
+<textarea name="$hiddenField" id="$hiddenField" cols="$col" rows="$row" style="width: $width; height: $height;">$content</textarea>
 <br />$buttons
 EOD;
 }

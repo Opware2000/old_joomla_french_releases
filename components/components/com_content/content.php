@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.php 1825 2006-01-14 21:48:43Z stingrey $
+* @version $Id: content.php 3755 2006-05-31 12:54:01Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -20,11 +20,8 @@ require_once( $mainframe->getPath( 'front_html', 'com_content' ) );
 $id			= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 $sectionid 	= intval( mosGetParam( $_REQUEST, 'sectionid', 0 ) );
 $pop 		= intval( mosGetParam( $_REQUEST, 'pop', 0 ) );
-$limit 		= intval( mosGetParam( $_REQUEST, 'limit', '' ) );
-$order 		= mosGetParam( $_REQUEST, 'order', '' );
+$limit 		= intval( mosGetParam( $_REQUEST, 'limit', $mosConfig_list_limit ) );
 $limitstart = intval( mosGetParam( $_REQUEST, 'limitstart', 0 ) );
-
-$now = date( 'Y-m-d H:i', time() + $mosConfig_offset * 60 * 60 );
 
 // Editor usertype check
 $access = new stdClass();
@@ -37,42 +34,46 @@ $cache =& mosCache::getCache( 'com_content' );
 
 // loads function for frontpage component
 if ( $option == 'com_frontpage' ) {
-	$cache->call( 'frontpage', $gid, $access, $pop, $now, $limit, $limitstart );
+	$cache->call( 'frontpage', $gid, $access, $pop, 0, $limit, $limitstart );
 	return;
 }
 
-switch ( strtolower( $task ) ) {
+switch ( $task ) {
 	case 'findkey':
-		findKeyItem( $gid, $access, $pop, $option, $now );
+		findKeyItem( $gid, $access, $pop, $option, 0 );
 		break;
 
 	case 'view':
-		showItem( $id, $gid, $access, $pop, $option, $now );
+		showItem( $id, $gid, $access, $pop, $option, 0 );
 		break;
 
 	case 'section':
-		$cache->call( 'showSection', $id, $gid, $access, $now );
+		$cache->call( 'showSection', $id, $gid, $access, 0 );
 		break;
 
 	case 'category':
-		$cache->call( 'showCategory', $id, $gid, $access, $sectionid, $limit, $order, $limitstart, $now );
+		$cache->call( 'showCategory', $id, $gid, $access, $sectionid, $limit, NULL, $limitstart, 0 );
 		break;
 
 	case 'blogsection':
-		$cache->call('showBlogSection', $id, $gid, $access, $pop, $now, $limit, $limitstart );
+		// Itemid is a dummy value to cater for caching
+		$cache->call('showBlogSection', $id, $gid, $access, $pop, $Itemid, $limit, $limitstart );
 		break;
 
 	case 'blogcategorymulti':
 	case 'blogcategory':
-		$cache->call( 'showBlogCategory', $id, $gid, $access, $pop, $now, $limit, $limitstart );
+		// Itemid is a dummy value to cater for caching
+		$cache->call( 'showBlogCategory', $id, $gid, $access, $pop, $Itemid, $limit, $limitstart );
 		break;
 
 	case 'archivesection':
-		showArchiveSection( $id, $gid, $access, $pop, $option );
+		// Itemid is a dummy value to cater for caching
+		$cache->call( 'showArchiveSection', $id, $gid, $access, $pop, $option, $Itemid );
 		break;
 
 	case 'archivecategory':
-		showArchiveCategory( $id, $gid, $access, $pop, $option, $now );
+		// Itemid is a dummy value to cater for caching
+		$cache->call( 'showArchiveCategory', $id, $gid, $access, $pop, $option, $Itemid );
 		break;
 
 	case 'edit':
@@ -107,7 +108,6 @@ switch ( strtolower( $task ) ) {
 		break;
 
 	default:
-		//$cache->call('showBlogSection', 0, $gid, $access, $pop, $now );
 		header("HTTP/1.0 404 Not Found");
 		echo _NOT_EXIST;
 		break;
@@ -123,7 +123,8 @@ switch ( strtolower( $task ) ) {
  */
 function findKeyItem( $gid, $access, $pop, $option, $now ) {
 	global $database;
-	$keyref = mosGetParam( $_REQUEST, 'keyref', '' );
+	
+	$keyref = strval( mosGetParam( $_REQUEST, 'keyref', '' ) );
 	$keyref = $database->getEscaped( $keyref );
 
 	$query = "SELECT id"
@@ -132,22 +133,23 @@ function findKeyItem( $gid, $access, $pop, $option, $now ) {
 	;
 	$database->setQuery( $query );
 	$id = $database->loadResult();
+	
 	if ($id > 0) {
-		showItem( $id, $gid, $access, $pop, $option, $now );
+		showItem( $id, $gid, $access, $pop, $option, 0 );
 	} else {
-		echo 'Key not found';
+		echo _KEY_NOT_FOUND;
 	}
 }
 
 function frontpage( $gid, &$access, $pop, $now ) {
 	global $database, $mainframe, $my, $Itemid;
 
+	$now 		= _CURRENT_SERVER_TIME;
 	$nullDate = $database->getNullDate();
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
 
 	// Parameters
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 	$params = new mosParameters( $menu->params );
 	$orderby_sec = $params->def( 'orderby_sec', '' );
 	$orderby_pri = $params->def( 'orderby_pri', '' );
@@ -156,25 +158,24 @@ function frontpage( $gid, &$access, $pop, $now ) {
 	$order_sec = _orderby_sec( $orderby_sec );
 	$order_pri = _orderby_pri( $orderby_pri );
 
+	$voting = votingQuery();
+	
+	$where 	= _where( 1, $access, $noauth, $gid, 0, $now, NULL, NULL, $params );	
+	$where 	= ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' );
+	
 	// query records
-//	$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
 	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access, a.hits,"
-	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
-	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. "\n CHAR_LENGTH( a.fulltext ) AS readmore, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n INNER JOIN #__content_frontpage AS f ON f.content_id = a.id"
 	. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n INNER JOIN #__sections AS s ON s.id = a.sectionid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
-	. "\n WHERE a.state = 1"
-	. ( $noauth ? "\n AND a.access <= $my->gid" : '' )
-	. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now'  )"
-	. "\n AND ( publish_down = '$nullDate' OR publish_down >= '$now' )"
-	. "\n AND s.published = 1"
-	. "\n AND cc.published = 1"
+	. $voting['join']
+	. $where
 	. "\n ORDER BY $order_pri $order_sec"
 	;
 	$database->setQuery( $query );
@@ -190,14 +191,32 @@ function frontpage( $gid, &$access, $pop, $now ) {
 function showSection( $id, $gid, &$access, $now ) {
 	global $database, $mainframe, $Itemid;
 
+	$section = new mosSection( $database );
+	$section->load( $id );
+	
+	/*
+	Check if section is published
+	*/
+	if(!$section->published) {
+		mosNotAuth();
+		return;
+	}	
+	/*
+	* check whether section access level allows access
+	*/
+	if( $section->access > $gid ) {
+		mosNotAuth();
+		return;
+	}	
+
+	$now 		= _CURRENT_SERVER_TIME;	
 	$nullDate 	= $database->getNullDate();
 	$noauth 	= !$mainframe->getCfg( 'shownoauth' );
 
 	// Paramters
 	$params = new stdClass();
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu 	= '';
@@ -218,16 +237,21 @@ function showSection( $id, $gid, &$access, $now ) {
 	$params->def( 'cat_description', 	1 );
 	$params->def( 'back_button', 		$mainframe->getCfg( 'back_button' ) );
 	$params->def( 'pageclass_sfx', 		'' );
+	// param controls whether unpublished items visible to publishers and above
+	$params->def( 'unpublished', 		1 );
 
 	// Ordering control
 	$orderby = _orderby_sec( $orderby );
 
-	$section = new mosSection( $database );
-	$section->load( $id );
-
 	if ( $access->canEdit ) {
 		$xwhere = '';
+		if ( $params->get( 'unpublished' ) ) {
+		// shows unpublished items for publishers and above
 		$xwhere2 = "\n AND b.state >= 0";
+	} else {
+		// unpublished items NOT shown for publishers and above
+			$xwhere2 = "\n AND b.state = 1";
+		}
 	} else {
 		$xwhere = "\n AND a.published = 1";
 		$xwhere2 = "\n AND b.state = 1"
@@ -251,19 +275,19 @@ function showSection( $id, $gid, &$access, $now ) {
 		}
 	}
 
-	$access = '';
+	$access_check = '';
 	if ($noauth) {
-		$access = "\n AND a.access <= $gid";
+		$access_check = "\n AND a.access <= $gid";
 	}
 
-	// Main Query
+	// Query of categories within section
 	$query = "SELECT a.*, COUNT( b.id ) AS numitems"
 	. "\n FROM #__categories AS a"
 	. "\n LEFT JOIN #__content AS b ON b.catid = a.id"
 	. $xwhere2
 	. "\n WHERE a.section = '$section->id'"
 	. $xwhere
-	. $access
+	. $access_check
 	. "\n GROUP BY a.id"
 	. $empty
 	. $empty_sec
@@ -291,22 +315,62 @@ function showSection( $id, $gid, &$access, $now ) {
 function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limitstart, $now  ) {
 	global $database, $mainframe, $Itemid, $mosConfig_list_limit;
 
+	$selected = strval( mosGetParam( $_REQUEST, 'order', '' ) );
+
+	$category = new mosCategory( $database );
+	$category->load( $id );
+	
+	/*
+	Check if category is published
+	*/
+	if(!$category->published) {
+		mosNotAuth();
+		return;
+	}	
+	/*
+	* check whether category access level allows access
+	*/
+	if( $category->access > $gid ) {
+		mosNotAuth();
+		return;
+	}	
+
+	$section = new mosSection( $database );
+	$section->load( $category->section );
+	
+	/*
+	Check if category is published
+	*/
+	if(!$section->published) {
+		mosNotAuth();
+		return;
+	}	
+	/*
+	* check whether section access level allows access
+	*/
+	if( $section->access > $gid ) {
+		mosNotAuth();
+		return;
+	}	
+
+	$now 		= _CURRENT_SERVER_TIME;	
 	$nullDate = $database->getNullDate();
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
 
 	// Paramters
 	$params = new stdClass();
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu = '';
 		$params = new mosParameters( '' );
 	}
 
+	$lists['order_value'] = '';
 	if ( $selected ) {
 		$orderby = $selected;
+		$lists['order_value'] 	= $selected;
 	} else {
 		$orderby = $params->get( 'orderby', 'rdate' );
 		$selected = $orderby;
@@ -333,12 +397,11 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 	$params->def( 'order_select', 		1 );
 	$params->def( 'filter', 			1 );
 	$params->def( 'filter_type', 		'title' );
+	// param controls whether unpublished items visible to publishers and above
+	$params->def( 'unpublished', 		1 );
 
 	// Ordering control
 	$orderby = _orderby_sec( $orderby );
-
-	$category = new mosCategory( $database );
-	$category->load( $id );
 
 	if ( $sectionid == 0 ) {
 		$sectionid = $category->section;
@@ -346,21 +409,25 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 
 	if ( $access->canEdit ) {
 		$xwhere = '';
+		if ( $params->get( 'unpublished' ) ) {
+		// shows unpublished items for publishers and above
 		$xwhere2 = "\n AND b.state >= 0";
+	} else {
+		// unpublished items NOT shown for publishers and above
+			$xwhere2 = "\n AND b.state = 1";
+		}
 	} else {
 		$xwhere = "\n AND c.published = 1";
 		$xwhere2 = "\n AND b.state = 1"
-		. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now' )"
-		. "\n AND ( publish_down = '$nullDate' OR publish_down >= '$now' )"
+		. "\n AND ( b.publish_up = '$nullDate' OR b.publish_up <= '$now' )"
+		. "\n AND ( b.publish_down = '$nullDate' OR b.publish_down >= '$now' )"
 		;
 	}
 
 	$pagetitle = '';
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
 		$pagetitle = $menu->name;
-	} // if
+	} 
 
 	// show/hide empty categories
 	$empty = '';
@@ -385,30 +452,39 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 
 	// get the total number of published items in the category
 	// filter functionality
-	$filter = mosGetParam( $_POST, 'filter', '' );
-	$filter = strtolower( $filter );
-	$and = '';
-	if ( $filter ) {
-		if ( $params->get( 'filter' ) ) {
+	$and 	= null;
+	$filter = null;
+	if ( $params->get( 'filter' ) ) {
+		$filter = strval( mosGetParam( $_REQUEST, 'filter', '' ) );
+		
+		if ( $filter ) {
+			// clean filter variable
+			$filter = strtolower( $filter );
+			
 			switch ( $params->get( 'filter_type' ) ) {
 				case 'title':
 					$and = "\n AND LOWER( a.title ) LIKE '%$filter%'";
 					break;
-
+	
 				case 'author':
 					$and = "\n AND ( ( LOWER( u.name ) LIKE '%$filter%' ) OR ( LOWER( a.created_by_alias ) LIKE '%$filter%' ) )";
 					break;
-
+	
 				case 'hits':
 					$and = "\n AND a.hits LIKE '%$filter%'";
 					break;
 			}
 		}
-
 	}
 
 	if ( $access->canEdit ) {
+		if ( $params->get( 'unpublished' ) ) {
+			// shows unpublished items for publishers and above
 		$xwhere = "\n AND a.state >= 0";
+	} else {
+			// unpublished items NOT shown for publishers and above
+			$xwhere = "\n AND a.state = 1";
+		}
 	} else {
 		$xwhere = "\n AND a.state = 1"
 		. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now' )"
@@ -447,9 +523,8 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 	. "\n AND $category->access <= $gid"
 	. $and
 	. "\n ORDER BY $orderby"
-	. "\n LIMIT $limitstart, $limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $limitstart, $limit );
 	$items = $database->loadObjectList();
 
 	$check = 0;
@@ -493,13 +568,16 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 function showBlogSection( $id=0, $gid, &$access, $pop, $now=NULL ) {
 	global $database, $mainframe, $Itemid;
 	
+	// needed for check whether section is published
+	$check = ( $id ? $id : 0 );
+	
+	$now 	= _CURRENT_SERVER_TIME;
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
 
 	// Parameters
 	$params = new stdClass();
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu = "";
@@ -511,7 +589,8 @@ function showBlogSection( $id=0, $gid, &$access, $pop, $now=NULL ) {
 		$id		= $params->def( 'sectionid', 0 );
 	}
 
-	$where 		= _where( 1, $access, $noauth, $gid, $id, $now );
+	$where 	= _where( 1, $access, $noauth, $gid, $id, $now, NULL, NULL, $params );	
+	$where 	= ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' );
 
 	// Ordering control
 	$orderby_sec 	= $params->def( 'orderby_sec', 'rdate' );
@@ -519,22 +598,20 @@ function showBlogSection( $id=0, $gid, &$access, $pop, $now=NULL ) {
 	$order_sec 		= _orderby_sec( $orderby_sec );
 	$order_pri 		= _orderby_pri( $orderby_pri );
 
+	$voting = votingQuery();
+	
 	// Main data query
-	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, cc.name AS category, g.name AS groups"
 	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
-	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
-	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. "\n CHAR_LENGTH( a.fulltext ) AS readmore, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__sections AS s ON a.sectionid = s.id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
-	. ( count( $where ) ? "\n WHERE ".implode( "\n AND ", $where ) : '' )
-	. "\n AND s.access <= $gid"
-	. "\n AND s.published = 1"
-	. "\n AND cc.published = 1"
+	. $voting['join']
+	. $where
 	. "\n ORDER BY $order_pri $order_sec"
 	;
 	$database->setQuery( $query );
@@ -545,19 +622,43 @@ function showBlogSection( $id=0, $gid, &$access, $pop, $now=NULL ) {
 		$mainframe->setPageTitle( $menu->name );
 	}
 
+	// check whether section is published
+	if (!count($rows) && $check) {
+		$secCheck = new mosSection( $database );
+		$secCheck->load( $check );
+		
+		/*
+		* check whether section is published
+		*/
+		if (!$secCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether section access level allows access
+		*/
+		if ($secCheck->access > $gid) {
+			mosNotAuth();
+			return;
+		}			
+	}
+
 	BlogOutput( $rows, $params, $gid, $access, $pop, $menu );
 }
 
 function showBlogCategory( $id=0, $gid, &$access, $pop, $now ) {
 	global $database, $mainframe, $Itemid;
 
+	$now 	= _CURRENT_SERVER_TIME;	
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
 
+	// needed for check whether section & category is published
+	$check = ( $id ? $id : 0 );
+	
 	// Paramters
 	$params = new stdClass();
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu = '';
@@ -569,7 +670,8 @@ function showBlogCategory( $id=0, $gid, &$access, $pop, $now ) {
 		$id 		= $params->def( 'categoryid', 0 );
 	}
 
-	$where		= _where( 2, $access, $noauth, $gid, $id, $now );
+	$where	= _where( 2, $access, $noauth, $gid, $id, $now, NULL, NULL, $params );	
+	$where 	= ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' );
 
 	// Ordering control
 	$orderby_sec 	= $params->def( 'orderby_sec', 'rdate' );
@@ -577,27 +679,64 @@ function showBlogCategory( $id=0, $gid, &$access, $pop, $now ) {
 	$order_sec 		= _orderby_sec( $orderby_sec );
 	$order_pri 		= _orderby_pri( $orderby_pri );
 
+	$voting = votingQuery();
+	
 	// Main data query
-	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, g.name AS groups, cc.name AS category"
 	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
-	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
-	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. "\n CHAR_LENGTH( a.fulltext ) AS readmore, s.published AS sec_pub,  cc.published AS sec_pub, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n LEFT JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__sections AS s ON a.sectionid = s.id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
-	. ( count( $where ) ? "\n WHERE ".implode( "\n AND ", $where ) : '' )
-	. "\n AND s.access <= $gid"
-	. "\n AND s.published = 1"
-	. "\n AND cc.published = 1"
+	. $voting['join']
+	. $where
 	. "\n ORDER BY $order_pri $order_sec"
 	;
 	$database->setQuery( $query );
 	$rows = $database->loadObjectList();
 
+	// check whether section & category is published
+	if (!count($rows) && $check) {
+		$catCheck = new mosCategory( $database );
+		$catCheck->load( $check );
+		
+		/*
+		* check whether category is published
+		*/
+		if (!$catCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether category access level allows access
+		*/
+		if( $catCheck->access > $gid ) {
+			mosNotAuth();
+			return;
+		}			
+
+		$secCheck = new mosSection( $database );
+		$secCheck->load( $catCheck->section );
+		
+		/*
+		* check whether section is published
+		*/
+		if (!$secCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether category access level allows access
+		*/
+		if( $secCheck->access > $gid ) {
+			mosNotAuth();
+			return;
+		}			
+	}
+	
 	// Dynamic Page Title
 	$mainframe->SetPageTitle( $menu->name );
 
@@ -608,16 +747,17 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 	global $database, $mainframe;
 	global $Itemid;
 
+	$secID 	= ( $id ? $id : 0 );
+	
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
 
 	// Paramters
-	$year 	= mosGetParam( $_REQUEST, 'year', date( 'Y' ) );
-	$month 	= mosGetParam( $_REQUEST, 'month', date( 'm' ) );
+	$year 	= strval( mosGetParam( $_REQUEST, 'year', date( 'Y' ) ) );
+	$month 	= strval( mosGetParam( $_REQUEST, 'month', date( 'm' ) ) );
 
 	$params = new stdClass();
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu = "";
@@ -636,6 +776,7 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 
 	// used in query
 	$where = _where( -1, $access, $noauth, $gid, $id, NULL, $year, $month );
+	$where = ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' );
 
 	// checks to see if 'All Sections' options used
 	if ( $id == 0 ) {
@@ -653,27 +794,46 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 	$items = $database->loadObjectList();
 	$archives = count( $items );
 
+	$voting = votingQuery();
+	
 	// Main Query
-	//$query = "SELECT a.*, ROUND(v.rating_sum/v.rating_count) AS rating, v.rating_count, u.name AS author, u.usertype, cc.name AS category, g.name AS groups"
 	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
-	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
-	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. "\n CHAR_LENGTH( a.fulltext ) AS readmore, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__sections AS s ON a.sectionid = s.id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
-	. ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '')
-	. "\n AND s.access <= $gid"
-	. "\n AND s.published = 1"
-	. "\n AND cc.published = 1"
+	. $voting['join']
+	. $where
 	. "\n ORDER BY $order_pri $order_sec"
 	;
 	$database->setQuery( $query );
 	$rows = $database->loadObjectList();
 
+	// check whether section is published
+	if (!count($rows) && $secID != 0) {
+		$secCheck = new mosSection( $database );
+		$secCheck->load( $secID );
+		
+		/*
+		* check whether section is published
+		*/
+		if (!$secCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether section access level allows access
+		*/
+		if ($secCheck->access > $gid) {
+			mosNotAuth();
+			return;
+		}			
+	}
+	
 	// initiate form
 	$link = 'index.php?option=com_content&task=archivesection&id='. $id .'&Itemid='. $Itemid;
  	echo '<form action="'.sefRelToAbs( $link ).'" method="post">';
@@ -700,11 +860,16 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	global $database, $mainframe;
 	global $Itemid;
 
-	// Parameters
+	$now 	= _CURRENT_SERVER_TIME;
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
-	$year 	= mosGetParam( $_REQUEST, 'year', 	date( 'Y' ) );
-	$month 	= mosGetParam( $_REQUEST, 'month', 	date( 'm' ) );
-	$module = mosGetParam( $_REQUEST, 'module', '' );
+	
+	// needed for check whether section & category is published
+	$catID 	= ( $id ? $id : 0 );
+	
+	// Parameters
+	$year 	= intval( mosGetParam( $_REQUEST, 'year', 	date( 'Y' ) ) );
+	$month 	= intval( mosGetParam( $_REQUEST, 'month', 	date( 'm' ) ) );
+	$module = intval( mosGetParam( $_REQUEST, 'module', 0 ) );
 
 	// used by archive module
 	if ( $module ) {
@@ -714,8 +879,7 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	}
 
 	if ( $Itemid ) {
-		$menu = new mosMenu( $database );
-		$menu->load( $Itemid );
+		$menu = $mainframe->get( 'menu' );
 		$params = new mosParameters( $menu->params );
 	} else {
 		$menu = '';
@@ -731,9 +895,10 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 
 	// used in query
 	$where = _where( -2, $access, $noauth, $gid, $id, NULL, $year, $month );
+	$where = ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' );
 
 	// query to determine if there are any archived entries for the category
-	$query = 	"SELECT a.id"
+	$query = "SELECT a.id"
 	. "\n FROM #__content as a"
 	. "\n WHERE a.state = -1"
 	. $check
@@ -742,25 +907,63 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	$items = $database->loadObjectList();
 	$archives = count( $items );
 
-	//$query = "SELECT a.*, ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, g.name AS groups"
+	$voting = votingQuery();
+	
+	// main query
 	$query = "SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,"
 	. "\n a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,"
-	. "\n CHAR_LENGTH( a.fulltext ) AS readmore,"
-	. "\n ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. "\n CHAR_LENGTH( a.fulltext ) AS readmore, u.name AS author, u.usertype, s.name AS section, cc.name AS category, g.name AS groups"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__sections AS s ON a.sectionid = s.id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
-	. ( count( $where ) ? "\n WHERE ". implode( "\n AND ", $where ) : '' )
-	. "\n AND s.access <= $gid"
-	. "\n AND s.published = 1"
-	. "\n AND cc.published = 1"
+	. $voting['join']
+	. $where
 	. "\n ORDER BY $order_sec"
 	;
 	$database->setQuery( $query );
 	$rows = $database->loadObjectList();
+	
+	// check whether section & category is published
+	if (!count($rows) && $catID != 0) {
+		$catCheck = new mosCategory( $database );
+		$catCheck->load( $catID );
+		
+		/*
+		* check whether category is published
+		*/
+		if (!$catCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether category access level allows access
+		*/
+		if( $catCheck->access > $gid ) {
+			mosNotAuth();
+			return;
+		}			
+		
+		$secCheck = new mosSection( $database );
+		$secCheck->load( $catCheck->section );
+		
+		/*
+		* check whether section is published
+		*/
+		if (!$secCheck->published) {
+			mosNotAuth();
+			return;
+		}
+		/*
+		* check whether category access level allows access
+		*/
+		if( $secCheck->access > $gid ) {
+			mosNotAuth();
+			return;
+		}			
+	}
 
 	// initiate form
 	$link = 'index.php?option=com_content&task=archivecategory&id='. $id .'&Itemid='. $Itemid;
@@ -771,7 +974,8 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 
 	if ( !$archives ) {
 		// if no archives for category, hides search and outputs empty message
-		echo '<br /><div align="center">'. _CATEGORY_ARCHIVE_EMPTY .'</div>';
+		echo '<br />';
+		echo '<div align="center">'. _CATEGORY_ARCHIVE_EMPTY .'</div>';
 	} else {
 		// if coming from the Archive Module, the Archive Dropdown selector is not shown
 		if ( $id ) {
@@ -826,11 +1030,6 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 		$limitstart = 0;
 	}
 	$i = $limitstart;
-
-	// needed to reduce queries used by getItemid
-	$ItemidCount['bs'] 		= $mainframe->getBlogSectionCount();
-	$ItemidCount['bc'] 		= $mainframe->getBlogCategoryCount();
-	$ItemidCount['gbs'] 	= $mainframe->getGlobalBlogSectionCount();
 
 	// used to display section/catagory description text and images
 	// currently not supported in Archives
@@ -903,7 +1102,7 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 					break;
 				}
 				echo '<div>';
-				show( $rows[$i], $params, $gid, $access, $pop, $option, $ItemidCount );
+				show( $rows[$i], $params, $gid, $access, $pop );
 				echo '</div>';
 				$i++;
 			}
@@ -930,7 +1129,7 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 
 				// outputs either intro or only a link
 				if ( $z < $intro ) {
-					show( $rows[$i], $params, $gid, $access, $pop, $option, $ItemidCount );
+					show( $rows[$i], $params, $gid, $access, $pop );
 				} else {
 					echo '</td>';
 					echo '</tr>';
@@ -939,19 +1138,6 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 
 				echo '</td>';
 
-//				if ( !( ( $z + 1 ) % $columns ) || $columns == 1 ) {
-//					echo '</tr>';
-//				}
-//
-//				$i++;
-//			}
-//
-//			// this is required to output a final closing </tr> tag when the number of items does not fully
-//			// fill the last row of output - a blank column is left
-//			if ( $intro % $columns ) {
-//				echo '</tr>';
-//			}
-				
                 $i++;
 
                 // this is required to output a closing </tr> tag if one of the 3 conditions are met
@@ -978,7 +1164,7 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 			echo '<tr>';
 			echo '<td valign="top">';
 			echo '<div class="blog_more'. $params->get( 'pageclass_sfx' ) .'">';
-			HTML_content::showLinks( $rows, $links, $total, $i, 1, $ItemidCount );
+			HTML_content::showLinks( $rows, $links, $total, $i, 1 );
 			echo '</div>';
 			echo '</td>';
 			echo '</tr>';
@@ -989,25 +1175,37 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 			if ( ( $pagination == 2 ) && ( $total <= $limit ) ) {
 				// not visible when they is no 'other' pages to display
 			} else {
+				require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/pageNavigation.php' );
 				// get the total number of records
 				$limitstart = $limitstart ? $limitstart : 0;
-				require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/pageNavigation.php' );
 				$pageNav = new mosPageNav( $total, $limitstart, $limit );
+				
+				if ( $Itemid && $Itemid != 99999999 ) {
+					// where Itemid value is returned, do not add Itemid to url
+					$Itemid_link = '&amp;Itemid='. $Itemid;
+				} else {
+					// where Itemid value is NOT returned, do not add Itemid to url
+					$Itemid_link = '';
+				}	
+				
 				if ( $option == 'com_frontpage' ) {
-					$link = 'index.php?option=com_frontpage&amp;Itemid='. $Itemid;
+					$link 	= 'index.php?option=com_frontpage'. $Itemid_link;
 				} else if ( $archive ) {
 					$year = $params->get( 'year' );
 					$month = $params->get( 'month' );
-					$link = 'index.php?option=com_content&amp;task='. $task .'&amp;id='. $id .'&amp;Itemid='. $Itemid.'&amp;year='. $year .'&amp;month='. $month;
+					
+					$link 	= 'index.php?option=com_content&amp;task='. $task .'&amp;id='. $id . $Itemid_link .'&amp;year='. $year .'&amp;month='. $month;
 				} else {
-					$link = 'index.php?option=com_content&amp;task='. $task .'&amp;id='. $id .'&amp;Itemid='. $Itemid;
+					$link 	= 'index.php?option=com_content&amp;task='. $task .'&amp;id='. $id . $Itemid_link;
 				}
+				
 				echo '<tr>';
 				echo '<td valign="top" align="center">';
 				echo $pageNav->writePagesLinks( $link );
 				echo '<br /><br />';
 				echo '</td>';
 				echo '</tr>';
+				
 				if ( $pagination_results ) {
 					echo '<tr>';
 					echo '<td valign="top" align="center">';
@@ -1031,31 +1229,40 @@ function BlogOutput ( &$rows, &$params, $gid, &$access, $pop, &$menu, $archive=N
 
 	// Back Button
 	$params->set( 'back_button', $back );
+	
 	mosHTML::BackButton ( $params );
 }
 
 
-function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
+function showItem( $uid, $gid, &$access, $pop, $option='com_content', $now ) {
 	global $database, $mainframe, $Itemid;
 	global $mosConfig_MetaTitle, $mosConfig_MetaAuthor;
 
+	$now 		= _CURRENT_SERVER_TIME;
 	$nullDate = $database->getNullDate();
+	
 	if ( $access->canEdit ) {
 		$xwhere = '';
 	} else {
 		$xwhere = " AND ( a.state = 1 OR a.state = -1 )"
-		. "\n AND ( publish_up = '$nullDate' OR publish_up <= '$now' )"
-		. "\n AND ( publish_down = '$nullDate' OR publish_down >= '$now' )"
+		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
+		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		;
 	}
 
-	$query = "SELECT a.*, ROUND(v.rating_sum/v.rating_count) AS rating, v.rating_count, u.name AS author, u.usertype, cc.name AS category, s.name AS section, g.name AS groups, s.published AS sec_pub, cc.published AS cat_pub"
+	$voting = votingQuery();
+	
+	// main query
+	$query = "SELECT a.*, u.name AS author, u.usertype, cc.name AS category, s.name AS section, g.name AS groups,"
+	. "\n s.published AS sec_pub, cc.published AS cat_pub, s.access AS sec_access, cc.access AS cat_access,"
+	. "\n s.id AS sec_id, cc.id as cat_id"
+	. $voting['select']
 	. "\n FROM #__content AS a"
 	. "\n LEFT JOIN #__categories AS cc ON cc.id = a.catid"
 	. "\n LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope = 'content'"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-	. "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id"
 	. "\n LEFT JOIN #__groups AS g ON a.access = g.id"
+	. $voting['join']
 	. "\n WHERE a.id = $uid"
 	. $xwhere
 	. "\n AND a.access <= $gid"
@@ -1064,14 +1271,32 @@ function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
 	$row = NULL;
 
 	if ( $database->loadObject( $row ) ) {
+		/*
+		* check whether category is published
+		*/
 		if ( !$row->cat_pub && $row->catid ) {
-		// check whether category is published
 			mosNotAuth();  
 			return;
 		}
+		/*
+		* check whether section is published
+		*/
 		if ( !$row->sec_pub && $row->sectionid ) {
-		// check whether section is published
 			mosNotAuth(); 
+			return;
+		}
+		/*
+		* check whether category access level allows access
+		*/
+		if ( ($row->cat_access > $gid) && $row->catid ) {
+			mosNotAuth();  
+			return;
+		}
+		/*
+		* check whether section access level allows access
+		*/
+		if ( ($row->sec_access > $gid) && $row->sectionid ) {
+			mosNotAuth();  
 			return;
 		}
 
@@ -1087,8 +1312,7 @@ function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
 		// loads the links for Next & Previous Button
 		if ( $params->get( 'item_navigation' ) ) {				
 			// Paramters for menu item as determined by controlling Itemid
-			$menu = new mosMenu( $database );
-			$menu->load( $Itemid );
+			$menu = $mainframe->get( 'menu' );
 			$mparams = new mosParameters( $menu->params );
 
 			// the following is needed as different menu items types utilise a different param to control ordering
@@ -1146,7 +1370,7 @@ function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
 			$mainframe->addMetaTag( 'author' , $row->author );
 		}
 
-		show( $row, $params, $gid, $access, $pop, $option );
+		show( $row, $params, $gid, $access, $pop );
 	} else {
 		mosNotAuth();
 		return;
@@ -1154,8 +1378,8 @@ function showItem( $uid, $gid, &$access, $pop, $option, $now ) {
 }
 
 
-function show( $row, $params, $gid, &$access, $pop, $option, $ItemidCount=NULL ) {
-	global $database, $mainframe, $Itemid;
+function show( $row, $params, $gid, &$access, $pop, $option='com_content', $ItemidCount=NULL ) {
+	global $database, $mainframe;
 	global $cache;
 
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
@@ -1205,51 +1429,106 @@ function show( $row, $params, $gid, &$access, $pop, $option, $ItemidCount=NULL )
 	$params->def( 'item_title', 	1 );
 	$params->def( 'url', 			1 );
 
+	// if a popup item (e.g. print page) set popup param to correct value
+	if ( $pop ) {
+		$params->set( 'popup', 1 );
+	}
+	
+	if ( $params->get( 'section_link' ) || $params->get( 'category_link' ) ) {
 	// loads the link for Section name
-	if ( $params->get( 'section_link' ) ) {
-		$query = "SELECT a.id"
-		. "\n FROM #__menu AS a"
-		. "\n WHERE a.componentid = ". $row->sectionid.""
+		if ( $params->get( 'section_link' ) || $params->get( 'category_link' ) ) {
+			// pull values from mainframe
+			$secLinkID 	= $mainframe->get( 'secID_'. $row->sectionid, -1 );
+			$secLinkURL = $mainframe->get( 'secURL_'. $row->sectionid );
+			
+			// check if values have already been placed into mainframe memory
+			if ( $secLinkID == -1 ) {
+				$query = "SELECT id, link"
+				. "\n FROM #__menu"
+				. "\n WHERE published = 1"
+				. "\n AND type IN ( 'content_section', 'content_blog_section' )"
+				. "\n AND componentid = $row->sectionid"
+				. "\n ORDER BY type DESC, ordering"
 		;
 		$database->setQuery( $query );
-		$_Itemid = $database->loadResult();
+				//$secLinkID = $database->loadResult();
+				$result = $database->loadRow();
 
-		if ( $_Itemid ) {
-			$_Itemid = '&amp;Itemid='. $_Itemid;
+				$secLinkID 	= $result[0];
+				$secLinkURL = $result[1];
+				
+				if ($secLinkID == null) {
+					$secLinkID = 0;
+					// save 0 query result to mainframe
+					$mainframe->set( 'secID_'. $row->sectionid, 0 );
+				} else {
+					// save query result to mainframe
+					$mainframe->set( 'secID_'. $row->sectionid, $secLinkID );
+					$mainframe->set( 'secURL_'. $row->sectionid, $secLinkURL );
+				}
 		}
 
+			$_Itemid = '';
+			// use Itemid for section found in query
+			if ($secLinkID != -1 && $secLinkID) {				
+				$_Itemid = '&amp;Itemid='. $secLinkID;
+			}
+			if ($secLinkURL) {
+				$link 			= sefRelToAbs( $secLinkURL . $_Itemid );
+			} else {
 		$link 			= sefRelToAbs( 'index.php?option=com_content&amp;task=section&amp;id='. $row->sectionid . $_Itemid );
+			}
 		$row->section 	= '<a href="'. $link .'">'. $row->section .'</a>';
 	}
 
 	// loads the link for Category name
-	if ( $params->get( 'category_link' ) ) {
-		$query = "SELECT a.id"
-		. "\n FROM #__menu AS a"
-		. "\n WHERE a.componentid = $row->catid"
+		if ( $params->get( 'category_link' ) && $row->catid ) {
+			// pull values from mainframe
+			$catLinkID 	= $mainframe->get( 'catID_'. $row->catid, -1 );
+			$catLinkURL = $mainframe->get( 'catURL_'. $row->catid );
+
+			// check if values have already been placed into mainframe memory
+			if ( $catLinkID == -1 ) {
+				$query = "SELECT id, link"
+				. "\n FROM #__menu"
+				. "\n WHERE published = 1"
+				. "\n AND type IN ( 'content_category', 'content_blog_category' )"
+				. "\n AND componentid = $row->catid"
+				. "\n ORDER BY type DESC, ordering"
 		;
 		$database->setQuery( $query );
-		$_Itemid = $database->loadResult();
+				//$catLinkID = $database->loadResult();
+				$result = $database->loadRow();
 
-		if ( $_Itemid ) {
-			$_Itemid = '&amp;Itemid='. $_Itemid;
+				$catLinkID 	= $result[0];
+				$catLinkURL = $result[1];				
+
+				if ($catLinkID == null) {
+					$catLinkID = 0;
+					// save 0 query result to mainframe
+					$mainframe->set( 'catID_'. $row->catid, 0 );
+				} else {
+					// save query result to mainframe
+					$mainframe->set( 'catID_'. $row->catid, $catLinkID );
+					$mainframe->set( 'catURL_'. $row->catid, $catLinkURL );
+				}
 		}
 
+			$_Itemid = '';
+			// use Itemid for category found in query
+			if ($catLinkID != -1 && $catLinkID) {				
+				$_Itemid = '&amp;Itemid='. $catLinkID;
+			} else if ($secLinkID != -1 && $secLinkID) {				
+			// use Itemid for section found in query
+				$_Itemid = '&amp;Itemid='. $secLinkID;
+			}
+			if ($catLinkURL) {
+				$link 			= sefRelToAbs( $catLinkURL . $_Itemid );
+			} else {
 		$link 			= sefRelToAbs( 'index.php?option=com_content&amp;task=category&amp;sectionid='. $row->sectionid .'&amp;id='. $row->catid . $_Itemid );
+			}
 		$row->category 	= '<a href="'. $link .'">'. $row->category .'</a>';
 	}
-
-	// loads current template for the pop-up window
-	$template = '';
-	if ( $pop ) {
-		$params->set( 'popup', 1 );
-		$query = "SELECT template"
-		. "\n FROM #__templates_menu"
-		. "\n WHERE client_id = 0"
-		. "\n AND menuid = 0"
-		;
-		$database->setQuery( $query );
-		$template = $database->loadResult();
 	}
 
 	// show/hides the intro text
@@ -1269,12 +1548,16 @@ function show( $row, $params, $gid, &$access, $pop, $option, $ItemidCount=NULL )
 		$obj->hit( $row->id );
 	}
 
-	$cache->call( 'HTML_content::show', $row, $params, $access, $page, $option, $ItemidCount );
+	// needed for caching purposes to stop different cachefiles being created for same item
+	// does not affect anything else as hits data not outputted
+	$row->hits = 0;
+	
+	$cache->call( 'HTML_content::show', $row, $params, $access, $page );
 }
 
 
 function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
-	global $database, $my;
+	global $database, $my, $mainframe;
 	global $mosConfig_absolute_path, $mosConfig_live_site;
 
 	$nullDate = $database->getNullDate();
@@ -1299,6 +1582,22 @@ function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
 			mosNotAuth();
 			return;
 		}
+		
+		if ( $Itemid == 0 || $Itemid == 99999999 ) {
+			// security check to see if link exists in a menu
+			$link = 'index.php?option=com_content&task=new&sectionid='. $sectionid;
+			$query = "SELECT id"
+			. "\n FROM #__menu"
+			. "\n WHERE link LIKE '%$link%'"
+			. "\n AND published = 1"
+			;
+			$database->setQuery( $query );
+			$exists = $database->loadResult();
+			if ( !$exists ) {						
+				mosNotAuth();
+				return;
+			}		
+		}
 	}
 
 	if ( $uid ) {
@@ -1320,28 +1619,44 @@ function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
 
 	if ( $uid ) {
 		$row->checkout( $my->id );
-		if (trim( $row->publish_down ) == '0000-00-00 00:00:00') {
-			$row->publish_down = 'Never';
-		}
+		
 		if (trim( $row->images )) {
 			$row->images = explode( "\n", $row->images );
 		} else {
 			$row->images = array();
 		}
-		$query = "SELECT name from #__users"
+		
+		$row->created 		= mosFormatDate( $row->created, _CURRENT_SERVER_TIME_FORMAT );
+		$row->modified 		= $row->modified == $nullDate ? '' : mosFormatDate( $row->modified, _CURRENT_SERVER_TIME_FORMAT );
+		$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );
+		
+		if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
+			$row->publish_down = 'Never';
+		}
+		$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );
+		
+		$query = "SELECT name"
+		. "\n FROM #__users"
 		. "\n WHERE id = $row->created_by"
 		;
 		$database->setQuery( $query	);
 		$row->creator = $database->loadResult();
+		
+		// test to reduce unneeded query
+		if ( $row->created_by == $row->modified_by ) {
+			$row->modifier = $row->creator;
+		} else {
+			$query = "SELECT name"
+			. "\n FROM #__users"
+			. "\n WHERE id = '$row->modified_by'"
+			;
+			$database->setQuery( $query );
+			$row->modifier = $database->loadResult();
+		}
 
-		$query = "SELECT name from #__users"
-		. "\n WHERE id = $row->modified_by"
-		;
-		$database->setQuery( $query );
-		$row->modifier = $database->loadResult();
-
-		$query = "SELECT content_id from #__content_frontpage"
-		."\n WHERE content_id = $row->id"
+		$query = "SELECT content_id"
+		. "\n FROM #__content_frontpage"
+		. "\n WHERE content_id = $row->id"
 		;
 		$database->setQuery( $query );
 		$row->frontpage = $database->loadResult();
@@ -1352,24 +1667,68 @@ function editItem( $uid, $gid, &$access, $sectionid=0, $task, $Itemid ){
 		$row->ordering 		= 0;
 		$row->images 		= array();
 		$row->publish_up 	= date( 'Y-m-d', time() );
-		$row->publish_down 	= 'Never';
+		$row->publish_down 	= 'Jamais';
 		$row->creator 		= 0;
 		$row->modifier 		= 0;
 		$row->frontpage 	= 0;
 	}
 
-
+	// pull param column from category info
+	$query = "SELECT params"
+	. "\n FROM #__categories"
+	. "\n WHERE id = $row->catid"
+	;
+	$database->setQuery( $query );
+	$categoryParam = $database->loadResult();	
+	
+	$paramsCat = new mosParameters( $categoryParam, $mainframe->getPath( 'com_xml', 'com_categories' ), 'component' );
+	$selected_folders = $paramsCat->get( 'imagefolders', '' );
+	
+	if ( !$selected_folders ) {
+		$selected_folders = '*2*';
+	}
+	
+	// check if images utilizes settings from section		
+	if ( strpos( $selected_folders, '*2*' ) !== false ) {
+		unset( $selected_folders );
+		// load param column from section info
+		$query = "SELECT params"
+		. "\n FROM #__sections"
+		. "\n WHERE id = $row->sectionid"
+		;
+		$database->setQuery( $query );
+		$sectionParam = $database->loadResult();			
+		
+		$paramsSec = new mosParameters( $sectionParam, $mainframe->getPath( 'com_xml', 'com_sections' ), 'component' );
+		$selected_folders = $paramsSec->get( 'imagefolders', '' );
+	}
+	
+	if ( trim( $selected_folders ) ) {
+		$temps = explode( ',', $selected_folders );
+		foreach( $temps as $temp ) {
+			$folders[] 	= mosHTML::makeOption( $temp, $temp );
+		}
+	} else {
+		$folders[] = mosHTML::makeOption( '*1*' );
+	}	
+	
 	// calls function to read image from directory
 	$pathA 		= $mosConfig_absolute_path .'/images/stories';
 	$pathL 		= $mosConfig_live_site .'/images/stories';
 	$images 	= array();
+
+	if ( $folders[0]->value == '*1*' ) {
 	$folders 	= array();
 	$folders[] 	= mosHTML::makeOption( '/' );
 	mosAdminMenus::ReadImages( $pathA, '/', $folders, $images );
+	} else {
+		mosAdminMenus::ReadImagesX( $folders, $images );
+	}	
+
 	// list of folders in images/stories/
 	$lists['folders'] 		= mosAdminMenus::GetImageFolders( $folders, $pathL );
 	// list of images in specfic folder in images/stories/
-	$lists['imagefiles']	= mosAdminMenus::GetImages( $images, $pathL );
+	$lists['imagefiles']	= mosAdminMenus::GetImages( $images, $pathL, $folders );
 	// list of saved images
 	$lists['imagelist'] 	= mosAdminMenus::GetSavedImages( $row, $pathL );
 
@@ -1413,11 +1772,13 @@ function saveContent( &$access, $task ) {
 	global $mosConfig_absolute_path, $Itemid;
 
 	$nullDate = $database->getNullDate();
+	
 	$row = new mosContent( $database );
 	if ( !$row->bind( $_POST ) ) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+	
 	$isNew = $row->id < 1;
 	if ( $isNew ) {
 		// new record
@@ -1425,6 +1786,7 @@ function saveContent( &$access, $task ) {
 			mosNotAuth();
 			return;
 		}
+		
 		$row->created = date( 'Y-m-d H:i:s' );
 		$row->created_by = $my->id;
 	} else {
@@ -1433,11 +1795,23 @@ function saveContent( &$access, $task ) {
 			mosNotAuth();
 			return;
 		}
+		
 		$row->modified 		= date( 'Y-m-d H:i:s' );
 		$row->modified_by 	= $my->id;
 	}
-	if ( trim( $row->publish_down ) == 'Never' ) {
+	
+	if (strlen(trim( $row->publish_up )) <= 10) {
+		$row->publish_up .= ' 00:00:00';
+	}
+	$row->publish_up = mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset );
+	
+	if (trim( $row->publish_down ) == 'Jamais' || trim( $row->publish_down ) == '') {
 		$row->publish_down = $nullDate;
+	} else {
+		if (strlen(trim( $row->publish_down )) <= 10) {
+			$row->publish_down .= ' 00:00:00';
+		}
+		$row->publish_down = mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT, -$mosConfig_offset );
 	}
 
 	// code cleaner for xhtml transitional compliance
@@ -1489,7 +1863,7 @@ function saveContent( &$access, $task ) {
 	require_once( $mainframe->getPath( 'class', 'com_frontpage' ) );
 	$fp = new mosFrontPage( $database );
 
-	if ( mosGetParam( $_REQUEST, 'frontpage', 0 ) ) {
+	if ( intval( mosGetParam( $_REQUEST, 'frontpage', 0 ) ) ) {
 
 		// toggles go to first place
 		if (!$fp->load( $row->id )) {
@@ -1550,13 +1924,14 @@ function saveContent( &$access, $task ) {
 	}
 
 	$msg = $isNew ? _THANK_SUB : _E_ITEM_SAVED;
+	$msg = $my->usertype == 'Publisher' ? _THANK_SUB_PUB: $msg;
 	switch ( $task ) {
 		case 'apply':
 			$link = $_SERVER['HTTP_REFERER'];
 			break;
 
 		case 'apply_new':
-			$Itemid = mosGetParam( $_POST, 'Returnid', $Itemid );
+			$Itemid = intval( mosGetParam( $_POST, 'Returnid', $Itemid ) );
 			$link 	= 'index.php?option=com_content&task=edit&id='. $row->id.'&Itemid='. $Itemid;
 			break;
 
@@ -1567,7 +1942,7 @@ function saveContent( &$access, $task ) {
 			if ( $Itemid ) {
 				$link = 'index.php?option=com_content&task=view&id='. $row->id.'&Itemid='. $Itemid;
 			} else {
-				$link = mosGetParam( $_POST, 'referer', '' );
+				$link = strval( mosGetParam( $_POST, 'referer', '' ) );
 			}
 			break;
 	}
@@ -1589,9 +1964,9 @@ function cancelContent( &$access ) {
 		$row->checkin();
 	}
 
-	$Itemid = mosGetParam( $_POST, 'Returnid', '0' );
+	$Itemid 	= intval( mosGetParam( $_POST, 'Returnid', '0' ) );
 
-	$referer 	= mosGetParam( $_POST, 'referer', '' );
+	$referer 	= strval( mosGetParam( $_POST, 'referer', '' ) );
 	$parts 		= parse_url( $referer );
 	parse_str( $parts['query'], $query );
 
@@ -1600,7 +1975,7 @@ function cancelContent( &$access ) {
 		$referer = 'index.php?option=com_content&task=view&id='. $row->id.'&Itemid='. $Itemid;
 	}
 
-	if ( $referer && !( $task == 'new' ) ) {
+	if ( $referer && $row->id ) {
 		mosRedirect( $referer );
 	} else {
 		mosRedirect( 'index.php' );
@@ -1617,6 +1992,8 @@ function emailContentForm( $uid ) {
 	$row = new mosContent( $database );
 	$row->load( $uid );
 
+	$itemid = intval( mosGetParam( $_GET, 'itemid', 0 ) );
+
 	if ( $row->id === null || $row->access > $my->gid ) {
 		mosNotAuth();
 		return;
@@ -1628,7 +2005,8 @@ function emailContentForm( $uid ) {
 		;
 		$database->setQuery( $query );
 		$template = $database->loadResult();
-		HTML_content::emailForm( $row->id, $row->title, $template );
+		
+		HTML_content::emailForm( $row->id, $row->title, $template, $itemid );
 	}
 
 }
@@ -1639,13 +2017,14 @@ function emailContentForm( $uid ) {
  */
 function emailContentSend( $uid ) {
 	global $database, $mainframe;
-	global $mosConfig_live_site, $mosConfig_sitename;
+	global $mosConfig_live_site, $mosConfig_sitename, $mosConfig_db;
 
-	$validate = mosGetParam( $_POST, mosHash( 'validate' ), 0 );
+	$validate = mosGetParam( $_POST, mosHash( $mosConfig_db ), 0 );
+	$itemid 	= intval( mosGetParam( $_POST, 'itemid', 0 ) );
+	
 	if (!$validate) {
 		// probably a spoofing attack
-		echo _NOT_AUTH;
-		return;
+		mosErrorAlert( _NOT_AUTH );
 	}
 
 	// First, make sure the form was posted from a browser.
@@ -1653,16 +2032,14 @@ function emailContentSend( $uid ) {
 	// other than requests from a browser:   
 	if (!isset( $_SERVER['HTTP_USER_AGENT'] )) {
 		header( "HTTP/1.0 403 Forbidden" );
-		die( _NOT_AUTH );
-		exit;
+		mosErrorAlert( _NOT_AUTH );
 	}
 	
 	// Make sure the form was indeed POST'ed:
 	//  (requires your html form to use: action="post")
 	if (!$_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		header("HTTP/1.0 403 Forbidden");
-		die( _NOT_AUTH );
-		exit;   
+		mosErrorAlert( _NOT_AUTH );
 	}
 	
 	// Attempt to defend against header injections:
@@ -1680,7 +2057,7 @@ function emailContentSend( $uid ) {
 		foreach ($badStrings as $v2) {
 			if (strpos( $v, $v2 ) !== false) {
 				header( "HTTP/1.0 403 Forbidden" );
-				die( _NOT_AUTH );
+				mosErrorAlert( _NOT_AUTH );
 			}
 		}
 	}   
@@ -1689,12 +2066,21 @@ function emailContentSend( $uid ) {
 	// and continue rest of script:   
 	unset($k, $v, $v2, $badStrings);
 	
-	$_Itemid 			= $mainframe->getItemid( $uid, 0, 0  );
-	$email 				= mosGetParam( $_POST, 'email', '' );
-	$yourname 			= mosGetParam( $_POST, 'yourname', '' );
-	$youremail 			= mosGetParam( $_POST, 'youremail', '' );
+	// check for session cookie
+	// Session Cookie `name`
+	$sessionCookieName 	= mosMainFrame::sessionCookieName();		
+	// Get Session Cookie `value`
+	$sessioncookie 		= mosGetParam( $_COOKIE, $sessionCookieName, null );			
+	
+	if ( !(strlen($sessioncookie) == 32 || $sessioncookie == '-') ) {
+		mosErrorAlert( _NOT_AUTH );
+	}	
+	
+	$email 				= strval( mosGetParam( $_POST, 'email', '' ) );
+	$yourname 			= strval( mosGetParam( $_POST, 'yourname', '' ) );
+	$youremail 			= strval( mosGetParam( $_POST, 'youremail', '' ) );
 	$subject_default 	= _EMAIL_INFO .' ' . $yourname;
-	$subject = mosGetParam( $_POST, 'subject', $subject_default );
+	$subject 			= strval( mosGetParam( $_POST, 'subject', $subject_default ) );
 
 	if ($uid < 1 || !$email || !$youremail || ( is_email( $email ) == false ) || (is_email( $youremail ) == false)) {
 		mosErrorAlert( _EMAIL_ERR_NOINFO );
@@ -1708,8 +2094,16 @@ function emailContentSend( $uid ) {
 	$database->setQuery( $query );
 	$template = $database->loadResult();
 
+	// determine Itemid for Item
+	if ($itemid) {
+		$_itemid = '&Itemid='. $itemid;
+	} else {
+		$itemid  = $mainframe->getItemid( $uid, 0, 0  );
+		$_itemid = '&Itemid='. $itemid;
+	}
+	
 	// link sent in email
-	$link = sefRelToAbs( $mosConfig_live_site .'/index.php?option=com_content&task=view&id='. $uid .'&Itemid='. $_Itemid );
+	$link = sefRelToAbs( $mosConfig_live_site .'/index.php?option=com_content&task=view&id='. $uid . $_itemid );
 
 	// message text
 	$msg = sprintf( _EMAIL_MSG, $mosConfig_sitename, $yourname, $youremail, $link );
@@ -1732,11 +2126,9 @@ function is_email( $email ){
 function recordVote() {
 	global $database;
 
-	$user_rating = mosGetParam( $_REQUEST, 'user_rating', 0 );
+	$user_rating 	= intval( mosGetParam( $_REQUEST, 'user_rating', 0 ) );
 	$url = mosGetParam( $_REQUEST, 'url', '' );
-	$cid = mosGetParam( $_REQUEST, 'cid', 0 );
-	$cid = intval( $cid );
-	$user_rating = intval( $user_rating );
+	$cid 			= intval( mosGetParam( $_REQUEST, 'cid', 0 ) );
 
 	if (($user_rating >= 1) and ($user_rating <= 5)) {
 		$currip = getenv( 'REMOTE_ADDR' );
@@ -1845,22 +2237,41 @@ function _orderby_sec( $orderby ) {
 /*
 * @param int 0 = Archives, 1 = Section, 2 = Category
 */
-function _where( $type=1, &$access, &$noauth, $gid, $id, $now=NULL, $year=NULL, $month=NULL ) {
-	global $database;
+function _where( $type=1, &$access, &$noauth, $gid, $id, $now=NULL, $year=NULL, $month=NULL, $params=NULL ) {
+	global $database, $mainframe;
 
+	$noauth			= !$mainframe->getCfg( 'shownoauth' );
 	$nullDate = $database->getNullDate();
+	$now			= _CURRENT_SERVER_TIME;
 	$where = array();
+	$unpublished 	= 0;
+
+	if ( isset($params) ) {
+	// param controls whether unpublished items visible to publishers and above
+		$unpublished = $params->def( 'unpublished', 0 );
+	}
 
 	// normal
 	if ( $type > 0) {
-		$where[] = "a.state = '1'";
-		if ( !$access->canEdit ) {
+		if ( isset($params) && $unpublished ) {
+		// shows unpublished items for publishers and above
+			if ( $access->canEdit ) {
+				$where[] = "a.state >= 0";
+			} else {
+				$where[] = "a.state = 1";
 			$where[] = "( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )";
 			$where[] = "( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )";
 		}
-		if ( $noauth ) {
-			$where[] = "a.access <= $gid";
+		} else {
+		// unpublished items NOT shown for publishers and above		
+			$where[] = "a.state = 1";
+			//if ( !$access->canEdit ) {
+				$where[] = "( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )";
+				$where[] = "( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )";
+			//}
 		}
+
+		// add query checks for category or section ids		
 		if ( $id > 0 ) {
 			if ( $type == 1 ) {
 				$where[] = "a.sectionid IN ( $id ) ";
@@ -1872,15 +2283,12 @@ function _where( $type=1, &$access, &$noauth, $gid, $id, $now=NULL, $year=NULL, 
 
 	// archive
 	if ( $type < 0 ) {
-		$where[] = "a.state='-1'";
+		$where[] = "a.state = -1";
 		if ( $year ) {
 			$where[] = "YEAR( a.created ) = '$year'";
 		}
 		if ( $month ) {
 			$where[] = "MONTH( a.created ) = '$month'";
-		}
-		if ( $noauth ) {
-			$where[] = "a.access <= $gid";
 		}
 		if ( $id > 0 ) {
 			if ( $type == -1 ) {
@@ -1891,6 +2299,33 @@ function _where( $type=1, &$access, &$noauth, $gid, $id, $now=NULL, $year=NULL, 
 		}
 	}
 
+	$where[] = "s.published = 1";
+	$where[] = "cc.published = 1";
+	if ( $noauth ) {
+		$where[] = "a.access <= $gid";
+		$where[] = "s.access <= $gid";
+		$where[] = "cc.access <= $gid";
+	}
+	
 	return $where;
+}
+
+function votingQuery() {
+	global $mainframe;
+	
+	$voting	= $mainframe->getCfg( 'vote' );
+
+	if ( $voting ) {
+		// calculate voting count
+		$select = "\n , ROUND( v.rating_sum / v.rating_count ) AS rating, v.rating_count"; 
+		$join	= "\n LEFT JOIN #__content_rating AS v ON a.id = v.content_id";
+	} else {
+		$select	= ''; 
+		$join	= '';
+	}
+	
+	$results = array( 'select' => $select, 'join' => $join );
+	
+	return $results;
 }
 ?>

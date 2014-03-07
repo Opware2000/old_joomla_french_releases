@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.frontpage.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.frontpage.php 3500 2006-05-15 04:31:11Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -17,11 +17,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 require_once( $mainframe->getPath( 'toolbar_default' ) );
-
-$act = mosGetParam( $_REQUEST, 'act', '' );
-if ($act) {
-	$task = $act;
-}
 
 switch ($task) {
 	default:

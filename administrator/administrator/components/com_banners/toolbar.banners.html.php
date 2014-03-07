@@ -33,7 +33,7 @@ class TOOLBAR_banners {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -76,7 +76,7 @@ class TOOLBAR_bannerClient {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancelclient', 'Close' );
+			mosMenuBar::cancel( 'cancelclient', 'Fermer' );
 		} else {
 			mosMenuBar::cancel( 'cancelclient' );
 		}

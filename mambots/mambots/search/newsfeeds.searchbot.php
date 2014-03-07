@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: newsfeeds.searchbot.php 1268 2005-11-30 22:55:50Z eddieajau $
+* @version $Id: newsfeeds.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,18 +26,26 @@ $_MAMBOTS->registerFunction( 'onSearch', 'botSearchNewsfeedslinks' );
 * @param string ordering option, newest|oldest|popular|alpha|category
 */
 function botSearchNewsfeedslinks( $text, $phrase='', $ordering='' ) {
-	global $database, $my;
+	global $database, $my, $_MAMBOTS;
 	
-	// load mambot params info
-	$query = "SELECT id"
-	. "\n FROM #__mambots"
-	. "\n WHERE element = 'newsfeeds.searchbot'"
-	. "\n AND folder = 'search'"
-	;
-	$database->setQuery( $query );
-	$id 	= $database->loadResult();
-	$mambot = new mosMambot( $database );
-	$mambot->load( $id );
+	// check if param query has previously been processed
+	if ( !isset($_MAMBOTS->_search_mambot_params['newsfeeds']) ) {
+		// load mambot params info
+		$query = "SELECT params"
+		. "\n FROM #__mambots"
+		. "\n WHERE element = 'newsfeeds.searchbot'"
+		. "\n AND folder = 'search'"
+		;
+		$database->setQuery( $query );
+		$database->loadObject($mambot);		
+		
+		// save query to class variable
+		$_MAMBOTS->_search_mambot_params['newsfeeds'] = $mambot;
+	}
+	
+	// pull query data from class variable
+	$mambot = $_MAMBOTS->_search_mambot_params['newsfeeds'];	
+	
 	$botParams = new mosParameters( $mambot->params );
 	
 	$limit = $botParams->def( 'search_limit', 50 );
@@ -95,9 +103,11 @@ function botSearchNewsfeedslinks( $text, $phrase='', $ordering='' ) {
 	. "\n CONCAT( 'index.php?option=com_newsfeeds&task=view&feedid=', a.id ) AS href,"
 	. "\n '1' AS browsernav"
 	. "\n FROM #__newsfeeds AS a"
-	. "\n INNER JOIN #__categories AS b ON b.id = a.catid AND b.access <= '$my->gid'"
+	. "\n INNER JOIN #__categories AS b ON b.id = a.catid"
 	. "\n WHERE ( $where )"
 	. "\n AND a.published = 1"
+	. "\n AND b.published = 1"
+	. "\n AND b.access <= $my->gid"
 	. "\n ORDER BY $order"
 	;
 	$database->setQuery( $query, 0, $limit );

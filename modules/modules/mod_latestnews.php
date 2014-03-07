@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_latestnews.php 1765 2006-01-12 18:00:20Z stingrey $
+* @version $Id: mod_latestnews.php 2711 2006-03-08 15:07:22Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,10 +21,11 @@ $count 		= intval( $params->get( 'count', 5 ) );
 $catid 		= trim( $params->get( 'catid' ) );
 $secid 		= trim( $params->get( 'secid' ) );
 $show_front	= $params->get( 'show_front', 1 );
-$now 		= date( 'Y-m-d H:i:s', time() + $mosConfig_offset * 60 * 60 );
-$access 	= !$mainframe->getCfg( 'shownoauth' );
 
-$nullDate = $database->getNullDate();
+$now 		= _CURRENT_SERVER_TIME;
+$access 	= !$mainframe->getCfg( 'shownoauth' );
+$nullDate 	= $database->getNullDate();
+
 // select between Content Items, Static Content or both
 switch ( $type ) {
 	case 2: 
@@ -38,27 +39,39 @@ switch ( $type ) {
 		. "\n ORDER BY a.created DESC"
 		. "\n LIMIT $count"
 		;
+		$database->setQuery( $query );
+		$rows = $database->loadObjectList();
 		break;
 
 	case 3: 
 	//Both
-		$query = "SELECT a.id, a.title, a.sectionid, a.catid"
+		$query = "SELECT a.id, a.title, a.sectionid, a.catid, cc.access AS cat_access, s.access AS sec_access, cc.published AS cat_state, s.published AS sec_state"
 		. "\n FROM #__content AS a"
 		. "\n LEFT JOIN #__content_frontpage AS f ON f.content_id = a.id"
-		. "\n INNER JOIN #__categories AS cc ON cc.id = a.catid"
-		. "\n INNER JOIN #__sections AS s ON s.id = a.sectionid"
+		. "\n LEFT JOIN #__categories AS cc ON cc.id = a.catid"
+		. "\n LEFT JOIN #__sections AS s ON s.id = a.sectionid"
 		. "\n WHERE a.state = 1"
 		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
-		. ( $access ? "\n AND a.access <= '$my->gid'" : '' )
+		. ( $access ? "\n AND a.access <= $my->gid" : '' )
 		. ( $catid ? "\n AND ( a.catid IN ( $catid ) )" : '' )
 		. ( $secid ? "\n AND ( a.sectionid IN ( $secid ) )" : '' )
 		. ( $show_front == '0' ? "\n AND f.content_id IS NULL" : '' )
-		. "\n AND s.published = 1"
-		. "\n AND cc.published = 1"
 		. "\n ORDER BY a.created DESC"
 		. "\n LIMIT $count"
 		;
+		$database->setQuery( $query );
+		$temp = $database->loadObjectList();
+		
+		$rows = array();
+		if (count($temp)) {
+			foreach ($temp as $row ) {
+				if (($row->cat_state == 1 || $row->cat_state == '') &&  ($row->sec_state == 1 || $row->sec_state == '') &&  ($row->cat_access <= $my->gid || $row->cat_access == '' || !$access) &&  ($row->sec_access <= $my->gid || $row->sec_access == '' || !$access)) {
+					$rows[] = $row;
+				}
+			}
+		}
+		unset($temp);
 		break;
 
 	case 1:  
@@ -72,7 +85,7 @@ switch ( $type ) {
 		. "\n WHERE ( a.state = 1 AND a.sectionid > 0 )"
 		. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
-		. ( $access ? "\n AND a.access <= '$my->gid'" : '' )
+		. ( $access ? "\n AND a.access <= $my->gid AND cc.access <= $my->gid AND s.access <= $my->gid" : '' )
 		. ( $catid ? "\n AND ( a.catid IN ( $catid ) )" : '' )
 		. ( $secid ? "\n AND ( a.sectionid IN ( $secid ) )" : '' )
 		. ( $show_front == '0' ? "\n AND f.content_id IS NULL" : '' )
@@ -81,11 +94,11 @@ switch ( $type ) {
 		. "\n ORDER BY a.created DESC"
 		. "\n LIMIT $count"
 		;
+		$database->setQuery( $query );
+		$rows = $database->loadObjectList();
 		break;
 }
 
-$database->setQuery( $query );
-$rows = $database->loadObjectList();
 
 // needed to reduce queries used by getItemid for Content Items
 if ( ( $type == 1 ) || ( $type == 3 ) ) {

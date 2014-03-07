@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menumanager.html.php 315 2005-10-02 13:18:46Z stingrey $
+* @version $Id: admin.menumanager.html.php 2752 2006-03-12 00:40:47Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -43,7 +43,7 @@ class HTML_menumanager {
 		<table class="adminheading">
 		<tr>
 			<th class="menus">
-			Menu Manager
+			Gestionnaire de menus
 			</th>
 		</tr>
 		</table>
@@ -54,19 +54,19 @@ class HTML_menumanager {
 			<th width="20px">
 			</th>
 			<th class="title" nowrap="nowrap">
-			Menu Name
+			Nom du Menu
 			</th>
 			<th width="5%" nowrap="nowrap">
-			Menu Items
+			El&eacute;ments du Menu
 			</th>
 			<th width="10%">
-			# Published
+			# Publi&eacute;s
 			</th>
 			<th width="15%">
-			# Unpublished
+			# Non Publi&eacute;s
 			</th>
 			<th width="15%">
-			# Trash
+			# Corbeille
 			</th>
 			<th width="15%">
 			# Modules
@@ -95,12 +95,12 @@ class HTML_menumanager {
 				<input type="radio" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $menu->type; ?>" onclick="isChecked(this.checked);" />
 				</td>
 				<td>
-				<a href="<?php echo $link; ?>" title="Edit Menu Name">
+				<a href="<?php echo $link; ?>" title="Editer le nom du menu">
 				<?php echo $menu->type; ?>
 				</a>
 				</td>
 				<td align="center">
-				<a href="<?php echo $linkA; ?>" title="Edit Menu Items">
+				<a href="<?php echo $linkA; ?>" title="Editer les éléments du menu">
 				<img src="<?php echo $mosConfig_live_site; ?>/includes/js/ThemeOffice/mainmenu.png" border="0"/>
 				</a>
 				</td>
@@ -157,7 +157,13 @@ class HTML_menumanager {
 
 			if (pressbutton == 'savemenu') {
 				if ( form.menutype.value == '' ) {
-					alert( 'Please enter a menu name' );
+					alert( 'Merci de donner un nom au menu' );
+					form.menutype.focus();
+					return;
+				}
+				var r = new RegExp("[\']", "i");
+				if ( r.exec(form.menutype.value) ) {
+					alert( 'The menu name cannot contain a \'' );
 					form.menutype.focus();
 					return;
 				}
@@ -165,7 +171,7 @@ class HTML_menumanager {
 				if ( $new ) {
 					?>
 					if ( form.title.value == '' ) {
-						alert( 'Please enter a module name for your menu' );
+						alert( 'Merci de donner un nom de module à votre menu' );
 						form.title.focus();
 						return;
 					}
@@ -183,7 +189,7 @@ class HTML_menumanager {
 		<table class="adminheading">
 		<tr>
 			<th class="menus">
-			Menu Details
+			D&eacute;tails du Menu
 			</th>
 		</tr>
 		</table>
@@ -191,12 +197,12 @@ class HTML_menumanager {
 		<table class="adminform">
 		<tr height="45px;">
 			<td width="100px" align="left">
-			<strong>Menu Name:</strong>
+			<strong>Nom du Menu:</strong>
 			</td>
 			<td>
 			<input class="inputbox" type="text" name="menutype" size="30" maxlength="25" value="<?php echo isset( $row->menutype ) ? $row->menutype : ''; ?>" />
 			<?php
-			$tip = 'This is the identification name used by Joomla! to identify this menu within the code - it must be unique. Recommend that you do not have any spaces in your Menu Name';
+			$tip = 'C est le nom utilisé par Joomla! pour identifier ce menu dans le code - Il doit être UNIQUE! Il est recommandé de ne pas utiliser d ESPACE dans ce nom!';
 			echo mosToolTip( $tip );
 			?>
 			</td>
@@ -206,21 +212,19 @@ class HTML_menumanager {
 			?>
 			<tr>
 				<td width="100px" align="left" valign="top">
-				<strong>Module Title:</strong>
-				</td>
+				<strong>Titre du Module:</strong>				</td>
 				<td>
 				<input class="inputbox" type="text" name="title" size="30" value="<?php echo $row->title ? $row->title : '';?>" />
 				<?php
-				$tip = 'Title of the mod_mainmenu module required to show this Menu';
+				$tip = 'Un titre pour mod_mainmenu module est requis pour afficher ce Menu';
 				echo mosToolTip( $tip );
 				?>
 				<br/><br/><br/>
 				<strong>
-				* A new mod_mainmenu module, with the Title you have entered above will automatically be created when you save this menu. *
-				<br/><br/>
-				Parameters for the module created are to be edited through the 'Modules Manager [site]': Modules -> Site Modules
-				</strong>
-				</td>
+				* Un nouveau module mod_mainmenu avec le titre que vous avez entr&eacute; ci-dessus sera automatiquement cr&eacute;&eacute; lorsque vous sauvegarderez ce menu. *
+				<br/>
+				<br/>
+				Les param&egrave;tres du module ainsi cr&eacute;&eacute; sont &eacute;ditables gr&acirc;ce au 'Modules Manager [site]': Modules -> Site Modules du Site</strong></td>
 			</tr>
 			<?php
 		}
@@ -266,7 +270,7 @@ class HTML_menumanager {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Delete Menu: <?php echo $type;?>
+			Effacer Menu: <?php echo $type;?>
 			</th>
 		</tr>
 		</table>
@@ -279,7 +283,7 @@ class HTML_menumanager {
 			<?php
 			if ( $modules ) {
 				?>
-				<strong>Module(s) being Deleted:</strong>
+				<strong>Module(s) &agrave; effacer:</strong>
 				<ol>
 				<?php
 				foreach ( $modules as $module ) {
@@ -301,7 +305,7 @@ class HTML_menumanager {
 			?>
 			</td>
 			<td align="left" valign="top" width="25%">
-			<strong>Menu Items being Deleted:</strong>
+			<strong>El&eacute;ments de menu &agrave; effacer:</strong>
 			<br />
 			<ol>
 			<?php
@@ -317,17 +321,19 @@ class HTML_menumanager {
 			}
 			?>
 			</ol>
-			</td>
+		  </td>
 			<td>
-			* This will <strong><font color="#FF0000">Delete</font></strong> this Menu, <br />ALL its Menu Items and the Module(s) associated with it *
-			<br /><br /><br />
+			* Ceci <strong><font color="#FF0000">Effacera</font></strong> ce Menu, <br />
+			TOUS ses &eacute;l&eacute;ments ainsi que le module associ&eacute; *
+			<br />
+			<br /><br />
 			<div style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 100px;">
-			<a class="toolbar" href="javascript:if (confirm('Are you sure you want to Delete this menu? \nThis will Delete the Menu, its Items and the Module(s).')){ submitbutton('deletemenu');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('remove','','images/delete_f2.png',1);">
-			<img name="remove" src="images/delete.png" alt="Delete" border="0" align="middle" />
-			&nbsp;Delete
+			<a class="toolbar" href="javascript:if (confirm('Etes vous certain de vouloir effacer ce menu\nTOUS ses éléments ainsi que le module associé?')){ submitbutton('deletemenu');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('remove','','images/delete_f2.png',1);">
+			<img name="remove" src="images/delete.png" alt="Effacer" border="0" align="middle" />
+			Effacer
 			</a>
 			</div>
-			</td>
+		  </td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -354,10 +360,10 @@ class HTML_menumanager {
 		function submitbutton(pressbutton) {
 			if (pressbutton == 'copymenu') {
 				if ( document.adminForm.menu_name.value == '' ) {
-					alert( 'Please enter a name for the copy of the Menu' );
+					alert( 'Merci de donner un nom à la copie du menu' );
 					return;
 				} else if ( document.adminForm.module_name.value == '' ) {
-					alert( 'Please enter a name for the new Module' );
+					alert( 'Merci de donner un nom au nouveau module' );
 					return;
 				} else {
 					submitform( 'copymenu' );
@@ -371,7 +377,7 @@ class HTML_menumanager {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Copy Menu
+			Copier le Menu
 			</th>
 		</tr>
 		</table>
@@ -381,18 +387,18 @@ class HTML_menumanager {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
-			<strong>New Menu Name:</strong>
+			<strong>Nouveau nom de menu :</strong>
 			<br />
 			<input class="inputbox" type="text" name="menu_name" size="30" value="" />
 			<br /><br /><br />
-			<strong>New Module Name:</strong>
+			<strong>Nouveau nom de module :</strong>
 			<br />
 			<input class="inputbox" type="text" name="module_name" size="30" value="" />
 			<br /><br />
 			</td>
 			<td align="left" valign="top" width="25%">
 			<strong>
-			Menu being copied:
+			Menu &agrave; copier:
 			</strong>
 			<br />
 			<font color="#000066">
@@ -402,7 +408,7 @@ class HTML_menumanager {
 			</font>
 			<br /><br />
 			<strong>
-			Menu Items being copied:
+			El&eacute;ments de menu &agrave; copier:
 			</strong>
 			<br />
 			<ol>

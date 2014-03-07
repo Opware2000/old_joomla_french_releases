@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: user.php 3754 2006-05-31 12:08:37Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,7 +24,12 @@ require_once ( $mainframe->getPath( 'front_html' ) );
 
 switch( $task ) {
 	case 'saveUpload':
-		saveUpload( $mosConfig_dbprefix, $uid, $option, $userfile, $userfile_name, $type, $existingImage );
+		// check to see if functionality restricted for use as demo site
+		if ( $_VERSION->RESTRICT == 1 ) {
+			mosRedirect( 'index.php?mosmsg=Functionality Restricted' );
+		} else {
+			saveUpload( $mosConfig_dbprefix, $uid, $option, $userfile, $userfile_name, $type, $existingImage );
+		}
 		break;
 
 	case 'UserDetails':
@@ -32,7 +37,12 @@ switch( $task ) {
 		break;
 
 	case 'saveUserEdit':
-		userSave( $option, $my->id );
+		// check to see if functionality restricted for use as demo site
+		if ( $_VERSION->RESTRICT == 1 ) {
+			mosRedirect( 'index.php?mosmsg=Functionality Restricted' );
+		} else {
+			userSave( $option, $my->id );
+		}
 		break;
 
 	case 'CheckIn':
@@ -102,6 +112,20 @@ function userEdit( $option, $uid, $submitvalue) {
 	global $database, $mainframe;
 	global $mosConfig_absolute_path;
 
+	// security check to see if link exists in a menu
+	$link = 'index.php?option=com_user&task=UserDetails';
+	$query = "SELECT id"
+	. "\n FROM #__menu"
+	. "\n WHERE link LIKE '%$link%'"
+	. "\n AND published = 1"
+	;
+	$database->setQuery( $query );
+	$exists = $database->loadResult();
+	if ( !$exists ) {						
+		mosNotAuth();
+		return;
+	}		
+	
 	require_once( $mosConfig_absolute_path .'/administrator/components/com_users/users.class.php' );
 
 	if ($uid == 0) {
@@ -119,7 +143,7 @@ function userEdit( $option, $uid, $submitvalue) {
 }
 
 function userSave( $option, $uid) {
-	global $database, $Itemid;
+	global $database, $my, $mosConfig_frontend_userparams;
 
 	$user_id = intval( mosGetParam( $_POST, 'id', 0 ));
 
@@ -128,36 +152,42 @@ function userSave( $option, $uid) {
 		mosNotAuth();
 		return;
 	}
+	
 	$row = new mosUser( $database );
-	$row->load( $user_id );
-	$row->orig_password = $row->password;
+	$row->load( $user_id );	
+	
+	$orig_password = $row->password;
+	$orig_username = $row->username;
 
-	if (!$row->bind( $_POST, "gid usertype" )) {
+	if (!$row->bind( $_POST, 'gid usertype' )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+	
 	mosMakeHtmlSafe($row);
 
-	if(isset($_POST["password"]) && $_POST["password"] != "") {
-		if(isset($_POST["verifyPass"]) && ($_POST["verifyPass"] == $_POST["password"])) {
-			$row->password = md5($_POST["password"]);
+	if (isset($_POST['password']) && $_POST['password'] != '') {
+		if (isset($_POST['verifyPass']) && ($_POST['verifyPass'] == $_POST['password'])) {
+			$row->password = md5( $row->password );
 		} else {
 			echo "<script> alert(\""._PASS_MATCH."\"); window.history.go(-1); </script>\n";
 			exit();
 		}
 	} else {
 		// Restore 'original password'
-		$row->password = $row->orig_password;
+		$row->password = $orig_password;
 	}
 
+	if ($mosConfig_frontend_userparams == '1' || $mosConfig_frontend_userparams == 1 || $mosConfig_frontend_userparams == NULL) {
 	// save params
-	$params = mosGetParam( $_POST, 'params', '' );
-	if (is_array( $params )) {
-		$txt = array();
-		foreach ( $params as $k=>$v) {
-			$txt[] = "$k=$v";
+		$params = mosGetParam( $_POST, 'params', '' );
+		if (is_array( $params )) {
+			$txt = array();
+			foreach ( $params as $k=>$v) {
+				$txt[] = "$k=$v";
+			}
+			$row->params = implode( "\n", $txt );
 		}
-		$row->params = implode( "\n", $txt );
 	}
 
 	if (!$row->check()) {
@@ -165,15 +195,26 @@ function userSave( $option, $uid) {
 		exit();
 	}
 
-	unset($row->orig_password); // prevent DB error!!
-
 	if (!$row->store()) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+	
+	// check if username has been changed
+	if ( $orig_username != $row->username ) {
+		// change username value in session table
+		$query = "UPDATE #__session"
+		. "\n SET username = '$row->username'"
+		. "\n WHERE username = '$orig_username'"
+		. "\n AND userid = $my->id"
+		. "\n AND gid = $my->gid"
+		. "\n AND guest = 0"
+		;
+		$database->setQuery( $query );
+		$database->query();		
+	}
 
-	$link = $_SERVER['HTTP_REFERER'];
-	mosRedirect( $link, _USER_DETAILS_SAVE );
+	mosRedirect( 'index.php', _USER_DETAILS_SAVE );
 }
 
 function CheckIn( $userid, $access, $option ){
@@ -186,6 +227,20 @@ function CheckIn( $userid, $access, $option ){
 		return;
 	}
 
+	// security check to see if link exists in a menu
+	$link = 'index.php?option=com_user&task=CheckIn';
+	$query = "SELECT id"
+	. "\n FROM #__menu"
+	. "\n WHERE link LIKE '%$link%'"
+	. "\n AND published = 1"
+	;
+	$database->setQuery( $query );
+	$exists = $database->loadResult();
+	if ( !$exists ) {						
+		mosNotAuth();
+		return;
+	}		
+	
 	$lt = mysql_list_tables($mosConfig_db);
 	$k = 0;
 	echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">";

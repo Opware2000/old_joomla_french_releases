@@ -89,6 +89,8 @@ class database {
 		$this->_table_prefix = $table_prefix;
 		$this->_ticker = 0;
 		$this->_log = array();
+		
+		$this->setSQLMode();		
 	}
 	/**
 	 * @param int
@@ -738,7 +740,7 @@ class mosDBTable {
 	 * @private
 	 * @since 1.0.6
 	 */
-	function setSchema( $array=null ) {
+	function _setSchema( $array=null ) {
 		if (is_array( $array )) {
 			$this->_schema = $array;
 		} else {
@@ -752,7 +754,7 @@ class mosDBTable {
 	 * @private
 	 * @since 1.0.6
 	 */
-	function &_getSchema() {
+	function _getSchema() {
 		if ($this->_schema == null) {
 			$this->_setSchema();
 		}
@@ -854,15 +856,32 @@ class mosDBTable {
 	*/
 	function load( $oid=null ) {
 		$k = $this->_tbl_key;
+		
 		if ($oid !== null) {
 			$this->$k = $oid;
 		}
+		
 		$oid = $this->$k;
+		
 		if ($oid === null) {
 			return false;
 		}
+		//Note: Prior to PHP 4.2.0, Uninitialized class variables will not be reported by get_class_vars().
+		$class_vars = get_class_vars(get_class($this));
+		foreach ($class_vars as $name => $value) {
+			if (($name != $k) and ($name != "_db") and ($name != "_tbl") and ($name != "_tbl_key")) {
+				$this->$name = $value;
+			}
+		}
+		
 		$this->reset();
-		$this->_db->setQuery( "SELECT * FROM $this->_tbl WHERE $this->_tbl_key='$oid'" );
+		
+		$query = "SELECT *"
+		. "\n FROM $this->_tbl"
+		. "\n WHERE $this->_tbl_key = '$oid'"
+		;
+		$this->_db->setQuery( $query );
+		
 		return $this->_db->loadObject( $this );
 	}
 
@@ -1178,12 +1197,17 @@ class mosDBTable {
 			$this->_error = "WARNING: ".strtolower(get_class( $this ))." does not support checkin.";
 			return false;
 		}
-		$k = $this->_tbl_key;
+		
+		$k 			= $this->_tbl_key;
+		$nullDate 	= $this->_db->getNullDate();
+
 		if ($oid !== null) {
 			$this->$k = intval( $oid );
 		}
-		$time = date( 'H:i:s' );
-		$nullDate = $this->_db->getNullDate();
+		if ($this->$k == NULL) {
+			return false;
+		}
+		
 		$query = "UPDATE $this->_tbl"
 		. "\n SET checked_out = 0, checked_out_time = '$nullDate'"
 		. "\n WHERE $this->_tbl_key = ". $this->$k

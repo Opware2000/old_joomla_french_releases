@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: editor.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: editor.php 2444 2006-02-17 18:59:08Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,7 +14,7 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-if (!defined( '_MOS_EDITOR_INCLUDED' )) {
+if (!defined( '_JOS_EDITOR_INCLUDED' )) {
 	global $mosConfig_editor;
 	global $my;
 
@@ -30,7 +30,6 @@ if (!defined( '_MOS_EDITOR_INCLUDED' )) {
 	}
 
 	$_MAMBOTS->loadBot( 'editors', $editor, 1 );
-	$_MAMBOTS->loadBotGroup( 'editors-xtd' );
 
 	function initEditor() {
 		global $mainframe, $_MAMBOTS;
@@ -60,6 +59,12 @@ if (!defined( '_MOS_EDITOR_INCLUDED' )) {
 	function editorArea( $name, $content, $hiddenField, $width, $height, $col, $row ) {
 		global $mainframe, $_MAMBOTS, $my;
 
+		// ensure editor-xtd bots are loaded only once
+		if (!defined( '_JOS_EDITORXTD_INCLUDED' )) {
+			define( '_JOS_EDITORXTD_INCLUDED', 1 );
+			$_MAMBOTS->loadBotGroup( 'editors-xtd' );
+		}
+		
 		$mainframe->set( 'loadEditor', true );
 
 		$results = $_MAMBOTS->trigger( 'onEditorArea', array( $name, $content, $hiddenField, $width, $height, $col, $row ) );
@@ -69,6 +74,6 @@ if (!defined( '_MOS_EDITOR_INCLUDED' )) {
 			}
 		}
 	}
-	define( '_MOS_EDITOR_INCLUDED', 1 );
+	define( '_JOS_EDITOR_INCLUDED', 1 );
 }
 ?>

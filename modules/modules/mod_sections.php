@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_sections.php 305 2005-10-02 09:36:51Z stingrey $
+* @version $Id: mod_sections.php 2711 2006-03-08 15:07:22Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -15,10 +15,10 @@ global $mosConfig_offset;
 /// no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-$count 	= intval( $params->get( 'count', 20 ) );
-$access = !$mainframe->getCfg( 'shownoauth' );
-$now 	= date( 'Y-m-d H:i:s', time() + $mosConfig_offset * 60 * 60 );
-$nullDate = $database->getNullDate();
+$count 		= intval( $params->get( 'count', 20 ) );
+$access 	= !$mainframe->getCfg( 'shownoauth' );
+$now 		= _CURRENT_SERVER_TIME;
+$nullDate 	= $database->getNullDate();
 
 $query = "SELECT a.id AS id, a.title AS title, COUNT(b.id) as cnt"
 . "\n FROM #__sections as a"

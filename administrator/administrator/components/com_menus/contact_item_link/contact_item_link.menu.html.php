@@ -36,9 +36,9 @@ class contact_item_link_menu_html {
 
 			// do field validation
 			if (trim(form.name.value) == ""){
-				alert( "Link must have a name" );
+				alert( "Le lien doit avoir un nom" );
 			} else if (trim(form.contact_item_link.value) == ""){
-				alert( "You must select a Contact to link to" );
+				alert( "Vous devez sélectionnez un contact vers lequel crér ce lien" );
 			} else {
 				form.link.value = "index.php?option=com_contact&task=view&contact_id=" + form.contact_item_link.value;
 				form.componentid.value = form.contact_item_link.value;
@@ -51,7 +51,7 @@ class contact_item_link_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Link - Contact Item
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Lien - Contact
 			</th>
 		</tr>
 		</table>
@@ -62,12 +62,12 @@ class contact_item_link_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
 					<td width="10%" align="right">
-					Name:
+					Nom du lien:
 					</td>
 					<td width="80%">
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo $menu->name; ?>" />
@@ -75,7 +75,7 @@ class contact_item_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Contact to Link:
+					Lien vers le contact:
 					</td>
 					<td width="80%">
 					<?php echo $lists['contact']; ?>
@@ -89,7 +89,7 @@ class contact_item_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					On Click, Open in:
+					Ouvrir dans:
 					</td>
 					<td width="80%">
 					<?php echo $lists['target']; ?>
@@ -97,7 +97,7 @@ class contact_item_link_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td>
 					<?php echo $lists['parent']; ?>
@@ -105,7 +105,7 @@ class contact_item_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -113,14 +113,14 @@ class contact_item_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -134,7 +134,7 @@ class contact_item_link_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

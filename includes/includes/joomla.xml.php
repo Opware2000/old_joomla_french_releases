@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.xml.php 1511 2005-12-20 22:31:53Z Jinx $
+* @version $Id: joomla.xml.php 3549 2006-05-18 08:24:53Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -279,9 +279,9 @@ class mosParameters {
 		$result[0] = $label ? $label : $name;
 
 		if ($result[0] == '@spacer') {
-			$result[0] = '';
+			$result[0] = '&nbsp;';
 		} else {
-			$result[0] = mosToolTip( addslashes( $description ), $result[0], '', '', $result[0], '#', 0 );
+			$result[0] = mosToolTip( addslashes( $description ), addslashes( $result[0] ), '', '', $result[0], '#', 0 );
 		}
 		$type = $param->getAttribute( 'type' );
 
@@ -310,7 +310,7 @@ class mosParameters {
 	function _form_text( $name, $value, &$node, $control_name ) {
 		$size = $node->getAttribute( 'size' );
 
-		return '<input type="text" name="'. $control_name .'['. $name .']" value="'. $value .'" class="text_area" size="'. $size .'"/>';
+		return '<input type="text" name="'. $control_name .'['. $name .']" value="'. $value .'" class="text_area" size="'. $size .'" />';
 	}
 	/**
 	* @param string The name of the form element
@@ -447,10 +447,10 @@ class mosParameters {
 			$options[] = mosHTML::makeOption( $file, $file );
 		}
 		if ( !$node->getAttribute( 'hide_none' ) ) {
-			array_unshift( $options, mosHTML::makeOption( '-1', '- '. 'Do not use an image' .' -' ) );
+			array_unshift( $options, mosHTML::makeOption( '-1', '- '. 'Ne pas utiliser' .' -' ) );
 		}
 		if ( !$node->getAttribute( 'hide_default' ) ) {
-			array_unshift( $options, mosHTML::makeOption( '', '- '. 'Use Default image' .' -' ) );
+			array_unshift( $options, mosHTML::makeOption( '', '- '. 'Par défaut' .' -' ) );
 		}
 
 		return mosHTML::selectList( $options, ''. $control_name .'['. $name .']', 'class="inputbox"', 'value', 'text', $value, "param$name" );

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.statistics.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.statistics.html.php 2760 2006-03-12 18:42:18Z stingrey $
 * @package Joomla
 * @subpackage Statistics
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -36,17 +36,17 @@ class HTML_statistics {
 		</style>
 		<table class="adminheading">
 		<tr>
-			<th class="browser">Browser, OS, Domain Statistics</th>
+			<th class="browser">Statistiques de Navigateurs, Syst&egrave;mes d'exploitation, Domaines</th>
 		</tr>
 		</table>
 		<form action="index2.php" method="post" name="adminForm">
 		<?php
 		$tabs->startPane("statsPane");
-		$tabs->startTab("Browsers","browsers-page");
+		$tabs->startTab("Navigateurs","browsers-page");
 		?>
 		<table class="adminlist">
 		<tr>
-			<th align="left">&nbsp;Browser <?php echo $sorts['b_agent'];?></th>
+			<th align="left">&nbsp;Navigateur <?php echo $sorts['b_agent'];?></th>
 			<th>&nbsp;</th>
 			<th width="100" align="left">% <?php echo $sorts['b_hits'];?></th>
 			<th width="100" align="left">#</th>
@@ -85,11 +85,11 @@ class HTML_statistics {
 		</table>
 		<?php
 		$tabs->endTab();
-		$tabs->startTab("OS Stats","os-page");
+		$tabs->startTab("OS","os-page");
 		?>
 		<table class="adminlist">
 		<tr>
-			<th align="left">&nbsp;Operating System <?php echo $sorts['o_agent'];?></th>
+			<th align="left">&nbsp;Syst&egrave;me d'exploitation <?php echo $sorts['o_agent'];?></th>
 			<th>&nbsp;</th>
 			<th width="100" align="left">% <?php echo $sorts['o_hits'];?></th>
 			<th width="100" align="left">#</th>
@@ -128,11 +128,11 @@ class HTML_statistics {
 		</table>
 		<?php
 		$tabs->endTab();
-		$tabs->startTab("Domain Stats","domain-page");
+		$tabs->startTab("Domaines","domain-page");
 		?>
 		<table class="adminlist">
 		<tr>
-			<th align="left">&nbsp;Domain <?php echo $sorts['d_agent'];?></th>
+			<th align="left">&nbsp;Domaine <?php echo $sorts['d_agent'];?></th>
 			<th>&nbsp;</th>
 			<th width="100" align="left">% <?php echo $sorts['d_hits'];?></th>
 			<th width="100" align="left">#</th>
@@ -183,7 +183,7 @@ class HTML_statistics {
 		?>
 		<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminheading">
 		<tr>
-			<th width="100%" class="impressions">Page Impression Statistics</th>
+			<th width="100%" class="impressions">Statistiques d'impression de pages</th>
 		</tr>
 		</table>
 
@@ -191,8 +191,8 @@ class HTML_statistics {
 		<table class="adminlist">
 		<tr>
 			<th style="text-align:right">#</th>
-			<th class="title">Title</th>
-			<th align="center" nowrap="nowrap">Page Impressions</th>
+			<th class="title">Titre</th>
+			<th align="center" nowrap="nowrap">Impressions</th>
 		</tr>
 		<?php
 		$i = $pageNav->limitstart;
@@ -222,27 +222,64 @@ class HTML_statistics {
 		<?php
 	}
 
-	function showSearches( &$rows, $pageNav, $option, $task ) {
+	function showSearches( &$rows, $pageNav, $option, $task, $showResults ) {
 		global $mainframe;
+		
+		mosCommonHTML::loadOverlib();
 		?>
 		<form action="index2.php" method="post" name="adminForm">
+		
 		<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminheading">
 			<tr>
-				<th width="100%" class="searchtext">
-				Search Engine Text :
-				<span class="componentheading">logging is :
-				<?php echo $mainframe->getCfg( 'enable_log_searches' ) ? '<b><font color="green">Enabled</font></b>' : '<b><font color="red">Disabled</font></b>' ?>
+			<th class="searchtext">
+				Texte recherch&eacute; par le moteur:
+				<span class="componentheading">statistiques :
+				<?php echo $mainframe->getCfg( 'enable_log_searches' ) ? '<b><font color="green">Activées</font></b>' : '<b><font color="red">Désactivées</font></b>' ?>
 				</span>
 				</th>
+			<td align="right">
+				<?php
+				if ( !$showResults ) {
+					echo mosWarning('Activating this can dramatically slow and even lock your site as it is a highly query intensive operation');
+				}
+				?>
+			</td>
+			<td align="right">
+				<?php
+				if ( $showResults ) {
+					?>
+					<input name="search_results" type="button" class="button" value="Hide Search Results" onclick="submitbutton('searches');">
+					<?php
+				} else {
+					?>
+					<input name="search_results" type="button" class="button" value="Show Search Results" onclick="submitbutton('searchesresults');">
+					<?php
+				}
+				?>
+			</td>
 			</tr>
 		</table>
 
 		<table class="adminlist">
 		<tr>
-			<th style="text-align:right">#</th>
-			<th class="title">Search Text</th>
-			<th nowrap="nowrap">Times Requested</th>
-			<th nowrap="nowrap">Results Returned</th>
+			<th style="text-align:right" width="10">
+				#
+			</th>
+			<th class="title">
+				Texte recherch&eacute;
+			</th>
+			<th nowrap="nowrap">
+				Nombre de fois
+			</th>
+			<?php
+			if ( $showResults ) {
+				?>
+				<th nowrap="nowrap">
+					R&eacute;sultats renvoy&eacute;s
+				</th>
+				<?php
+			}
+			?>
 		</tr>
 		<?php
 		$k = 0;
@@ -253,9 +290,21 @@ class HTML_statistics {
 				<td align="right">
 				<?php echo $i+1+$pageNav->limitstart; ?>
 				</td>
-				<td align="left"><?php echo $row->search_term;?></td>
-				<td align="center"><?php echo $row->hits; ?></td>
-				<td align="center"><?php echo $row->returns; ?></td>
+				<td align="left">
+					<?php echo $row->search_term;?>
+				</td>
+				<td align="center">
+					<?php echo $row->hits; ?>
+				</td>
+				<?php
+				if ( $showResults ) {
+					?>
+					<td align="center">
+						<?php echo $row->returns; ?>
+					</td>
+					<?php
+				}
+				?>
 			</tr>
 			<?php
 			$k = 1 - $k;
@@ -263,6 +312,7 @@ class HTML_statistics {
 		?>
 	</table>
 	<?php echo $pageNav->getListFooter(); ?>
+		
   	<input type="hidden" name="option" value="<?php echo $option;?>" />
   	<input type="hidden" name="task" value="<?php echo $task;?>" />
 	</form>

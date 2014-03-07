@@ -40,7 +40,7 @@ class content_archive_category_menu_html {
 			if ( !$menu->id ) {
 				?>
 				if ( getSelectedValue( 'adminForm', 'componentid' ) < 1 ) {
-					alert( 'You must select a category' );
+					alert( 'Vous devez sélectionner une catégorie' );
 					return;
 				}
 				sectcat = getSelectedText( 'adminForm', 'componentid' );
@@ -56,7 +56,7 @@ class content_archive_category_menu_html {
 			} else {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 				} else {
 					submitform( pressbutton );
 				}
@@ -69,7 +69,7 @@ class content_archive_category_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Blog - Content Category Archive
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Blog - Archive de catégorie
 			</th>
 		</tr>
 		</table>
@@ -80,24 +80,24 @@ class content_archive_category_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
-					<td width="10%" align="right" valign="top">Name:</td>
+					<td width="10%" align="right" valign="top">Nom du lien:</td>
 					<td width="200px">
 					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo $menu->name; ?>"/>
 					</td>
 					<td>
 					<?php
 					if ( !$menu->id ) {
-						echo mosToolTip( 'If you leave this blank the Category name will be automatically used' );
+						echo mosToolTip( 'si ce champ est vierge, le nom de la catégorie sélectionnée sera automatiquement utilisé' );
 					}
 					?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Category:</td>
+					<td valign="top" align="right">Catégorie:</td>
 					<td>
 					<?php echo $lists['componentid']; ?>
 					</td>
@@ -109,25 +109,25 @@ class content_archive_category_menu_html {
 					</td>
 				</tr>
 				<tr>
-					<td align="right">Parent Item:</td>
+					<td align="right">Lien parent:</td>
 					<td>
 					<?php echo $lists['parent']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Ordering:</td>
+					<td valign="top" align="right">Ordre:</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Access Level:</td>
+					<td valign="top" align="right">Niveau d'accès:</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -141,7 +141,7 @@ class content_archive_category_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.contact.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: admin.contact.php 3494 2006-05-14 23:51:02Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,7 +24,6 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$id 	= mosGetParam( $_GET, 'id', 0 );
 $cid 	= mosGetParam( $_POST, 'cid', array(0) );
 if (!is_array( $cid )) {
 	$cid = array(0);
@@ -37,7 +36,7 @@ switch ($task) {
 		break;
 
 	case 'edit':
-		editContact( $cid[0], $option );
+		editContact( intval( $cid[0] ), $option );
 		break;
 
 	case 'editA':
@@ -61,11 +60,11 @@ switch ($task) {
 		break;
 
 	case 'orderup':
-		orderContacts( $cid[0], -1, $option );
+		orderContacts( intval( $cid[0] ), -1, $option );
 		break;
 
 	case 'orderdown':
-		orderContacts( $cid[0], 1, $option );
+		orderContacts( intval( $cid[0] ), 1, $option );
 		break;
 
 	case 'cancel':
@@ -84,9 +83,9 @@ switch ($task) {
 function showContacts( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$catid 		= $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 );
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$catid 		= intval( $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 ) );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 	$search 	= $mainframe->getUserStateFromRequest( "search{$option}", 'search', '' );
 	$search 	= $database->getEscaped( trim( strtolower( $search ) ) );
 
@@ -302,7 +301,9 @@ function orderContacts( $uid, $inc, $option ) {
 
 	$row = new mosContact( $database );
 	$row->load( $uid );
+	$row->updateOrder();
 	$row->move( $inc, "published >= 0" );
+	$row->updateOrder();
 
 	mosRedirect( "index2.php?option=$option" );
 }

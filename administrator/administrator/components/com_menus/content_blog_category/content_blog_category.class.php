@@ -64,7 +64,7 @@ class content_blog_category {
 		}
 
 		// build the html select list for category
-		$rows[] = mosHTML::makeOption( '', 'All Categories' );
+		$rows[] = mosHTML::makeOption( '', 'Toutes les catégories' );
 		$query = "SELECT c.id AS `value`, c.section AS `id`, CONCAT_WS( ' / ', s.title, c.title) AS `text`"
 		. "\n FROM #__sections AS s"
 		. "\n INNER JOIN #__categories AS c ON c.section = s.id"
@@ -133,7 +133,7 @@ class content_blog_category {
 		$row->checkin();
 		$row->updateOrder( "menutype = '$row->menutype' AND parent = $row->parent" );
 
-		$msg = 'Menu item Saved';
+		$msg = 'Elément de menu sauvegardé.';
 		switch ( $task ) {
 			case 'apply':
 				mosRedirect( 'index2.php?option='. $option .'&menutype='. $row->menutype .'&task=edit&id='. $row->id, $msg );

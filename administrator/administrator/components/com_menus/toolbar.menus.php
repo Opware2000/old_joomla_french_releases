@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.menus.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.menus.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -57,7 +57,7 @@ switch ($task) {
 				echo $database->stderr();
 			}
 		} else {
-			$type 		= mosGetParam( $_REQUEST, 'type', null );
+			$type 		= strval( mosGetParam( $_REQUEST, 'type', null ) );
 			$item_path  = $path . $type .'/'. $type .'.menubar.php';
 
 			if ( $type ) {
@@ -73,7 +73,7 @@ switch ($task) {
 		break;
 
 	default:
-		$type 		= mosGetParam( $_REQUEST, 'type' );
+		$type 		= strval( mosGetParam( $_REQUEST, 'type' ) );
 		$item_path  = $path . $type .'/'. $type .'.menubar.php';
 
 		if ( $type ) {

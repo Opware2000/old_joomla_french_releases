@@ -61,12 +61,12 @@ if (array_key_exists ( $element, $classMap )) {
 			if (file_exists( $path )) {
 				require $path;
 			} else {
-				echo "Installer not found for element [$element]";
+				echo "Installeur non trouvé pour [$element]";
 			}
 			break;
 	}
 } else {
-	echo "Installer not available for element [$element]";
+	echo "Installeur non disponible pour [$element]";
 }
 
 /**
@@ -79,14 +79,14 @@ function uploadPackage( $installerClass, $option, $element, $client ) {
 
 	// Check if file uploads are enabled
 	if (!(bool)ini_get('file_uploads')) {
-		HTML_installer::showInstallMessage( "The installer can't continue before file uploads are enabled. Please use the install from directory method.",
+		HTML_installer::showInstallMessage( "L installeur ne peut continuer sans que l upload de fichiers soit activé. Veuillez utiliser la méthode Installer à partir du Répertoire.",
 			'Installer - Error', $installer->returnTo( $option, $element, $client ) );
 		exit();
 	}
 
 	// Check that the zlib is available
 	if(!extension_loaded('zlib')) {
-		HTML_installer::showInstallMessage( "The installer can't continue before zlib is installed",
+		HTML_installer::showInstallMessage( "L installeur ne peut continuer sans que zlib soit installé.",
 			'Installer - Error', $installer->returnTo( $option, $element, $client ) );
 		exit();
 	}
@@ -94,7 +94,7 @@ function uploadPackage( $installerClass, $option, $element, $client ) {
 	$userfile = mosGetParam( $_FILES, 'userfile', null );
 
 	if (!$userfile) {
-		HTML_installer::showInstallMessage( 'No file selected', 'Upload new module - error',
+		HTML_installer::showInstallMessage( 'Aucun fichier sélectionné.', 'Upload du nouveau module - erreur',
 			$installer->returnTo( $option, $element, $client ));
 		exit();
 	}
@@ -106,16 +106,16 @@ function uploadPackage( $installerClass, $option, $element, $client ) {
 
 	if ($resultdir !== false) {
 		if (!$installer->upload( $userfile['name'] )) {
-			HTML_installer::showInstallMessage( $installer->getError(), 'Upload '.$element.' - Upload Failed',
+			HTML_installer::showInstallMessage( $installer->getError(), 'Upload '.$element.' - ECHEC',
 				$installer->returnTo( $option, $element, $client ) );
 		}
 		$ret = $installer->install();
 
-		HTML_installer::showInstallMessage( $installer->getError(), 'Upload '.$element.' - '.($ret ? 'Success' : 'Failed'),
+		HTML_installer::showInstallMessage( $installer->getError(), 'Upload '.$element.' - '.($ret ? 'SUCCES' : 'ECHEC'),
 			$installer->returnTo( $option, $element, $client ) );
 		cleanupInstall( $userfile['name'], $installer->unpackDir() );
 	} else {
-		HTML_installer::showInstallMessage( $msg, 'Upload '.$element.' -  Upload Error',
+		HTML_installer::showInstallMessage( $msg, 'Upload '.$element.' -  ERREUR',
 			$installer->returnTo( $option, $element, $client ) );
 	}
 }
@@ -128,7 +128,7 @@ function installFromDirectory( $installerClass, $option, $element, $client ) {
 	$userfile = mosGetParam( $_REQUEST, 'userfile', '' );
 
 	if (!$userfile) {
-		mosRedirect( "index2.php?option=$option&element=module", "Please select a directory" );
+		mosRedirect( "index2.php?option=$option&element=module", "Merci de sélectionner un répertoire" );
 	}
 
 	$installer = new $installerClass();
@@ -139,7 +139,7 @@ function installFromDirectory( $installerClass, $option, $element, $client ) {
 	}
 
 	$ret = $installer->install( $path );
-	HTML_installer::showInstallMessage( $installer->getError(), 'Upload new '.$element.' - '.($ret ? 'Success' : 'Error'), $installer->returnTo( $option, $element, $client ) );
+	HTML_installer::showInstallMessage( $installer->getError(), 'Upload du nouveau '.$element.' - '.($ret ? 'SUCCES' : 'ERREUR'), $installer->returnTo( $option, $element, $client ) );
 }
 /**
 *
@@ -159,7 +159,7 @@ function removeElement( $installerClass, $option, $element, $client ) {
 
 	$msg = $installer->getError();
 
-	mosRedirect( $installer->returnTo( $option, $element, $client ), $result ? 'Success ' . $msg : 'Failed ' . $msg );
+	mosRedirect( $installer->returnTo( $option, $element, $client ), $result ? 'SUCCES ' . $msg : 'ECHEC ' . $msg );
 }
 /**
 * @param string The name of the php (temporary) uploaded file
@@ -176,16 +176,16 @@ function uploadFile( $filename, $userfile_name, &$msg ) {
 				if (mosChmod( $baseDir . $userfile_name )) {
 					return true;
 				} else {
-					$msg = 'Failed to change the permissions of the uploaded file.';
+					$msg = 'Impossible de changer les autorisations du fichier uploadé.';
 				}
 			} else {
-				$msg = 'Failed to move uploaded file to <code>/media</code> directory.';
+				$msg = 'Impossible de déplacer le fichier uploadé vers le répertoire <code>/media</code> .';
 			}
 		} else {
-			$msg = 'Upload failed as <code>/media</code> directory is not writable.';
+			$msg = 'Echec de l upload car le répertoire <code>/media</code> n est pas modifiable.';
 		}
 	} else {
-		$msg = 'Upload failed as <code>/media</code> directory does not exist.';
+		$msg = 'Echec de l upload car le répertoire <code>/media</code> n existe pas.';
 	}
 	return false;
 }

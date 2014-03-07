@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_archive.php 1682 2006-01-06 18:59:23Z stingrey $
+* @version $Id: mod_archive.php 2711 2006-03-08 15:07:22Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,10 +14,8 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-global $mosConfig_offset;
-
 $count 	= intval( $params->def( 'count', 10 ) );
-$now 	= date( 'Y-m-d H:i:s', time() + $mosConfig_offset * 60 * 60 );
+$now 	= _CURRENT_SERVER_TIME;
 
 $query = "SELECT MONTH( created ) AS created_month, created, id, sectionid, title, YEAR(created) AS created_year"
 . "\n FROM #__content"

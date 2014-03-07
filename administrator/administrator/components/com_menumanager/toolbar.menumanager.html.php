@@ -25,9 +25,9 @@ class TOOLBAR_menumanager {
 	*/
 	function _DEFAULT() {
 		mosMenuBar::startTable();
-		mosMenuBar::customX( 'copyconfirm', 'copy.png', 'copy_f2.png', 'Copy', true );
+		mosMenuBar::customX( 'copyconfirm', 'copy.png', 'copy_f2.png', 'Copier', true );
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'deleteconfirm', 'delete.png', 'delete_f2.png', 'Delete', true );
+		mosMenuBar::customX( 'deleteconfirm', 'delete.png', 'delete_f2.png', 'Supprimer', true );
 		mosMenuBar::spacer();
 		mosMenuBar::editListX();
 		mosMenuBar::spacer();
@@ -51,7 +51,7 @@ class TOOLBAR_menumanager {
 	*/
 	function _NEWMENU()	{
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'savemenu', 'save.png', 'save_f2.png', 'Save', false );
+		mosMenuBar::custom( 'savemenu', 'save.png', 'save_f2.png', 'Sauver', false );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();

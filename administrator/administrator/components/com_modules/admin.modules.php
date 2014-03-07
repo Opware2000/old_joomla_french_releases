@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.modules.php 1805 2006-01-14 14:14:14Z stingrey $
+* @version $Id: admin.modules.php 3876 2006-06-05 14:08:05Z stingrey $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,10 +22,9 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'module
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-$client 	= mosGetParam( $_REQUEST, 'client', '' );
-$cid 		= mosGetParam( $_POST, 'cid', array(0) );
-$id 		= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
+$client 	= strval( mosGetParam( $_REQUEST, 'client', '' ) );
 $moduleid 	= mosGetParam( $_REQUEST, 'moduleid', null );
+$cid 		= mosGetParam( $_POST, 'cid', array(0) );
 if ($cid[0] == 0 && isset($moduleid) ) {
 	$cid[0] = $moduleid;
 }
@@ -40,7 +39,7 @@ switch ( $task ) {
 		break;
 
 	case 'edit':
-		editModule( $option, $cid[0], $client );
+		editModule( $option, intval( $cid[0] ), $client );
 		break;
 
 	case 'editA':
@@ -49,7 +48,6 @@ switch ( $task ) {
 
 	case 'save':
 	case 'apply':
-		mosCache::cleanCache( 'com_content' );
 		saveModule( $option, $client, $task );
 		break;
 
@@ -63,19 +61,18 @@ switch ( $task ) {
 
 	case 'publish':
 	case 'unpublish':
-		mosCache::cleanCache( 'com_content' );
 		publishModule( $cid, ($task == 'publish'), $option, $client );
 		break;
 
 	case 'orderup':
 	case 'orderdown':
-		orderModule( $cid[0], ($task == 'orderup' ? -1 : 1), $option );
+		orderModule( intval( $cid[0] ), ($task == 'orderup' ? -1 : 1), $option );
 		break;
 
 	case 'accesspublic':
 	case 'accessregistered':
 	case 'accessspecial':
-		accessMenu( $cid[0], $task, $option, $client );
+		accessMenu( intval( $cid[0] ), $task, $option, $client );
 		break;
 
 	case 'saveorder':
@@ -95,8 +92,8 @@ function viewModules( $option, $client ) {
 
 	$filter_position 	= $mainframe->getUserStateFromRequest( "filter_position{$option}{$client}", 'filter_position', 0 );
 	$filter_type	 	= $mainframe->getUserStateFromRequest( "filter_type{$option}{$client}", 'filter_type', 0 );
-	$limit 				= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart 		= $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$limit 				= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart 		= intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 	$search 			= $mainframe->getUserStateFromRequest( "search{$option}{$client}", 'search', '' );
 	$search 			= $database->getEscaped( trim( strtolower( $search ) ) );
 
@@ -222,6 +219,8 @@ function copyModule( $option, $uid, $client ) {
 		$database->query();
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	$msg = 'Module Copied ['. $row->title .']';
 	mosRedirect( 'index2.php?option='. $option .'&client='. $client, $msg );
 }
@@ -254,6 +253,7 @@ function saveModule( $option, $client, $task ) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+	
 	$row->checkin();
 	if ($client == 'admin') {
 		$where = "client_id=1";
@@ -294,15 +294,17 @@ function saveModule( $option, $client, $task ) {
 		}				
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	switch ( $task ) {
 		case 'apply':
-			$msg = 'Successfully Saved changes to Module: '. $row->title;
+			$msg = 'Modifications appliquées pour le Module: '. $row->title;
 			mosRedirect( 'index2.php?option='. $option .'&client='. $client .'&task=editA&hidemainmenu=1&id='. $row->id, $msg );
 			break;
 
 		case 'save':
 		default:
-			$msg = 'Successfully Saved Module: '. $row->title;
+			$msg = 'Modifications enregistrées pour le Module: '. $row->title;
 			mosRedirect( 'index2.php?option='. $option .'&client='. $client, $msg );
 			break;
 	}
@@ -323,10 +325,10 @@ function editModule( $option, $uid, $client ) {
 	$row->load( $uid );
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
-		mosErrorAlert( "The module ".$row->title." is currently being edited by another administrator" );
+		mosErrorAlert( "Le module ".$row->title." est actuellement édité par un autre administrateur" );
 	}
 
-	$row->content = htmlspecialchars( str_replace( '&amp;', '&', $row->content ) );
+	$row->content = htmlspecialchars( $row->content );
 
 	if ( $uid ) {
 		$row->checkout( $my->id );
@@ -517,6 +519,8 @@ function removeModule( &$cid, $option, $client ) {
 		echo "<script>alert('Module(s): \'$cids\' cannot be deleted they can only be un-installed as they are Joomla! modules.');</script>\n";
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	mosRedirect( 'index2.php?option='. $option .'&client='. $client );
 }
 
@@ -552,6 +556,8 @@ function publishModule( $cid=null, $publish=1, $option, $client ) {
 		$row->checkin( $cid[0] );
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	mosRedirect( 'index2.php?option='. $option .'&client='. $client );
 }
 
@@ -577,7 +583,7 @@ function cancelModule( $option, $client ) {
 function orderModule( $uid, $inc, $option ) {
 	global $database;
 
-	$client = mosGetParam( $_POST, 'client', '' );
+	$client = strval( mosGetParam( $_POST, 'client', '' ) );
 
 	$row = new mosModule( $database );
 	$row->load( $uid );
@@ -594,6 +600,8 @@ function orderModule( $uid, $inc, $option ) {
 		$client = '';
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	mosRedirect( 'index2.php?option='. $option .'&client='. $client );
 }
 
@@ -629,6 +637,8 @@ function accessMenu( $uid, $access, $option, $client ) {
 		return $row->getError();
 	}
 
+	mosCache::cleanCache( 'com_content' );
+	
 	mosRedirect( 'index2.php?option='. $option .'&client='. $client );
 }
 
@@ -667,7 +677,9 @@ function saveOrder( &$cid, $client ) {
 		$row->updateOrder( $cond[1] );
 	} // foreach
 
-	$msg 	= 'New ordering saved';
+	mosCache::cleanCache( 'com_content' );
+	
+	$msg 	= 'Nouveau tri enregistré';
 	mosRedirect( 'index2.php?option=com_modules&client='. $client, $msg );
 } // saveOrder
 ?>

@@ -22,9 +22,9 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class TOOLBAR_Trash {
 	function _DEFAULT() {
 		mosMenuBar::startTable();
-		mosMenuBar::custom('restoreconfirm','restore.png','restore_f2.png','Restore', true);
+		mosMenuBar::custom('restoreconfirm','restore.png','restore_f2.png','Restaurer', true);
 		mosMenuBar::spacer();
-		mosMenuBar::custom('deleteconfirm','delete.png','delete_f2.png','Delete', true);
+		mosMenuBar::custom('deleteconfirm','delete.png','delete_f2.png','Supprimer', true);
 		mosMenuBar::spacer();
 		mosMenuBar::help( 'screen.trashmanager' );
 		mosMenuBar::endTable();

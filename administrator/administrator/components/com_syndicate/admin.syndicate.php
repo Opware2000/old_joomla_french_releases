@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.syndicate.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.syndicate.php 3712 2006-05-29 03:55:59Z stingrey $
 * @package Joomla
 * @subpackage Syndicate
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,9 +22,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-
 switch ($task) {
-
 	case 'save':
 		saveSyndicate( $option );
 		break;
@@ -43,11 +41,12 @@ switch ($task) {
 * @param string The current GET/POST option
 */
 function showSyndicate( $option ) {
-	global $database, $mainframe, $mosConfig_list_limit;
+	global $database, $mainframe;
 
 	$query = "SELECT a.id"
 	. "\n FROM #__components AS a"
-	. "\n WHERE a.name = 'Syndicate'"
+	. "\n WHERE ( a.admin_menu_link = 'option=com_syndicate' OR a.admin_menu_link = 'option=com_syndicate&hidemainmenu=1' )"
+	. "\n AND a.option = 'com_syndicate'"
 	;
 	$database->setQuery( $query );
 	$id = $database->loadResult();
@@ -78,7 +77,7 @@ function saveSyndicate( $option ) {
 		$_POST['params'] = mosParameters::textareaHandling( $txt );
 	}
 
-	$id = mosGetParam( $_POST, 'id', '17' );
+	$id = intval( mosGetParam( $_POST, 'id', '17' ) );
 	$row = new mosComponent( $database );
 	$row->load( $id );
 
@@ -96,7 +95,7 @@ function saveSyndicate( $option ) {
 		exit();
 	}
 
-	$msg = 'Settings successfully Saved';
+	$msg = 'Paramètres de configuration sauvegardés';
 	mosRedirect( 'index2.php?option='. $option, $msg );
 }
 

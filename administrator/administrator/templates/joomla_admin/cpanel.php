@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: cpanel.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: cpanel.php 2704 2006-03-08 10:26:56Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,7 +21,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 	   <?php mosLoadAdminModules( 'icon', 0 ); ?>
 	</td>
 	<td width="45%" valign="top">
-		<div style="width=100%;">
+		<div style="width: 100%;">
 			<form action="index2.php" method="post" name="adminForm">
 			<?php mosLoadAdminModules( 'cpanel', 1 ); ?>
 			</form>

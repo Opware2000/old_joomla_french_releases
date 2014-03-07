@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: registration.html.php 3478 2006-05-13 20:31:22Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -74,7 +74,7 @@ class HTML_registration {
 			} else if (form.username.value == "") {
 				alert( "<?php echo html_entity_decode(_REGWARN_UNAME);?>" );
 			} else if (r.exec(form.username.value) || form.username.value.length < 3) {
-				alert( "<?php printf( html_entity_decode(_VALID_AZ09), html_entity_decode(_PROMPT_UNAME), 2 );?>" );
+				alert( "<?php printf( html_entity_decode(_VALID_AZ09_USER), html_entity_decode(_PROMPT_UNAME), 2 );?>" );
 			} else if (form.email.value == "") {
 				alert( "<?php echo html_entity_decode(_REGWARN_MAIL);?>" );
 			} else if (form.password.value.length < 6) {
@@ -105,7 +105,7 @@ class HTML_registration {
 				<?php echo _REGISTER_NAME; ?> *
 			</td>
 		  	<td>
-		  		<input type="text" name="name" size="40" value="" class="inputbox" />
+		  		<input type="text" name="name" size="40" value="" class="inputbox" maxlength="50" />
 		  	</td>
 		</tr>
 		<tr>
@@ -113,14 +113,14 @@ class HTML_registration {
 				<?php echo _REGISTER_UNAME; ?> *
 			</td>
 			<td>
-				<input type="text" name="username" size="40" value="" class="inputbox" />
+				<input type="text" name="username" size="40" value="" class="inputbox" maxlength="25" />
 			</td>
 		<tr>
 			<td>
 				<?php echo _REGISTER_EMAIL; ?> *
 			</td>
 			<td>
-				<input type="text" name="email" size="40" value="" class="inputbox" />
+				<input type="text" name="email" size="40" value="" class="inputbox" maxlength="100" />
 			</td>
 		</tr>
 		<tr>

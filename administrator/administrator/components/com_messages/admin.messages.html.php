@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.messages.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.messages.html.php 2749 2006-03-11 21:59:51Z stingrey $
 * @package Joomla
 * @subpackage Messages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,24 +23,41 @@ class HTML_messages {
 	function showMessages( &$rows, $pageNav, $search, $option ) {
 ?>
 <form action="index2.php" method="post" name="adminForm">
+		
   <table class="adminheading">
 	<tr>
-	  <th class="inbox">Private Messaging</th>
-	  <td>Search:</td>
-	  <td> <input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
+			<th class="inbox">
+				Messagerie Priv&eacute;e
+			</th>
+			<td>
+				Rechercher:
+			</td>
+			<td> 
+				<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
 	  </td>
 	</tr>
   </table>
+  
   <table class="adminlist">
 	<tr>
-	  <th width="20">#</th>
-	  <th width="5%" class="title"> <input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count($rows); ?>);" />
+			<th width="20">
+				#
+			</th>
+			<th width="5%" class="title"> 
+				<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count($rows); ?>);" />
+			</th>
+			<th width="60%" class="title">
+				Sujet
+			</th>
+			<th width="15%" class="title">
+				De
+			</th>
+			<th width="15%" class="title">
+				Date
+			</th>
+			<th width="5%" class="title">
+				Lu
 	  </th>
-	  <th width="60%" class="title">Subject</th>
-	  <th width="15%" class="title">From</th>
-	  <!-- <th width="20%" class="title">UserType</th> -->
-	  <th width="15%" class="title">Date</th>
-	  <th width="5%" class="title">Read</th>
 	</tr>
 <?php
 $k = 0;
@@ -48,49 +65,55 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 	$row =& $rows[$i];
 ?>
 	<tr class="<?php echo "row$k"; ?>">
-	  <td width="20"><?php echo $i+1+$pageNav->limitstart;?></td>
-	  <td width="5%"><?php echo mosHTML::idBox( $i, $row->message_id ); ?></td>
-	  <td width="60%"> <a href="#edit" onClick="hideMainMenu();return listItemTask('cb<?php echo $i;?>','view')">
-		<?php echo $row->subject; ?> </a> </td>
-	  <td width="15%"><?php echo $row->user_from; ?></td>
-	  <td width="15%"><?php echo $row->date_time; ?></td>
-	  <td width="15%"><?php
+				<td width="20">
+					<?php echo $i+1+$pageNav->limitstart;?>
+				</td>
+				<td width="5%">
+					<?php echo mosHTML::idBox( $i, $row->message_id ); ?>
+				</td>
+				<td width="60%"> 
+					<a href="#edit" onClick="hideMainMenu();return listItemTask('cb<?php echo $i;?>','view')">
+						<?php echo $row->subject; ?></a> 
+				</td>
+				<td width="15%">
+					<?php echo $row->user_from; ?>
+				</td>
+				<td width="15%">
+					<?php echo $row->date_time; ?>
+				</td>
+				<td width="15%">
+					<?php
 	  if (intval( $row->state ) == "1") {
-	  	echo "Read";
+						echo 'Lu';
 	  } else {
-	  	echo "Unread";
-	  } ?></td>
+						echo 'Non Lu';
+					} 
+					?>
+				</td>
 	</tr>
 	<?php $k = 1 - $k;
-			} ?>
+		} 
+		?>
 	</table>
 	<?php echo $pageNav->getListFooter(); ?>
+		
   <input type="hidden" name="option" value="<?php echo $option;?>" />
   <input type="hidden" name="task" value="" />
   <input type="hidden" name="boxchecked" value="0" />
   <input type="hidden" name="hidemainmenu" value="0" />
 </form>
-<?php }
+		<?php 
+	}
 
 function editConfig( &$vars, $option) {
-
 	$tabs = new mosTabs(0);
-?>
-<table class="adminheading">
-  <tr>
-	<th class="msgconfig">Private Messaging Configuration</th>
-  </tr>
-</table>
-<?php
-$tabs->startPane("messages");
-$tabs->startTab("General","general-page");
 ?>
 <form action="index2.php" method="post" name="adminForm">
 <script language="javascript" type="text/javascript">
 function submitbutton(pressbutton) {
 	var form = document.adminForm;
 	if (pressbutton == 'saveconfig') {
-		if (confirm ("Are you sure?")) {
+		if (confirm ("Etes vous certain?")) {
 			submitform( pressbutton );
 		}
 	} else {
@@ -99,54 +122,94 @@ function submitbutton(pressbutton) {
 }
 </script>
 
+		<table class="adminheading">
+		<tr>
+			<th class="msgconfig">
+				Configuration de la Messagerie Priv&eacute;e
+			</th>
+		</tr>
+		</table>
 
 	<table class="adminform">
 	  <tr>
-		<td width="20%">Lock Inbox:</td>
-		<td> <?php echo $vars['lock']; ?> </td>
+			<td width="25%">
+				Verrouiller la bo&icirc;te de r&eacute;ception:
+			</td>
+			<td> 
+				<?php echo $vars['lock']; ?> 
+			</td>
 	  </tr>
 	  <tr>
-		<td width="20%">Mail me on new Message:</td>
-		<td> <?php echo $vars['mail_on_new']; ?> </td>
+			<td>
+				Me pr&eacute;venir en cas de nouveau message:
+			</td>
+			<td> 
+				<?php echo $vars['mail_on_new']; ?> 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Auto Purge Messages:
+			</td>
+			<td> 
+				<input type="text" name="vars[auto_purge]" size="5" value="<?php echo $vars['auto_purge']; ?>" class="inputbox" /> days old
+			</td>
 	  </tr>
 	</table>
 
-
-<?php
-$tabs->endTab();
-$tabs->endPane();
-?>  <input type="hidden" name="option" value="<?php echo $option; ?>">
+		<input type="hidden" name="option" value="<?php echo $option; ?>">
   <input type="hidden" name="task" value="">
 </form>
-<?php }
+		<?php 
+	}
 
 function viewMessage( &$row, $option ) {
 ?>
+		<form action="index2.php" method="post" name="adminForm">
+		
 	<table class="adminheading">
 		<tr>
-			<th class="inbox">View Private Message</th>
+			<th class="inbox">
+				Voir les Messages Priv&eacute;s
+			</th>
 		</tr>
 	</table>
 
-	<form action="index2.php" method="post" name="adminForm">
 	<table class="adminform">
 		<tr>
-			<td width="100">From:</td>
-			<td width="85%" bgcolor="#ffffff"><?php echo $row->user_from;?></td>
+			<td width="100">
+				De:
+			</td>
+			<td width="85%" bgcolor="#ffffff">
+				<?php echo $row->user_from;?>
+			</td>
 		</tr>
 		<tr>
-			<td>Posted:</td>
-			<td bgcolor="#ffffff"><?php echo $row->date_time;?></td>
+			<td>
+				Post&eacute;:
+			</td>
+			<td bgcolor="#ffffff">
+				<?php echo $row->date_time;?>
+			</td>
 		</tr>
 		<tr>
-			<td>Subject:</td>
-			<td bgcolor="#ffffff"><?php echo $row->subject;?></td>
+			<td>
+				Sujet:
+			</td>
+			<td bgcolor="#ffffff">
+				<?php echo $row->subject;?>
+			</td>
 		</tr>
 		<tr>
-			<td valign="top">Message:</td>
-			<td width="100%" bgcolor="#ffffff"><pre><?php echo htmlspecialchars( $row->message );?></pre></td>
+			<td valign="top">
+				Message:
+			</td>
+			<td width="100%" bgcolor="#ffffff">
+				<pre><?php echo htmlspecialchars( $row->message );?></pre>
+			</td>
 		</tr>
 	</table>
+		
 	<input type="hidden" name="option" value="<?php echo $option;?>" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="1" />
@@ -155,7 +218,8 @@ function viewMessage( &$row, $option ) {
 	<input type="hidden" name="subject" value="Re: <?php echo $row->subject; ?>" />
 	<input type="hidden" name="hidemainmenu" value="0" />
 	</form>
-<?php }
+		<?php 
+	}
 
 function newMessage($option, $recipientslist, $subject ) {
 	global $my;
@@ -170,11 +234,11 @@ function newMessage($option, $recipientslist, $subject ) {
 
 		// do field validation
 		if (form.subject.value == "") {
-			alert( "You must provide a subject." );
+			alert( "Vous devez saisir un sujet." );
 		} else if (form.message.value == "") {
-			alert( "You must provide a message." );
+			alert( "Vous devez saisir un message." );
 		} else if (getSelectedValue('adminForm','user_id_to') < 1) {
-			alert( "You must select a recipient." );
+			alert( "Vous devez sélectionner un destinataire." );
 		} else {
 			submitform( pressbutton );
 		}
@@ -183,33 +247,45 @@ function newMessage($option, $recipientslist, $subject ) {
 
 	<table class="adminheading">
 		<tr>
-			<th class="inbox">New Private Message</th>
+			<th class="inbox">
+				Nouveau Message Priv&eacute;
+			</th>
 		</tr>
 	</table>
 
 	<form action="index2.php" method="post" name="adminForm">
 	<table class="adminform">
 		<tr>
-			<td width="100">To:</td>
-			<td width="85%"><?php echo $recipientslist; ?></td>
+			<td width="100">
+				A:
+			</td>
+			<td width="85%">
+				<?php echo $recipientslist; ?>
+			</td>
 		</tr>
 		<tr>
-			<td>Subject:</td>
+			<td>
+				Sujet:
+			</td>
 			<td>
 				<input type="text" name="subject" size="50" maxlength="100" class="inputbox" value="<?php echo $subject; ?>"/>
 			</td>
 		</tr>
 		<tr>
-			<td valign="top">Message:</td>
+			<td valign="top">
+				Message:
+			</td>
 			<td width="100%">
 				<textarea name="message" style="width:100%" rows="30" class="inputbox"></textarea>
 			</td>
 		</tr>
 	</table>
+		
 	<input type="hidden" name="user_id_from" value="<?php echo $my->id; ?>">
 	<input type="hidden" name="option" value="<?php echo $option; ?>">
 	<input type="hidden" name="task" value="">
 	</form>
-<?php }
-
-}?>
+		<?php 
+	}
+}
+?>

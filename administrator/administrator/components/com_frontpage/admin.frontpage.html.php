@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.frontpage.html.php 104 2005-09-16 10:29:04Z eddieajau $
+* @version $Id: admin.frontpage.html.php 2711 2006-03-08 15:07:22Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ class HTML_content {
 		<table class="adminheading">
 		<tr>
 			<th class="frontpage" rowspan="2">
-			Frontpage Manager
+			Gestionnaire de page d'accueil
 			</th>
 			<td width="right">
 			<?php echo $lists['sectionid'];?>
@@ -48,7 +48,7 @@ class HTML_content {
 		</tr>
 		<tr>
 			<td align="right" colspan="2">
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
@@ -65,31 +65,31 @@ class HTML_content {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th class="title">
-			Title
+			Titre
 			</th>
 			<th width="10%" nowrap="nowrap">
-			Published
+			Publié
 			</th>
 			<th colspan="2" nowrap="nowrap" width="5%">
-			Reorder
+			Retrier
 			</th>
 			<th width="2%">
-			Order
+			Ordre
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver Tri" /></a>
 			</th>
 			<th width="8%" nowrap="nowrap">
-			Access
+			Accès
 			</th>
 			<th width="10%" align="left">
 			Section
 			</th>
 			<th width="10%" align="left">
-			Category
+			Catégorie
 			</th>
 			<th width="10%" align="left">
-			Author
+			Auteur
 			</th>
 		</tr>
 		<?php
@@ -102,34 +102,34 @@ class HTML_content {
 			$row->sect_link = 'index2.php?option=com_sections&task=editA&hidemainmenu=1&id='. $row->sectionid;
 			$row->cat_link 	= 'index2.php?option=com_categories&task=editA&hidemainmenu=1&id='. $row->catid;
 
-			$now = date( 'Y-m-d H:i:s' );
+			$now = _CURRENT_SERVER_TIME;
 			if ( $now <= $row->publish_up && $row->state == '1' ) {
 				$img = 'publish_y.png';
-				$alt = 'Published';
+				$alt = 'Publié';
 			} else if (($now <= $row->publish_down || $row->publish_down == $nullDate) && $row->state == '1') {
 				$img = 'publish_g.png';
-				$alt = 'Published';
+				$alt = 'Publié';
 			} else if ( $now > $row->publish_down && $row->state == '1' ) {
 				$img = 'publish_r.png';
-				$alt = 'Expired';
+				$alt = 'Expiré';
 			} elseif ( $row->state == "0" ) {
 				$img = "publish_x.png";
-				$alt = 'Unpublished';
+				$alt = 'Dépublié';
 			}
 
 			$times = '';
 			if ( isset( $row->publish_up ) ) {
 				  if ( $row->publish_up == $nullDate) {
-						$times .= '<tr><td>Start: Always</td></tr>';
+						$times .= '<tr><td>Début: toujours</td></tr>';
 				  } else {
-						$times .= '<tr><td>Start: '. $row->publish_up .'</td></tr>';
+						$times .= '<tr><td>Début: '. $row->publish_up .'</td></tr>';
 				  }
 			}
 			if ( isset( $row->publish_down ) ) {
 				  if ($row->publish_down == $nullDate) {
-						$times .= '<tr><td>Finish: No Expiry</td></tr>';
+						$times .= '<tr><td>Fin: pas d\'expiration</td></tr>';
 				  } else {
-				  $times .= '<tr><td>Finish: '. $row->publish_down .'</td></tr>';
+				  $times .= '<tr><td>Fin: '. $row->publish_down .'</td></tr>';
 				  }
 			}
 
@@ -141,7 +141,7 @@ class HTML_content {
 					$author = $row->created_by_alias;
 				} else {
 					$linkA 	= 'index2.php?option=com_users&task=editA&hidemainmenu=1&id='. $row->created_by;
-					$author = '<a href="'. $linkA .'" title="Edit User">'. $row->author .'</a>';
+					$author = '<a href="'. $linkA .'" title="Editer utilisateur">'. $row->author .'</a>';
 				}
 			} else {
 				if ( $row->created_by_alias ) {
@@ -164,7 +164,7 @@ class HTML_content {
 					echo $row->title;
 				} else {
 					?>
-					<a href="<?php echo $link; ?>" title="Edit Content">
+					<a href="<?php echo $link; ?>" title="Editer article">
 					<?php echo $row->title; ?>
 					</a>
 					<?php
@@ -175,7 +175,7 @@ class HTML_content {
 				if ( $times ) {
 					?>
 					<td align="center">
-					<a href="javascript: void(0);" onmouseover="return overlib('<table><?php echo $times; ?></table>', CAPTION, 'Publish Information', BELOW, RIGHT);" onMouseOut="return nd();" onclick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? "unpublish" : "publish";?>')">
+					<a href="javascript: void(0);" onmouseover="return overlib('<table><?php echo $times; ?></table>', CAPTION, 'Information de Publication', BELOW, RIGHT);" onMouseOut="return nd();" onclick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? "unpublish" : "publish";?>')">
 					<img src="images/<?php echo $img;?>" width="12" height="12" border="0" alt="<?php echo $alt;?>" />
 					</a>
 					</td>
@@ -195,12 +195,12 @@ class HTML_content {
 				<?php echo $access;?>
 				</td>
 				<td>
-				<a href="<?php echo $row->sect_link; ?>" title="Edit Section">
+				<a href="<?php echo $row->sect_link; ?>" title="Editer Section">
 				<?php echo $row->sect_name; ?>
 				</a>
 				</td>
 				<td>
-				<a href="<?php echo $row->cat_link; ?>" title="Edit Category">
+				<a href="<?php echo $row->cat_link; ?>" title="Editer Catégorie">
 				<?php echo $row->name; ?>
 				</a>
 				</td>

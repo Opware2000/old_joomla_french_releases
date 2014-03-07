@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install1.php 597 2005-10-23 17:11:09Z stingrey $
+* @version $Id: install1.php 2796 2006-03-15 14:58:05Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -30,7 +30,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 <script  type="text/javascript">
 <!--
@@ -39,22 +39,26 @@ function check() {
 	var formValid=false;
 	var f = document.form;
 	if ( f.DBhostname.value == '' ) {
-		alert('Please enter a Host name');
+		alert('Veuillez saisir un nom de serveur');
 		f.DBhostname.focus();
 		formValid=false;
 	} else if ( f.DBuserName.value == '' ) {
-		alert('Please enter a Database User Name');
+		alert('Veuillez saisir le nom d\'utilisateur de la base de données');
 		f.DBuserName.focus();
 		formValid=false;
 	} else if ( f.DBname.value == '' ) {
-		alert('Please enter a Name for your new Database');
+		alert('Veuillez saisir le nom de la base de données');
 		f.DBname.focus();
 		formValid=false;
-	} else if ( f.DBPrefix.value == 'old_' ) {
-		alert('You cannot use "old_" as the MySQL Table Prefix because Joomla uses this prefix for backup tables.');
+	} else if ( f.DBPrefix.value == '' ) {
+		alert('Vous devez saisir un préfixe pour les tables MySQL.');
 		f.DBPrefix.focus();
 		formValid=false;
-	} else if ( confirm('Are you sure these settings are correct? \nJoomla will now attempt to populate a Database with the settings you have supplied')) {
+	} else if ( f.DBPrefix.value == 'old_' ) {
+		alert('Vous ne pouvez pas utiliser le préfixe "old_" qui est celui utilisé pour les tables sauvegardées.');
+		f.DBPrefix.focus();
+		formValid=false;
+	} else if ( confirm('Etes vous certain que ces paramètres sont corrects? \nJoomla va maintenant configurer la base de données.')) {
 		formValid=true;
 	}
 
@@ -73,41 +77,26 @@ function check() {
 	<form action="install2.php" method="post" name="form" id="form" onsubmit="return check();">
 	<div class="install">
 		<div id="stepbar">
-			<div class="step-off">
-				pre-installation check
-			</div>
-			<div class="step-off">
-				license
-			</div>
-			<div class="step-on">
-				step 1
-			</div>
-			<div class="step-off">
-				step 2
-			</div>
-			<div class="step-off">
-				step 3
-			</div>
-			<div class="step-off">
-				step 4
-			</div>
+			<div class="step-off">Pré-installation</div>
+			<div class="step-off">Licence</div>
+			<div class="step-on">Etape 1</div>
+			<div class="step-off">Etape 2</div>
+			<div class="step-off">Etape 3</div>
+			<div class="step-off">Etape 4</div>
 		</div>
 		<div id="right">
 			<div class="far-right">
-				<input class="button" type="submit" name="next" value="Next >>"/>
+				<input class="button" type="submit" name="next" value="Suivant >>"/>
   			</div>
-	  		<div id="step">
-	  			step 1
-	  		</div>
+	  		<div id="step">Etape 1</div>
   			<div class="clr"></div>
-  			<h1>MySQL database configuration:</h1>
+  			<h1>Configuration de la base de données MySQL:</h1>
 	  		<div class="install-text">
-  				<p>Setting up Joomla to run on your server involves 4 simple steps...</p>
-  				<p>Please enter the hostname of the server Joomla is to be installed on.</p>
-				<p>Enter the MySQL username, password and database name you wish to use with Joomla.</p>
-				<p>Enter a table name prefix to be used by this Joomla! install and select what
-					to do with existing tables from former installations.</p>
-				<p>Install the sample data unless you are an experienced Joomla! User wanting to start with a completely empty site.</p>
+  				<p>L'installation de Joomla sur votre serveur implique 4 étapes simples...</p>
+  				<p>Veuillez entrer le nom du serveur (hostname) sur lequel Joomla va être installé.</p>
+				<p>Entrez le nom d'utilisateur, le mot de passe et le nom de la BDD MySQL que vous allez utiliser avec Joomla.</p>
+				<p>Entrez le préfixe des tables devant étre utilisé par cette installation Joomla et choisissez l'action adéquat à faire lorsqu'il existe des tables d'une installation précédente.</p>
+				<p>Installez les exemples de contenu si vous n'étes pas expérimenté avec Joomla, sinon vous aurez un site presque entiérement vide de contenu pour débuter.</p>
   			</div>
 			<div class="install-form">
   				<div class="form-block">
@@ -119,53 +108,53 @@ function check() {
   					</tr>
   		  			<tr>
   						<td colspan="2">
-  							Host Name
+  							Nom du serveur
   							<br/>
   							<input class="inputbox" type="text" name="DBhostname" value="<?php echo "$DBhostname"; ?>" />
   						</td>
 			  			<td>
-			  				<em>This is usually 'localhost'</em>
+			  				<em> Habituellement 'localhost'</em>
 			  			</td>
   					</tr>
 					<tr>
 			  			<td colspan="2">
-			  				MySQL User Name
+			  				Nom d'utilisateur
 			  				<br/>
 			  				<input class="inputbox" type="text" name="DBuserName" value="<?php echo "$DBuserName"; ?>" />
 			  			</td>
 			  			<td>
-			  				<em>Either something as 'root' or a username given by the hoster</em>
+			  				<em>Soit 'root' ou un nom d'utilisateur fourni par l'hébergeur</em>
 			  			</td>
   					</tr>
 			  		<tr>
 			  			<td colspan="2">
-			  				MySQL Password
+			  				Mot de passe
 			  				<br/>
 			  				<input class="inputbox" type="text" name="DBpassword" value="<?php echo "$DBpassword"; ?>" />
 			  			</td>
 			  			<td>
-			  				<em>For site security using a password for the mysql account in mandatory</em>
+			  				<em>Pour la sécurité du site l'utilisation d'un mot de passe est obligatoire pour le compte mysql</em>
 			  			</td>
 					</tr>
   		  			<tr>
   						<td colspan="2">
-  							MySQL Database Name
+  							Nom de la base de données
   							<br/>
   							<input class="inputbox" type="text" name="DBname" value="<?php echo "$DBname"; ?>" />
   						</td>
 			  			<td>
-			  				<em>Some hosts allow only a certain DB name per site. Use table prefix in this case for distinct Joomla sites.</em>
+			  				<em>Certains hébergements limitent le nombre de noms de BDD par site. Utilisez dans ce cas le préfixe de table pour distinguer les sites Joomla..</em>
 			  			</td>
   					</tr>
   		  			<tr>
   						<td colspan="2">
-  							MySQL Table Prefix
+  							Préfixe des tables
   							<br/>
   							<input class="inputbox" type="text" name="DBPrefix" value="<?php echo "$DBPrefix"; ?>" />
   						</td>
 			  			<td>
 			  			<!--
-			  			<em>Don't use 'old_' since this is used for backup tables</em>
+			  			<em> N'utilisez pas 'old_', qui est réservé à la sauvegarde des tables</em>
 			  			-->
 			  			</td>
   					</tr>
@@ -174,7 +163,7 @@ function check() {
 			  				<input type="checkbox" name="DBDel" id="DBDel" value="1" <?php if ($DBDel) echo 'checked="checked"'; ?> />
 			  			</td>
 						<td>
-							<label for="DBDel">Drop Existing Tables</label>
+							<label for="DBDel">Supprimer les tables existantes</label>
 						</td>
   						<td>
   						</td>
@@ -184,10 +173,10 @@ function check() {
 			  				<input type="checkbox" name="DBBackup" id="DBBackup" value="1" <?php if ($DBBackup) echo 'checked="checked"'; ?> />
 			  			</td>
 						<td>
-							<label for="DBBackup">Backup Old Tables</label>
+							<label for="DBBackup">Sauvegarder les anciennes tables</label>
 						</td>
   						<td>
-  							<em>Any existing backup tables from former Joomla installations will be replaced</em>
+  							<em>Toute sauvegarde de tables d'une installation précédente de Joomla sera remplacée</em>
   						</td>
 			  		</tr>
   		  			<tr>
@@ -195,10 +184,10 @@ function check() {
 			  				<input type="checkbox" name="DBSample" id="DBSample" value="1" <?php if ($DBSample) echo 'checked="checked"'; ?> />
 			  			</td>
 						<td>
-							<label for="DBSample">Install Sample Data</label>
+							<label for="DBSample">Installer des exemples de données</label>
 						</td>
 			  			<td>
-			  				<em>Don't uncheck option this unless you are experienced in using Joomla!</em>
+			  				<em>Décochez seulement si vous êtes expérimenté avec Joomla!</em>
 			  			</td>
 			  		</tr>
 		  		 	</table>

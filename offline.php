@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: offline.php 449 2005-10-11 04:58:12Z stingrey $
+* @version $Id: offline.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,8 +17,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 global $database;
 global $mosConfig_live_site, $mosConfig_lang;
 
-@include_once ('language/' . $mosConfig_lang . '.php' );
-
 $adminOffline = false;
 
 if (!defined( '_INSTALL_CHECK' )) {
@@ -29,9 +27,9 @@ if (!defined( '_INSTALL_CHECK' )) {
 	if (class_exists( 'mosUser' )) {
 		// restore some session variables
 		$admin 				= new mosUser( $database );
-		$admin->id 			= mosGetParam( $_SESSION, 'session_user_id', '' );
-		$admin->username 	= mosGetParam( $_SESSION, 'session_username', '' );
-		$admin->usertype 	= mosGetParam( $_SESSION, 'session_usertype', '' );
+		$admin->id 			= intval( mosGetParam( $_SESSION, 'session_user_id', '' ) );
+		$admin->username 	= strval( mosGetParam( $_SESSION, 'session_username', '' ) );
+		$admin->usertype 	= strval( mosGetParam( $_SESSION, 'session_usertype', '' ) );
 		$session_id 		= mosGetParam( $_SESSION, 'session_id', '' );
 		$logintime 			= mosGetParam( $_SESSION, 'session_logintime', '' );
 	
@@ -55,6 +53,7 @@ if (!defined( '_INSTALL_CHECK' )) {
 }
 
 if (!defined( '_ADMIN_OFFLINE' ) || defined( '_INSTALL_CHECK' )) {
+	@include_once ('language/' . $mosConfig_lang . '.php' );
 	$cur_template = 'rhuk_solarflare_ii';
 	
 	// needed to seperate the ISO number from the language file constant _ISO

@@ -31,21 +31,20 @@ class HTML_component {
 			<table class="adminheading">
 			<tr>
 				<th class="install">
-				Installed Components
-				</th>
+				Composants install&eacute;s				</th>
 			</tr>
 			</table>
 
 			<table class="adminlist">
 			<tr>
 				<th width="20%" class="title">
-				Currently Installed
+				Actuellement install&eacute;s
 				</th>
 				<th width="20%" class="title">
-				Component Menu Link
+				Lien vers le composant
 				</th>
 				<th width="10%" align="left">
-				Author
+				Auteur
 				</th>
 				<th width="5%" align="center">
 				Version
@@ -54,10 +53,9 @@ class HTML_component {
 				Date
 				</th>
 				<th width="15%" align="left">
-				Author Email
-				</th>
+				Email	de	l'auteur		</th>
 				<th width="15%" align="left">
-				Author URL
+				URL de l'auteur
 				</th>
 			</tr>
 			<?php
@@ -96,10 +94,10 @@ class HTML_component {
 			}
 		} else {
 			?>
-			<td class="small">
-			There are no custom components installed
+			  <td class="small">
+			Il n'y a pas de composants personalis&eacute;s install&eacute;s
 			</td>
-			<?php
+			    <?php
 		}
 		?>
 		</table>

@@ -50,7 +50,7 @@ foreach ($comps as $row) {
 <table class="adminlist">
 <tr>
 	<th class="title">
-	   Components
+	   Composants
 	</th>
 </tr>
 <tr>
@@ -75,7 +75,7 @@ foreach ($comps as $row) {
 							<table width="100%" class="adminlist">
 							<tr>
 								<td align="center" style="text-align: center; font-weight: bold;">
-									<a href="index2.php?option=com_admin&task=listcomponents">Full Component List</a>
+									<a href="index2.php?option=com_admin&task=listcomponents">Liste compl&egrave;te des composants </a>
 								</td>
 							</tr>		
 							</table>					

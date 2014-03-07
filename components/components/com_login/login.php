@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: login.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: login.php 3752 2006-05-31 11:42:32Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -18,14 +18,15 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 // load the html drawing class
 require_once( $mainframe->getPath( 'front_html' ) );
 
-global $database, $my;
-global $mosConfig_live_site;
+global $database, $my, $mainframe;
+global $mosConfig_live_site, $mosConfig_frontend_login;
 
-$return = mosGetParam( $_SERVER, 'REQUEST_URI', null );
-$return = ampReplace( $return );
+if ( $mosConfig_frontend_login != NULL && ($mosConfig_frontend_login === 0 || $mosConfig_frontend_login === '0')) {
+	echo _NOT_AUTH;
+	return;
+}
 
-$menu = new mosMenu( $database );
-$menu->load( $Itemid );
+$menu = $mainframe->get( 'menu' );
 $params = new mosParameters( $menu->params );
 
 $params->def( 'page_title', 1 );

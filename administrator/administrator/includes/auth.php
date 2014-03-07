@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: auth.php 262 2005-09-29 23:20:41Z Levis $
+* @version $Id: auth.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -30,12 +30,12 @@ if (!isset( $my )) {
 	$my = new mosUser( $database );
 }
 
-$my->id 		= mosGetParam( $_SESSION, 'session_user_id', '' );
-$my->username 	= mosGetParam( $_SESSION, 'session_username', '' );
-$my->usertype 	= mosGetParam( $_SESSION, 'session_usertype', '' );
-$my->gid 		= mosGetParam( $_SESSION, 'session_gid', '' );
-$session_id 	= mosGetParam( $_SESSION, 'session_id', '' );
-$logintime 		= mosGetParam( $_SESSION, 'session_logintime', '' );
+$my->id 		= intval( mosGetParam( $_SESSION, 'session_user_id', '' ) );
+$my->username 	= strval( mosGetParam( $_SESSION, 'session_username', '' ) );
+$my->usertype 	= strval( mosGetParam( $_SESSION, 'session_usertype', '' ) );
+$my->gid 		= intval( mosGetParam( $_SESSION, 'session_gid', '' ) );
+$session_id 	= strval( mosGetParam( $_SESSION, 'session_id', '' ) );
+$logintime 		= strval( mosGetParam( $_SESSION, 'session_logintime', '' ) );
 
 if ( $session_id != md5( $my->id.$my->username.$my->usertype.$logintime ) ) {
 	mosRedirect( "index.php" );

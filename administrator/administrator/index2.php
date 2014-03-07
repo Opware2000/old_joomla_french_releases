@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: index2.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -25,85 +25,37 @@ require_once( $mosConfig_absolute_path . '/includes/joomla.php' );
 include_once( $mosConfig_absolute_path . '/language/'. $mosConfig_lang .'.php' );
 require_once( $mosConfig_absolute_path . '/administrator/includes/admin.php' );
 
-$option = strtolower( mosGetParam( $_REQUEST, 'option', '' ) );
-if ($option == '') {
-	$option = 'com_admin';
-}
 // must start the session before we create the mainframe object
 session_name( md5( $mosConfig_live_site ) );
 session_start();
 
+$option 		= strval( strtolower( mosGetParam( $_REQUEST, 'option', '' ) ) );
+$task 			= strval( mosGetParam( $_REQUEST, 'task', '' ) );
+
 // mainframe is an API workhorse, lots of 'core' interaction routines
-$mainframe = new mosMainFrame( $database, $option, '..', true );
+$mainframe 		= new mosMainFrame( $database, $option, '..', true );
+
+// admin session handling
+$my 			= $mainframe->initSessionAdmin( $option, $task );
 
 // initialise some common request directives
-$task 		= mosGetParam( $_REQUEST, 'task', '' );
-$act 		= strtolower( mosGetParam( $_REQUEST, 'act', '' ) );
-$section 	= mosGetParam( $_REQUEST, 'section', '' );
-$no_html 	= strtolower( mosGetParam( $_REQUEST, 'no_html', '' ) );
-$id         = intval( mosGetParam( $_REQUEST, 'id' ) );
+$act 			= strtolower( mosGetParam( $_REQUEST, 'act', '' ) );
+$section 		= mosGetParam( $_REQUEST, 'section', '' );
+$no_html 		= intval( mosGetParam( $_REQUEST, 'no_html', 0 ) );
+$id         	= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 
-if ($option == 'logout') {
-	require 'logout.php';
-	exit();
+$cur_template 	= $mainframe->getTemplate();
+
+// default admin homepage
+if ($option == '') {
+	$option = 'com_admin';
 }
-
-// restore some session variables
-$my 			= new mosUser( $database );
-$my->id 		= mosGetParam( $_SESSION, 'session_user_id', '' );
-$my->username 	= mosGetParam( $_SESSION, 'session_username', '' );
-$my->usertype 	= mosGetParam( $_SESSION, 'session_usertype', '' );
-$my->gid 		= mosGetParam( $_SESSION, 'session_gid', '' );
-$my->params		= mosGetParam( $_SESSION, 'session_user_params', '' );
-$session_id 	= mosGetParam( $_SESSION, 'session_id', '' );
-$logintime 		= mosGetParam( $_SESSION, 'session_logintime', '' );
-
-// check against db record of session
-if ( $session_id == md5( $my->id . $my->username . $my->usertype . $logintime ) ) {
-	$query = "SELECT *"
-	. "\n FROM #__session"
-	. "\n WHERE session_id = '$session_id'"
-	. "\n AND username = " . $database->Quote( $my->username )
-	. "\n AND userid = " . intval( $my->id )
-	;
-	$database->setQuery( $query );
-	if (!$result = $database->query()) {
-		echo $database->stderr();
-	}
-	if ($database->getNumRows( $result ) != 1) {
-		echo "<script>document.location.href='index.php'</script>\n";
-		exit();
-	}
-} else {
-	echo "<script>document.location.href='$mosConfig_live_site/administrator/index.php'</script>\n";
-	exit();
-}
-
-// update session timestamp
-$current_time = time();
-$query = "UPDATE #__session"
-. "\n SET time = '$current_time'"
-. "\n WHERE session_id = '$session_id'"
-;
-$database->setQuery( $query );
-$database->query();
-
-// timeout old sessions
-$past = time()-1800;
-$query = "DELETE FROM #__session"
-. "\n WHERE time < '$past'"
-;
-$database->setQuery( $query );
-$database->query();
-
-$cur_template = $mainframe->getTemplate();
 
 // set for overlib check
 $mainframe->set( 'loadOverlib', false );
 
 // precapture the output of the component
 require_once( $mosConfig_absolute_path . '/editor/editor.php' );
-
 
 ob_start();
 if ($path = $mainframe->getPath( 'admin' )) {
@@ -124,7 +76,7 @@ initGzip();
 if ($no_html == 0) {
 	// loads template file
 	if ( !file_exists( $mosConfig_absolute_path .'/administrator/templates/'. $cur_template .'/index.php' ) ) {
-		echo 'TEMPLATE '. $cur_template .' NOT FOUND' ;
+		echo 'TEMPLATE '. $cur_template .' INTROUVABLE' ;
 	} else {
 		require_once( $mosConfig_absolute_path .'/administrator/templates/'. $cur_template .'/index.php' );
 	}
@@ -132,5 +84,19 @@ if ($no_html == 0) {
 	mosMainBody_Admin();
 }
 
+// displays queries performed for page
+if ($mosConfig_debug) {
+	echo $database->_ticker . ' queries executed';
+	echo '<pre>';
+	foreach ($database->_log as $k=>$sql) {
+		echo $k+1 . "\n" . $sql . '<hr />';
+	}
+}
+
 doGzip();
+
+// if task action is 'save' or 'apply' redo session check
+if ( $task == 'save' || $task == 'apply' ) {
+	$mainframe->initSessionAdmin( $option, '' );
+}
 ?>

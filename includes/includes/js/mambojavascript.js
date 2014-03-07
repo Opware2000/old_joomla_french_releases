@@ -1,6 +1,6 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version $Id: mambojavascript.js 47 2005-09-15 02:55:27Z rhuk $
+* @version $Id: mambojavascript.js 3562 2006-05-20 12:27:49Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -560,17 +560,22 @@ function MM_preloadImages() { //v3.0
 
 function saveorder( n ) {
 	checkAll_button( n );
-	submitform('saveorder');
 }
 
 //needed by saveorder function
 function checkAll_button( n ) {
 	for ( var j = 0; j <= n; j++ ) {
 		box = eval( "document.adminForm.cb" + j );
-		if ( box.checked == false ) {
-			box.checked = true;
+		if ( box ) {
+			if ( box.checked == false ) {
+				box.checked = true;
+			}
+		} else {
+			alert("You cannot change the order of items, as an item in the list is `Checked Out`");
+			return;
 		}
 	}
+	submitform('saveorder');
 }
 /**
 * @param object A form element

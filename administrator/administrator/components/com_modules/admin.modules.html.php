@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.modules.html.php 185 2005-09-19 08:39:45Z stingrey $
+* @version $Id: admin.modules.html.php 3037 2006-04-05 14:03:52Z stingrey $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -35,8 +35,7 @@ class HTML_modules {
 		<table class="adminheading">
 		<tr>
 			<th class="modules" rowspan="2">
-			Module Manager <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
-			</th>
+			Gestionnaire de Modules <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>			</th>
 			<td width="right">
 			<?php echo $lists['position'];?>
 			</td>
@@ -46,7 +45,7 @@ class HTML_modules {
 		</tr>
 		<tr>
 			<td align="right">
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
@@ -61,25 +60,25 @@ class HTML_modules {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows );?>);" />
 			</th>
 			<th class="title">
-			Module Name
+			Nom du Module 
 			</th>
 			<th nowrap="nowrap" width="10%">
-			Published
+			Publi&eacute;
 			</th>
 			<th colspan="2" align="center" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th width="2%">
-			Order
+			Trier
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver le tri" /></a>
 			</th>
 			<?php
 			if ( !$client ) {
 				?>
 				<th nowrap="nowrap" width="7%">
-				Access
+				Acc&egrave;s
 				</th>
 				<?php
 			}
@@ -202,7 +201,7 @@ class HTML_modules {
 	* @param object Parameters
 	*/
 	function editModule( &$row, &$orders2, &$lists, &$params, $option ) {
-		global $mosConfig_live_site;
+		global $mosConfig_live_site, $mosConfig_cachepath, $my;
 
 		$row->titleA = '';
 		if ( $row->id ) {
@@ -219,7 +218,6 @@ class HTML_modules {
 				<?php if ($row->module == "") {
 					getEditorContents( 'editor1', 'content' );
 				}?>
-				submitform(pressbutton);
 			}
 			submitform(pressbutton);
 		}
@@ -242,7 +240,7 @@ class HTML_modules {
 			<?php echo $lists['client_id'] ? 'Administrator' : 'Site';?>
 			Module:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>
 			</small>
 			<?php echo $row->titleA; ?>
 			</th>
@@ -257,12 +255,12 @@ class HTML_modules {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					D&eacute;tails
 					</th>
 				<tr>
 				<tr>
 					<td width="100" align="left">
-					Title:
+					Titre:
 					</td>
 					<td>
 					<input class="text_area" type="text" name="title" size="35" value="<?php echo $row->title; ?>" />
@@ -271,7 +269,7 @@ class HTML_modules {
 				<!-- START selectable pages -->
 				<tr>
 					<td width="100" align="left">
-					Show title:
+					Afficher Titre:
 					</td>
 					<td>
 					<?php echo $lists['showtitle']; ?>
@@ -287,7 +285,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Module Order:
+					Ordre du Module:
 					</td>
 					<td>
 					<script language="javascript" type="text/javascript">
@@ -299,7 +297,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Access Level:
+					Niveau d'acc&egrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -307,7 +305,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top">
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
@@ -338,29 +336,52 @@ class HTML_modules {
 				<table class="adminform">
 				<tr>
 					<th >
-					Parameters
+					Param&egrave;tres
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td>
 					<?php echo $params->render();?>
 					</td>
 				</tr>
 				</table>
+				
+				<?php
+				if ($row->module == "") {
+					?>
+					<table class="adminform">
+				<tr>
+					<td>
+							<table align="center">
+							<?php
+							$visible = 0;
+							// check to hide certain paths if not super admin
+							if ( $my->gid == 25 ) {
+								$visible = 1;
+							}
+							mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ', $visible );
+							?>
+							</table>
+					</td>
+				</tr>
+				</table>
+					<?php
+				}
+				?>				
 			</td>
 			<td width="40%" >
 				<table width="100%" class="adminform">
 				<tr>
 					<th>
-					Pages / Items
+					Pages / El&eacute;ments
 					</th>
-				<tr>
+				</tr>
 				<tr>
 					<td>
-					Menu Item Link(s):
+					Lien(s) vers l'&eacute;l&eacute;ment de menu:
 					<br />
 					<?php echo $lists['selections']; ?>
-					</td>
+				  </td>
 				</tr>
 				</table>
 			</td>
@@ -375,10 +396,10 @@ class HTML_modules {
 							<th colspan="2">
 							Custom Output
 							</th>
-						<tr>
+						</tr>
 						<tr>
 							<td valign="top" align="left">
-							Content:
+							Contenu:
 							</td>
 							<td>
 							<?php

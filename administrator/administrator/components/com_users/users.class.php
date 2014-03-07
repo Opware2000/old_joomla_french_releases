@@ -36,7 +36,7 @@ class mosUserParameters extends mosParameters {
 		$database->setQuery( $query );
 		$editors = $database->loadObjectList();
 
-		array_unshift( $editors, mosHTML::makeOption( '', '- Select Editor -' ) );
+		array_unshift( $editors, mosHTML::makeOption( '', '- Sélectionner un éditeur -' ) );
 
 		return mosHTML::selectList( $editors, ''. $control_name .'['. $name .']', 'class="inputbox"', 'value', 'text', $value );
 	}

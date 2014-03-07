@@ -22,7 +22,7 @@
 *
 * @package Cache_Lite
 * @category Caching
-* @version $Id: Lite.php 47 2005-09-15 02:55:27Z rhuk $
+* @version $Id: Lite.php 3313 2006-04-26 19:43:05Z stingrey $
 * @author Fabien MARTY <fab@php.net>
 */
 
@@ -465,10 +465,13 @@ class Cache_Lite
 	* @param int $code error code
 	* @access public
 	*/
-	function raiseError($msg, $code)
-	{
-		include_once('PEAR.php');
-		PEAR::raiseError($msg, $code, $this->_pearErrorMode);
+	function raiseError($msg, $code) {
+		$path = dirname( __FILE__ ) . DIRECTORY_SEPARATOR .'includes'. DIRECTORY_SEPARATOR .'PEAR'. DIRECTORY_SEPARATOR .'PEAR.php';
+		
+		if ( file_exists( $path ) ) {			
+			include_once( $path );
+			PEAR::raiseError($msg, $code, $this->_pearErrorMode);
+		}
 	}
 
 	// --- Private methods ---

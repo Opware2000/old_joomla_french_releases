@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: french.php,v 2.0 2005/11/21 17:12:36 lexel Exp $
+* @version $Id: french.php,v 2.0 2006/06/06 17:12:36 joomlafacile.com Exp $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,14 +23,16 @@ DEFINE('_LANGUAGE','fr'); // Paramètre initial 'en'
 DEFINE('_NOT_AUTH','Vous n\'êtes pas autorisé(e) à accéder à cette ressource.<br />Vous devez vous connecter.');
 DEFINE('_DO_LOGIN','Vous devez vous identifier.');
 DEFINE('_VALID_AZ09','Saisissez un %s valide&nbsp;:  sans espace, au moins %d caractères, alphanumériques uniquement (0-9,a-z,A-Z)');
+DEFINE('_VALID_AZ09_USER',"Saisissez un %s valide. Au moins %d caractères, alphanumériques uniquement 0-9,a-z,A-Z");
 DEFINE('_CMN_YES','Oui');
 DEFINE('_CMN_NO','Non');
 DEFINE('_CMN_SHOW','Afficher');
-DEFINE('_CMN_HIDE','Cacher');
+DEFINE('_CMN_HIDE','Masquer');
 
 DEFINE('_CMN_NAME','Nom');
 DEFINE('_CMN_DESCRIPTION','Description');
 DEFINE('_CMN_SAVE','Sauvegarder');
+DEFINE('_CMN_APPLY','Appliquer');
 DEFINE('_CMN_CANCEL','Annuler');
 DEFINE('_CMN_PRINT','Version imprimable');
 DEFINE('_CMN_PDF','Convertir en PDF');
@@ -75,6 +77,8 @@ DEFINE('_CMN_REQUIRED','Obligatoire');
 
 DEFINE('_CMN_CONTINUE','Continuer');
 
+DEFINE('_STATIC_CONTENT','Article statique');
+
 DEFINE('_CMN_NEW_ITEM_LAST','Les nouveaux items sont placés en dernière position'); //item au lieu de element
 DEFINE('_CMN_NEW_ITEM_FIRST','Les nouveaux items sont placés en première position'); //item au lieu de element
 DEFINE('_LOGIN_INCOMPLETE','Merci de renseigner votre nom d\'utilisateur et votre mot de passe.');
@@ -114,7 +118,7 @@ DEFINE('_NOT_EXIST','Cette page est indisponible.<br />Veuillez faire un autre c
 DEFINE('_BUTTON_VOTE','Voter');
 DEFINE('_BUTTON_RESULTS','Résultats');
 DEFINE('_USERNAME','Nom d\'utilisateur');
-DEFINE('_LOST_PASSWORD','Perdu votre mot de passe&nbsp;?');
+DEFINE('_LOST_PASSWORD','Mot de passe oublié&nbsp;?');
 DEFINE('_PASSWORD','Mot de passe');
 DEFINE('_BUTTON_LOGIN','Se connecter');
 DEFINE('_BUTTON_LOGOUT','Se déconnecter');
@@ -139,7 +143,7 @@ DEFINE('_CONTACT_HEADER_EMAIL','E-mail');
 DEFINE('_CONTACT_HEADER_PHONE','Téléphone');
 DEFINE('_CONTACT_HEADER_FAX','Fax');
 DEFINE('_CONTACTS_DESC','La liste des contacts du site.');
-
+DEFINE('_CONTACT_MORE_THAN','Vous ne pouvez pas saisir plus d\'une adresse e-mail.');
 
 /** classes/html/contact.php */
 DEFINE('_CONTACT_TITLE','Contact');
@@ -159,6 +163,7 @@ DEFINE('_CONTACT_ADDRESS','Adresse&nbsp;:');
 DEFINE('_CONTACT_MISC','Information&nbsp;:');
 DEFINE('_CONTACT_SEL','Sélectionnez un contact&nbsp;:');
 DEFINE('_CONTACT_NONE','Aucun profil de contact défini.');
+DEFINE('_CONTACT_ONE_EMAIL','Ne saisissez qu\'une adresse e-mail.');
 DEFINE('_EMAIL_A_COPY','Recevoir une copie de cet e-mail');
 DEFINE('_CONTACT_DOWNLOAD_AS','Télécharger les informations comme');
 DEFINE('_VCARD','VCard');
@@ -186,18 +191,16 @@ DEFINE('_BUTTON_SUBMIT_MAIL','Envoyer');
 DEFINE('_BUTTON_CANCEL','Annuler');
 DEFINE('_EMAIL_ERR_NOINFO','Vous devez saisir une adresse e-mail valide');
 DEFINE('_EMAIL_MSG','Une page du site %s vous est suggérée par %s ( %s ).
-
 Vous pouvez consulter la page en question à l\'adresse suivante:
 %s
-
 Cordialement.');
 DEFINE('_EMAIL_INFO','Publication envoyée par');
 DEFINE('_EMAIL_SENT','Cette publication a été suggérée à');
-DEFINE('_PROMPT_CLOSE','Fermer la fenétre');
+DEFINE('_PROMPT_CLOSE','Fermer la fenêtre');
 
 /** classes/html/content.php */
 DEFINE('_AUTHOR_BY', ' Soumis par'); 
-DEFINE('_WRITTEN_BY', ' Ecrit par');
+DEFINE('_WRITTEN_BY', ' Écrit par');
 DEFINE('_LAST_UPDATED', ' Dernière mise à jour&nbsp;:');
 DEFINE('_BACK','[&nbsp;Retour&nbsp;]');
 DEFINE('_LEGEND','Légende');
@@ -223,6 +226,7 @@ DEFINE('_E_IMAGES','Images');
 DEFINE('_E_GALLERY_IMAGES','Galerie d\'images');
 DEFINE('_E_CONTENT_IMAGES','Images sélectionnées');
 DEFINE('_E_EDIT_IMAGE','Propriétés de l\'image');
+DEFINE('_E_NO_IMAGE','Aucune image');
 DEFINE('_E_INSERT','Insertion');
 DEFINE('_E_UP','Au dessus');
 DEFINE('_E_DOWN','Au dessous');
@@ -232,6 +236,9 @@ DEFINE('_E_ALIGN','Alignement&nbsp;:');
 DEFINE('_E_ALT','Balise alt&nbsp;:');
 DEFINE('_E_BORDER','Bordure&nbsp;:');
 DEFINE('_E_CAPTION','Légende&nbsp;:');
+DEFINE('_E_CAPTION_POSITION','Position de la légende');
+DEFINE('_E_CAPTION_ALIGN','Alignement de la légende');
+DEFINE('_E_CAPTION_WIDTH','Largeur de la légende');
 DEFINE('_E_APPLY','Appliquer');
 DEFINE('_E_PUBLISHING','Publication');
 DEFINE('_E_STATE','Etat&nbsp;:');
@@ -241,7 +248,7 @@ DEFINE('_E_ORDERING','Ordre&nbsp;:');
 DEFINE('_E_START_PUB','Début de publication&nbsp;:');
 DEFINE('_E_FINISH_PUB','Fin de publication&nbsp;:');
 DEFINE('_E_SHOW_FP','Afficher en page d\'accueil&nbsp;:');
-DEFINE('_E_HIDE_TITLE','Cacher le titre de l\'item&nbsp;:'); //item au lieu de element
+DEFINE('_E_HIDE_TITLE','Masquer le titre de l\'item&nbsp;:'); //item au lieu de element
 DEFINE('_E_METADATA','Métadonnées');
 DEFINE('_E_M_DESC','Description&nbsp;:');
 DEFINE('_E_M_KEY','Mots-clés&nbsp;:');
@@ -256,9 +263,11 @@ DEFINE('_E_SAVE','Sauvegarder');
 DEFINE('_E_CANCEL','Abandonner');
 DEFINE('_E_REGISTERED','Utilisateurs enregistrés seulement');
 DEFINE('_E_ITEM_INFO','Info sur l\'article');
-DEFINE('_E_ITEM_SAVED','Publication sauvegardée avec succés.');
+DEFINE('_E_ITEM_SAVED','Publication sauvegardée avec succès.');
 DEFINE('_ITEM_PREVIOUS','&lt; Précédent');
 DEFINE('_ITEM_NEXT','Suivant &gt;');
+DEFINE('_KEY_NOT_FOUND','Clé non trouvée');
+
 
 /** content.php */
 DEFINE('_SECTION_ARCHIVE_EMPTY','Cette section ne contient aucune archive.');	
@@ -280,9 +289,9 @@ DEFINE('_ORDER_DROPDOWN_O','Ordre');
 
 /** poll.php */
 DEFINE('_ALERT_ENABLED','Vous devez autoriser les cookies.'); 
-DEFINE('_ALREADY_VOTE','Vous avez déja voté pour ce sondage aujourd\'hui.');
-DEFINE('_NO_SELECTION','Vous n\'avez rien sélectionné, veuillez recommencer');
-DEFINE('_THANKS','Merci d\'avoir voté. Pour voir les résultats, cliquez sur le bouton \'Résultats\'');
+DEFINE('_ALREADY_VOTE','Vous avez déja voté pour ce sondage aujourd`hui.');
+DEFINE('_NO_SELECTION','Vous n`avez rien sélectionné, veuillez recommencer');
+DEFINE('_THANKS','Merci d`avoir voté. Pour voir les résultats, cliquez sur le bouton Résultats');
 DEFINE('_SELECT_POLL','Veuillez sélectionner un sondage dans la liste');
 
 /** classes/html/poll.php */
@@ -293,7 +302,7 @@ DEFINE('_APR','Avril');
 DEFINE('_MAY','Mai');
 DEFINE('_JUN','Juin');
 DEFINE('_JUL','Juillet');
-DEFINE('_AUG','Aoét');
+DEFINE('_AUG','Août');
 DEFINE('_SEP','Septembre');
 DEFINE('_OCT','Octobre');
 DEFINE('_NOV','Novembre');
@@ -408,7 +417,7 @@ DEFINE('_DATE_FORMAT','l, F d Y');  //Uses PHP's DATE Command Format - Depreciat
 *
 *e.g. DEFINE('_DATE_FORMAT_LC','%A, %d %B %Y %H:%M'); // Référez-vous é l'utilisation de la commande PHP strftime
 */
-DEFINE('_DATE_FORMAT_LC','%d-%m-%Y'); // Référez-vous é l'utilisation de la commande PHP strftime
+DEFINE('_DATE_FORMAT_LC','%d-%m-%Y'); // Référez-vous à l'utilisation de la commande PHP strftime
 /** la ligne initiale dans le fichier source en anglais :  DEFINE('_DATE_FORMAT_LC2','%A, %d %B %Y %H:%M'); */
 DEFINE('_DATE_FORMAT_LC2','%d-%m-%Y %H:%M');
 DEFINE('_SEARCH_BOX','Rechercher...');
@@ -422,6 +431,7 @@ DEFINE('_HI','Bonjour, ');
 /** user.php */
 DEFINE('_SAVE_ERR','Veuillez remplir tous les champs du formulaire, merci.');
 DEFINE('_THANK_SUB','Merci pour votre proposition. Votre proposition sera vérifiée  avant d\'être publiée sur le site.');
+DEFINE('_THANK_SUB_PUB','Merci de nous avoir proposé cet article.');
 DEFINE('_UP_SIZE','Vous ne pouvez pas transmettre des fichiers de plus de 15ko.'); 
 DEFINE('_UP_EXISTS','Une image portant le nom $userfile_name existe déjà. Veuillez renommer votre fichier avant de réessayer.');
 DEFINE('_UP_COPY_FAIL','La copie a échoué');
@@ -494,12 +504,15 @@ DEFINE('_FEED_LINK','Lien vers le Fil d\'actualité');
 /** whos_online.php */
 DEFINE('_WE_HAVE', 'Il y a actuellement ');
 DEFINE('_AND', ' et ');
-DEFINE('_GUEST_COUNT','$guest_array invité');
-DEFINE('_GUESTS_COUNT','$guest_array invités');
-DEFINE('_MEMBER_COUNT','$user_array membre');
-DEFINE('_MEMBERS_COUNT','$user_array membres');
+DEFINE('_GUEST_COUNT','%s invité');
+DEFINE('_GUESTS_COUNT','%s invités');
+DEFINE('_MEMBER_COUNT','%s membre');
+DEFINE('_MEMBERS_COUNT','%s membres');
 DEFINE('_ONLINE',' en ligne');
 DEFINE('_NONE','Aucun utilisateur enregistré en ligne');
+
+/** modules/mod_random_image */
+DEFINE('_NO_IMAGES','Aucune image');
 
 /** modules/mod_stats.php */
 DEFINE('_TIME_STAT','Heure');
@@ -513,6 +526,7 @@ DEFINE('_VISITORS','Visiteurs');
 DEFINE('_MAINMENU_HOME','* Ceci est le premier item publié dans ce menu [mainmenu] c\'est la page d\'accueil du site par défaut *'); //item au lieu de element
 DEFINE('_MAINMENU_DEL','* Vous ne pouvez pas effacer ce menu, car il est nécessaire au bon fonctionnement de Joomla *');
 DEFINE('_MENU_GROUP','* Quelques \'Types de Menu\' existent dans plus d\'un groupe *');
+
 
 /** administrators/components/com_users */
 DEFINE('_NEW_USER_MESSAGE_SUBJECT', 'Votre Profil Utilisateur' );

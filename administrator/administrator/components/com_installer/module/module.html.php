@@ -28,8 +28,7 @@ class HTML_module {
 			<table class="adminheading">
 			<tr>
 				<th class="install">
-				Installed Modules
-				</th>
+				Modules	install&eacute;s			</th>
 				<td>
 				Filter:
 				</td>
@@ -38,10 +37,10 @@ class HTML_module {
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3">
-				Only those Modules that can be uninstalled are displayed - some Core Modules cannot be removed.
-				<br /><br />
-				</td>
+				<td colspan="3">Seuls les modules qui peuvent &ecirc;tre d&eacute;sinstall&eacute;s sont affich&eacute;s - certains modules du noyau ne peuvent &ecirc;tre supprim&eacute;s.
+				<br />
+				<br />
+			  </td>
 			</tr>
 			</table>
 
@@ -101,10 +100,10 @@ class HTML_module {
 			}
 		} else {
 			?>
-			<td class="small">
-			No custom modules installed
+			  <td class="small">
+			Aucun module personnalis&eacute; install&eacute;
 			</td>
-			<?php
+			    <?php
 		}
 		?>
 		</table>

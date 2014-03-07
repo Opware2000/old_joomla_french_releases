@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.trash.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.trash.php 3494 2006-05-14 23:51:02Z stingrey $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,8 +23,8 @@ if (!($acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'comp
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class', 'com_frontpage' ) );
 
-$cid = mosGetParam( $_POST, 'cid', array(0) );
 $mid = mosGetParam( $_POST, 'mid', array(0) );
+$cid = mosGetParam( $_POST, 'cid', array(0) );
 if ( !is_array( $cid ) ) {
 	$cid = array(0);
 }
@@ -57,10 +57,11 @@ switch ($task) {
 */
 function viewTrash( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
-	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
 
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{". $option ."}limitstart", 'limitstart', 0 );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 10 ) );
+
+	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
 
 	// get the total number of content
 	$query = "SELECT count(*)"
@@ -82,11 +83,9 @@ function viewTrash( $option ) {
 	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
 	. "\n WHERE c.state = -2"
 	. "\n ORDER BY s.name, cc.name, c.title"
-	. "\n LIMIT $pageNav_content->limitstart, $pageNav_content->limit "
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav_content->limitstart, $pageNav_content->limit );
 	$contents = $database->loadObjectList();
-
 
 	$query = "SELECT count(*)"
 	. "\n FROM #__menu AS m"
@@ -95,7 +94,6 @@ function viewTrash( $option ) {
 	;
 	$database->setQuery( $query );
 	$total_menu = $database->loadResult();
-	//$total_menu = count( $total_menu );
 	$pageNav_menu = new mosPageNav( $total_menu, $limitstart, $limit );
 
 	// Query menu items
@@ -104,14 +102,17 @@ function viewTrash( $option ) {
 	. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
 	. "\n WHERE m.published = -2"
 	. "\n ORDER BY m.menutype, m.ordering, m.ordering, m.name"
-	. "\n LIMIT $pageNav_menu->limitstart, $pageNav_menu->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav_menu->limitstart, $pageNav_menu->limit );
 	$menus = $database->loadObjectList();
 
-	for ( $i = 0; $i < $total_content; $i++ ) {
+	$num = $total_content;
+	if ( $limit < $total_content ) {
+		$num = $limit;
+	}	
+	for ( $i = 0; $i < $num; $i++ ) {
 		if ( ( $contents[$i]->sectionid == 0 ) && ( $contents[$i]->catid == 0 ) ) {
-			$contents[$i]->sectname = 'Typed Content';
+			$contents[$i]->sectname = 'Static Content';
 		}
 	}
 
@@ -139,7 +140,7 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 		$database->setQuery( $query );
 		$items = $database->loadObjectList();
 		$id = $cid;
-		$type = "content";
+		$type 	= 'content';
 	} else if ( $mids ) {
 		// Content Items query
 		$query = 	"SELECT a.name"
@@ -150,7 +151,7 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 		$database->setQuery( $query );
 		$items = $database->loadObjectList();
 		$id = $mid;
-		$type = "menu";
+		$type 	= 'menu';
 	}
 
 	HTML_trash::showDelete( $option, $id, $items, $type );
@@ -183,7 +184,7 @@ function deleteTrash( $cid, $option ) {
 		}
 	}
 
-	$msg = $total. " Item(s) successfully Deleted";
+	$msg = $total. " élément(s) supprimé(s) avec succès.";
 	mosRedirect( "index2.php?option=$option&mosmsg=". $msg ."" );
 }
 
@@ -243,14 +244,48 @@ function restoreTrash( $cid, $option ) {
 	$cids = implode( ',', $cid );
 
 	if ( $type == 'content' ) {
+	// query to restore content items
 		$query = "UPDATE #__content"
 		. "\n SET state = $state, ordering = $ordering"
 		. "\n WHERE id IN ( $cids )"
 		;
-	} else if ( $type == "menu" ) {
+		$database->setQuery( $query );
+		if ( !$database->query() ) {
+			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+			exit();
+		}					
+	} else if ( $type == 'menu' ) {
+		sort( $cid );
+
+		foreach ( $cid as $id ) {
+			$check = 1;
+			$row = new mosMenu( $database );
+			$row->load( $id );
+			
+			// check if menu item is a child item
+			if ( $row->parent != 0 ) {
+				$query = "SELECT id"
+				. "\n FROM #__menu"
+				. "\n WHERE id = $row->parent"
+				. "\n AND ( published = 0 OR published = 1 )"
+				;
+				$database->setQuery( $query );
+				$check = $database->loadResult();
+				
+				if ( !$check ) {
+				// if menu items parent is not found that are published/unpublished make it a root menu item
+					$query  = "UPDATE #__menu"
+					. "\n SET parent = 0, published = $state, ordering = 9999"
+					. "\n WHERE id = $id"
+					;
+				}
+			}
+			
+			if ( $check ) {
+			// query to restore menu items
 		$query = "UPDATE #__menu"
 		. "\n SET published = $state, ordering = 9999"
-		. "\n WHERE id IN ( $cids )"
+				. "\n WHERE id = $id"
 		;
 	}
 
@@ -259,8 +294,10 @@ function restoreTrash( $cid, $option ) {
 		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+		}
+	}	
 
-	$msg = $total. " Item(s) successfully Restored";
+	$msg = $total. " élément(s) restauré(s) avec succès.";
 	mosRedirect( "index2.php?option=$option&mosmsg=". $msg ."" );
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: search.html.php 599 2005-10-23 17:45:26Z stingrey $
+* @version $Id: search.html.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -101,18 +101,17 @@ class search_html {
 		global $mosConfig_hideCreateDate;
 		global $mosConfig_live_site, $option, $Itemid;
 
-
-		$c = count ($rows);
-
+		$c 			= count ($rows);
+		$image 		= mosAdminMenus::ImageCheck( 'google.png', '/images/M_images/', NULL, NULL, 'Google', 'Google', 1 );
+		$searchword = urldecode( $searchword );
+		
 				// number of matches found
 				echo '<br/>';
 				eval ('echo "'._CONCLUSION.'";');
-				
-				$image = mosAdminMenus::ImageCheck( 'google.png', '/images/M_images/', NULL, NULL, 'Google', 'Google', 1 );
+
 				?>
-				<a href="http://www.google.com/search?q=<?php echo stripslashes($searchword);?>" target="_blank">
-				<?php echo $image; ?>
-				</a>
+				<a href="http://www.google.com/search?q=<?php echo $searchword; ?>" target="_blank">
+					<?php echo $image; ?></a>
 			</td>
 		</tr>
 		</table>
@@ -121,8 +120,8 @@ class search_html {
 			<?php
 			echo $pageNav->writePagesCounter();
 
-			$searchphrase = trim( strtolower( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
-			$ordering = trim( strtolower( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
+			$searchphrase 	= strtolower( strval( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
+			$ordering 		= strtolower( strval( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
 
 			$link = $mosConfig_live_site ."/index.php?option=$option&amp;Itemid=$Itemid&amp;searchword=$searchword&amp;searchphrase=$searchphrase&amp;ordering=$ordering";
 			echo $pageNav->getLimitBox( $link );
@@ -204,27 +203,18 @@ class search_html {
 		<?php
 	}
 
-	function conclusion( $totalRows, $searchword, $pageNav ) {
+	function conclusion( $searchword, $pageNav ) {
 		global $mosConfig_live_site, $option, $Itemid;
+		
+		$searchphrase 	= strtolower( strval( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
+		$ordering 		= strtolower( strval( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
+		$link 			= $mosConfig_live_site ."/index.php?option=$option&Itemid=$Itemid&searchword=$searchword&searchphrase=$searchphrase&ordering=$ordering";
 		?>
 		<tr>
 			<td colspan="3">
 				<div align="center">
-					<?php
-
-				$searchphrase = trim( strtolower( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
-				$ordering = trim( strtolower( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
-
-				$link = $mosConfig_live_site ."/index.php?option=$option&Itemid=$Itemid&searchword=$searchword&searchphrase=$searchphrase&ordering=$ordering";
-
-				echo $pageNav->writePagesLinks( $link );
-					?>
+					<?php echo $pageNav->writePagesLinks( $link ); ?>
 				</div>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="3">
-
 			</td>
 		</tr>
 		</table>

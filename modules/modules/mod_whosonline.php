@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_whosonline.php 1462 2005-12-16 22:55:18Z rhuk $
+* @version $Id: mod_whosonline.php 2726 2006-03-09 14:01:19Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,95 +14,85 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-$showmode 	= $params->get( 'showmode' );
+$showmode 	= $params->get( 'showmode', 0 );
 
-$content 	= '';
+$output 	= '';
 
+// show online count
 if ($showmode==0 || $showmode==2) {
-	$query = "SELECT COUNT( session_id ) AS guest_online"
+	$query = "SELECT guest, usertype"
 	. "\n FROM #__session"
-	. "\n WHERE guest = 1"
-	. "\n AND ( usertype is NULL OR usertype = '' )";
-	$database->setQuery( $query );
-	$guest_array = $database->loadResult();
-
-	$query = "SELECT COUNT( DISTINCT( username ) ) AS user_online"
-	. "\n FROM #__session"
-	. "\n WHERE guest = 0"
 	;
 	$database->setQuery( $query );
-	$user_array = $database->loadResult();
+	$sessions = $database->loadObjectList();
 
-	if ($guest_array != 0 && $user_array==0) {
-		if ($guest_array==1) {
-			$content.=_WE_HAVE;
-			$content.=_GUEST_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
-		} else {
-			$content.=_WE_HAVE;
-			$content.=_GUESTS_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
+	// calculate number of guests and members
+	$user_array 	= 0;
+	$guest_array 	= 0;
+	foreach( $sessions as $session ) {		
+		// if guest increase guest count by 1
+		if ( $session->guest == 1 && !$session->usertype ) {
+			$guest_array++;
+		}
+		// if member increase member count by 1
+		if ( $session->guest == 0 ) {
+			$user_array++;
 		}
 	}
-
-	if ($guest_array==0 && $user_array != 0) {
-		if ($user_array==1) {
-			$content.=_WE_HAVE;
-			$content.=_MEMBER_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
-		} else {
-			$content.=_WE_HAVE;
-			$content.=_MEMBERS_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
+	
+	// check if any guest or member is on the site
+	if ($guest_array != 0 || $user_array != 0) {
+		$output .= _WE_HAVE;
+			
+		// guest count handling
+		if ($guest_array == 1) {
+		// 1 guest only
+			$output .= sprintf( _GUEST_COUNT, $guest_array );
+		} else if ($guest_array > 1) {
+		// more than 1 guest
+			$output .= sprintf( _GUESTS_COUNT, $guest_array );
 		}
-	}
-
-	if ($guest_array != 0 && $user_array != 0) {
-		if ($guest_array==1) {
-			$content.=_WE_HAVE;
-			$content.=_GUEST_COUNT;
-			$content.=_AND;
-			eval ("\$content = \"$content\";");
-		} else {
-			$content.=_WE_HAVE;
-			$content.=_GUESTS_COUNT;
-			$content.=_ONLINE;
-			$content.=_AND;
-			eval ("\$content = \"$content\";");
+	
+		// if there are guests and members online
+		if ($guest_array != 0 && $user_array != 0) {
+			$output .= _AND;
 		}
-
-		if ($user_array==1) {
-			$content.=_MEMBER_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
-		} else {
-			$content.=_MEMBERS_COUNT;
-			$content.=_ONLINE;
-			eval ("\$content = \"$content\";");
+			
+		// member count handling
+		if ($user_array == 1) {
+		// 1 member only
+			$output .= sprintf( _MEMBER_COUNT, $user_array );
+		} else if ($user_array > 1) {
+		// more than 1 member
+			$output .= sprintf( _MEMBERS_COUNT, $user_array );
 		}
-
+		
+		$output .= _ONLINE;
 	}
 }
 
-if ($showmode==1 || $showmode==2) {
+// show online member names
+if ($showmode > 0) {
 	$query = "SELECT DISTINCT a.username"
 	."\n FROM #__session AS a"
 	."\n WHERE a.guest = 0"
 	;
 	$database->setQuery($query);
 	$rows = $database->loadObjectList();
-	$content .= "<ul>\n";
-	foreach($rows as $row) {
-		$content .= "<li><strong>" . $row->username . "</strong></li>\n";
-	}
-	$content .= "</ul>\n";
-
-	if ( !$content ) {
-		echo _NONE ."\n";
+	
+	if ( count( $rows ) ) {
+		// output
+		$output .= '<ul>';
+		foreach($rows as $row) {
+			$output .= '<li>';
+			$output .= '<strong>';
+			$output .= $row->username;
+			$output .= '</strong>';
+			$output .= '</li>';
+		}
+		$output .= '</ul>';
 	}
 }
+
+echo $output;
 ?>

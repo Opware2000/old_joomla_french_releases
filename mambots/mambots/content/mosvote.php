@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosvote.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mosvote.php 3500 2006-05-15 04:31:11Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,11 +17,10 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 $_MAMBOTS->registerFunction( 'onBeforeDisplayContent', 'botVoting' );
 
 function botVoting( &$row, &$params, $page=0 ) {
-	global $Itemid;
+	global $Itemid, $task;
 
 	$id 	= $row->id;
 	$option = 'com_content';
-	$task 	= mosGetParam( $_REQUEST, 'task', '' );
 
 	$html = '';
 	if ($params->get( 'rating' ) && !$params->get( 'popup' )){

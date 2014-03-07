@@ -59,7 +59,7 @@ $rows = $database->loadObjectList();
 <table class="adminlist">
 <tr>
 	<th colspan="4">
-	Currently Logged in Users
+	Utilisateurs actuellement connectés
 	</th>
 </tr>
 <?php
@@ -67,7 +67,7 @@ $i = 0;
 foreach ( $rows as $row ) {
 	if ( $acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_users' ) ) {
 		$link 	= 'index2.php?option=com_users&task=editA&hidemainmenu=1&id='. $row->userid;
-		$name 	= '<a href="'. $link .'" title="Edit User">'. $row->username .'</a>';
+		$name 	= '<a href="'. $link .'" title="Editer Utilisateur">'. $row->username .'</a>';
 	} else {
 		$name 	= $row->username;
 	}

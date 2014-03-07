@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: logout.php 302 2005-10-02 06:23:10Z Levis $
+* @version $Id: logout.php 3280 2006-04-25 21:41:34Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,27 +14,36 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-$currentDate = date( "Y-m-d\TH:i:s" );
+global $database, $_VERSION;
 
-if ( isset( $_SESSION['session_user_id'] ) && $_SESSION['session_user_id'] != '' ) {
-	$query = "UPDATE #__users"
-	. "\n SET lastvisitDate = '$currentDate'"
-	. "\n WHERE id = ". $_SESSION['session_user_id']
-	;
-	$database->setQuery( $query );
-
-	if (!$database->query()) {
-		echo $database->stderr();
+// check to see if site is a production site
+// allows multiple logins with same user for a demo site
+if ( $_VERSION->SITE == 1 ) {
+	// update db user last visit record corresponding to currently logged in user
+	if ( isset( $_SESSION['session_user_id'] ) && $_SESSION['session_user_id'] != '' ) {
+		$currentDate = date( "Y-m-d\TH:i:s" );
+		
+		$query = "UPDATE #__users"
+		. "\n SET lastvisitDate = '$currentDate'"
+		. "\n WHERE id = ". $_SESSION['session_user_id']
+		;
+		$database->setQuery( $query );
+	
+		if (!$database->query()) {
+			echo $database->stderr();
+		}
 	}
-}
-
-if ( isset( $_SESSION['session_id'] ) && $_SESSION['session_id'] != '' ) {
-	$query = "DELETE FROM #__session"
-	. "\n WHERE session_id = '". $_SESSION['session_id'] ."'"
-	;
-	$database->setQuery( $query );
-	if (!$database->query()) {
-		echo $database->stderr();
+	
+	// delete db session record corresponding to currently logged in user
+	if ( isset( $_SESSION['session_id'] ) && $_SESSION['session_id'] != '' ) {
+		$query = "DELETE FROM #__session"
+		. "\n WHERE session_id = '". $_SESSION['session_id'] ."'"
+		;
+		$database->setQuery( $query );
+	
+		if (!$database->query()) {
+			echo $database->stderr();
+		}
 	}
 }
 
@@ -43,6 +52,7 @@ $fullname 	= '';
 $id 		= '';
 $session_id = '';
 
+// destroy PHP session of currently logged in user
 session_unregister( 'session_id' );
 session_unregister( 'session_user_id' );
 session_unregister( 'session_username' );
@@ -64,5 +74,7 @@ if (session_is_registered( 'session_usertype' )) {
 if (session_is_registered( 'session_logintime' )) {
 	session_destroy();
 }
+
+// return to site homepage
 mosRedirect( '../index.php' );
 ?>

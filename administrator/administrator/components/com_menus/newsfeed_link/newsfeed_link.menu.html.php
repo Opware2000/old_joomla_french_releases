@@ -29,16 +29,16 @@ class newsfeed_link_menu_html {
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
 			var form = document.adminForm;
-			if (pressbutton == 'cancel') {
+			if (pressbutton == 'annuler') {
 				submitform( pressbutton );
 				return;
 			}
 
 			// do field validation
 			if (trim(form.name.value) == ""){
-				alert( "Link must have a name" );
+				alert( "Le lien doit avoir un nom" );
 			} else if (trim(form.newsfeed_link.value) == ""){
-				alert( "You must select a Newsfeed to link to" );
+				alert( "Vous devez sélectionner un flux RSS" );
 			} else {
 				form.link.value = "index.php?option=com_newsfeeds&task=view&feedid=" + form.newsfeed_link.value;
 				form.componentid.value = form.newsfeed_link.value;
@@ -51,7 +51,7 @@ class newsfeed_link_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Link - Newsfeed
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Lien - Flux RSS
 			</th>
 		</tr>
 		</table>
@@ -62,7 +62,7 @@ class newsfeed_link_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
@@ -75,7 +75,7 @@ class newsfeed_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Newsfeed to Link:
+					Flux RSS:
 					</td>
 					<td width="80%">
 					<?php echo $lists['newsfeed']; ?>
@@ -89,7 +89,7 @@ class newsfeed_link_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					On Click, Open in:
+					Ouvrir dans:
 					</td>
 					<td width="80%">
 					<?php echo $lists['target']; ?>
@@ -97,7 +97,7 @@ class newsfeed_link_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td>
 					<?php echo $lists['parent']; ?>
@@ -105,7 +105,7 @@ class newsfeed_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -113,14 +113,14 @@ class newsfeed_link_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -134,7 +134,7 @@ class newsfeed_link_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

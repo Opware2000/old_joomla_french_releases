@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: english.php 1570 2005-12-29 05:53:33Z eddieajau $
+* @version $Id: english.php 3507 2006-05-15 19:02:27Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,6 +23,7 @@ DEFINE('_LANGUAGE','en');
 DEFINE('_NOT_AUTH','You are not authorized to view this resource.');
 DEFINE('_DO_LOGIN','You need to login.');
 DEFINE('_VALID_AZ09',"Please enter a valid %s.  No spaces, more than %d characters and contain 0-9,a-z,A-Z");
+DEFINE('_VALID_AZ09_USER',"Please enter a valid %s.  More than %d characters and contain 0-9,a-z,A-Z");
 DEFINE('_CMN_YES','Yes');
 DEFINE('_CMN_NO','No');
 DEFINE('_CMN_SHOW','Show');
@@ -31,6 +32,7 @@ DEFINE('_CMN_HIDE','Hide');
 DEFINE('_CMN_NAME','Name');
 DEFINE('_CMN_DESCRIPTION','Description');
 DEFINE('_CMN_SAVE','Save');
+DEFINE('_CMN_APPLY','Apply');
 DEFINE('_CMN_CANCEL','Cancel');
 DEFINE('_CMN_PRINT','Print');
 DEFINE('_CMN_PDF','PDF');
@@ -74,6 +76,8 @@ DEFINE('_CMN_OPTIONAL','Optional');
 DEFINE('_CMN_REQUIRED','Required');
 
 DEFINE('_CMN_CONTINUE','Continue');
+
+DEFINE('_STATIC_CONTENT','Static Content');
 
 DEFINE('_CMN_NEW_ITEM_LAST','New items default to the last place. Ordering can be changed after this item is saved.');
 DEFINE('_CMN_NEW_ITEM_FIRST','New items default to the first place. Ordering can be changed after this item is saved.');
@@ -139,6 +143,7 @@ DEFINE('_CONTACT_HEADER_EMAIL','Email');
 DEFINE('_CONTACT_HEADER_PHONE','Phone');
 DEFINE('_CONTACT_HEADER_FAX','Fax');
 DEFINE('_CONTACTS_DESC','The Contact list for this Website.');
+DEFINE('_CONTACT_MORE_THAN','You cannot enter more than one email address.');
 
 /** classes/html/contact.php */
 DEFINE('_CONTACT_TITLE','Contact');
@@ -153,11 +158,12 @@ DEFINE('_CONTACT_MOBILE','Mobile: ');
 DEFINE('_CONTACT_FAX','Fax: ');
 DEFINE('_CONTACT_EMAIL','Email: ');
 DEFINE('_CONTACT_NAME','Name: ');
-DEFINE('_CONTACT_POSITION','Postition: ');
+DEFINE('_CONTACT_POSITION','Position: ');
 DEFINE('_CONTACT_ADDRESS','Address: ');
 DEFINE('_CONTACT_MISC','Information: ');
 DEFINE('_CONTACT_SEL','Select Contact:');
 DEFINE('_CONTACT_NONE','There are no Contact Details listed.');
+DEFINE('_CONTACT_ONE_EMAIL','You cannot enter more than one email address.');
 DEFINE('_EMAIL_A_COPY','Email a copy of this message to your own address');
 DEFINE('_CONTACT_DOWNLOAD_AS','Download information as a');
 DEFINE('_VCARD','VCard');
@@ -220,6 +226,7 @@ DEFINE('_E_IMAGES','Images');
 DEFINE('_E_GALLERY_IMAGES','Gallery Images');
 DEFINE('_E_CONTENT_IMAGES','Content Images');
 DEFINE('_E_EDIT_IMAGE','Edit Image');
+DEFINE('_E_NO_IMAGE','No Image');
 DEFINE('_E_INSERT','Insert');
 DEFINE('_E_UP','Up');
 DEFINE('_E_DOWN','Down');
@@ -229,6 +236,9 @@ DEFINE('_E_ALIGN','Align:');
 DEFINE('_E_ALT','Alt Text:');
 DEFINE('_E_BORDER','Border:');
 DEFINE('_E_CAPTION','Caption');
+DEFINE('_E_CAPTION_POSITION','Caption Position');
+DEFINE('_E_CAPTION_ALIGN','Caption Align');
+DEFINE('_E_CAPTION_WIDTH','Caption Width');
 DEFINE('_E_APPLY','Apply');
 DEFINE('_E_PUBLISHING','Publishing');
 DEFINE('_E_STATE','State:');
@@ -253,9 +263,10 @@ DEFINE('_E_SAVE','Save');
 DEFINE('_E_CANCEL','Cancel');
 DEFINE('_E_REGISTERED','Registered Users Only');
 DEFINE('_E_ITEM_INFO','Item Information');
-DEFINE('_E_ITEM_SAVED','Item succesfully saved.');
+DEFINE('_E_ITEM_SAVED','Item successfully saved.');
 DEFINE('_ITEM_PREVIOUS','&lt; Prev');
 DEFINE('_ITEM_NEXT','Next &gt;');
+DEFINE('_KEY_NOT_FOUND','Key not found');
 
 
 /** content.php */
@@ -354,7 +365,7 @@ DEFINE('_REG_COMPLETE_NOPASS','<div class="componentheading">Registration Comple
 .'You may now login.<br />&nbsp;&nbsp;');
 DEFINE('_REG_COMPLETE', '<div class="componentheading">Registration Complete!</div><br />You may now login.');
 DEFINE('_REG_COMPLETE_ACTIVATE', '<div class="componentheading">Registration Complete!</div><br />Your account has been created and activation link has been sent to the e-mail address you entered. Note that you must activate the account by clicking on the activation link when you get the e-mail before you can login.');
-DEFINE('_REG_ACTIVATE_COMPLETE', '<div class="componentheading">Activation Complete!</div><br />Your account has been successfully activated. You can now login using the username and password you choose during the registration.');
+DEFINE('_REG_ACTIVATE_COMPLETE', '<div class="componentheading">Activation Complete!</div><br />Your account has been successfully activated. You can now login using the username and password you chose during the registration.');
 DEFINE('_REG_ACTIVATE_NOT_FOUND', '<div class="componentheading">Invalid Activation Link!</div><br />There is no such account in our database or the account has already been activated.');
 
 /** classes/html/registration.php */
@@ -379,7 +390,7 @@ DEFINE('_SENDING_PASSWORD','Your password will be sent to the above e-mail addre
 DEFINE('_SEARCH_TITLE','Search');
 DEFINE('_PROMPT_KEYWORD','Search Keyword');
 DEFINE('_SEARCH_MATCHES','returned %d matches');
-DEFINE('_CONCLUSION','Total $totalRows results found.  Search for <b>$searchword</b> with');
+DEFINE('_CONCLUSION','Total $totalRows results found.  Search for [ <b>$searchword</b> ] with');
 DEFINE('_NOKEYWORD','No results were found');
 DEFINE('_IGNOREKEYWORD','One or more common words were ignored in the search');
 DEFINE('_SEARCH_ANYWORDS','Any words');
@@ -420,6 +431,7 @@ DEFINE('_HI','Hi, ');
 /** user.php */
 DEFINE('_SAVE_ERR','Please complete all the fields.');
 DEFINE('_THANK_SUB','Thanks for your submission. Your submission will now be reviewed before being posted to the site.');
+DEFINE('_THANK_SUB_PUB','Thanks for your submission.');
 DEFINE('_UP_SIZE','You cannot upload files greater than 15kb in size.');
 DEFINE('_UP_EXISTS','Image $userfile_name already exists. Please rename the file and try again.');
 DEFINE('_UP_COPY_FAIL','Failed to copy');
@@ -466,7 +478,7 @@ DEFINE('_BNR_URL','You must select a URL/Custom banner code for the banner.');
 DEFINE('_ALREADY_LOGIN','You are already logged in!');
 DEFINE('_LOGOUT','Click here to logout');
 DEFINE('_LOGIN_TEXT','Use the login and password fields opposite to gain full access');
-DEFINE('_LOGIN_SUCCESS','You have succesfully Logged In');
+DEFINE('_LOGIN_SUCCESS','You have successfully Logged In');
 DEFINE('_LOGOUT_SUCCESS','You have successfully Logged Out');
 DEFINE('_LOGIN_DESCRIPTION','To access the Private area of this site please Login');
 DEFINE('_LOGOUT_DESCRIPTION','You are currently Logged in to the private area of this site');
@@ -493,12 +505,15 @@ DEFINE('_FEED_LINK','Feed Link');
 /** whos_online.php */
 DEFINE('_WE_HAVE', 'We have ');
 DEFINE('_AND', ' and ');
-DEFINE('_GUEST_COUNT','$guest_array guest');
-DEFINE('_GUESTS_COUNT','$guest_array guests');
-DEFINE('_MEMBER_COUNT','$user_array member');
-DEFINE('_MEMBERS_COUNT','$user_array members');
+DEFINE('_GUEST_COUNT','%s guest');
+DEFINE('_GUESTS_COUNT','%s guests');
+DEFINE('_MEMBER_COUNT','%s member');
+DEFINE('_MEMBERS_COUNT','%s members');
 DEFINE('_ONLINE',' online');
 DEFINE('_NONE','No Users Online');
+
+/** modules/mod_random_image */
+DEFINE('_NO_IMAGES','No Images');
 
 /** modules/mod_stats.php */
 DEFINE('_TIME_STAT','Time');

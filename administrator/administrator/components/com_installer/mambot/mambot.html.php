@@ -30,14 +30,14 @@ class HTML_mambot {
 		<table class="adminheading">
 		<tr>
 			<th class="install">
-			Installed Mambots
-			</th>
+			Mambots	Install&eacute;s		</th>
 		</tr>
 		<tr>
 			<td>
-			Only those Mambots that can be uninstalled are displayed - some Core Mambots cannot be removed.
-			<br /><br />
-			</td>
+			  <p>Seuls les mambots qui peuvent &ecirc;tre d&eacute;sinstall&eacute;s sont affich&eacute;s - certains Mambots du noyau ne peuvent &ecirc;tre supprim&eacute;s.<br />
+			    <br />
+		      </p>
+		    </td>
 		</tr>
 		</table>
 		<?php
@@ -58,7 +58,7 @@ class HTML_mambot {
 				</th>
 				-->
 				<th width="10%" align="left">
-				Author
+				Auteur
 				</th>
 				<th width="5%" align="center">
 				Version
@@ -67,10 +67,10 @@ class HTML_mambot {
 				Date
 				</th>
 				<th width="15%" align="left">
-				Author Email
+				Email de l'auteur
 				</th>
 				<th width="15%" align="left">
-				Author URL
+				URL de l'auteur
 				</th>
 			</tr>
 			<?php
@@ -125,7 +125,7 @@ class HTML_mambot {
 			<?php
 		} else {
 			?>
-			There are no non-core, custom mambots installed.
+			Il n'y a aucun mambots personnalis&eacute;s install&eacute;s n'appartenant pas au noyau.
 			<?php
 		}
 	}

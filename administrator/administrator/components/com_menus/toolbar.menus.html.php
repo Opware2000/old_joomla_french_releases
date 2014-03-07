@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.menus.html.php 108 2005-09-16 17:39:25Z stingrey $
+* @version $Id: toolbar.menus.html.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -25,7 +25,7 @@ class TOOLBAR_menus {
 	*/
 	function _NEW()	{
 		mosMenuBar::startTable();
-		mosMenuBar::customX( 'edit', 'next.png', 'next_f2.png', 'Next', true );
+		mosMenuBar::customX( 'edit', 'next.png', 'next_f2.png', 'Suivant', true );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();
@@ -38,7 +38,7 @@ class TOOLBAR_menus {
 	*/
 	function _MOVEMENU()	{
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'movemenusave', 'move.png', 'move_f2.png', 'Move', false );
+		mosMenuBar::custom( 'movemenusave', 'move.png', 'move_f2.png', 'Déplacer', false );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel( 'cancelmovemenu' );
 		mosMenuBar::spacer();
@@ -51,7 +51,7 @@ class TOOLBAR_menus {
 	*/
 	function _COPYMENU()	{
 		mosMenuBar::startTable();
-		mosMenuBar::custom( 'copymenusave', 'copy.png', 'copy_f2.png', 'Copy', false );
+		mosMenuBar::custom( 'copymenusave', 'copy.png', 'copy_f2.png', 'Copier', false );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel( 'cancelcopymenu' );
 		mosMenuBar::spacer();
@@ -69,7 +69,7 @@ class TOOLBAR_menus {
 			$cid = mosGetParam( $_POST, 'cid', array(0) );
 			$id = $cid[0];
 		}
-		$menutype 	= mosGetParam( $_REQUEST, 'menutype', 'mainmenu' );
+		$menutype 	= strval( mosGetParam( $_REQUEST, 'menutype', 'mainmenu' ) );
 
 		mosMenuBar::startTable();
 		if ( !$id ) {
@@ -83,7 +83,7 @@ class TOOLBAR_menus {
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Annuler' );
 		} else {
 			mosMenuBar::cancel();
 		}
@@ -98,9 +98,9 @@ class TOOLBAR_menus {
 		mosMenuBar::spacer();
 		mosMenuBar::unpublishList();
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'movemenu', 'move.png', 'move_f2.png', 'Move', true );
+		mosMenuBar::customX( 'movemenu', 'move.png', 'move_f2.png', 'Déplacer', true );
 		mosMenuBar::spacer();
-		mosMenuBar::customX( 'copymenu', 'copy.png', 'copy_f2.png', 'Copy', true );
+		mosMenuBar::customX( 'copymenu', 'copy.png', 'copy_f2.png', 'Copier', true );
 		mosMenuBar::spacer();
 		mosMenuBar::trash();
 		mosMenuBar::spacer();

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.php 1758 2006-01-12 13:58:21Z stingrey $
+* @version $Id: admin.media.php 3494 2006-05-14 23:51:02Z stingrey $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,7 +22,6 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 }
 
 require_once( $mainframe->getPath( 'admin_html' ) );
-//require_once( $mainframe->getPath( 'class' ) );
 
 /**
  * Makes file name safe to use
@@ -43,7 +42,7 @@ $listdir = makeSafe( mosGetParam( $_REQUEST, 'listdir', '' ) );
 $dirPath = makeSafe( mosGetParam( $_POST, 'dirPath', '' ) );
 
 if (is_int(strpos ($listdir, "..")) && $listdir != '') {
-	mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "NO HACKING PLEASE" );
+	mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "NO HACKING PLEASE - PAS DE HACKING SVP" );
 }
 
 define( 'COM_MEDIA_BASE', $mosConfig_absolute_path . DIRECTORY_SEPARATOR . 'images' );
@@ -58,7 +57,7 @@ switch ($task) {
 
 	case 'newdir':
 		if (ini_get('safe_mode')=='On') {
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Directory creation not allowed while running in SAFE MODE as this can cause problems." );
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Création de répertoire interdite en SAFE MODE car cela peut engendrer des problèmes." );
 		} else {
 			create_folder( $dirPath );
 		}
@@ -94,11 +93,10 @@ switch ($task) {
  */
 function delete_file( $listdir ) {
 	$delFile = makeSafe( mosGetParam( $_REQUEST, 'delFile', '' ) );
-	$fullPath = COM_MEDIA_BASE . $listdir . DIRECTORY_SEPARATOR . $delFile;
+	$fullPath = COM_MEDIA_BASE . $listdir . DIRECTORY_SEPARATOR . stripslashes( $delFile );
 
 	if (file_exists( $fullPath )) {
 		unlink( $fullPath );
-	} else {
 	}
 }
 
@@ -107,7 +105,7 @@ function create_folder($dirPath) {
 
 	if(strlen($folder_name) >0) {
 		if (eregi("[^0-9a-zA-Z_]", $folder_name)) {
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Directory name must only contain alphanumeric characters and no spaces please." );
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Le nom des répertoires ne doit contenir que des caractères alphanumériques et aucun espace." );
 		}
 		$folder = COM_MEDIA_BASE . $dirPath . DIRECTORY_SEPARATOR . $folder_name;
 		if(!is_dir( $folder ) && !is_file( $folder )) {
@@ -139,7 +137,7 @@ function delete_folder($listdir) {
 		@unlink( $del_html );
 		rmdir( $del_folder );
 	} else {
-		echo '<font color="red">Unable to delete: not empty!</font>';
+		echo '<font color="red">Impossible de supprimer : non vide!</font>';
 	}
 }
 
@@ -168,7 +166,7 @@ function do_upload($file, $dest_dir) {
 	global $clearUploads;
 
 		if (file_exists($dest_dir.$file['name'])) {
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload FAILED.File allready exists" );
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "ECHEC Upload. Le fichier existe déjà!" );
 		}
 
 		$format = substr( $file['name'], -3 );
@@ -196,18 +194,19 @@ function do_upload($file, $dest_dir) {
 
         $noMatch = 0;
 		foreach( $allowable as $ext ) {
-			if ( strcasecmp( $format, $ext ) == 0 ) $noMatch = 1;
+		if ( strcasecmp( $format, $ext ) == 0 ) {
+			$noMatch = 1;
+		}
 		}
         if(!$noMatch){
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], 'This file type is not supported' );
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], 'Type de fichier non supporté' );
         }
 
 		if (!move_uploaded_file($file['tmp_name'], $dest_dir.strtolower($file['name']))){
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload FAILED" );
-			}
-		else {
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "ECHEC Upload" );
+	} else {
 			mosChmod($dest_dir.strtolower($file['name']));
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload complete" );
+			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload terminé" );
 		}
 
 	$clearUploads = true;
@@ -220,8 +219,8 @@ function recursive_listdir( $base ) {
 	if(is_dir($base)) {
 		$dh = opendir($base);
 		while (false !== ($dir = readdir($dh))) {
-			if (is_dir($base ."/". $dir) && $dir !== '.' && $dir !== '..' && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
-				$subbase = $base ."/". $dir;
+			if (is_dir($base .'/'. $dir) && $dir !== '.' && $dir !== '..' && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
+				$subbase = $base .'/'. $dir;
 				$dirlist[] = $subbase;
 				$subdirlist = recursive_listdir($subbase);
 			}
@@ -289,7 +288,6 @@ function listImages($listdir) {
 					// file is document
 					$file_details['size'] = filesize( COM_MEDIA_BASE .$listdir."/".$img_file);
 					$file_details['file'] = COM_MEDIA_BASE .$listdir."/".$img_file;
-					//$docs[$entry] = $img_file;
 					$docs[$entry] = $file_details;
 				}
 			} else if(is_dir( COM_MEDIA_BASE .'/'.$listdir.'/'.$img_file) && substr($entry,0,1) != '.' && strtolower($entry) !== 'cvs') {
@@ -317,13 +315,12 @@ function listImages($listdir) {
 
 			for($i=0; $i<count($docs); $i++) {
 				$doc_name = key($docs);
-				$iconfile= $GLOBALS['mosConfig_absolute_path']."/administrator/components/com_media/images/".substr($doc_name,-3)."_16.png";
+				$iconfile= $GLOBALS['mosConfig_absolute_path'].'/administrator/components/com_media/images/'.substr($doc_name,-3).'_16.png';
 				if (file_exists($iconfile))	{
-					$icon = "components/com_media/images/".(substr($doc_name,-3))."_16.png"	;
+					$icon = 'components/com_media/images/'.(substr($doc_name,-3)).'_16.png'	;
 				} else {
-					$icon = "components/com_media/images/con_info.png";
+					$icon = 'components/com_media/images/con_info.png';
 				}
-				//HTML_Media::show_doc($docs[$doc_name], $listdir, $icon);
 				HTML_Media::show_doc($doc_name, $docs[$doc_name]['size'],$listdir, $icon);
 				next($docs);
 			}
@@ -344,21 +341,15 @@ function listImages($listdir) {
 }
 
 function rm_all_dir($dir) {
-	//$dir = dir_name($dir);
-	//echo "OPEN:".$dir.'<Br>';
 	if(is_dir($dir)) {
 		$d = @dir($dir);
 
 		while ( false !== ( $entry = $d->read() ) ) {
-			//echo "#".$entry.'<br>';
 			if($entry != '.' && $entry != '..') {
 				$node = $dir.'/'.$entry;
-				//echo "NODE:".$node;
 				if(is_file($node)) {
-					//echo " - is file<br>";
 					unlink($node);
 				} else if(is_dir($node)) {
-					//echo " -	is Dir<br>";
 					rm_all_dir($node);
 				}
 			}
@@ -367,6 +358,5 @@ function rm_all_dir($dir) {
 
 		rmdir($dir);
 	}
-	//echo "RM: $dir <br>";
 }
 ?>

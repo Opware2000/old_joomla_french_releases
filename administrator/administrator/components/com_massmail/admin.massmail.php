@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.massmail.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.massmail.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -56,16 +56,16 @@ function sendMail() {
 	global $mosConfig_sitename;
 	global $mosConfig_mailfrom, $mosConfig_fromname;
 
-	$mode				= mosGetParam( $_POST, 'mm_mode', 0 );
-	$subject			= mosGetParam( $_POST, 'mm_subject', '' );
+	$mode				= intval( mosGetParam( $_POST, 'mm_mode', 0 ) );
+	$subject			= strval( mosGetParam( $_POST, 'mm_subject', '' ) );
 	$gou				= mosGetParam( $_POST, 'mm_group', NULL );
-	$recurse			= mosGetParam( $_POST, 'mm_recurse', 'NO_RECURSE' );
+	$recurse			= strval( mosGetParam( $_POST, 'mm_recurse', 'NO_RECURSE' ) );
 	// pulls message inoformation either in text or html format
 	if ( $mode ) {
 		$message_body	= $_POST['mm_message'];
 	} else {
 		// automatically removes html formatting
-		$message_body	= mosGetParam( $_POST, 'mm_message', '' );
+		$message_body	= strval( mosGetParam( $_POST, 'mm_message', '' ) );
 	}
 	$message_body 		= stripslashes( $message_body );
 

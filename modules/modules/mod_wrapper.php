@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_wrapper.php 1782 2006-01-13 02:29:37Z eddieajau $
+* @version $Id: mod_wrapper.php 2528 2006-02-22 16:23:57Z stingrey $
 * @package Joomla_1.0.0
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,22 +23,26 @@ $params->def( 'add', '1' );
 
 $url = $params->get( 'url' );
 if ( $params->get( 'add' ) ) {
-	// adds "http://" if none is set
-	if ( !strstr( $url, 'http' ) && !strstr( $url, 'https' ) ) {
+	// adds 'http://' if none is set
+	if ( substr( $url, 0, 1 ) == '/' ) {
+		// relative url in component. use server http_host.
+		$url = 'http://'. $_SERVER['HTTP_HOST'] . $url;
+	} elseif ( !strstr( $url, 'http' ) && !strstr( $url, 'https' ) ) {
 		$url = 'http://'. $url;
+	} else {
+		$url = $url;
 	}
 }
 
 // auto height control
-if ( $params->get( 'height_auto' ) ) {
-	$load = "window.onload = iFrameHeight;\n";
+if ( $params->def( 'height_auto' ) ) {
+	$load = 'onload="iFrameHeight()"';
 } else {
 	$load = '';
 }
 
 ?>
 <script language="javascript" type="text/javascript">
-<?php echo $load; ?>
 function iFrameHeight() {
 	var h = 0;
 	if ( !document.all ) {
@@ -51,6 +55,7 @@ function iFrameHeight() {
 }
 </script>
 <iframe
+<?php echo $load; ?>
 id="blockrandom"
 src="<?php echo $url; ?>"
 width="<?php echo $params->get( 'width' ); ?>"
@@ -58,5 +63,6 @@ height="<?php echo $params->get( 'height' ); ?>"
 scrolling="<?php echo $params->get( 'scrolling' ); ?>"
 align="top"
 frameborder="0"
-class="wrapper<?php echo $params->get( 'pageclass_sfx' ); ?>">
+class="wrapper<?php echo $params->get( 'moduleclass_sfx' ); ?>">
+<?php echo _CMN_IFRAMES; ?>
 </iframe>

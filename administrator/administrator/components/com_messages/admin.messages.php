@@ -18,7 +18,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$task	= mosGetParam( $_REQUEST, 'task' );
 $cid	= mosGetParam( $_REQUEST, 'cid', array( 0 ) );
 if (!is_array( $cid )) {
 	$cid = array ( 0 );
@@ -34,11 +33,7 @@ switch ($task) {
 		break;
 
 	case 'reply':
-		newMessage(
-			$option,
-			mosGetParam( $_REQUEST, 'userid', 0 ),
-			mosGetParam( $_REQUEST, 'subject', '' )
-		);
+		newMessage( $option );
 		break;
 
 	case 'save':
@@ -72,9 +67,21 @@ function editConfig( $option ) {
 	$database->setQuery( $query );
 	$data = $database->loadObjectList( 'cfg_name' );
 
+	// initialize values if they do not exist
+	if (!isset($data['lock']->cfg_value)) {
+		$data['lock']->cfg_value 		= 0;
+	}
+	if (!isset($data['mail_on_new']->cfg_value)) {
+		$data['mail_on_new']->cfg_value = 0;
+	}
+	if (!isset($data['auto_purge']->cfg_value)) {
+		$data['auto_purge']->cfg_value 	= 7;
+	}
+	
 	$vars 				= array();
-	$vars['lock'] 		= mosHTML::yesnoSelectList( "vars[lock]", 'class="inputbox" size="1"', @$data['lock']->cfg_value );
-	$vars['mail_on_new'] = mosHTML::yesnoSelectList( "vars[mail_on_new]", 'class="inputbox" size="1"', @$data['mail_on_new']->cfg_value );
+	$vars['lock'] 			= mosHTML::yesnoSelectList( "vars[lock]", 'class="inputbox" size="1"', $data['lock']->cfg_value );
+	$vars['mail_on_new'] 	= mosHTML::yesnoSelectList( "vars[mail_on_new]", 'class="inputbox" size="1"', $data['mail_on_new']->cfg_value );
+	$vars['auto_purge'] 	= $data['auto_purge']->cfg_value;
 
 	HTML_messages::editConfig( $vars, $option );
 
@@ -102,8 +109,11 @@ function saveConfig( $option ) {
 	mosRedirect( "index2.php?option=$option" );
 }
 
-function newMessage( $option, $user, $subject ) {
-	global $database, $mainframe, $my, $acl;
+function newMessage( $option ) {
+	global $database, $acl;
+	
+	$user 		= intval( mosGetParam( $_REQUEST, 'userid', 0 ) );
+	$subject 	= strval( mosGetParam( $_REQUEST, 'subject', '' ) );
 
 	// get available backend user groups
 	$gid 	= $acl->get_group_id( 'Public Backend', 'ARO' );
@@ -111,7 +121,8 @@ function newMessage( $option, $user, $subject ) {
 	$gids 	= implode( ',', $gids );
 
 	// get list of usernames
-	$recipients = array( mosHTML::makeOption( '0', '- Select User -' ) );
+	$recipients = array( mosHTML::makeOption( '0', '- S&eacute;lectionner un utilisateur -' ) );
+
 	$query = "SELECT id AS value, username AS text FROM #__users"
 	. "\n WHERE gid IN ( $gids )"
 	. "\n ORDER BY name"
@@ -119,15 +130,8 @@ function newMessage( $option, $user, $subject ) {
 	$database->setQuery( $query );
 	$recipients = array_merge( $recipients, $database->loadObjectList() );
 
-	$recipientslist =
-		mosHTML::selectList(
-			$recipients,
-			'user_id_to',
-			'class="inputbox" size="1"',
-			'value',
-			'text',
-			$user
-		);
+	$recipientslist = mosHTML::selectList( $recipients, 'user_id_to', 'class="inputbox" size="1"', 'value', 'text', $user );
+		
 	HTML_messages::newMessage($option, $recipientslist, $subject );
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.newsfeeds.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.newsfeeds.html.php 2693 2006-03-07 18:13:12Z stingrey $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,7 +22,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class HTML_newsfeeds {
 
 	function showNewsFeeds( &$rows, &$lists, $pageNav, $option ) {
-		global $my;
+		global $my, $mosConfig_cachepath;
 
 		mosCommonHTML::loadOverlib();
 		?>
@@ -30,7 +30,7 @@ class HTML_newsfeeds {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Newsfeed Manager
+			Gestionnaire de flux RSS
 			</th>
 			<td width="right">
 			<?php echo $lists['category'];?>
@@ -47,23 +47,22 @@ class HTML_newsfeeds {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
 			<th class="title">
-			News Feed
+			Flux RSS
 			</th>
 			<th width="5%">
-			Published
+			Publi&eacute;
 			</th>
 			<th colspan="2" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th class="title" width="20%">
-			Category
+			Cat&eacute;gorie
 			</th>
 			<th width="5%" nowrap="nowrap">
 			# Articles
 			</th>
 			<th width="10%">
-			Cache time
-			</th>
+			Dur&eacute;e du cache			</th>
 		</tr>
 		<?php
 		$k = 0;
@@ -74,7 +73,7 @@ class HTML_newsfeeds {
 
 			$img 	= $row->published ? 'tick.png' : 'publish_x.png';
 			$task 	= $row->published ? 'unpublish' : 'publish';
-			$alt 	= $row->published ? 'Published' : 'Unpublished';
+			$alt 	= $row->published ? 'Publié' : 'Non Publié';
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 
@@ -92,7 +91,7 @@ class HTML_newsfeeds {
 				if ( $row->checked_out && ( $row->checked_out != $my->id ) ) {
 					?>
 					<?php echo $row->name; ?>
-					&nbsp;[ <i>Checked Out</i> ]
+					&nbsp;[ <i>V&eacute;rifi&eacute;</i> ]
 					<?php
 				} else {
 					?>
@@ -133,6 +132,23 @@ class HTML_newsfeeds {
 		</table>
 		<?php echo $pageNav->getListFooter(); ?>
 
+		<table class="adminform">
+		<tr>
+			<td>
+				<table align="center">
+				<?php
+				$visible = 0;
+				// check to hide certain paths if not super admin
+				if ( $my->gid == 25 ) {
+					$visible = 1;
+				}
+				mosHTML::writableCell( $mosConfig_cachepath, 0, '<strong>Cache Directory</strong> ', $visible );
+				?>
+				</table>
+			</td>
+		</tr>
+		</table>
+
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
@@ -155,17 +171,17 @@ class HTML_newsfeeds {
 
 			// do field validation
 			if (form.name.value == '') {
-				alert( "Please fill in the newsfeed name." );
+				alert( "Vous devez saisir un nom de flux RSS." );
 			} else if (form.catid.value == 0) {
-				alert( "Please select a Category." );
+				alert( "Vous devez sélectionner une catégorie." );
 			} else if (form.link.value == '') {
-				alert( "Please fill in the newsfeed link." );
+				alert( "Vous devez saisir le lien du flux RSS." );
 			} else if (getSelectedValue('adminForm','catid') < 0) {
-				alert( "Please select a category." );
+				alert( "Vous devez sélectionner une catégorie." );
 			} else if (form.numarticles.value == "" || form.numarticles.value == 0) {
-				alert( "Please fill in the number of articles to display." );
+				alert( "Vous devez sélectionner le nombre d\'articles à afficher." );
 			} else if (form.cache_time.value == "" || form.cache_time.value == 0) {
-				alert( "Please fill in the cache refresh time." );
+				alert( "Vous devez saisir la durée de rafraîchissement du cache." );
 			} else {
 				submitform( pressbutton );
 			}
@@ -176,7 +192,7 @@ class HTML_newsfeeds {
 		<table class="adminheading">
 		<tr>
 			<th class="edit">
-			Newsfeed: <small><?php echo $row->id ? 'Edit' : 'New';?></small> <small><small>[ <?php echo $row->name;?> ]</small></small>
+			Flux RSS: <small><?php echo $row->id ? 'Editer' : 'Nouveau';?></small> <small><small>[ <?php echo $row->name;?> ]</small></small>
 			</th>
 		</tr>
 		</table>
@@ -184,12 +200,12 @@ class HTML_newsfeeds {
 		<table class="adminform">
 		<tr>
 			<th colspan="2">
-			Details
+			D&eacute;tails
 			</th>
 		</tr>
 		<tr>
 			<td>
-			Name
+			Nom
 			</td>
 			<td>
 			<input class="inputbox" type="text" size="40" name="name" value="<?php echo $row->name; ?>">
@@ -197,7 +213,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td>
-			Category
+			Cat&eacute;gorie
 			</td>
 			<td>
 			<?php echo $lists['category']; ?>
@@ -205,7 +221,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td>
-			Link
+			Lien
 			</td>
 			<td>
 			<input class="inputbox" type="text" size="60" name="link" value="<?php echo $row->link; ?>">
@@ -213,7 +229,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td>
-			Number of Articles
+			Nombre d'articles
 			</td>
 			<td>
 			<input class="inputbox" type="text" size="2" name="numarticles" value="<?php echo $row->numarticles; ?>">
@@ -221,7 +237,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td>
-			Cache time (in seconds)
+			Dur&eacute;e du cache (en secondes)
 			</td>
 			<td>
 			<input class="inputbox" type="text" size="4" name="cache_time" value="<?php echo $row->cache_time; ?>">
@@ -229,7 +245,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td>
-			Ordering
+			Ordre
 			</td>
 			<td>
 			<?php echo $lists['ordering']; ?>
@@ -237,7 +253,7 @@ class HTML_newsfeeds {
 		</tr>
 		<tr>
 			<td valign="top" align="right">
-			Published:
+			Publi&eacute;:
 			</td>
 			<td>
 			<?php echo $lists['published']; ?>

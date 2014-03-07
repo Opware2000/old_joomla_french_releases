@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.php 1596 2005-12-31 05:40:31Z stingrey $
+* @version $Id: admin.banners.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ switch ($task) {
 		break;
 
 	case 'editclient':
-		editBannerClient( $cid[0], $option );
+		editBannerClient( intval( $cid[0] ), $option );
 		break;
 
 	case 'editclientA':
@@ -100,8 +100,8 @@ switch ($task) {
 function viewBanners( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "viewban{$option}limitstart", 'limitstart', 0 );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "viewban{$option}limitstart", 'limitstart', 0 ) );
 
 	// get the total number of records
 	$query = "SELECT COUNT(*)"
@@ -149,7 +149,7 @@ function editBanner( $bannerid, $option ) {
 		return;
 	}
 
-	$clientlist[] 	= mosHTML::makeOption( '0', 'Select Client', 'cid', 'name' );
+	$clientlist[] 	= mosHTML::makeOption( '0', 'Sélectionner un client', 'cid', 'name' );
 	$clientlist 	= array_merge( $clientlist, $database->loadObjectList() );
 	$lists['cid'] 	= mosHTML::selectList( $clientlist, 'cid', 'class="inputbox" size="1"','cid', 'name', $row->cid);
 
@@ -160,8 +160,8 @@ function editBanner( $bannerid, $option ) {
 
 
 	// make the select list for the image positions
-	$yesno[] = mosHTML::makeOption( '0', 'No' );
-  	$yesno[] = mosHTML::makeOption( '1', 'Yes' );
+	$yesno[] = mosHTML::makeOption( '0', 'Non' );
+  	$yesno[] = mosHTML::makeOption( '1', 'Oui' );
 
   	$lists['showBanner'] = mosHTML::selectList( $yesno, 'showBanner', 'class="inputbox" size="1"' , 'value', 'text', $row->showBanner );
 
@@ -173,7 +173,7 @@ function saveBanner( $task ) {
 
 	$row = new mosBanner($database);
 
-	$msg = 'Saved Banner info';
+	$msg = 'Information bannière sauvegardée';
 	if (!$row->bind( $_POST )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
@@ -182,11 +182,11 @@ function saveBanner( $task ) {
 	// Resets clicks when `Reset Clicks` button is used instead of `Save` button
 	if ( $task == 'resethits' ) {
 		$row->clicks = 0;
-		$msg = 'Reset Banner clicks';
+		$msg = 'Remise &agrave; z&eacute;ro des clics banni&egrave;re';
 	}
 	
 	// Sets impressions to unlimited when `unlimited` checkbox ticked
-	$unlimited = mosGetParam( $_POST, 'unlimited', 0 );
+	$unlimited = intval( mosGetParam( $_POST, 'unlimited', 0 ) );
 	if ( $unlimited ) {
 		$row->imptotal = 0;
 	}
@@ -264,8 +264,8 @@ function removeBanner( $cid ) {
 function viewBannerClients( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$limit = $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "viewcli{$option}limitstart", 'limitstart', 0 );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "viewcli{$option}limitstart", 'limitstart', 0 ) );
 
 	// get the total number of records
 	$query = "SELECT COUNT(*)"
@@ -302,7 +302,7 @@ function editBannerClient( $clientid, $option ) {
 
 	// fail if checked out not by 'me'
 	if ($row->checked_out && $row->checked_out != $my->id) {
-		$msg = 'The client [ '. $row->name. ' ] is currently being edited by another person.';
+		$msg = 'Le client [ '. $row->name. ' ] est en cours d\'&eacute;dition par un autre administrateur.';
 		mosRedirect( 'index2.php?option='. $option .'&task=listclients', $msg );
 	}
 
@@ -363,7 +363,7 @@ function removeBannerClients( $cid, $option ) {
 
 		if ($count != 0) {
 			mosRedirect( "index2.php?option=$option&task=listclients",
-			"Cannot delete client at this time as they have a banner still running" );
+			"Impossible du supprimer un client qui a encore une banni&egrave;re active" );
 		} else {
 			$query="DELETE FROM #__bannerfinish"
 			. "\n WHERE cid = ". $cid[$i]

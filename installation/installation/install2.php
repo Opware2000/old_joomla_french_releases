@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install2.php 749 2005-10-31 06:25:03Z stingrey $
+* @version $Id: install2.php 3832 2006-06-03 16:47:58Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -35,18 +35,18 @@ $database = null;
 $errors = array();
 if (!$DBcreated){
 	if (!$DBhostname || !$DBuserName || !$DBname) {
-		db_err ("stepBack3","The database details provided are incorrect and/or empty.");
+		db_err ("stepBack3","Les paramètres de connexion à la base de données sont incorrects ou manquants.");
 	}
 
+	if($DBPrefix == '') {
+		db_err ('stepBack','Vous n\'avez pas saisi de préfixe pour la base de données.');
+	}
+	
 	$database = new database( $DBhostname, $DBuserName, $DBpassword, '', '', false );
 	$test = $database->getErrorMsg();
 
 	if (!$database->_resource) {
-		db_err ('stepBack2','The password and username provided are incorrect.');
-	}
-
-	if($DBname == '') {
-		db_err ('stepBack','The database name provided is empty.');
+		db_err ('stepBack2','Le mot de passe et le nom d\'utilisateur sont incorrects.');
 	}
 
 	// Does this code actually do anything???
@@ -192,7 +192,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 <script type="text/javascript">
 <!--
@@ -227,33 +227,32 @@ function check() {
 	<input type="hidden" name="DBcreated" value="<?php echo "$DBcreated"; ?>" />
 	<div class="install">
 		<div id="stepbar">
-		  	<div class="step-off">pre-installation check</div>
-	  		<div class="step-off">license</div>
-		  	<div class="step-off">step 1</div>
-		  	<div class="step-on">step 2</div>
-	  		<div class="step-off">step 3</div>
-		  	<div class="step-off">step 4</div>
+		  	<div class="step-off">Pré-installation</div>
+	  		<div class="step-off">Licence</div>
+		  	<div class="step-off">Etape 1</div>
+		  	<div class="step-on">Etape 2</div>
+	  		<div class="step-off">Etape 3</div>
+		  	<div class="step-off">Etape 4</div>
 		</div>
 		<div id="right">
   			<div class="far-right">
 <?php if (!$isErr) { ?>
-  		  		<input class="button" type="submit" name="next" value="Next >>"/>
+  		  		<input class="button" type="submit" name="next" value="Suivant >>"/>
 <?php } ?>
   			</div>
-	  		<div id="step">step 2</div>
+	  		<div id="step">Etape 2</div>
   			<div class="clr"></div>
 
-  			<h1>Enter the name of your Joomla site:</h1>
+  			<h1>Saisissez le nom de votre site Joomla:</h1>
 			<div class="install-text">
 <?php if ($isErr) { ?>
-			Looks like there have been some errors with inserting data into your database!<br />
-  			You cannot continue.
+			Il semble qu\il y ait eu des problèmes lors de l\insertion des données dans la base de données!<br />
+  			Vous ne pouvez pas continuer.
 <?php } else { ?>
-			SUCCESS!
+			SUCCES!
 			<br/>
 			<br/>
-  			Type in the name for your Joomla site. This
-			name is used in email messages so make it something meaningful.
+  			Le nom du site est utilisé dans les mails, faites en sorte qu'il soit parlant.
 <?php } ?>
   		</div>
   		<div class="install-form">
@@ -274,12 +273,12 @@ function check() {
   			} else {
 ?>
   				<tr>
-  					<td width="100">Site name</td>
+  					<td width="100">Nom du site</td>
   					<td align="center"><input class="inputbox" type="text" name="sitename" size="50" value="<?php echo "{$configArray['sitename']}"; ?>" /></td>
   				</tr>
   				<tr>
   					<td width="100">&nbsp;</td>
-  					<td align="center" class="small">e.g. The Home of Joomla</td>
+  					<td align="center" class="small">Par exemple: Mon site Joomla</td>
   				</tr>
   				</table>
 <?php

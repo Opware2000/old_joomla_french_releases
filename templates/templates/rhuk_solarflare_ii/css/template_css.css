@@ -29,7 +29,8 @@ body {
 
 #buttons_inner {
 	border: 1px solid #cccccc;
-	height: 21px;
+	height: 21px !important;
+	height: 23px;
 }
 
 #pathway_text {
@@ -592,7 +593,6 @@ a.sublevel:hover {
 
 a.sublevel#active_menu {
 	color: #333;
-	text-decoration: bold;
 }
 
 .highlight {
@@ -625,7 +625,6 @@ div.mosimage {
   background: #efefef;
   padding: 1px 2px;
   color: #666;
-  text-transform: normal;
   font-size: 10px;
   border-top: 1px solid #cccccc;
 }

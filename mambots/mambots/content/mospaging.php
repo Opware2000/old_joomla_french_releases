@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mospaging.php 1674 2006-01-06 17:26:54Z stingrey $
+* @version $Id: mospaging.php 2574 2006-02-23 18:48:16Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -31,8 +31,13 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosPaging' );
 *
 */
 function botMosPaging( $published, &$row, &$params, $page=0 ) {
-	global $mainframe, $Itemid, $database;
+	global $mainframe, $Itemid, $database, $_MAMBOTS;
 
+	// simple performance check to determine whether bot should process further
+	if ( strpos( $row->text, 'mospagebreak' ) === false ) {
+		return true;
+	}
+	
  	// expression to search for
  	$regex = '/{(mospagebreak)\s*(.*?)}/i';
 
@@ -54,16 +59,24 @@ function botMosPaging( $published, &$row, &$params, $page=0 ) {
 
 	// we have found at least one mambot, therefore at least 2 pages
 	if ($n > 1) {
-		// load mambot params info
-		$query = "SELECT id"
-		. "\n FROM #__mambots"
-		. "\n WHERE element = 'mospaging'"
-		. "\n AND folder = 'content'"
-		;
-		$database->setQuery( $query );
-	 	$id 	= $database->loadResult();
-	 	$mambot = new mosMambot( $database );
-	  	$mambot->load( $id );
+		// check if param query has previously been processed
+		if ( !isset($_MAMBOTS->_content_mambot_params['mospaging']) ) {
+			// load mambot params info
+			$query = "SELECT params"
+			. "\n FROM #__mambots"
+			. "\n WHERE element = 'mospaging'"
+			. "\n AND folder = 'content'"
+			;
+			$database->setQuery( $query );
+			$database->loadObject($mambot);		
+			
+			// save query to class variable
+			$_MAMBOTS->_content_mambot_params['mospaging'] = $mambot;
+		}
+		
+		// pull query data from class variable
+		$mambot = $_MAMBOTS->_content_mambot_params['mospaging'];
+		
 	 	$botParams = new mosParameters( $mambot->params );
 
 	 	$title	= $botParams->def( 'title', 1 );
@@ -77,7 +90,8 @@ function botMosPaging( $published, &$row, &$params, $page=0 ) {
 				parse_str( html_entity_decode( $matches[0][2] ), $args );
 
 				if ( @$args['heading'] ) {
-					$row->page_title = $args['heading'];
+					//$row->page_title = $args['heading'];
+					$row->page_title = '';
 				} else {
 					$row->page_title = '';
 				}
@@ -85,7 +99,7 @@ function botMosPaging( $published, &$row, &$params, $page=0 ) {
 				parse_str( html_entity_decode( $matches[$page-1][2] ), $args );
 
 				if ( @$args['title'] ) {
-					$row->page_title = stripslashes( $args['title'] );
+					$row->page_title = ': '. stripslashes( $args['title'] );
 				}
 			}
 	 	}
@@ -143,11 +157,11 @@ function createTOC( &$row, &$matches, &$page ) {
 	$heading = $row->title;
 	// allows customization of first page title by checking for `heading` attribute in first bot
 	if ( @$matches[0][2] ) {
-		parse_str( html_entity_decode( $matches[0][2] ), $args2 );
+		parse_str( html_entity_decode( $matches[0][2] ), $args );
 
 		if ( @$args['heading'] ) {
 			$heading = $args['heading'];
-			$row->title .= ': '. $heading;
+			$row->title .= ' - '. $heading;
 		}
 	}
 

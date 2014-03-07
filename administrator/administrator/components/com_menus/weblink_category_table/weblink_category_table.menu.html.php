@@ -31,7 +31,7 @@ class weblink_category_table_menu_html {
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
-			if ( pressbutton == 'cancel' ) {
+			if ( pressbutton == 'annuler' ) {
 				submitform( pressbutton );
 				return;
 			}
@@ -40,7 +40,7 @@ class weblink_category_table_menu_html {
 			if ( !$menu->id ) {
 				?>
 				if ( getSelectedValue( 'adminForm', 'componentid' ) < 1 ) {
-					alert( 'You must select a category' );
+					alert( 'Vous devez sélectionner une catégorie' );
 					return;
 				}
 				cat = getSelectedText( 'adminForm', 'componentid' );
@@ -54,7 +54,7 @@ class weblink_category_table_menu_html {
 			} else {
 				?>
 				if ( form.name.value == '' ) {
-					alert( 'This Menu item must have a title' );
+					alert( 'Le lien doit avoir un nom' );
 				} else {
 					submitform( pressbutton );
 				}
@@ -67,7 +67,7 @@ class weblink_category_table_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Table - Weblink Category
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Tableau - Catégories de liens web
 			</th>
 		</tr>
 		</table>
@@ -78,13 +78,13 @@ class weblink_category_table_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Details
+					Détails
 					</th>
 				</tr>
 
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Name:
+					Nom du lien:
 					</td>
 					<td width="200px">
 					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo $menu->name; ?>"/>
@@ -92,14 +92,14 @@ class weblink_category_table_menu_html {
 					<td>
 					<?php
 					if ( !$menu->id ) {
-						echo mosToolTip( 'If you leave this blank the Category name will be automatically used' );
+						echo mosToolTip( 'si ce champ est vierge, le nom de la catégorie sélectionnée sera automatiquement utilisé' );
 					}
 					?>
 					</td>
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Category:
+					Catégories:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['componentid']; ?>
@@ -115,7 +115,7 @@ class weblink_category_table_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['parent'];?>
@@ -123,7 +123,7 @@ class weblink_category_table_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['ordering']; ?>
@@ -131,7 +131,7 @@ class weblink_category_table_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['access']; ?>
@@ -139,7 +139,7 @@ class weblink_category_table_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Published:
+					Publié:
 					</td>
 					<td colspan="2">
 					<?php echo $lists['published']; ?>
@@ -154,7 +154,7 @@ class weblink_category_table_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

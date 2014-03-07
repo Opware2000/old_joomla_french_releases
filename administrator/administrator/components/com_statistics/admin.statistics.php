@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.statistics.php 120 2005-09-16 20:09:14Z stingrey $
+* @version $Id: admin.statistics.php 2762 2006-03-12 19:09:43Z stingrey $
 * @package Joomla
 * @subpackage Statistics
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -21,6 +21,10 @@ switch ($task) {
 		showSearches( $option, $task );
 		break;
 
+	case 'searchesresults':
+		showSearches( $option, $task, 1 );
+		break;
+	
 	case 'pageimp':
 		showPageImpressions( $option, $task );
 		break;
@@ -157,7 +161,7 @@ function showPageImpressions( $option, $task ) {
 	HTML_statistics::pageImpressions( $rows, $pageNav, $option, $task );
 }
 
-function showSearches( $option, $task ) {
+function showSearches( $option, $task, $showResults=null ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 	global $_MAMBOTS;
 
@@ -189,17 +193,25 @@ function showSearches( $option, $task ) {
 
 	$_MAMBOTS->loadBotGroup( 'search' );
 
-	for ($i=0, $n = count($rows); $i < $n; $i++) {
-		$results = $_MAMBOTS->trigger( 'onSearch', array( $rows[$i]->search_term ) );
-
-		$count = 0;
-		for ($j = 0, $n2 = count( $results ); $j < $n2; $j++) {
-			$count += count( $results[$j] );
+	$total = count($rows);
+	for ($i=0, $n = $total; $i < $n; $i++) {
+		// determine if number of results for search item should be calculated
+		// by default it is `off` as it is highly query intensive
+		if ( $showResults ) {
+			$results = $_MAMBOTS->trigger( 'onSearch', array( $rows[$i]->search_term ) );
+	
+			$count = 0;
+			$total = count( $results );
+			for ($j = 0, $n2 = $total; $j < $n2; $j++) {
+				$count += count( $results[$j] );
+			}
+	
+			$rows[$i]->returns = $count;
+		} else {
+			$rows[$i]->returns = null;
 		}
-
-		$rows[$i]->returns = $count;
 	}
 
-	HTML_statistics::showSearches( $rows, $pageNav, $option, $task );
+	HTML_statistics::showSearches( $rows, $pageNav, $option, $task, $showResults );
 }
 ?>

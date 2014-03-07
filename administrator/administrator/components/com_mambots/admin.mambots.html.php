@@ -35,10 +35,9 @@ class HTML_modules {
 		<table class="adminheading">
 		<tr>
 			<th class="modules">
-			Mambot Manager <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
-			</th>
+			Gestionnaire de Mambots <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>			</th>
 			<td>
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
@@ -56,28 +55,27 @@ class HTML_modules {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows );?>);" />
 			</th>
 			<th class="title">
-			Mambot Name
-			</th>
+			Nom du Mambot			</th>
 			<th nowrap="nowrap" width="10%">
-	  		Published
+	  		Publi&eacute;
 			</th>
 			<th colspan="2" nowrap="true" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th width="2%">
-			Order
+			Tri
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver Tri" /></a>
 			</th>
 			<th nowrap="nowrap" width="10%">
-			Access
+			Acc&egrave;s
 			</th>
 			<th nowrap="nowrap" align="left" width="10%">
 			Type
 			</th>
 			<th nowrap="nowrap" align="left" width="10%">
-			File
+			Fichier
 			</th>
 		</tr>
 		<?php
@@ -191,12 +189,10 @@ class HTML_modules {
 		<table class="adminheading">
 		<tr>
 			<th class="mambots">
-			Site Mambot:
+			Mambot du site:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
-			</small>
-			<?php echo $row->nameA; ?>
-			</th>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>			</small>
+			<?php echo $row->nameA; ?>			</th>
 		</tr>
 		</table>
 
@@ -207,12 +203,11 @@ class HTML_modules {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Mambot Details
-					</th>
+					D&eacute;tails du Mambot					</th>
 				<tr>
 				<tr>
 					<td width="100" align="left">
-					Name:
+					Nom:
 					</td>
 					<td>
 					<input class="text_area" type="text" name="name" size="35" value="<?php echo $row->name; ?>" />
@@ -220,7 +215,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Folder:
+					R&eacute;pertoire:
 					</td>
 					<td>
 					<?php echo $lists['folder']; ?>
@@ -228,7 +223,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Mambot file:
+					Fichier Mambot:
 					</td>
 					<td>
 					<input class="text_area" type="text" name="element" size="35" value="<?php echo $row->element; ?>" />.php
@@ -236,7 +231,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Mambot Order:
+					Ordre du Mambot:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -244,7 +239,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" align="left">
-					Access Level:
+					Niveau d'acc&eacute;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -252,7 +247,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top">
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
@@ -277,7 +272,7 @@ class HTML_modules {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Parameters
+					Param&egrave;tres
 					</th>
 				<tr>
 				<tr>

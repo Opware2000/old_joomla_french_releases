@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: wrapper.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: wrapper.php 3594 2006-05-22 17:29:07Z stingrey $
 * @package Joomla
 * @subpackage Wrapper
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,8 +23,7 @@ showWrap( $option );
 function showWrap( $option ) {
 	global $database, $Itemid, $mainframe;
 
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
+	$menu = $mainframe->get( 'menu' );
 	$params = new mosParameters( $menu->params );
 	$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
 	$params->def( 'scrolling', 'auto' );
@@ -32,7 +31,7 @@ function showWrap( $option ) {
 	$params->def( 'pageclass_sfx', '' );
 	$params->def( 'header', $menu->name );
 	$params->def( 'height', '500' );
-	$params->def( 'height_auto', '1' );
+	$params->def( 'height_auto', '0' );
 	$params->def( 'width', '100%' );
 	$params->def( 'add', '1' );
 	$url = $params->def( 'url', '' );

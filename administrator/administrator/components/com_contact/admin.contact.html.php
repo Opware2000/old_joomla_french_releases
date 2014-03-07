@@ -30,10 +30,10 @@ class HTML_contact {
 		<table class="adminheading">
 		<tr>
 			<th>
-			Contact Manager
+			Gestionnaire de contacts
 			</th>
 			<td>
-			Filter:
+			Filtre:
 			</td>
 			<td>
 			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
@@ -53,19 +53,19 @@ class HTML_contact {
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($rows); ?>);" />
 			</th>
 			<th class="title">
-			Name
+			Nom
 			</th>
 			<th width="5%" class="title" nowrap="true">
-			Published
+			Publi&eacute;
 			</th>
 			<th colspan="2" nowrap="nowrap" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th width="15%" align="left">
-			Category
+			Cat&eacute;gorie
 			</th>
 			<th class="title" nowrap="nowrap" width="15%">
-			Linked to User
+			Li&eacute; &agrave; l'utilisateur
 			</th>
 		</tr>
 		<?php
@@ -77,7 +77,7 @@ class HTML_contact {
 
 			$img 	= $row->published ? 'tick.png' : 'publish_x.png';
 			$task 	= $row->published ? 'unpublish' : 'publish';
-			$alt 	= $row->published ? 'Published' : 'Unpublished';
+			$alt 	= $row->published ? 'Publi&eacute;' : 'D&eacute;publi&eacute;';
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 
@@ -97,7 +97,7 @@ class HTML_contact {
 					echo $row->name;
 				} else {
 					?>
-					<a href="<?php echo $link; ?>" title="Edit Contact">
+					<a href="<?php echo $link; ?>" title="Editer le contact">
 					<?php echo $row->name; ?>
 					</a>
 					<?php
@@ -116,12 +116,12 @@ class HTML_contact {
 				<?php echo $pageNav->orderDownIcon( $i, $n, ( $row->catid == @$rows[$i+1]->catid ) ); ?>
 				</td>
 				<td>
-				<a href="<?php echo $row->cat_link; ?>" title="Edit Category">
+				<a href="<?php echo $row->cat_link; ?>" title="Editer la cat&eacute;gorie">
 				<?php echo $row->category; ?>
 				</a>
 				</td>
 				<td>
-				<a href="<?php echo $row->user_link; ?>" title="Edit User">
+				<a href="<?php echo $row->user_link; ?>" title="Editer l'utilisateur">
 				<?php echo $row->user; ?>
 				</a>
 				</td>
@@ -164,9 +164,9 @@ class HTML_contact {
 
 			// do field validation
 			if ( form.name.value == "" ) {
-				alert( "You must provide a name." );
+				alert( "Vous devez donner un nom." );
 			} else if ( form.catid.value == 0 ) {
-				alert( "Please select a Category." );
+				alert( "Merci de sélectionner un catégorie." );
 			} else {
 				submitform( pressbutton );
 			}
@@ -180,7 +180,7 @@ class HTML_contact {
 			<th>
 			Contact:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouveau';?>
 			</small>
 			</th>
 		</tr>
@@ -192,12 +192,12 @@ class HTML_contact {
 				<table width="100%" class="adminform">
 				<tr>
 					<th colspan="2">
-					Contact Details
+					D&eacute;tails du contact
 					</th>
 				<tr>
 				<tr>
 					<td width="20%" align="right">
-					Category:
+					Cat&eacute;gorie:
 					</td>
 					<td width="40%">
 					<?php echo $lists['catid'];?>
@@ -205,7 +205,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td width="20%" align="right">
-					Linked to User:
+					Li&eacute; &agrave; l'utilisateur:
 					</td>
 					<td >
 					<?php echo $lists['user_id'];?>
@@ -213,7 +213,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td width="20%" align="right">
-					Name:
+					Nom:
 					</td>
 					<td >
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo $row->name; ?>" />
@@ -221,7 +221,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td align="right">
-					Contact's Position:
+					Fonction:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="con_position" size="50" maxlength="50" value="<?php echo $row->con_position; ?>" />
@@ -229,15 +229,14 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td align="right">
-					E-mail:
-					</td>
+					Email:					</td>
 					<td>
 					<input class="inputbox" type="text" name="email_to" size="50" maxlength="100" value="<?php echo $row->email_to; ?>" />
 					</td>
 				</tr>
 				<tr>
 					<td align="right">
-					Street Address:
+					Adresse:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="address" size="50" value="<?php echo $row->address; ?>" />
@@ -245,31 +244,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td align="right">
-					Town/Suburb:
-					</td>
-					<td>
-					<input class="inputbox" type="text" name="suburb" size="50" maxlength="50" value="<?php echo $row->suburb;?>" />
-					</td>
-				</tr>
-				<tr>
-					<td align="right">
-					State/County:
-					</td>
-					<td>
-					<input class="inputbox" type="text" name="state" size="50" maxlength="20" value="<?php echo $row->state;?>" />
-					</td>
-				</tr>
-				<tr>
-					<td align="right">
-					Country:
-					</td>
-					<td>
-					<input class="inputbox" type="text" name="country" size="50" maxlength="50" value="<?php echo $row->country;?>" />
-					</td>
-				</tr>
-				<tr>
-					<td align="right">
-					Postal Code/ZIP:
+					CP:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="postcode" size="25" maxlength="10" value="<?php echo $row->postcode; ?>" />
@@ -277,7 +252,31 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td align="right">
-					Telephone:
+					Ville:
+					</td>
+					<td>
+					<input class="inputbox" type="text" name="suburb" size="50" maxlength="50" value="<?php echo $row->suburb;?>" />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+					Etat:
+					</td>
+					<td>
+					<input class="inputbox" type="text" name="state" size="50" maxlength="20" value="<?php echo $row->state;?>" />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+					Pays:
+					</td>
+					<td>
+					<input class="inputbox" type="text" name="country" size="50" maxlength="50" value="<?php echo $row->country;?>" />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+					T&eacute;l&eacute;phone:
 					</td>
 					<td>
 					<input class="inputbox" type="text" name="telephone" size="25" maxlength="25" value="<?php echo $row->telephone; ?>" />
@@ -293,7 +292,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td align="right" valign="top">
-					Miscellaneous Info:
+					Autres Informations:
 					</td>
 					<td>
 					<textarea name="misc" rows="5" cols="50" class="inputbox"><?php echo $row->misc; ?></textarea>
@@ -305,17 +304,17 @@ class HTML_contact {
 			<td width="40%" valign="top">
 				<?php
 				$tabs->startPane("content-pane");
-				$tabs->startTab("Publishing","publish-page");
+				$tabs->startTab("Publication","publish-page");
 				?>
 				<table width="100%" class="adminform">
 				<tr>
 					<th colspan="2">
-					Publishing Info
+					Information de publication
 					</th>
 				<tr>
 				<tr>
 					<td valign="top" align="right">
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
@@ -323,7 +322,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -331,7 +330,7 @@ class HTML_contact {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access:
+					Acc&egrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -350,7 +349,7 @@ class HTML_contact {
 				<table width="100%" class="adminform">
 				<tr>
 					<th colspan="2">
-					Image Info
+					Information sur l'image
 					</th>
 				<tr>
 				<tr>
@@ -371,26 +370,27 @@ class HTML_contact {
 					} else {
 						jsimg='../images/M_images/blank.png';
 					}
-					document.write('<img src=' + jsimg + ' name="imagelib" width="100" height="100" border="2" alt="Preview" />');
+					document.write('<img src=' + jsimg + ' name="imagelib" width="100" height="100" border="2" alt="Aper&ccedil;u" />');
 					</script>
 					</td>
 				</tr>
 				</table>
 				<?php
 				$tabs->endTab();
-				$tabs->startTab("Parameters","params-page");
+				$tabs->startTab("Param&egrave;tres","params-page");
 				?>
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Param&egrave;tres
 					</th>
 				</tr>
 				<tr>
 					<td>
-					* These Parameters only control what you see when you click to view a Contact item *
-					<br /><br />
-					</td>
+					* Ces param&egrave;tres contr&ocirc;lent seulement ce que vous voyez lorsque vous cliquez pour visualiser un contact *
+					<br />
+					<br />
+				  </td>
 				</tr>
 				<tr>
 					<td>

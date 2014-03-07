@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.php 1334 2005-12-07 05:32:52Z eddieajau $
+* @version $Id: frontend.php 3830 2006-06-03 15:53:37Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,20 +17,40 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 */
 function mosMainBody() {
 	// message passed via the url
-	$mosmsg = mosGetParam( $_REQUEST, 'mosmsg', '' );
-	if (!get_magic_quotes_gpc()) {
-		$mosmsg = addslashes( $mosmsg );
-	}
+	$mosmsg = strval( mosGetParam( $_REQUEST, 'mosmsg', '' ) );
 
 	$popMessages = false;
+	
+	// Browser Check
+	$browserCheck = 0;
+	if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+		$browserCheck = 1;
+	}
+	
+	// Session Check
+	$sessionCheck = 0;
+	// Session Cookie `name`
+	$sessionCookieName 	= mosMainFrame::sessionCookieName();		
+	// Get Session Cookie `value`
+	$sessioncookie 		= mosGetParam( $_COOKIE, $sessionCookieName, null );				
+	if ( (strlen($sessioncookie) == 32 || $sessioncookie == '-') ) {
+		$sessionCheck = 1;
+	}
 
-	if ($mosmsg && !$popMessages) {
+	// limit mosmsg to 150 characters
+	if ( strlen( $mosmsg ) > 150 ) {
+		$mosmsg = substr( $mosmsg, 0, 150 );
+	}
+	
+	// mosmsg outputed within html
+	if ($mosmsg && !$popMessages && $browserCheck && $sessionCheck) {
 		echo "\n<div class=\"message\">$mosmsg</div>";
 	}
 
 	echo $GLOBALS['_MOS_OPTION']['buffer'];
 
-	if ($mosmsg && $popMessages) {
+	// mosmsg outputed in JS Popup
+	if ($mosmsg && $popMessages && $browserCheck && $sessionCheck) {
 		echo "\n<script language=\"javascript\">alert('$mosmsg');</script>";
 	}
 }
@@ -54,13 +74,14 @@ function &initModules() {
 		. "\n FROM #__modules AS m"
 		. "\n INNER JOIN #__modules_menu AS mm ON mm.moduleid = m.id"
 		. "\n WHERE m.published = 1"
-		. "\n AND m.access <= '". $my->gid ."'"
+		. "\n AND m.access <= $my->gid"
 		. "\n AND m.client_id != 1"
-		. "\n AND ( mm.menuid = '". $Itemid ."' OR mm.menuid = 0 )"
+		. "\n AND ( mm.menuid = $Itemid OR mm.menuid = 0 )"
 		. "\n ORDER BY ordering";
 
 		$database->setQuery( $query );
 		$modules = $database->loadObjectList();
+		
 		foreach ($modules as $module) {
 			$GLOBALS['_MOS_MODULES'][$module->position][] = $module;
 		}
@@ -73,7 +94,7 @@ function &initModules() {
 function mosCountModules( $position='left' ) {
 	global $database, $my, $Itemid;
 
-	$tp = mosGetParam( $_GET, 'tp', 0 );
+	$tp = intval( mosGetParam( $_GET, 'tp', 0 ) );
 	if ($tp) {
 		return 1;
 	}
@@ -92,7 +113,7 @@ function mosCountModules( $position='left' ) {
 function mosLoadModules( $position='left', $style=0 ) {
 	global $mosConfig_gzip, $mosConfig_absolute_path, $database, $my, $Itemid, $mosConfig_caching;
 
-	$tp = mosGetParam( $_GET, 'tp', 0 );
+	$tp = intval( mosGetParam( $_GET, 'tp', 0 ) );
 	if ($tp) {
 		echo '<div style="height:50px;background-color:#eee;margin:2px;padding:10px;border:1px solid #f00;color:#700;">';
 		echo $position;
@@ -127,15 +148,15 @@ function mosLoadModules( $position='left', $style=0 ) {
 
 		echo $prepend;
 
-		if ((substr("$module->module",0,4))=="mod_") {
+		if ((substr("$module->module",0,4))=='mod_') {
 			if ($params->get('cache') == 1 && $mosConfig_caching == 1) {
-				$cache->call('modules_html::module2', $module, $params, $Itemid, $style );
+				$cache->call('modules_html::module2', $module, $params, $Itemid, $style, $my->gid  );
 			} else {
 				modules_html::module2( $module, $params, $Itemid, $style, $count );
 			}
 		} else {
 			if ($params->get('cache') == 1 && $mosConfig_caching == 1) {
-				$cache->call('modules_html::module', $module, $params, $Itemid, $style );
+				$cache->call('modules_html::module', $module, $params, $Itemid, $style, 0, $my->gid );
 			} else {
 				modules_html::module( $module, $params, $Itemid, $style );
 			}
@@ -152,10 +173,8 @@ function mosLoadModules( $position='left', $style=0 ) {
 * Assembles head tags
 */
 function mosShowHead() {
-	global $database, $option, $my, $mainframe, $_VERSION;
+	global $database, $option, $my, $mainframe, $_VERSION, $task;
 	global $mosConfig_MetaDesc, $mosConfig_MetaKeys, $mosConfig_live_site, $mosConfig_sef, $mosConfig_absolute_path, $mosConfig_sitename, $mosConfig_favicon;
-
-	$task = mosGetParam( $_REQUEST, 'task', '' );
 
 	if ($my->id || $mainframe->get( 'joomlaJavascript' )) {
 		?>
@@ -165,7 +184,7 @@ function mosShowHead() {
 
 	$mainframe->appendMetaTag( 'description', $mosConfig_MetaDesc );
 	$mainframe->appendMetaTag( 'keywords', $mosConfig_MetaKeys );
-	$mainframe->addMetaTag( 'Generator', $_VERSION->PRODUCT . " - " . $_VERSION->COPYRIGHT);
+	$mainframe->addMetaTag( 'Generator', $_VERSION->PRODUCT . ' - ' . $_VERSION->COPYRIGHT);
 	$mainframe->addMetaTag( 'robots', 'index, follow' );
 
 	echo $mainframe->getHead();
@@ -174,22 +193,49 @@ function mosShowHead() {
 		echo "<base href=\"$mosConfig_live_site/\" />\r\n";
 	}
 
-	// support for Firefox Live Bookmarks ability for site syndication
-	$query = "SELECT a.id"
+	$row = new mosComponent( $database );
+	$query = "SELECT a.*"
 	. "\n FROM #__components AS a"
-	. "\n WHERE a.name = 'Syndicate'"
+	. "\n WHERE ( a.admin_menu_link = 'option=com_syndicate' OR a.admin_menu_link = 'option=com_syndicate&hidemainmenu=1' )"
+	. "\n AND a.option = 'com_syndicate'"
 	;
 	$database->setQuery( $query );
-	$id = $database->loadResult();
-
-	// load the row from the db table
-	$row = new mosComponent( $database );
-	$row->load( $id );
-
+	$database->loadObject( $row );
+	
 	// get params definitions
-	$params = new mosParameters( $row->params, $mainframe->getPath( 'com_xml', $row->option ), 'component' );
+	$syndicateParams = new mosParameters( $row->params, $mainframe->getPath( 'com_xml', $row->option ), 'component' );
+	
+	// needed to reduce query
+	$GLOBALS['syndicateParams'] = $syndicateParams;
 
-	$live_bookmark = $params->get( 'live_bookmark', 0 );
+	$live_bookmark = $syndicateParams->get( 'live_bookmark', 0 );
+	
+	// and to allow disabling/enabling of selected feed types
+	switch ( $live_bookmark ) {
+		case 'RSS0.91':			
+			if ( !$syndicateParams->get( 'rss091', 1 ) ) {
+				$live_bookmark = 0;
+			}
+			break;
+		
+		case 'RSS1.0':			
+			if ( !$syndicateParams->get( 'rss10', 1 ) ) {
+				$live_bookmark = 0;
+			}
+			break;
+		
+		case 'RSS2.0':			
+			if ( !$syndicateParams->get( 'rss20', 1 ) ) {
+				$live_bookmark = 0;
+			}
+			break;
+		
+		case 'ATOM0.3':			
+			if ( !$syndicateParams->get( 'atom03', 1 ) ) {
+				$live_bookmark = 0;
+			}
+			break;
+	}
 
 	// support for Live Bookmarks ability for site syndication
 	if ($live_bookmark) {
@@ -200,8 +246,25 @@ function mosShowHead() {
 		// xhtml check
 		$link_file = ampReplace( $link_file );
 
+		// security chcek
+		$check = $syndicateParams->def( 'check', 1 );
+		if($check) {
+			// test if rssfeed module is published
+			// if not disable access
+			$query = "SELECT m.id"
+			. "\n FROM #__modules AS m"
+			. "\n WHERE m.module = 'mod_rssfeed'"
+			. "\n AND m.published = 1"
+			;
+			$database->setQuery( $query );
+			$check = $database->loadResultArray();
+			if(empty($check)) {
+				$show = 0;
+			}			
+		}			
 		// outputs link tag for page
 		if ($show) {
+			// test if security check is enbled
 			?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo $mosConfig_sitename; ?>" href="<?php echo $link_file; ?>" />
 			<?php

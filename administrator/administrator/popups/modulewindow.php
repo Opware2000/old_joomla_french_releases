@@ -74,7 +74,7 @@ content = content.replace('src=\"images', 'src=\"../../images');
 	<td valign="top" height="90%"><script>document.write(content);</script></td>
 </tr>
 <tr>
-	<td align="center"><a href="#" onClick="window.close()">Close</a></td>
+	<td align="center"><a href="#" onClick="window.close()">Fermer</a></td>
 </tr>
 </table>
 </body>

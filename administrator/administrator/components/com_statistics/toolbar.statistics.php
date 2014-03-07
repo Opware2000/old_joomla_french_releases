@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.statistics.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.statistics.php 2760 2006-03-12 18:42:18Z stingrey $
 * @package Joomla
 * @subpackage Statistics
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -18,8 +18,8 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 
 switch ($task) {
-
-	case "searches":
+	case 'searches':
+	case 'searchesresults':
 		TOOLBAR_statistics::_SEARCHES();
 		break;
 

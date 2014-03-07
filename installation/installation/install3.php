@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install3.php 278 2005-09-30 20:54:09Z troozers $
+* @version $Id: install3.php 2510 2006-02-21 04:59:41Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -51,7 +51,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <head>
 <title>Joomla - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
 <script type="text/javascript">
 <!--
@@ -60,19 +60,19 @@ function check() {
 	var formValid = true;
 	var f = document.form;
 	if ( f.siteUrl.value == '' ) {
-		alert('Please enter Site URL');
+		alert('Veuillez saisir l\URL du site');
 		f.siteUrl.focus();
 		formValid = false;
 	} else if ( f.absolutePath.value == '' ) {
-		alert('Please enter the absolute path to your site');
+		alert('Veuillez saisir le chemin absolu de votre site');
 		f.absolutePath.focus();
 		formValid = false;
 	} else if ( f.adminEmail.value == '' ) {
-		alert('Please enter an email address to contact your administrator');
+		alert('Veuillez saisir l\'email du compte Admin');
 		f.adminEmail.focus();
 		formValid = false;
 	} else if ( f.adminPassword.value == '' ) {
-		alert('Please enter a password for you administrator');
+		alert('Veuillez saisir un mot de passe pour le compte Admin');
 		f.adminPassword.focus();
 		formValid = false;
 	}
@@ -124,32 +124,24 @@ function changeDirPermsMode(mode)
 	<input type="hidden" name="sitename" value="<?php echo "$sitename"; ?>" />
 	<div class="install">
 		<div id="stepbar">
-			<div class="step-off">pre-installation check</div>
-			<div class="step-off">license</div>
-			<div class="step-off">step 1</div>
-			<div class="step-off">step 2</div>
-			<div class="step-on">step 3</div>
-			<div class="step-off">step 4</div>
+			<div class="step-off">Pré-installation</div>
+			<div class="step-off">License</div>
+			<div class="step-off">Etape 1</div>
+			<div class="step-off">Etape 2</div>
+			<div class="step-on">Etape 3</div>
+			<div class="step-off">Etape 4</div>
 		</div>
 		<div id="right">
-			<div id="step">step 3</div>
+			<div id="step">Etape 3</div>
 			<div class="far-right">
-				<input class="button" type="submit" name="next" value="Next >>"/>
+				<input class="button" type="submit" name="next" value="Suivant >>"/>
 			</div>
 			<div class="clr"></div>
-			<h1>Confirm the site URL, path, admin e-mail and file/directory chmods</h1>
+			<h1>URL du site, chemin, e-mail de l'admin et CHMOD fichiers/répertoires</h1>
 			<div class="install-text">
-				  <p>If URL and Path look correct then please do not change them.
-				  If you are not sure then please contact your ISP or administrator. Usually
-				  the values displayed will work for your site.<br/>
-				  <br/>
-				  Enter your e-mail address, this will be the e-mail address of the site
-				  SuperAdministrator.<br />
-				  <br/>
-				  The permission settings will be used while installing Joomla itself, by
-				  the Joomla addon-installers and by the media manager. If you are unsure
-				  what flags shall be set, leave the default settings at the moment.
-				  You can still change these flags later in the site global configuration.</p>
+				  <p>Si l'adresse et le chemin absolu semblent corrects, alors conservez les tels quels. Si vous n'en êtes pas certain, alors contactez l'hébergeur de votre site Internet ou votre administrateur. Habituellement les valeurs affichées conviendront à votre site.<br/>
+				  <br/>Entrez votre adresse email, pour l'administrateur principal du site..<br />
+				  <br/>La configuration des permissions va être utilisée pendant l'installation de Joomla, par le système d'installation de Joomla et par le "gestionnaire de média". Si vous n'êtes pas certain des valeurs à cocher, alors laissez la configuration par défaut pour l'instant. Vous pourrez les changer ultérieurement dans l'espace administrateur sous configuration globale.</p>
 			</div>
 			<div class="install-form">
 				<div class="form-block">
@@ -170,7 +162,7 @@ function changeDirPermsMode(mode)
 ?>						<td align="center"><input class="inputbox" type="text" name="siteUrl" value="<?php echo $url; ?>" size="50"/></td>
 					</tr>
 					<tr>
-						<td>Path</td>
+						<td>Chemin</td>
 <?php
 	$abspath = "";
 	if ($configArray['absolutePath'])
@@ -185,11 +177,11 @@ function changeDirPermsMode(mode)
 ?>						<td align="center"><input class="inputbox" type="text" name="absolutePath" value="<?php echo $abspath; ?>" size="50"/></td>
 					</tr>
 					<tr>
-						<td>Your E-mail</td>
+						<td>E-mail Admin</td>
 						<td align="center"><input class="inputbox" type="text" name="adminEmail" value="<?php echo "$adminEmail"; ?>" size="50" /></td>
 					</tr>
 					<tr>
-						<td>Admin password</td>
+						<td>Mot de passe Admin</td>
 						<td align="center"><input class="inputbox" type="text" name="adminPassword" value="<?php echo mosMakePassword(8); ?>" size="50"/></td>
 					</tr>
 					<tr>
@@ -202,22 +194,22 @@ function changeDirPermsMode(mode)
 	} // if
 ?>
 						<td colspan="2">
-  							<fieldset><legend>File Permissions</legend>
+  							<fieldset><legend>Permissions sur les fichiers</legend>
 								<table cellpadding="1" cellspacing="1" border="0">
 									<tr>
 										<td><input type="radio" id="filePermsMode0" name="filePermsMode" value="0" onclick="changeFilePermsMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/></td>
-										<td><label for="filePermsMode0">Dont CHMOD files (use server defaults)</label></td>
+										<td><label for="filePermsMode0">Ne pas changer les droits (CHMOD) des fichiers (utilisez ceux du serveur par défaut)</label></td>
 									</tr>
 									<tr>
 										<td><input type="radio" id="filePermsMode1" name="filePermsMode" value="1" onclick="changeFilePermsMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/></td>
-										<td><label for="filePermsMode1"> CHMOD files to:</label></td>
+										<td><label for="filePermsMode1">Modifier les droits (CHMOD) des fichiers en:</label></td>
 									</tr>
 									<tr id="filePermsFlags"<?php if (!$mode) echo ' style="display:none"'; ?>>
 										<td>&nbsp;</td>
 										<td>
 											<table cellpadding="1" cellspacing="0" border="0">
 												<tr>
-													<td>User:</td>
+													<td>Utilisateur:</td>
 													<td><input type="checkbox" id="filePermsUserRead" name="filePermsUserRead" value="1"<?php if ($flags & 0400) echo ' checked="checked"'; ?>/></td>
 													<td><label for="filePermsUserRead">read</label></td>
 													<td><input type="checkbox" id="filePermsUserWrite" name="filePermsUserWrite" value="1"<?php if ($flags & 0200) echo ' checked="checked"'; ?>/></td>
@@ -226,7 +218,7 @@ function changeDirPermsMode(mode)
 													<td width="100%"><label for="filePermsUserExecute">execute</label></td>
 												</tr>
 												<tr>
-													<td>Group:</td>
+													<td>Groupe:</td>
 													<td><input type="checkbox" id="filePermsGroupRead" name="filePermsGroupRead" value="1"<?php if ($flags & 040) echo ' checked="checked"'; ?>/></td>
 													<td><label for="filePermsGroupRead">read</label></td>
 													<td><input type="checkbox" id="filePermsGroupWrite" name="filePermsGroupWrite" value="1"<?php if ($flags & 020) echo ' checked="checked"'; ?>/></td>
@@ -235,7 +227,7 @@ function changeDirPermsMode(mode)
 													<td width="100%"><label for="filePermsGroupExecute">execute</label></td>
 												</tr>
 												<tr>
-													<td>World:</td>
+													<td>Public:</td>
 													<td><input type="checkbox" id="filePermsWorldRead" name="filePermsWorldRead" value="1"<?php if ($flags & 04) echo ' checked="checked"'; ?>/></td>
 													<td><label for="filePermsWorldRead">read</label></td>
 													<td><input type="checkbox" id="filePermsWorldWrite" name="filePermsWorldWrite" value="1"<?php if ($flags & 02) echo ' checked="checked"'; ?>/></td>
@@ -260,22 +252,22 @@ function changeDirPermsMode(mode)
 	} // if
 ?>
 						<td colspan="2">
-  							<fieldset><legend>Directory Permissions</legend>
+  							<fieldset><legend>Permissions sur les répertoires</legend>
 								<table cellpadding="1" cellspacing="1" border="0">
 									<tr>
 										<td><input type="radio" id="dirPermsMode0" name="dirPermsMode" value="0" onclick="changeDirPermsMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/></td>
-										<td><label for="dirPermsMode0">Dont CHMOD directories (use server defaults)</label></td>
+										<td><label for="dirPermsMode0">Ne pas changer les droits (CHMOD) des fichiers (utilisez ceux du serveur par défaut)</label></td>
 									</tr>
 									<tr>
 										<td><input type="radio" id="dirPermsMode1" name="dirPermsMode" value="1" onclick="changeDirPermsMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/></td>
-										<td><label for="dirPermsMode1"> CHMOD directories to:</label></td>
+										<td><label for="dirPermsMode1">Modifier les droits (CHMOD) des fichiers en::</label></td>
 									</tr>
 									<tr id="dirPermsFlags"<?php if (!$mode) echo ' style="display:none"'; ?>>
 										<td>&nbsp;</td>
 										<td>
 											<table cellpadding="1" cellspacing="0" border="0">
 												<tr>
-													<td>User:</td>
+													<td>Utilisateur:</td>
 													<td><input type="checkbox" id="dirPermsUserRead" name="dirPermsUserRead" value="1"<?php if ($flags & 0400) echo ' checked="checked"'; ?>/></td>
 													<td><label for="dirPermsUserRead">read</label></td>
 													<td><input type="checkbox" id="dirPermsUserWrite" name="dirPermsUserWrite" value="1"<?php if ($flags & 0200) echo ' checked="checked"'; ?>/></td>
@@ -284,7 +276,7 @@ function changeDirPermsMode(mode)
 													<td width="100%"><label for="dirPermsUserSearch">search</label></td>
 												</tr>
 												<tr>
-													<td>Group:</td>
+													<td>Groupe:</td>
 													<td><input type="checkbox" id="dirPermsGroupRead" name="dirPermsGroupRead" value="1"<?php if ($flags & 040) echo ' checked="checked"'; ?>/></td>
 													<td><label for="dirPermsGroupRead">read</label></td>
 													<td><input type="checkbox" id="dirPermsGroupWrite" name="dirPermsGroupWrite" value="1"<?php if ($flags & 020) echo ' checked="checked"'; ?>/></td>
@@ -293,7 +285,7 @@ function changeDirPermsMode(mode)
 													<td width="100%"><label for="dirPermsGroupSearch">search</label></td>
 												</tr>
 												<tr>
-													<td>World:</td>
+													<td>Public:</td>
 													<td><input type="checkbox" id="dirPermsWorldRead" name="dirPermsWorldRead" value="1"<?php if ($flags & 04) echo ' checked="checked"'; ?>/></td>
 													<td><label for="dirPermsWorldRead">read</label></td>
 													<td><input type="checkbox" id="dirPermsWorldWrite" name="dirPermsWorldWrite" value="1"<?php if ($flags & 02) echo ' checked="checked"'; ?>/></td>

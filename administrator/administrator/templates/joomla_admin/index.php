@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 280 2005-09-30 21:56:34Z rhuk $
+* @version $Id: index.php 3549 2006-05-18 08:24:53Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -34,7 +34,7 @@ include_once( $mosConfig_absolute_path . '/editor/editor.php' );
 initEditor();
 ?>
 <meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
-<meta name="Generator" content="Joomla! Content Management System" />
+<meta name="Generator" content="Joomla! Système de Gestion de contenu" />
 <link rel="shortcut icon" href="<?php echo $mosConfig_live_site .'/images/favicon.ico';?>" />
 </head>
 <body onload="MM_preloadImages('images/help_f2.png','images/archive_f2.png','images/back_f2.png','images/cancel_f2.png','images/delete_f2.png','images/edit_f2.png','images/new_f2.png','images/preview_f2.png','images/publish_f2.png','images/save_f2.png','images/unarchive_f2.png','images/unpublish_f2.png','images/upload_f2.png')">
@@ -56,7 +56,7 @@ initEditor();
 	</td>
 	<td class="menubackgr" align="right" style="padding-right:5px;">
 		<a href="index2.php?option=logout" style="color: #333333; font-weight: bold">
-			Logout</a>
+			Déconnexion</a>
 		<strong><?php echo $my->username;?></strong>
 	</td>
 </tr>
@@ -92,14 +92,14 @@ initEditor();
 			<div align="center" class="smallgrey">
 				<?php echo $version; ?>
 				<br/>
-				<a href="http://www.joomla.org/content/blogcategory/32/66/" target="_blank">Check for latest Version</a>
+				<a href="http://www.joomla.org/content/blogcategory/32/66/" target="_blank">Identifier la dernière version stable de Joomla!</a>
 			</div>			
 			<?php
 			if ( $mosConfig_debug ) {
 				echo '<div class="smallgrey">';
 				$tend = mosProfiler::getmicrotime();
 				$totaltime = ($tend - $tstart);
-				printf ("Page was generated in %f seconds", $totaltime);
+				printf ("Page générée en %f secondes", $totaltime);
 				echo '</div>';
 			}
 			?>			

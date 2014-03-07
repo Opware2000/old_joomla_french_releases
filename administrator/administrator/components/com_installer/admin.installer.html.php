@@ -19,7 +19,7 @@ function writableCell( $folder ) {
 	echo '<tr>';
 	echo '<td class="item">' . $folder . '/</td>';
 	echo '<td align="left">';
-	echo is_writable( $GLOBALS['mosConfig_absolute_path'] . '/' . $folder ) ? '<b><font color="green">Writeable</font></b>' : '<b><font color="red">Unwriteable</font></b>' . '</td>';
+	echo is_writable( $GLOBALS['mosConfig_absolute_path'] . '/' . $folder ) ? '<b><font color="green">Modifiable</font></b>' : '<b><font color="red">Non modifiable</font></b>' . '</td>';
 	echo '</tr>';
 }
 
@@ -36,7 +36,7 @@ class HTML_installer {
 
 			// do field validation
 			if (form.userfile.value == ""){
-				alert( "Please select a directory" );
+				alert( "Vous devez sélectionner un répertoire" );
 			} else {
 				form.submit();
 			}
@@ -57,15 +57,15 @@ class HTML_installer {
 		<table class="adminform">
 		<tr>
 			<th>
-			Upload Package File
+			Upload du fichier package
 			</th>
 		</tr>
 		<tr>
 			<td align="left">
-			Package File:
-			<input class="text_area" name="userfile" type="file" size="70"/>
-			<input class="button" type="submit" value="Upload File &amp; Install" />
-			</td>
+			Fichier Package:
+			  <input class="text_area" name="userfile" type="file" size="70"/>
+			<input class="button" type="submit" value="Installer" />
+		  </td>
 		</tr>
 		</table>
 
@@ -80,15 +80,15 @@ class HTML_installer {
 		<table class="adminform">
 		<tr>
 			<th>
-			Install from directory
+			Installer depuis le r&eacute;pertoire
 			</th>
 		</tr>
 		<tr>
 			<td align="left">
-			Install directory:&nbsp;
+			R&eacute;pertoire d'installation:&nbsp;
 			<input type="text" name="userfile" class="text_area" size="65" value="<?php echo $p_startdir; ?>"/>&nbsp;
-			<input type="button" class="button" value="Install" onclick="submitbutton3()" />
-			</td>
+			<input type="button" class="button" value="Installer" onclick="submitbutton3()" />
+		  </td>
 		</tr>
 		</table>
 
@@ -125,7 +125,7 @@ class HTML_installer {
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
-			[&nbsp;<a href="<?php echo $url;?>" style="font-size: 16px; font-weight: bold">Continue ...</a>&nbsp;]
+			[&nbsp;<a href="<?php echo $url;?>" style="font-size: 16px; font-weight: bold">Continuer ...</a>&nbsp;]
 			</td>
 		</tr>
 		</table>

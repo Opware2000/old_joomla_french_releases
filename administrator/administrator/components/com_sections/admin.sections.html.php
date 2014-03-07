@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.sections.html.php 3585 2006-05-22 07:28:29Z stingrey $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ class sections_html {
 		<table class="adminheading">
 		<tr>
 			 <th class="sections">
-			Section Manager
+			Gestionnaire de Sections
 			</th>
 		</tr>
 		</table>
@@ -48,34 +48,32 @@ class sections_html {
 			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows );?>);" />
 			</th>
 			<th class="title">
-			Section Name
-			</th>
+			Nom de la Section			</th>
 			<th width="10%">
-			Published
+			Publi&eacute;e
 			</th>
 			<th colspan="2" width="5%">
-			Reorder
+			R&eacute;organiser
 			</th>
 			<th width="2%">
-			Order
+			Trier
 			</th>
 			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
+			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver Tri" /></a>
 			</th>
 			<th width="8%">
-			Access
+			Acc&egrave;s
 			</th>
 			<th width="12%" nowrap>
-			Section ID
+			 ID	Section		</th>
+			<th width="12%" nowrap>
+			# Cat&eacute;gories
 			</th>
 			<th width="12%" nowrap>
-			# Categories
+			# Actives
 			</th>
 			<th width="12%" nowrap>
-			# Active
-			</th>
-			<th width="12%" nowrap>
-			# Trash
+			# Corbeille
 			</th>
 
 		</tr>
@@ -173,14 +171,17 @@ class sections_html {
 	*/
 	function edit( &$row, $option, &$lists, &$menus ) {
 		global $mosConfig_live_site;
+		
 		if ( $row->name != '' ) {
 			$name = $row->name;
 		} else {
-			$name = "New Section";
+			$name = "Nouvelle Section";
 		}
 		if ($row->image == "") {
 			$row->image = 'blank.png';
 		}
+		
+		mosMakeHtmlSafe( $row, ENT_QUOTES, 'description' );
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
@@ -192,21 +193,21 @@ class sections_html {
 
 			if ( pressbutton == 'menulink' ) {
 				if ( form.menuselect.value == "" ) {
-					alert( "Please select a Menu" );
+					alert( "Merci de sélectionner un menu" );
 					return;
 				} else if ( form.link_type.value == "" ) {
-					alert( "Please select a menu type" );
+					alert( "Merci de sélectionner un type de menu" );
 					return;
 				} else if ( form.link_name.value == "" ) {
-					alert( "Please enter a Name for this menu item" );
+					alert( "Merci de donner un nom à cet élément de menu" );
 					return;
 				}
 			}
 
 			if (form.name.value == ""){
-				alert("Section must have a name");
+				alert("La section doit avoir un nom");
 			} else if (form.title.value ==""){
-				alert("Section must have a title");
+				alert("La section doit avoir un titre");
 			} else {
 				<?php getEditorContents( 'editor1', 'description' ) ; ?>
 				submitform(pressbutton);
@@ -220,7 +221,7 @@ class sections_html {
 			<th class="sections">
 			Section:
 			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
+			<?php echo $row->id ? 'Editer' : 'Nouvelle';?>
 			</small>
 			<small><small>
 			[ <?php echo $name ; ?> ]
@@ -235,12 +236,12 @@ class sections_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="3">
-					Section Details
+					D&eacute;tails de la section
 					</th>
 				<tr>
 				<tr>
-					<td width="150">
-					Scope:
+					<td width="100">
+					Type:
 					</td>
 					<td width="85%" colspan="2">
 					<strong>
@@ -250,18 +251,26 @@ class sections_html {
 				</tr>
 				<tr>
 					<td>
-					Title:
+					Titre:
 					</td>
 					<td colspan="2">
-					<input class="text_area" type="text" name="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="A short name to appear in menus" />
+					<input class="text_area" type="text" name="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="Un nom court pour les menus" />
 					</td>
 				</tr>
 				<tr>
 					<td>
-					<?php echo (isset($row->section) ? "Category" : "Section");?> Name:
+					Nom de la <?php echo (isset($row->section) ? "Catégorie" : "Section");?> :
+                                        </td>
+					<td colspan="2">
+					<input class="text_area" type="text" name="name" value="<?php echo $row->name; ?>" size="50" maxlength="255" title="Un nom long pour les titres" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+					Ordre:
 					</td>
 					<td colspan="2">
-					<input class="text_area" type="text" name="name" value="<?php echo $row->name; ?>" size="50" maxlength="255" title="A long name to be displayed in headings" />
+					<?php echo $lists['ordering']; ?>
 					</td>
 				</tr>
 				<tr>
@@ -271,19 +280,19 @@ class sections_html {
 					<td>
 					<?php echo $lists['image']; ?>
 					</td>
-					<td rowspan="4" width="50%">
+					<td rowspan="5" width="50%">
 					<?php
 						$path = $mosConfig_live_site . "/images/";
 						if ($row->image != "blank.png") {
 							$path.= "stories/";
 						}
 					?>
-					<img src="<?php echo $path;?><?php echo $row->image;?>" name="imagelib" width="80" height="80" border="2" alt="Preview" />
+					<img src="<?php echo $path . $row->image;?>" name="imagelib" width="80" height="80" border="2" alt="Aperçu" />
 					</td>
 				</tr>
 				<tr>
 					<td>
-					Image Position:
+					Position de l'image:
 					</td>
 					<td>
 					<?php echo $lists['image_position']; ?>
@@ -291,15 +300,7 @@ class sections_html {
 				</tr>
 				<tr>
 					<td>
-					Ordering:
-					</td>
-					<td>
-					<?php echo $lists['ordering']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Access Level:
+					Niveau d'acc&egrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -307,17 +308,19 @@ class sections_html {
 				</tr>
 				<tr>
 					<td>
-					Published:
+					Publi&eacute;:
 					</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top">
+					<td valign="top" colspan="2">
 					Description:
 					</td>
-					<td colspan="2">
+				</tr>
+				<tr>
+					<td colspan="3">
 					<?php
 					// parameters : areaname, content, hidden field, width, height, rows, cols
 					editorArea( 'editor1',  $row->description , 'description', '100%;', '300', '60', '20' ) ; ?>
@@ -332,34 +335,34 @@ class sections_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Link to Menu
+					Lier au Menu
 					</th>
 				<tr>
 				<tr>
-					<td colspan="2">
-					This will create a new menu item in the menu you select
-					<br /><br />
-					</td>
+						<td colspan="2">
+						Ceci va cr&eacute;er un nouvel &eacute;l&eacute;ment dans le menu s&eacute;lectionn&eacute;
+						<br /><br />
+				  </td>
 				<tr>
 				<tr>
 					<td valign="top" width="100px">
-					Select a Menu
+					S&eacute;lectionner un menu
 					</td>
 					<td>
 					<?php echo $lists['menuselect']; ?>
 					</td>
 				<tr>
 				<tr>
-					<td valign="top" width="100px">
-					Select Menu Type
-					</td>
+						<td valign="top" width="100px">
+						S&eacute;lectionner un type de menu
+						</td>
 					<td>
 					<?php echo $lists['link_type']; ?>
 					</td>
 				<tr>
 				<tr>
 					<td valign="top" width="100px">
-					Menu Item Name
+					Nom de l'&eacute;l&eacute;ment de menu
 					</td>
 					<td>
 					<input type="text" name="link_name" class="inputbox" value="" size="25" />
@@ -374,7 +377,7 @@ class sections_html {
 				<tr>
 				<tr>
 					<th colspan="2">
-					Existing Menu Links
+					Liens existant
 					</th>
 				</tr>
 				<?php
@@ -382,7 +385,7 @@ class sections_html {
 					?>
 					<tr>
 						<td colspan="2">
-						None
+						Aucun
 						</td>
 					</tr>
 					<?php
@@ -399,12 +402,33 @@ class sections_html {
 			} else {
 			?>
 			<table class="adminform" width="40%">
-				<tr><th>&nbsp;</th></tr>
-				<tr><td>Menu links available when saved</td></tr>
+				<tr>
+						<th>
+						&nbsp;
+						</th>
+					</tr>
+					<tr>
+						<td>
+						Liens aux menus disponibles apr&egrave;s l'enregistrement
+						</td>
+				</tr>
 			</table>
 			<?php
 			}
 			?>
+				<br />
+				<table class="adminform">
+				<tr>
+					<th colspan="2">
+					Dossiers MOSImage
+					</th>
+					<tr>
+					<tr>
+					<td colspan="2">
+					<?php echo $lists['folders']; ?>
+					</td>
+				<tr>	
+				</table>		
 			</td>
 		</tr>
 		</table>
@@ -430,7 +454,7 @@ class sections_html {
 		<table class="adminheading">
 		<tr>
 			<th class="sections">
-			Copy Section
+			Copier la section
 			</th>
 		</tr>
 		</table>
@@ -440,13 +464,13 @@ class sections_html {
 		<tr>
 			<td width="3%"></td>
 			<td align="left" valign="top" width="30%">
-			<strong>Copy to Section:</strong>
+			<strong>Copier vers la  section:</strong>
 			<br />
-			<input class="text_area" type="text" name="title" value="" size="35" maxlength="50" title="The new Section name" />
+			<input class="text_area" type="text" name="title" value="" size="35" maxlength="50" title="Le nom de la nouvelle section" />
 			<br /><br />
 			</td>
 			<td align="left" valign="top" width="20%">
-			<strong>Categories being copied:</strong>
+			<strong>Cat&eacute;gories &agrave; copier:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -458,7 +482,7 @@ class sections_html {
 			?>
 			</td>
 			<td valign="top" width="20%">
-			<strong>Content Items being copied:</strong>
+			<strong>Articles &agrave; copier :</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -470,11 +494,11 @@ class sections_html {
 			?>
 			</td>
 			<td valign="top">
-			This will copy the Categories listed
+			Ceci copiera les cat&eacute;gories s&eacute;lectionn&eacute;es
 			<br />
-			and all the items within the category (also listed)
+			ainsi que l'int&eacute;gralit&eacute; de leur contenu
 			<br />
-			to the new Section created.
+			dans la nouvelle section cr&eacute;&eacute;e.
 			</td>.
 		</tr>
 		</table>

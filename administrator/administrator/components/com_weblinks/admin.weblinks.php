@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.weblinks.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.weblinks.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -25,7 +25,6 @@ require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
 $cid 	= mosGetParam( $_POST, 'cid', array(0) );
-$id 	= mosGetParam( $_GET, 'id', 0 );
 
 switch ($task) {
 	case 'new':
@@ -64,11 +63,11 @@ switch ($task) {
 		break;
 
 	case 'orderup':
-		orderWeblinks( $cid[0], -1, $option );
+		orderWeblinks( intval( $cid[0] ), -1, $option );
 		break;
 
 	case 'orderdown':
-		orderWeblinks( $cid[0], 1, $option );
+		orderWeblinks( intval( $cid[0] ), 1, $option );
 		break;
 
 	default:
@@ -83,9 +82,9 @@ switch ($task) {
 function showWeblinks( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
 
-	$catid 		= $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 );
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$catid 		= intval( $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 ) );
+	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 	$search 	= $mainframe->getUserStateFromRequest( "search{$option}", 'search', '' );
 	$search 	= $database->getEscaped( trim( strtolower( $search ) ) );
 
@@ -137,7 +136,7 @@ function showWeblinks( $option ) {
 * @param integer The unique id of the record to edit (0 if new)
 */
 function editWeblink( $option, $id ) {
-	global $database, $my, $mosConfig_absolute_path, $mosConfig_live_site;
+	global $database, $my, $mosConfig_absolute_path;
 
 	$lists = array();
 
@@ -147,7 +146,7 @@ function editWeblink( $option, $id ) {
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
-		mosRedirect( 'index2.php?option='. $option, 'The module $row->title is currently being edited by another administrator.' );
+		mosRedirect( 'index2.php?option='. $option, 'Le module $row->title est actuellement édité par un autre administrateur.' );
 	}
 
 	if ($id) {
@@ -157,7 +156,7 @@ function editWeblink( $option, $id ) {
 		$row->published = 1;
 		$row->approved 	= 1;
 		$row->order 	= 0;
-		$row->catid 	= mosGetParam( $_POST, 'catid', 0 );
+		$row->catid 	= intval( mosGetParam( $_POST, 'catid', 0 ) );
 	}
 
 	// build the html select list for ordering
@@ -286,7 +285,9 @@ function orderWeblinks( $uid, $inc, $option ) {
 	global $database;
 	$row = new mosWeblink( $database );
 	$row->load( $uid );
+	$row->updateOrder();
 	$row->move( $inc, "published >= 0" );
+	$row->updateOrder();
 
 	mosRedirect( "index2.php?option=$option" );
 }

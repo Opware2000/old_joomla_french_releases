@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosloadposition.php 427 2005-10-09 18:59:01Z stingrey $
+* @version $Id: mosloadposition.php 2574 2006-02-23 18:48:16Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -20,8 +20,13 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosLoadPosition' );
 * Mambot that loads module positions within content
 */
 function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
-	global $database;
+	global $database, $_MAMBOTS;
 
+	// simple performance check to determine whether bot should process further
+	if ( strpos( $row->text, 'mosloadposition' ) === false ) {
+		return true;
+	}
+	
  	// expression to search for
  	$regex = '/{mosloadposition\s*.*?}/i';
 
@@ -39,16 +44,24 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
 
  	// mambot only processes if there are any instances of the mambot in the text
  	if ( $count ) {
-		// load mambot params info
-		$query = "SELECT id"
-		. "\n FROM #__mambots"
-		. "\n WHERE element = 'mosloadposition'"
-		. "\n AND folder = 'content'"
-		;
-		$database->setQuery( $query );
-	 	$id 	= $database->loadResult();
-	 	$mambot = new mosMambot( $database );
-	  	$mambot->load( $id );
+		// check if param query has previously been processed
+		if ( !isset($_MAMBOTS->_content_mambot_params['mosloadposition']) ) {
+			// load mambot params info
+			$query = "SELECT params"
+			. "\n FROM #__mambots"
+			. "\n WHERE element = 'mosloadposition'"
+			. "\n AND folder = 'content'"
+			;
+			$database->setQuery( $query );
+			$database->loadObject($mambot);
+					
+			// save query to class variable
+			$_MAMBOTS->_content_mambot_params['mosloadposition'] = $mambot;
+		}
+		
+		// pull query data from class variable
+		$mambot = $_MAMBOTS->_content_mambot_params['mosloadposition'];
+		
 	 	$botParams = new mosParameters( $mambot->params );
 
 	 	$style	= $botParams->def( 'style', -2 );

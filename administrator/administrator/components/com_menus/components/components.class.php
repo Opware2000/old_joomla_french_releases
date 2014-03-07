@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: components.class.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: components.class.php 3494 2006-05-14 23:51:02Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -74,7 +74,7 @@ class components_menu {
 		// build published button option
 		$lists['published'] 	= mosAdminMenus::Published( $menu );
 		// build the url link output
-		$lists['link'] 		= mosAdminMenus::Link( $menu, $uid );
+		$lists['link'] 			= mosAdminMenus::Link( $menu, $uid );
 
 		// get params definitions
 		$params = new mosParameters( $menu->params, $mainframe->getPath( 'com_xml', $row->option ), 'component' );

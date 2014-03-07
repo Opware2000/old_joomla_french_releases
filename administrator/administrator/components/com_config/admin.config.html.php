@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 1835 2006-01-15 13:42:38Z stingrey $
+* @version $Id: admin.config.html.php 3754 2006-05-31 12:08:37Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,93 +22,104 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class HTML_config {
 
 	function showconfig( &$row, &$lists, $option) {
-		global $mosConfig_absolute_path, $mosConfig_live_site;
-		$tabs = new mosTabs(1);
+		global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_session_type;
+		
+		$tabs = new mosTabs(0);
 		?>
 		<script type="text/javascript">
 		<!--
-			function saveFilePerms()
-			{
-				var f = document.adminForm;
-				if (f.filePermsMode0.checked)
-					f.config_fileperms.value = '';
-				else {
-					var perms = 0;
-					if (f.filePermsUserRead.checked) perms += 400;
-					if (f.filePermsUserWrite.checked) perms += 200;
-					if (f.filePermsUserExecute.checked) perms += 100;
-					if (f.filePermsGroupRead.checked) perms += 40;
-					if (f.filePermsGroupWrite.checked) perms += 20;
-					if (f.filePermsGroupExecute.checked) perms += 10;
-					if (f.filePermsWorldRead.checked) perms += 4;
-					if (f.filePermsWorldWrite.checked) perms += 2;
-					if (f.filePermsWorldExecute.checked) perms += 1;
-					f.config_fileperms.value = '0'+''+perms;
+		function saveFilePerms() {
+			var f = document.adminForm;
+			if (f.filePermsMode0.checked)
+				f.config_fileperms.value = '';
+			else {
+				var perms = 0;
+				if (f.filePermsUserRead.checked) perms += 400;
+				if (f.filePermsUserWrite.checked) perms += 200;
+				if (f.filePermsUserExecute.checked) perms += 100;
+				if (f.filePermsGroupRead.checked) perms += 40;
+				if (f.filePermsGroupWrite.checked) perms += 20;
+				if (f.filePermsGroupExecute.checked) perms += 10;
+				if (f.filePermsWorldRead.checked) perms += 4;
+				if (f.filePermsWorldWrite.checked) perms += 2;
+				if (f.filePermsWorldExecute.checked) perms += 1;
+				f.config_fileperms.value = '0'+''+perms;
+			}
+		}
+		function changeFilePermsMode(mode) {
+			if(document.getElementById) {
+				switch (mode) {
+					case 0:
+						document.getElementById('filePermsValue').style.display = 'none';
+						document.getElementById('filePermsTooltip').style.display = '';
+						document.getElementById('filePermsFlags').style.display = 'none';
+						break;
+					default:
+						document.getElementById('filePermsValue').style.display = '';
+						document.getElementById('filePermsTooltip').style.display = 'none';
+						document.getElementById('filePermsFlags').style.display = '';
+				} // switch
+			} // if
+			saveFilePerms();
+		}
+		function saveDirPerms() {
+			var f = document.adminForm;
+			if (f.dirPermsMode0.checked)
+				f.config_dirperms.value = '';
+			else {
+				var perms = 0;
+				if (f.dirPermsUserRead.checked) perms += 400;
+				if (f.dirPermsUserWrite.checked) perms += 200;
+				if (f.dirPermsUserSearch.checked) perms += 100;
+				if (f.dirPermsGroupRead.checked) perms += 40;
+				if (f.dirPermsGroupWrite.checked) perms += 20;
+				if (f.dirPermsGroupSearch.checked) perms += 10;
+				if (f.dirPermsWorldRead.checked) perms += 4;
+				if (f.dirPermsWorldWrite.checked) perms += 2;
+				if (f.dirPermsWorldSearch.checked) perms += 1;
+				f.config_dirperms.value = '0'+''+perms;
+			}
+		}
+		function changeDirPermsMode(mode) 	{
+			if(document.getElementById) {
+				switch (mode) {
+					case 0:
+						document.getElementById('dirPermsValue').style.display = 'none';
+						document.getElementById('dirPermsTooltip').style.display = '';
+						document.getElementById('dirPermsFlags').style.display = 'none';
+						break;
+					default:
+						document.getElementById('dirPermsValue').style.display = '';
+						document.getElementById('dirPermsTooltip').style.display = 'none';
+						document.getElementById('dirPermsFlags').style.display = '';
+				} // switch
+			} // if
+			saveDirPerms();
+		}
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			
+			// do field validation
+			if (form.config_session_type.value != <?php echo $row->config_session_type; ?> ){
+				if ( confirm('Etes vous certain de vouloir changer la `Méthode d\'Authentification de Session`? \n\n Toutes les sessions existantes sur le site public seront supprimées !! \n\n') ) {
+					submitform( pressbutton );
+				} else {
+					return;
 				}
+			} else {
+				submitform( pressbutton );
 			}
-			function changeFilePermsMode(mode)
-			{
-				if(document.getElementById) {
-					switch (mode) {
-						case 0:
-							document.getElementById('filePermsValue').style.display = 'none';
-							document.getElementById('filePermsTooltip').style.display = '';
-							document.getElementById('filePermsFlags').style.display = 'none';
-							break;
-						default:
-							document.getElementById('filePermsValue').style.display = '';
-							document.getElementById('filePermsTooltip').style.display = 'none';
-							document.getElementById('filePermsFlags').style.display = '';
-					} // switch
-				} // if
-				saveFilePerms();
-			}
-			function saveDirPerms()
-			{
-				var f = document.adminForm;
-				if (f.dirPermsMode0.checked)
-					f.config_dirperms.value = '';
-				else {
-					var perms = 0;
-					if (f.dirPermsUserRead.checked) perms += 400;
-					if (f.dirPermsUserWrite.checked) perms += 200;
-					if (f.dirPermsUserSearch.checked) perms += 100;
-					if (f.dirPermsGroupRead.checked) perms += 40;
-					if (f.dirPermsGroupWrite.checked) perms += 20;
-					if (f.dirPermsGroupSearch.checked) perms += 10;
-					if (f.dirPermsWorldRead.checked) perms += 4;
-					if (f.dirPermsWorldWrite.checked) perms += 2;
-					if (f.dirPermsWorldSearch.checked) perms += 1;
-					f.config_dirperms.value = '0'+''+perms;
-				}
-			}
-			function changeDirPermsMode(mode)
-			{
-				if(document.getElementById) {
-					switch (mode) {
-						case 0:
-							document.getElementById('dirPermsValue').style.display = 'none';
-							document.getElementById('dirPermsTooltip').style.display = '';
-							document.getElementById('dirPermsFlags').style.display = 'none';
-							break;
-						default:
-							document.getElementById('dirPermsValue').style.display = '';
-							document.getElementById('dirPermsTooltip').style.display = 'none';
-							document.getElementById('dirPermsFlags').style.display = '';
-					} // switch
-				} // if
-				saveDirPerms();
-			}
+		}
 		//-->
 		</script>
 		<form action="index2.php" method="post" name="adminForm">
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<table cellpadding="1" cellspacing="1" border="0" width="100%">
 		<tr>
-			<td width="250"><table class="adminheading"><tr><th nowrap class="config">Global Configuration</th></tr></table></td>
+			<td width="250"><table class="adminheading"><tr><th nowrap class="config">Configuration Globale</th></tr></table></td>
 			<td width="270">
-				<span class="componentheading">configuration.php is :
-				<?php echo is_writable( '../configuration.php' ) ? '<b><font color="green"> Writeable</font></b>' : '<b><font color="red"> Unwriteable</font></b>' ?>
+				<span class="componentheading">configuration.php est :
+				<?php echo is_writable( '../configuration.php' ) ? '<b><font color="green"> Modifiable</font></b>' : '<b><font color="red"> Non modifiable</font></b>' ?>
 				</span>
 			</td>
 			<?php
@@ -117,7 +128,7 @@ class HTML_config {
 					?>
 					<td>
 						<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-						<label for="disable_write">Make unwriteable after saving</label>
+						<label for="disable_write">Rendre non modifiable apr&egrave;s la sauvegarde</label>
 					</td>
 					<?php
 				} else {
@@ -138,80 +149,103 @@ class HTML_config {
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="185">Site Offline:</td>
+				<td width="185">Site hors ligne:</td>
 				<td><?php echo $lists['offline']; ?></td>
 			</tr>
 			<tr>
-				<td valign="top">Offline Message:</td>
-				<td><textarea class="text_area" cols="60" rows="2" style="width:500px; height:40px" name="config_offline_message"><?php echo htmlspecialchars( stripslashes( $row->config_offline_message ), ENT_QUOTES); ?></textarea><?php
-					$tip = 'A message that displays if your site is offline';
+				<td valign="top">Message site hors ligne:</td>
+				<td><textarea class="text_area" cols="60" rows="2" style="width:500px; height:40px" name="config_offline_message"><?php echo $row->config_offline_message ; ?></textarea><?php
+					$tip = 'Message affich&eacute; lorsque le site est hors ligne';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td valign="top">System Error Message:</td>
-				<td><textarea class="text_area" cols="60" rows="2" style="width:500px; height:40px" name="config_error_message"><?php echo htmlspecialchars( stripslashes( $row->config_error_message ), ENT_QUOTES); ?></textarea><?php
-					$tip = 'A message that displays if Joomla! could not connect to the database';
+				<td valign="top">Message erreur syst&egrave;me:</td>
+				<td><textarea class="text_area" cols="60" rows="2" style="width:500px; height:40px" name="config_error_message"><?php echo $row->config_error_message; ?></textarea><?php
+					$tip = 'Message affich&eacute; lorsque Joomla! ne parvient pas &agrave; se connecter &agrave; la base de donn&eacute;es';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Site Name:</td>
+				<td>Nom du site:</td>
 				<td><input class="text_area" type="text" name="config_sitename" size="50" value="<?php echo $row->config_sitename; ?>"/></td>
 			</tr>
 			<tr>
-				<td>Show UnAuthorized Links:</td>
+				<td>Afficher les liens non autoris&eacute;s:</td>
 				<td><?php echo $lists['shownoauth']; ?><?php
-					$tip = 'If yes, will show links to content to registered content even if you are not logged in.  The user will need to login to see the item in full.';
+					$tip = 'Si oui, les liens vers les articles non publics seront visibles par les utilisateurs non logu&eacute;s.  L utilisateur devra se loguer pour voir l article en entier.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Allow User Registration:</td>
+				<td>Enregistrement des utilisateurs:</td>
 				<td><?php echo $lists['allowUserRegistration']; ?><?php
-					$tip = 'If yes, allows users to self-register';
+					$tip = 'Si oui, les utilisateurs sont autoris&eacute;s &agrave; cr&eacute;er un compte sur votre site';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Use New Account Activation:</td>
+				<td>Forcer l'activation des comptes:</td>
 				<td><?php echo $lists['useractivation']; ?>
 				<?php
-					$tip = 'If yes, the user will be mailed a link to activate their account before they can log in.';
+					$tip = 'Si oui, le nouvel inscrit recevra par mail un lien pour activer son compte.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Require Unique Email:</td>
+				<td>Requiert un email unique:</td>
 				<td><?php echo $lists['uniquemail']; ?><?php
-					$tip = 'If yes, users cannot share the same email address';
+					$tip = 'si oui, les utilisateurs ne pourront pas partager le m&ecirc;me email.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Debug Site:</td>
-				<td><?php echo $lists['debug']; ?><?php
-					$tip = 'If yes, displays diagnostic information and SQL errors if present';
+				<td>Authentification sur le site:</td>
+				<td>
+					<?php echo $lists['frontend_login']; ?>
+					<?php
+					$tip = 'Si `Non` est s&eacute;lectionn&eacute;, les utilisateurs ne pourront pas s`authentifier sur le site. Ce param&egrave;tre d&eacute;sactive également l`enregistrement des nouveaux utilisateurs';
 					echo mosToolTip( $tip );
-				?></td>
+					?>
+				</td>
+			</tr>
+			<tr>	
+				<td>Paramètres utilisateur en Frontend:</td>
+				<td>
+					<?php echo $lists['frontend_userparams']; ?>
+					<?php
+					$tip = 'Si `Non` est s&eacute;lectionn&eacute;, l`utilisateur ne pourra pas modifier ses paramètres dans son profil';
+					echo mosToolTip( $tip );
+					?>
+				</td>
 			</tr>
 			<tr>
-				<td>Default WYSIWYG Editor:</td>
+				<td>Debug du Site:</td>
+				<td>
+					<?php echo $lists['debug']; ?>
+					<?php
+					$tip = 'Si oui, des informations de diagnostic seront affich&eacute;es ainsi que les erreurs SQL, si elles sont pr&eacute;sentes';
+					echo mosToolTip( $tip );
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>Editeur WYSIWYG par d&eacute;faut:</td>
 				<td><?php echo $lists['editor']; ?></td>
 			</tr>
 			<tr>
-				<td>List Length:</td>
+				<td>Longueur des listes:</td>
 				<td><?php echo $lists['list_limit']; ?><?php
-					$tip = 'Sets the default length of lists in the administrator for all users';
+					$tip = 'Longueur par d&eacute;faut des listes pour tous les utilisateurs du backend';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Favourites Site Icon:</td>
+				<td>Ic&ocirc;ne "Favori" du site:</td>
 				<td>
 				<input class="text_area" type="text" name="config_favicon" size="20" value="<?php echo $row->config_favicon; ?>"/>
 				<?php
-				$tip = 'If left blank or the file cannot be found, the default favicon.ico will be used.';
+				$tip = 'Si non d&eacute;fini ou si le fichier ne peut &ecirc;tre trouv&eacute;, le fichier favicon.ico par d&eacute;faut sera utilis&eacute;.';
 				echo mosToolTip( $tip, 'Favourite Icon' );
 				?>			
 				</td>
@@ -219,31 +253,31 @@ class HTML_config {
 			</table>
 			<?php
 		$tabs->endTab();
-		$tabs->startTab("Locale","Locale-page");
+		$tabs->startTab("Localisation","Locale-page");
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="185">Language:</td>
+				<td width="185">Langue:</td>
 				<td><?php echo $lists['lang']; ?></td>
 			</tr>
 			<tr>
-				<td width="185">Time Offset:</td>
+				<td width="185">Fuseau horaire:</td>
 				<td>
 				<?php echo $lists['offset']; ?>
 				<?php
-				$tip = "Current date/time configured to display: " . mosCurrentDate(_DATE_FORMAT_LC2);
+				$tip = "Date/heure courante &agrave; afficher: " . mosCurrentDate(_DATE_FORMAT_LC2);
 				echo mosToolTip($tip);
 				?>			
 				</td>
 			</tr>
 			<tr>
-				<td width="185">Server Offset:</td>
+				<td width="185">Fuseau horaire du serveur:</td>
 				<td>
 				<input class="text_area" type="text" name="config_offset" size="15" value="<?php echo $row->config_offset; ?>" disabled="true"/>
 				</td>
 			</tr>
 			<tr>
-				<td width="185">Country Locale:</td>
+				<td width="185">Code langue:</td>
 				<td>
 				<input class="text_area" type="text" name="config_locale" size="15" value="<?php echo $row->config_locale; ?>"/>
 				</td>
@@ -251,75 +285,75 @@ class HTML_config {
 			</table>
 			<?php
 		$tabs->endTab();
-		$tabs->startTab("Content","content-page");
+		$tabs->startTab("Contenu","content-page");
 			?>
 			<table class="adminform">
 			<tr>
-				<td colspan="3">* These Parameters control Output elements*<br/><br/></td>
+				<td colspan="3">* Ces param&egrave;tres pilotent le format d'affichage du contenu *<br/><br/></td>
 			</tr>
 			<tr>
-				<td width="200">Linked Titles:</td>
-				<td width="100"><?php echo $lists['link_titles']; ?></td>
+				<td width="200">Titres cliquables:</td>
+				<td width="130"><?php echo $lists['link_titles']; ?></td>
 				<td><?php
-					$tip = 'If yes, the title of content items will be hyperlinked to the item';
+					$tip = 'Si oui, le titre de l article sera cliquable et renverra vers l article';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td width="200">Read More Link:</td>
-				<td width="100"><?php echo $lists['readmore']; ?></td>
+				<td width="200">Lien "Lire la suite":</td>
+				<td width="130"><?php echo $lists['readmore']; ?></td>
 				<td><?php
-					$tip = 'If set to show, the read-more link will show if main-text has been provided for the item';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, le lien Lire la suite sera affich&eacute; si un texte principal a &eacute;t&eacute; saisi pour un article donn&eacute;';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Item Rating/Voting:</td>
+				<td>Evaluation/Vote des articles:</td>
 				<td><?php echo $lists['vote']; ?></td>
 				<td><?php
-					$tip = 'If set to show, a voting system will be enabled for content items';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, le syst&egrave;me de vote est activ&eacute; pour les articles';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Author Names:</td>
+				<td>Nom de l'auteur:</td>
 				<td><?php echo $lists['hideAuthor']; ?></td>
 				<td><?php
-					$tip = 'If set to show, the name of the author will be displayed.  This a global setting but can be changed at menu and item levels.';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, le nom de l auteur sera affich&eacute;. Ce param&egrave;tre global peut-&ecirc;tre modifi&eacute; dans les param&egrave;tres de l article.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Created Date and Time:</td>
+				<td>Date/Heure de cr&eacute;ation:</td>
 				<td><?php echo $lists['hideCreateDate']; ?></td>
 				<td><?php
-					$tip = 'If set to show, the date and time an item was created will be displayed. This a global setting but can be changed at menu and item levels.';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, la date et l heure de cr&eacute;ation d un article sera affich&eacute;e. Ce param&egrave;tre global peut-&ecirc;tre modifi&eacute; dans les param&egrave;tres de l article.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Modified Date and Time:</td>
+				<td>Date/Heure de modification:</td>
 				<td><?php echo $lists['hideModifyDate']; ?></td>
 				<td><?php
-					$tip = 'If set to show, the date and time an item was last modified will be displayed.  This a global setting but can be changed at menu and item levels.';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, la date et l heure de modification d un article sera affich&eacute;e. Ce param&egrave;tre global peut-&ecirc;tre modifi&eacute; dans les param&egrave;tres de l article.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>Hits:</td>
+				<td>Clics:</td>
 				<td><?php echo $lists['hits']; ?></td>
 				<td><?php
-					$tip = 'If set to show, the hits for a particular item will be displayed.  This a global setting but can be changed at menu and item levels.';
+					$tip = 'Si Afficher est s&eacute;lectionn&eacute;, le nombre de clics sur les articles sera affich&eacute;. Ce param&egrave;tre global peut-&ecirc;tre modifi&eacute; dans les param&egrave;tres de l article.';
 					echo mosToolTip( $tip );
 				?></td>
 			</tr>
 			<tr>
-				<td>PDF Icon:</td>
+				<td>Ic&ocirc;ne PDF:</td>
 				<td><?php echo $lists['hidePdf']; ?></td>
 				<?php
 				if (!is_writable( "$mosConfig_absolute_path/media/" )) {
 					echo "<td align=\"left\">";
-					echo mosToolTip('Option not available as /media directory not writable');
+					echo mosToolTip('Option non disponible si le répertoire /media est non modifiable');
 					echo "</td>";
 				} else {
 					?>				
@@ -329,32 +363,32 @@ class HTML_config {
 				?>		
 			</tr>
 			<tr>
-				<td>Print Icon:</td>
+				<td>Ic&ocirc;ne Print:</td>
 				<td><?php echo $lists['hidePrint']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Email Icon:</td>
+				<td>Ic&ocirc;ne Email:</td>
 				<td><?php echo $lists['hideEmail']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Icons:</td>
+				<td>Ic&ocirc;nes:</td>
 				<td><?php echo $lists['icons']; ?></td>
-				<td><?php echo mosToolTip('Print, PDF and Email will utilise Icons or Text'); ?></td>
+				<td><?php echo mosToolTip('Si Afficher est s&eacute;lectionn&eacute;, les ic&ocirc;nes Print, PDF et Email seront affich&eacute;es'); ?></td>
 			</tr>
 			<tr>
-				<td>Table of Contents on multi-page items:</td>
+				<td>Sommaire pour les articles multi-pages:</td>
 				<td><?php echo $lists['multipage_toc']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Back Button:</td>
+				<td>Bouton "Retour":</td>
 				<td><?php echo $lists['back_button']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Content Item Navigation:</td>
+				<td>Navigation entre les articles:</td>
 				<td><?php echo $lists['item_navigation']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
@@ -381,54 +415,80 @@ class HTML_config {
 				<td>MySQL Database Prefix:</td>
 				<td>
 				<input class="text_area" type="text" name="config_dbprefix" size="10" value="<?php echo $row->config_dbprefix; ?>"/>
-				&nbsp;<?php echo mosWarning('!! DO NOT CHANGE UNLESS YOU HAVE A DATABASE BUILT USING TABLES WITH THE PREFIX YOU ARE SETTING !!'); ?>
+				&nbsp;<?php echo mosWarning('!! NE LE CHANGEZ PAS SI VOUS N ETES PAS CERTAIN DE CE QUE VOUS FAITES !!'); ?>
 				</td>
 			</tr>
 			</table>
 			<?php
 		$tabs->endTab();
-		$tabs->startTab("Server","server-page");
+		$tabs->startTab("Serveur","server-page");
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="185">Absolute Path:</td>
+				<td width="185">Chemin absolu:</td>
 				<td width="450"><strong><?php echo $row->config_absolute_path; ?></strong></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Live Site:</td>
+				<td>URL du Site:</td>
 				<td><strong><?php echo $row->config_live_site; ?></strong></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Secret Word:</td>
+				<td>Mot secret:</td>
 				<td><strong><?php echo $row->config_secret; ?></strong></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>GZIP Page Compression:</td>
+				<td>Compression GZIP des pages:</td>
 				<td>
 				<?php echo $lists['gzip']; ?>
-				<?php echo mosToolTip('Compress buffered output if supported'); ?>
+				<?php echo mosToolTip('*Compress buffered output* si support&eacute;'); ?>
 				</td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Login Session Lifetime:</td>
+				<td>Durée de vie des sessions du site:</td>
 				<td>
 				<input class="text_area" type="text" name="config_lifetime" size="10" value="<?php echo $row->config_lifetime; ?>"/>
 				&nbsp;seconds&nbsp;
-				<?php echo mosToolTip('Auto logout after this time of inactivity'); ?>
+				<?php echo mosWarning('D&eacute;connexion automatique apr&egrave;s la dur&eacute;e d inactivit&eacute; d&eacute;finie pour les utilisateurs du <strong>site/frontend</strong>. Plus cette valeur est &eacute;lev&eacute;e plus le risque de s&eacute;curit&eacute; est grand!'); ?>
 				</td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Error Reporting:</td>
+				<td>Durée de vie des sessions de l'admin:</td>
+				<td>
+				<input class="text_area" type="text" name="config_session_life_admin" size="10" value="<?php echo $row->config_session_life_admin; ?>"/>
+				&nbsp;seconds&nbsp;
+				<?php echo mosWarning('D&eacute;connexion automatique apr&egrave;s la dur&eacute;e d inactivit&eacute; d&eacute;finie pour les utilisateurs <strong>admin/backend</strong>. Plus cette valeur est &eacute;lev&eacute;e plus le risque de s&eacute;curit&eacute; est grand!'); ?>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>Se rappeler de la page o&ugrave; la session a expir&eacute;:</td>
+				<td>
+				<?php echo $lists['admin_expired']; ?>
+				<?php echo mosToolTip('Si la session expire et vous reconnectez dans les 10 minutes, vous serez redirigé vers la page à laquelle vous tentiez d accèder lorsque vous avez été déconnecté.'); ?>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>M&eacute;thode d'authentification de session:</td>
+				<td>
+				<?php echo $lists['session_type']; ?>
+				&nbsp;&nbsp;
+				<?php echo mosWarning(' NE CHANGEZ PAS CETTE VALEUR SI VOUS N ETES PAS CERTAIN DE CE QUE VOUS FAITES!<br /><br /> Si vous avez des visiteurs utilisant AOL ou un Proxy, vous devrez peut-&ecirc;tre passer au Level 2' ); ?>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>Rapport d'erreurs:</td>
 				<td><?php echo $lists['error_reporting']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Help Server:</td>
+				<td>Serveur d'Aide:</td>
 				<td><input class="text_area" type="text" name="config_helpurl" size="50" value="<?php echo $row->config_helpurl; ?>"/></td>
 			</tr>
 			<tr>
@@ -440,23 +500,23 @@ class HTML_config {
 					$flags = octdec($row->config_fileperms);
 				} // if
 				?>
-				<td valign="top">File Creation:</td>
+				<td valign="top">Création de fichier:</td>
 				<td>
-					<fieldset><legend>File Permissions</legend>
+					<fieldset><legend>Permissions des fichiers</legend>
 						<table cellpadding="1" cellspacing="1" border="0">
 							<tr>
 								<td><input type="radio" id="filePermsMode0" name="filePermsMode" value="0" onclick="changeFilePermsMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/></td>
-								<td><label for="filePermsMode0">Dont CHMOD new files (use server defaults)</label></td>
+								<td><label for="filePermsMode0">Ne pas CHMODer les nouveaux fichiers (utiliser les param&egrave;tres du serveur)</label></td>
 							</tr>
 							<tr>
 								<td><input type="radio" id="filePermsMode1" name="filePermsMode" value="1" onclick="changeFilePermsMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/></td>
 								<td>
-									<label for="filePermsMode1">CHMOD new files</label>
+									<label for="filePermsMode1">CHMODer les nouveaux fichiers</label>
 									<span id="filePermsValue"<?php if (!$mode) echo ' style="display:none"'; ?>>
-									to:	<input class="text_area" type="text" readonly="readonly" name="config_fileperms" size="4" value="<?php echo $row->config_fileperms; ?>"/>
+									en:	<input class="text_area" type="text" readonly="readonly" name="config_fileperms" size="4" value="<?php echo $row->config_fileperms; ?>"/>
 									</span>
 									<span id="filePermsTooltip"<?php if ($mode) echo ' style="display:none"'; ?>>
-									&nbsp;<?php echo mosToolTip('Select this option to define permission flags for new created files'); ?>
+									&nbsp;<?php echo mosToolTip('S&eacute;lectionner cette option pour définir les permissions sur les nouveaux fichiers'); ?>
 									</span>
 								</td>
 							</tr>
@@ -465,42 +525,42 @@ class HTML_config {
 								<td>
 									<table cellpadding="0" cellspacing="1" border="0">
 										<tr>
-											<td style="padding:0px">User:</td>
+											<td style="padding:0px">Utilisateur:</td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsUserRead" name="filePermsUserRead" value="1" onclick="saveFilePerms()"<?php if ($flags & 0400) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsUserRead">read</label></td>
+											<td style="padding:0px"><label for="filePermsUserRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsUserWrite" name="filePermsUserWrite" value="1" onclick="saveFilePerms()"<?php if ($flags & 0200) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsUserWrite">write</label></td>
+											<td style="padding:0px"><label for="filePermsUserWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsUserExecute" name="filePermsUserExecute" value="1" onclick="saveFilePerms()"<?php if ($flags & 0100) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" colspan="3"><label for="filePermsUserExecute">execute</label></td>
+											<td style="padding:0px" colspan="3"><label for="filePermsUserExecute">execution</label></td>
 										</tr>
 										<tr>
-											<td style="padding:0px">Group:</td>
+											<td style="padding:0px">Groupe:</td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsGroupRead" name="filePermsGroupRead" value="1" onclick="saveFilePerms()"<?php if ($flags & 040) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsGroupRead">read</label></td>
+											<td style="padding:0px"><label for="filePermsGroupRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsGroupWrite" name="filePermsGroupWrite" value="1" onclick="saveFilePerms()"<?php if ($flags & 020) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsGroupWrite">write</label></td>
+											<td style="padding:0px"><label for="filePermsGroupWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsGroupExecute" name="filePermsGroupExecute" value="1" onclick="saveFilePerms()"<?php if ($flags & 010) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" width="70"><label for="filePermsGroupExecute">execute</label></td>
+											<td style="padding:0px" width="70"><label for="filePermsGroupExecute">execution</label></td>
 											<td><input type="checkbox" id="applyFilePerms" name="applyFilePerms" value="1"/></td>
 											<td nowrap="nowrap">
 												<label for="applyFilePerms">
-													Apply to existing files
+													Appliquer aux fichiers existants
 													&nbsp;<?php
 													echo mosWarning(
-														'Checking here will apply the permission flags to <em>all existing files</em> of the site.<br/>'.
-														'<b>INAPPROPRIATE USAGE OF THIS OPTION MAY RENDER THE SITE INOPERATIVE!</b>'
+														'Ces param&egrave;tres vont s appliquer à <em>tous les fichiers existants</em> du site.<br/>'.
+														'<b>UNE UTILISATION INAPPROPRIEE DE CETTE OPTION PEUT RENDRE LE SITE INUTILISABLE!</b>'
 													);?>
 												</label>
 											</td>
 										</tr>
 										<tr>
-											<td style="padding:0px">World:</td>
+											<td style="padding:0px">Public:</td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsWorldRead" name="filePermsWorldRead" value="1" onclick="saveFilePerms()"<?php if ($flags & 04) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsWorldRead">read</label></td>
+											<td style="padding:0px"><label for="filePermsWorldRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsWorldWrite" name="filePermsWorldWrite" value="1" onclick="saveFilePerms()"<?php if ($flags & 02) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="filePermsWorldWrite">write</label></td>
+											<td style="padding:0px"><label for="filePermsWorldWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="filePermsWorldExecute" name="filePermsWorldExecute" value="1" onclick="saveFilePerms()"<?php if ($flags & 01) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" colspan="4"><label for="filePermsWorldExecute">execute</label></td>
+											<td style="padding:0px" colspan="4"><label for="filePermsWorldExecute">execution</label></td>
 										</tr>
 									</table>
 								</td>
@@ -519,23 +579,23 @@ class HTML_config {
 					$flags = octdec($row->config_dirperms);
 				} // if
 				?>
-				<td valign="top">Directory Creation:</td>
+				<td valign="top">Création de dossier:</td>
 				<td>
-					<fieldset><legend>Directory Permissions</legend>
+					<fieldset><legend>Permissions des dossiers</legend>
 						<table cellpadding="1" cellspacing="1" border="0">
 							<tr>
 								<td><input type="radio" id="dirPermsMode0" name="dirPermsMode" value="0" onclick="changeDirPermsMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/></td>
-								<td><label for="dirPermsMode0">Dont CHMOD new directories (use server defaults)</label></td>
+								<td><label for="dirPermsMode0">Ne pas CHMODer les nouveaux fichiers (utiliser les param&egrave;tres du serveur)</label></td>
 							</tr>
 							<tr>
 								<td><input type="radio" id="dirPermsMode1" name="dirPermsMode" value="1" onclick="changeDirPermsMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/></td>
 								<td>
-									<label for="dirPermsMode1">CHMOD new directories</label>
+									<label for="dirPermsMode1">CHMODer les nouveaux dossiers</label>
 									<span id="dirPermsValue"<?php if (!$mode) echo ' style="display:none"'; ?>>
-									to: <input class="text_area" type="text" readonly="readonly" name="config_dirperms" size="4" value="<?php echo $row->config_dirperms; ?>"/>
+									en: <input class="text_area" type="text" readonly="readonly" name="config_dirperms" size="4" value="<?php echo $row->config_dirperms; ?>"/>
 									</span>
 									<span id="dirPermsTooltip"<?php if ($mode) echo ' style="display:none"'; ?>>
-									&nbsp;<?php echo mosToolTip('Select this option to define permission flags for new created directories'); ?>
+									&nbsp;<?php echo mosToolTip('S&eacute;lectionner cette option pour définir les permissions sur les nouveaux dossiers'); ?>
 									</span>
 								</td>
 							</tr>
@@ -544,42 +604,42 @@ class HTML_config {
 								<td>
 									<table cellpadding="1" cellspacing="0" border="0">
 										<tr>
-											<td style="padding:0px">User:</td>
+											<td style="padding:0px">Utilisateur:</td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsUserRead" name="dirPermsUserRead" value="1" onclick="saveDirPerms()"<?php if ($flags & 0400) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsUserRead">read</label></td>
+											<td style="padding:0px"><label for="dirPermsUserRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsUserWrite" name="dirPermsUserWrite" value="1" onclick="saveDirPerms()"<?php if ($flags & 0200) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsUserWrite">write</label></td>
+											<td style="padding:0px"><label for="dirPermsUserWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsUserSearch" name="dirPermsUserSearch" value="1" onclick="saveDirPerms()"<?php if ($flags & 0100) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" colspan="3"><label for="dirPermsUserSearch">search</label></td>
+											<td style="padding:0px" colspan="3"><label for="dirPermsUserSearch">recherche</label></td>
 										</tr>
 										<tr>
-											<td style="padding:0px">Group:</td>
+											<td style="padding:0px">Groupe:</td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsGroupRead" name="dirPermsGroupRead" value="1" onclick="saveDirPerms()"<?php if ($flags & 040) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsGroupRead">read</label></td>
+											<td style="padding:0px"><label for="dirPermsGroupRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsGroupWrite" name="dirPermsGroupWrite" value="1" onclick="saveDirPerms()"<?php if ($flags & 020) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsGroupWrite">write</label></td>
+											<td style="padding:0px"><label for="dirPermsGroupWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsGroupSearch" name="dirPermsGroupSearch" value="1" onclick="saveDirPerms()"<?php if ($flags & 010) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" width="70"><label for="dirPermsGroupSearch">search</label></td>
+											<td style="padding:0px" width="70"><label for="dirPermsGroupSearch">recherche</label></td>
 											<td><input type="checkbox" id="applyDirPerms" name="applyDirPerms" value="1"/></td>
 											<td nowrap="nowrap">
 												<label for="applyDirPerms">
-													Apply to existing directories
+													Appliquer aux dossiers existants
 													&nbsp;<?php
 													echo mosWarning(
-														'Checking here will apply the permission flags to <em>all existing directories</em> of the site.<br/>'.
-														'<b>INAPPROPRIATE USAGE OF THIS OPTION MAY RENDER THE SITE INOPERATIVE!</b>'
+														'Ces param&egrave;tres vont s appliquer à <em>tous les dossiers existants</em> du site.<br/>'.
+														'<b>UNE UTILISATION INAPPROPRIEE DE CETTE OPTION PEUT RENDRE LE SITE INUTILISABLE!</b>'
 													);?>
 												</label>
 											</td>
 										</tr>
 										<tr>
-											<td style="padding:0px">World:</td>
+											<td style="padding:0px">Public:</td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsWorldRead" name="dirPermsWorldRead" value="1" onclick="saveDirPerms()"<?php if ($flags & 04) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsWorldRead">read</label></td>
+											<td style="padding:0px"><label for="dirPermsWorldRead">lecture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsWorldWrite" name="dirPermsWorldWrite" value="1" onclick="saveDirPerms()"<?php if ($flags & 02) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px"><label for="dirPermsWorldWrite">write</label></td>
+											<td style="padding:0px"><label for="dirPermsWorldWrite">ecriture</label></td>
 											<td style="padding:0px"><input type="checkbox" id="dirPermsWorldSearch" name="dirPermsWorldSearch" value="1" onclick="saveDirPerms()"<?php if ($flags & 01) echo ' checked="checked"'; ?>/></td>
-											<td style="padding:0px" colspan="3"><label for="dirPermsWorldSearch">search</label></td>
+											<td style="padding:0px" colspan="3"><label for="dirPermsWorldSearch">recherche</label></td>
 										</tr>
 									</table>
 								</td>
@@ -596,27 +656,27 @@ class HTML_config {
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="185" valign="top">Global Site Meta Description:</td>
-				<td><textarea class="text_area" cols="50" rows="3" style="width:500px; height:50px" name="config_MetaDesc"><?php echo htmlspecialchars($row->config_MetaDesc, ENT_QUOTES); ?></textarea></td>
+				<td width="185" valign="top">Description Meta pour tout le site:</td>
+				<td><textarea class="text_area" cols="50" rows="3" style="width:500px; height:50px" name="config_MetaDesc"><?php echo $row->config_MetaDesc; ?></textarea></td>
 			</tr>
 			<tr>
-				<td valign="top">Global Site Meta Keywords:</td>
-				<td><textarea class="text_area" cols="50" rows="3" style="width:500px; height:50px" name="config_MetaKeys"><?php echo htmlspecialchars($row->config_MetaKeys, ENT_QUOTES); ?></textarea></td>
+				<td valign="top">Mots clés Meta pour tout le site:</td>
+				<td><textarea class="text_area" cols="50" rows="3" style="width:500px; height:50px" name="config_MetaKeys"><?php echo $row->config_MetaKeys; ?></textarea></td>
 			</tr>
 			<tr>
-				<td valign="top">Show Title Meta Tag:</td>
+				<td valign="top">Afficher le Meta Tag Titre:</td>
 				<td>
 				<?php echo $lists['MetaTitle']; ?>
 				&nbsp;&nbsp;&nbsp;
-				<?php echo mosToolTip('Show the title meta tag when viewing content items'); ?>
+				<?php echo mosToolTip('Montre le meta tag Titre à l affichage des articles'); ?>
 				</td>
 			  	</tr>
 			<tr>
-				<td valign="top">Show Author Meta Tag:</td>
+				<td valign="top">Afficher le Meta Tag Auteur:</td>
 				<td>
 				<?php echo $lists['MetaAuthor']; ?>
 				&nbsp;&nbsp;&nbsp;
-				<?php echo mosToolTip('Show the author meta tag when viewing content items'); ?>
+				<?php echo mosToolTip('Montre le meta tag Auteur à l affichage des articles'); ?>
 				</td>
 			</tr>
 			</table>
@@ -630,11 +690,11 @@ class HTML_config {
 				<td><?php echo $lists['mailer']; ?></td>
 			</tr>
 			<tr>
-				<td>Mail From:</td>
+				<td>Mail de:</td>
 				<td><input class="text_area" type="text" name="config_mailfrom" size="50" value="<?php echo $row->config_mailfrom; ?>"/></td>
 			</tr>
 			<tr>
-				<td>From Name:</td>
+				<td>Nom de l'exp&eacute;diteur:</td>
 				<td><input class="text_area" type="text" name="config_fromname" size="50" value="<?php echo $row->config_fromname; ?>"/></td>
 			</tr>
 			<tr>
@@ -667,7 +727,7 @@ class HTML_config {
 			if (is_writeable($row->config_cachepath)) {
 				?>
 				<tr>
-					<td width="185">Caching:</td>
+					<td width="185">Activer le Cache:</td>
 					<td width="500"><?php echo $lists['caching']; ?></td>
 					<td>&nbsp;</td>
 				</tr>
@@ -675,42 +735,42 @@ class HTML_config {
 			}
 			?>
 			<tr>
-				<td>Cache Folder:</td>
+				<td>Dossier du Cache:</td>
 				<td>
 				<input class="text_area" type="text" name="config_cachepath" size="50" value="<?php echo $row->config_cachepath; ?>"/>
 				<?php
 				if (is_writeable($row->config_cachepath)) {
-					echo mosToolTip('Current cache is directory is <b>Writeable</b>');
+					echo mosToolTip('Le dossier du cache est <b>Modifiable</b>');
 				} else {
-					echo mosWarning('The cache directory is UNWRITEABLE - please set this directory to CHMOD755 before turning on the cache');
+					echo mosWarning('Le dossier du cache n est pas MODIFIABLE - veuillez le CHMODer en 755 avant d activer le Cache');
 				}
-				?>			
+				?>
 				</td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Cache Time:</td>
-				<td><input class="text_area" type="text" name="config_cachetime" size="5" value="<?php echo $row->config_cachetime; ?>"/> seconds</td>
+				<td>Dur&eacute;e de vie du Cache:</td>
+				<td><input class="text_area" type="text" name="config_cachetime" size="5" value="<?php echo $row->config_cachetime; ?>"/> secondes</td>
 				<td>&nbsp;</td>
 			</tr>
 			</table>
 			<?php
 		$tabs->endTab();
-		$tabs->startTab("Statistics","stats-page");
+		$tabs->startTab("Statistiques","stats-page");
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="185">Statistics:</td>
+				<td width="185">Statistiques:</td>
 				<td width="100"><?php echo $lists['enable_stats']; ?></td>
-				<td><?php echo mostooltip('Enable/disable collection of site statistics'); ?></td>
+				<td><?php echo mostooltip('Active/d&eacute;sactive la collecte des statistiques du site'); ?></td>
 			</tr>
 			<tr>
-				<td>Log Content Hits by Date:</td>
+				<td>Journaliser les clics du contenu par date:</td>
 				<td><?php echo $lists['log_items']; ?></td>
-				<td><span class="error"><?php echo mosWarning('WARNING : Large amounts of data will be collected'); ?></span></td>
+				<td><span class="error"><?php echo mosWarning('ATTENTION : un grande quantit&eacute; de donn&eacute;es sera collect&eacute;e'); ?></span></td>
 			</tr>
 			<tr>
-				<td>Log Search Strings:</td>
+				<td>Journaliser les mots recherch&eacute;s:</td>
 				<td><?php echo $lists['log_searches']; ?></td>
 				<td>&nbsp;</td>
 			</tr>
@@ -721,19 +781,19 @@ class HTML_config {
 			?>
 			<table class="adminform">
 			<tr>
-				<td width="200"><strong>Search Engine Optimization</strong></td>
+				<td width="200"><strong>Optimisation pour les moteurs de recherche</strong></td>
 				<td width="100">&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Search Engine Friendly URLs:</td>
+				<td>URLs explicites (SEF):</td>
 				<td><?php echo $lists['sef']; ?>&nbsp;</td>
-				<td><span class="error"><?php echo mosWarning('Apache only! Rename htaccess.txt to .htaccess before activating'); ?></span></td>
+				<td><span class="error"><?php echo mosWarning('Apache seulement! Renommer htaccess.txt en .htaccess avant activation'); ?></span></td>
 			</tr>
 			<tr>
-				<td>Dynamic Page Titles:</td>
+				<td>Titres Dynamiques des pages:</td>
 				<td><?php echo $lists['pagetitles']; ?></td>
-				<td><?php echo mosToolTip('Dynamically changes the page title to reflect current content viewed'); ?></td>
+				<td><?php echo mosToolTip('Change dynamiquement le titre des pages pour refl&eacute;ter l article visit&eacute;'); ?></td>
 			</tr>
 			</table>
 			<?php

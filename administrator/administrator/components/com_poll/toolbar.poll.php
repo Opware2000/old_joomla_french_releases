@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.poll.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.poll.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -41,7 +41,7 @@ switch ($task) {
 		break;
 
 	case 'editA':
-		$id = mosGetParam( $_REQUEST, 'id', 0 );
+		$id = intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 
 		$query = "SELECT published"
 		. "\n FROM #__polls"

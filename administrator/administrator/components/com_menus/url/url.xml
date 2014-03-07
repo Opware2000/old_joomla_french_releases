@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <mosinstall type="menu" version="1.0.0">
-	<name>Link - Url</name>
+	<name>Lien - Url</name>
 	<group>Link</group>
 	<author>Joomla! Project</author>
 	<creationDate>July 2004</creationDate>
@@ -9,8 +9,8 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-	<description>Creates url link</description>
+	<description>Crée un lien à partir d\'une URL</description>
 	<params>
-		<param name="menu_image" type="imagelist" directory="/images/stories" hide_default="1" default="" label="Menu Image" description="A small image to be placed to the left or right of your menu item, images must be in images/stories/" />
+		<param name="menu_image" type="imagelist" directory="/images/stories" hide_default="1" default="" label="Image de Menu" description="Une petite image à placer à droite ou à gauche du lien, les images doivent se trouver dans images/stories/" />
 	</params>
 </mosinstall>

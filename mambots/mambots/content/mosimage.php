@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosimage.php 427 2005-10-09 18:59:01Z stingrey $
+* @version $Id: mosimage.php 2942 2006-03-29 10:01:29Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,7 +19,12 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosImage' );
 /**
 */
 function botMosImage( $published, &$row, &$params, $page=0 ) {
-	global $database;
+	global $database, $_MAMBOTS;
+	
+	// simple performance check to determine whether bot should process further
+	if ( strpos( $row->text, 'mosimage' ) === false ) {
+		return true;
+	}
 	
  	// expression to search for
 	$regex = '/{mosimage\s*.*?}/i';	
@@ -47,16 +52,24 @@ function botMosImage( $published, &$row, &$params, $page=0 ) {
 
  	// mambot only processes if there are any instances of the mambot in the text
  	if ( $count ) {
-		// load mambot params info
-		$query = "SELECT id"
-		. "\n FROM #__mambots"
-		. "\n WHERE element = 'mosimage'"
-		. "\n AND folder = 'content'"
-		;
-		$database->setQuery( $query );
-	 	$id 	= $database->loadResult();
-	 	$mambot = new mosMambot( $database );
-	  	$mambot->load( $id );
+		// check if param query has previously been processed
+		if ( !isset($_MAMBOTS->_content_mambot_params['mosimage']) ) {
+			// load mambot params info
+			$query = "SELECT params"
+			. "\n FROM #__mambots"
+			. "\n WHERE element = 'mosimage'"
+			. "\n AND folder = 'content'"
+			;
+			$database->setQuery( $query );
+			$database->loadObject($mambot);
+			
+			// save query to class variable
+			$_MAMBOTS->_content_mambot_params['mosimage'] = $mambot;
+		}
+
+		// pull query data from class variable
+		$mambot = $_MAMBOTS->_content_mambot_params['mosimage'];
+		
 	 	$botParams = new mosParameters( $mambot->params );
 
 	 	$botParams->def( 'padding' );
@@ -115,7 +128,7 @@ function processImages ( &$row, &$params, &$introCount ) {
 
 			// $attrib[3] border
 			if ( !isset($attrib[3]) || !$attrib[3] ) {
-				$attrib[3] = '0';
+				$attrib[3] = 0;
 			}
 
 			// $attrib[4] caption
@@ -162,32 +175,60 @@ function processImages ( &$row, &$params, &$introCount ) {
 			$image .=' hspace="6" alt="'. $attrib[2] .'" title="'. $attrib[2] .'" border="'. $border .'" />';
 
 			// assemble caption - if caption detected
-			if ( $attrib[4] ) {
-				$caption = '<div class="mosimage_caption" style="width: '. $width .'; text-align: '. $attrib[6] .';" align="'. $attrib[6] .'">';
+			$caption = '';
+			if ( $attrib[4] ) {				
+				$caption = '<div class="mosimage_caption"';
+				if ( $attrib[6] ) {
+					$caption .= ' style="text-align: '. $attrib[6] .';"';
+					$caption .= ' align="'. $attrib[6] .'"';
+				}
+				$caption .= '>';
 				$caption .= $attrib[4];
-				$caption .='</div>';
+				$caption .= '</div>';
 			}
-
+			
 			// final output
 			if ( $attrib[4] ) {
-				$img = '<div class="mosimage" style="border-width: '. $attrib[3] .'px; float: '. $attrib[1] .'; margin: '. $params->def( 'margin' ) .'px; padding: '. $params->def( 'padding' ) .'px;'. $width .'" align="center">';
+				// initialize variables
+				$margin  		= '';
+				$padding 		= '';
+				$float			= '';
+				$border_width 	= '';
+				$style			= '';
+				if ( $params->def( 'margin' ) ) {
+					$margin 		= ' margin: '. $params->def( 'margin' ).'px;';
+				}				
+				if ( $params->def( 'padding' ) ) {
+					$padding 		= ' padding: '. $params->def( 'padding' ).'px;';
+				}				
+				if ( $attrib[1] ) {
+					$float 			= ' float: '. $attrib[1] .';';
+				}
+				if ( $attrib[3] ) {
+					$border_width	= ' border-width: '. $attrib[3] .'px;';
+				}
+				
+				if ( $params->def( 'margin' ) || $params->def( 'padding' ) || $attrib[1] || $attrib[3] ) {
+					$style = ' style="'. $border_width . $float . $margin . $padding . $width .'"';
+				}
+				
+				$img = '<div class="mosimage" '. $style .' align="center">'; 
 
 				// display caption in top position
-				if ( $attrib[5] == 'top' ) {
+				if ( $attrib[5] == 'top' && $caption ) {
 					$img .= $caption;
 				}
 
 				$img .= $image;
 
 				// display caption in bottom position
-				if ( $attrib[5] == 'bottom' ) {
+				if ( $attrib[5] == 'bottom' && $caption ) {
 					$img .= $caption;
 				}
 				$img .='</div>';
 			} else {
 				$img = $image;
 			}
-
 
 			$images[] = $img;
 		}

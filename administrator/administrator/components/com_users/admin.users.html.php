@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.users.html.php 736 2005-10-31 03:35:38Z stingrey $
+* @version $Id: admin.users.html.php 3513 2006-05-15 20:52:25Z stingrey $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -28,7 +28,7 @@ class HTML_users {
 		<table class="adminheading">
 		<tr>
 			<th class="user">
-			User Manager
+			Gestion des utilisateurs
 			</th>
 			<td>
 			Filter:
@@ -54,25 +54,25 @@ class HTML_users {
 			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count($rows); ?>);" />
 			</th>
 			<th class="title">
-			Name
+			Nom
 			</th>
 			<th width="15%" class="title" >
-			Username
+			Identifiant
 			</th>
 			<th width="5%" class="title" nowrap="nowrap">
-			Logged In
+			Connecté
 			</th>
 			<th width="5%" class="title">
-			Enabled
+			Activé
 			</th>
 			<th width="15%" class="title">
-			Group
+			Groupe
 			</th>
 			<th width="15%" class="title">
 			E-Mail
 			</th>
 			<th width="10%" class="title">
-			Last Visit
+			Dernière visite
 			</th>
 			<th width="1%" class="title">
 			ID
@@ -85,7 +85,7 @@ class HTML_users {
 
 			$img 	= $row->block ? 'publish_x.png' : 'tick.png';
 			$task 	= $row->block ? 'unblock' : 'block';
-			$alt 	= $row->block ? 'Enabled' : 'Blocked';
+			$alt 	= $row->block ? 'Actif' : 'Bloqué';
 			$link 	= 'index2.php?option=com_users&amp;task=editA&amp;id='. $row->id. '&amp;hidemainmenu=1';
 			?>
 			<tr class="<?php echo "row$k"; ?>">
@@ -120,7 +120,7 @@ class HTML_users {
 				</a>
 				</td>
 				<td nowrap="nowrap">
-				<?php echo mosFormatDate( $row->lastvisitDate, "%Y-%m-%d %H:%M:%S" ); ?>
+				<?php echo mosFormatDate( $row->lastvisitDate, _CURRENT_SERVER_TIME_FORMAT ); ?>
 				</td>
 				<td>
 				<?php echo $row->id; ?>
@@ -161,21 +161,21 @@ class HTML_users {
 
 			// do field validation
 			if (trim(form.name.value) == "") {
-				alert( "You must provide a name." );
+				alert( "Vous devez saisir un nom." );
 			} else if (form.username.value == "") {
-				alert( "You must provide a user login name." );
+				alert( "Vous devez saisir un identifiant." );
 			} else if (r.exec(form.username.value) || form.username.value.length < 3) {
-				alert( "You login name contains invalid characters or is too short." );
+				alert( "Votre identifiant contient des caractères invalides ou est trop court." );
 			} else if (trim(form.email.value) == "") {
-				alert( "You must provide an email address." );
+				alert( "Vous devez saisir une adresse email." );
 			} else if (form.gid.value == "") {
-				alert( "You must assign user to a group." );
+				alert( "Vous devez assigner cet utilisateur à une groupe." );
 			} else if (trim(form.password.value) != "" && form.password.value != form.password2.value){
-				alert( "Password do not match." );
+				alert( "Les mots de passe ne correspondent pas." );
 			} else if (form.gid.value == "29") {
-				alert( "Please Select another group as `Public Frontend` is not a selectable option" );
+				alert( "Vous devez sélectionner un autre groupe, `Public Frontend` n est pas sélectionnable" );
 			} else if (form.gid.value == "30") {
-				alert( "Please Select another group as `Public Backend` is not a selectable option" );
+				alert( "Vous devez sélectionner un autre groupe, `Public Backend` n est pas sélectionnable" );
 			} else {
 				submitform( pressbutton );
 			}
@@ -192,7 +192,7 @@ class HTML_users {
 		<table class="adminheading">
 		<tr>
 			<th class="user">
-			User: <small><?php echo $row->id ? 'Edit' : 'Add';?></small>
+			Utilisateur: <small><?php echo $row->id ? 'Edite' : 'Ajouter';?></small>
 			</th>
 		</tr>
 		</table>
@@ -203,23 +203,23 @@ class HTML_users {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					User Details
+					Détails utilisateur
 					</th>
 				</tr>
 				<tr>
-					<td width="100">
-					Name:
+					<td width="130">
+					Nom:
 					</td>
-					<td width="85%">
-					<input type="text" name="name" class="inputbox" size="40" value="<?php echo $row->name; ?>" />
+					<td>
+					<input type="text" name="name" class="inputbox" size="40" value="<?php echo $row->name; ?>" maxlength="50" />
 					</td>
 				</tr>
 				<tr>
 					<td>
-					Username:
+					Identifiant:
 					</td>
 					<td>
-					<input type="text" name="username" class="inputbox" size="40" value="<?php echo $row->username; ?>" />
+					<input type="text" name="username" class="inputbox" size="40" value="<?php echo $row->username; ?>" maxlength="25" />
 					</td>
 				<tr>
 					<td>
@@ -231,7 +231,7 @@ class HTML_users {
 				</tr>
 				<tr>
 					<td>
-					New Password:
+					Nouveau mot de passe:
 					</td>
 					<td>
 					<input class="inputbox" type="password" name="password" size="40" value="" />
@@ -239,7 +239,7 @@ class HTML_users {
 				</tr>
 				<tr>
 					<td>
-					Verify Password:
+					Confirmer le mot de passe:
 					</td>
 					<td>
 					<input class="inputbox" type="password" name="password2" size="40" value="" />
@@ -247,7 +247,7 @@ class HTML_users {
 				</tr>
 				<tr>
 					<td valign="top">
-					Group:
+					Groupe:
 					</td>
 					<td>
 					<?php echo $lists['gid']; ?>
@@ -258,7 +258,7 @@ class HTML_users {
 					?>
 					<tr>
 						<td>
-						Block User
+						Bloquer l'utilisateur
 						</td>
 						<td>
 						<?php echo $lists['block']; ?>
@@ -270,7 +270,7 @@ class HTML_users {
 					?>
 					<tr>
 						<td>
-						Receive System Emails
+						Recevoir les emails système
 						</td>
 						<td>
 						<?php echo $lists['sendEmail']; ?>
@@ -282,7 +282,7 @@ class HTML_users {
 					?>
 					<tr>
 						<td>
-						Register Date
+						Date d'enregistrement
 						</td>
 						<td>
 						<?php echo $row->registerDate;?>
@@ -290,7 +290,7 @@ class HTML_users {
 					</tr>
 				<tr>
 					<td>
-					Last Visit Date
+					Dernière visite
 					</td>
 					<td>
 					<?php echo $row->lastvisitDate;?>
@@ -310,7 +310,7 @@ class HTML_users {
 				<table class="adminform">
 				<tr>
 					<th colspan="1">
-					<?php echo 'Parameters'; ?>
+					<?php echo 'Paramètres'; ?>
 					</th>
 				</tr>
 				<tr>
@@ -326,15 +326,15 @@ class HTML_users {
 					<table class="adminform">
 					<tr>
 						<th>
-						Contact Information
+						Information liée au contact
 						</th>
 					</tr>
 					<tr>
 						<td>
 						<br />
-						No Contact details linked to this User:
+						Aucun contact lié à cet utilisateur:
 						<br />
-						See 'Components -> Contact -> Manage Contacts' for details.
+						Voir 'Composants -> Contact -> Gérer les Contacts' pour les détails.
 						<br /><br />
 						</td>
 					</tr>
@@ -345,12 +345,12 @@ class HTML_users {
 					<table class="adminform">
 					<tr>
 						<th colspan="2">
-						Contact Information
+						Information liée au contact
 						</th>
 					</tr>
 					<tr>
 						<td width="15%">
-						Name:
+						Nom:
 						</td>
 						<td>
 						<strong>
@@ -360,7 +360,7 @@ class HTML_users {
 					</tr>
 					<tr>
 						<td>
-						Position:
+						Fonction:
 						</td>
 						<td >
 						<strong>
@@ -370,7 +370,7 @@ class HTML_users {
 					</tr>
 					<tr>
 						<td>
-						Telephone:
+						Téléphone:
 						</td>
 						<td >
 						<strong>
@@ -411,10 +411,10 @@ class HTML_users {
 					<tr>
 						<td colspan="2">
 						<br /><br />
-						<input class="button" type="button" value="change Contact Details" onclick="javascript: gotocontact( '<?php echo $contact[0]->id; ?>' )">
+						<input class="button" type="button" value="changer les détails du Contact" onclick="javascript: gotocontact( '<?php echo $contact[0]->id; ?>' )">
 						<i>
 						<br />
-						'Components -> Contact -> Manage Contacts'.
+						'Composants -> Contact -> Gérer les Contacts'.
 						</i>
 						</td>
 					</tr>

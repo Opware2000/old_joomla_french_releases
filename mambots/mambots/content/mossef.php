@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mossef.php 427 2005-10-09 18:59:01Z stingrey $
+* @version $Id: mossef.php 3536 2006-05-17 15:49:40Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,9 +23,20 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosSef' );
 * <code><a href="...relative link..."></code>
 */
 function botMosSef( $published, &$row, &$params, $page=0 ) {
-
+	global $mosConfig_sef;
+	
 	// check whether mambot has been unpublished
 	if ( !$published ) {
+		return true;
+	}
+	
+	// check whether SEF is off
+	//if ( !$mosConfig_sef ) {
+	//	return true;
+	//}
+	
+	// simple performance check to determine whether bot should process further
+	if ( strpos( $row->text, 'href="' ) === false ) {
 		return true;
 	}
 	
@@ -37,18 +48,39 @@ function botMosSef( $published, &$row, &$params, $page=0 ) {
 
 	return true;
 }
+
 /**
 * Replaces the matched tags
 * @param array An array of matches (see preg_match_all)
 * @return string
 */
 function botMosSef_replacer( &$matches ) {
-	if ( substr($matches[1],0,1)=="#" ) {
-		// anchor
-		$temp = split("index.php", $_SERVER['REQUEST_URI']);
-		return "href=\"".sefRelToAbs("index.php".@$temp[1]).$matches[1]."\"";
+	global $mosConfig_live_site;
+
+	// original text that might be replaced
+	$original = 'href="'. $matches[1] .'"';
+
+	// array list of non http/https	URL schemes
+	$url_schemes = explode( ', ', _URL_SCHEMES );
+	
+	foreach ( $url_schemes as $url ) {
+		// disable bot from being applied to specific URL Scheme tag
+		if ( strpos( $matches[1], $url ) !== false ) {
+			return $original;
+		}
+	}
+
+	// will only process links containing 'index.php?option or links starting with '#'	
+	if ( strpos( $matches[1], 'index.php?option' ) !== false || strpos( $matches[1], '#' ) === 0  ) {
+		// convert url to SEF link
+		$link 		= sefRelToAbs( $matches[1] );
+		
+		// reconstruct html output
+		$replace 	= 'href="'. $link .'"';
+		
+		return $replace;
 	} else {
-		return "href=\"".sefRelToAbs($matches[1])."\"";
+		return $original;
 	}
 }
 ?>

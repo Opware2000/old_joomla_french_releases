@@ -22,7 +22,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class TOOLBAR_messages {
 	function _VIEW() {
 		mosMenuBar::startTable();
-		mosMenuBar::customX('reply', 'restore.png', 'restore_f2.png', 'Reply', false );
+		mosMenuBar::customX('reply', 'restore.png', 'restore_f2.png', 'Répondre', false );
 		mosMenuBar::spacer();
 		mosMenuBar::deleteList();
 		mosMenuBar::spacer();
@@ -32,7 +32,7 @@ class TOOLBAR_messages {
 
 	function _EDIT() {
 		mosMenuBar::startTable();
-		mosMenuBar::save( 'save', 'Send' );
+		mosMenuBar::save( 'save', 'Envoyer' );
 		mosMenuBar::spacer();
 		mosMenuBar::cancel();
 		mosMenuBar::spacer();

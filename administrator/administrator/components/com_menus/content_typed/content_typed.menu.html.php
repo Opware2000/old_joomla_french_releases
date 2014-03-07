@@ -32,7 +32,7 @@ class content_menu_html {
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
 			var form = document.adminForm;
-			if (pressbutton == 'cancel') {
+			if (pressbutton == 'annuler') {
 				submitform( pressbutton );
 				return;
 			}
@@ -43,9 +43,9 @@ class content_menu_html {
 
 			// do field validation
 			if (trim(form.name.value) == ""){
-				alert( "Link must have a name" );
+				alert( "Le lien doit avoir un nom" );
 			} else if (trim(form.content_typed.value) == ""){
-				alert( "You must select a Content to link to" );
+				alert( "Vous devez sélectionner un article" );
 			} else {
 				form.link.value = "index.php?option=com_content&task=view&id=" + form.content_typed.value;
 				form.componentid.value = form.content_typed.value;
@@ -58,7 +58,7 @@ class content_menu_html {
 		<table class="adminheading">
 		<tr>
 			<th>
-			<?php echo $menu->id ? 'Edit' : 'Add';?> Menu Item :: Link - Static Content
+			<?php echo $menu->id ? 'Editer' : 'Ajouter';?> :: Lien - Article statique
 			</th>
 		</tr>
 		</table>
@@ -69,12 +69,12 @@ class content_menu_html {
 				<table class="adminform">
 				<tr>
 					<th colspan="2">
-					Details
+					Détails
 					</th>
 				</tr>
 				<tr>
 					<td width="10%" align="right">
-					Name:
+					Nom:
 					</td>
 					<td width="80%">
 					<input class="inputbox" type="text" name="name" size="50" maxlength="100" value="<?php echo $menu->name; ?>" />
@@ -82,7 +82,7 @@ class content_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					Static Content:
+					Article statique:
 					</td>
 					<td width="80%">
 					<?php echo $lists['content']; ?>
@@ -96,7 +96,7 @@ class content_menu_html {
 				</tr>
 				<tr>
 					<td width="10%" align="right" valign="top">
-					On Click, open:
+					Ouvrir dans:
 					</td>
 					<td width="80%">
 					<?php echo $lists['target']; ?>
@@ -104,7 +104,7 @@ class content_menu_html {
 				</tr>
 				<tr>
 					<td align="right">
-					Parent Item:
+					Lien parent:
 					</td>
 					<td>
 					<?php echo $lists['parent']; ?>
@@ -112,7 +112,7 @@ class content_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Ordering:
+					Ordre:
 					</td>
 					<td>
 					<?php echo $lists['ordering']; ?>
@@ -120,14 +120,14 @@ class content_menu_html {
 				</tr>
 				<tr>
 					<td valign="top" align="right">
-					Access Level:
+					Niveau d'accès:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
 					</td>
 				</tr>
 				<tr>
-					<td valign="top" align="right">Published:</td>
+					<td valign="top" align="right">Publié:</td>
 					<td>
 					<?php echo $lists['published']; ?>
 					</td>
@@ -141,7 +141,7 @@ class content_menu_html {
 				<table class="adminform">
 				<tr>
 					<th>
-					Parameters
+					Paramètres
 					</th>
 				</tr>
 				<tr>

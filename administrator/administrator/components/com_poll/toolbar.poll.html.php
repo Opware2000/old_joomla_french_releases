@@ -49,14 +49,14 @@ class TOOLBAR_poll {
 		mosMenuBar::startTable();
 		$popup='pollwindow';
 		?>
-		<td><a class="toolbar" href="#" onclick="window.open('popups/<?php echo $popup;?>.php?pollid=<?php echo $pollid; ?>&t=<?php echo $cur_template; ?>', 'win1', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('preview','','images/preview_f2.png',1);"><img src="images/preview.png" alt="Preview" border="0" name="preview" align="middle" />&nbsp;Preview</a></td>
+		<td><a class="toolbar" href="#" onclick="window.open('popups/<?php echo $popup;?>.php?pollid=<?php echo $pollid; ?>&t=<?php echo $cur_template; ?>', 'win1', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('preview','','images/preview_f2.png',1);"><img src="images/preview.png" alt="Aper&ccedil;u" border="0" name="preview" align="middle" />Aper&ccedil;u</a></td>
 		<?php
 		mosMenuBar::spacer();
 		mosMenuBar::save();
 		mosMenuBar::spacer();
 		if ( $id ) {
 			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+			mosMenuBar::cancel( 'cancel', 'Fermer' );
 		} else {
 			mosMenuBar::cancel();
 		}

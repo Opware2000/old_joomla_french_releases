@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.templates.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.templates.php 3495 2006-05-15 01:44:00Z stingrey $
 * @package Joomla
 * @subpackage Templates
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -17,7 +17,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 
-$client = mosGetParam( $_REQUEST, 'client', '' );
+$client = strval( mosGetParam( $_REQUEST, 'client', '' ) );
 
 switch ($task) {
 

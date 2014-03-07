@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sections.searchbot.php 1490 2005-12-20 15:53:29Z Jinx $
+* @version $Id: sections.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,18 +26,26 @@ $_MAMBOTS->registerFunction( 'onSearch', 'botSearchSections' );
 * @param string ordering option, newest|oldest|popular|alpha|category
 */
 function botSearchSections( $text, $phrase='', $ordering='' ) {
-	global $database, $my;
+	global $database, $my, $_MAMBOTS;
 	
-	// load mambot params info
-	$query = "SELECT id"
-	. "\n FROM #__mambots"
-	. "\n WHERE element = 'sections.searchbot'"
-	. "\n AND folder = 'search'"
-	;
-	$database->setQuery( $query );
-	$id 	= $database->loadResult();
-	$mambot = new mosMambot( $database );
-	$mambot->load( $id );
+	// check if param query has previously been processed
+	if ( !isset($_MAMBOTS->_search_mambot_params['sections']) ) {
+		// load mambot params info
+		$query = "SELECT params"
+		. "\n FROM #__mambots"
+		. "\n WHERE element = 'sections.searchbot'"
+		. "\n AND folder = 'search'"
+		;
+		$database->setQuery( $query );
+		$database->loadObject($mambot);		
+		
+		// save query to class variable
+		$_MAMBOTS->_search_mambot_params['sections'] = $mambot;
+	}
+	
+	// pull query data from class variable
+	$mambot = $_MAMBOTS->_search_mambot_params['sections'];	
+	
 	$botParams = new mosParameters( $mambot->params );
 	
 	$limit = $botParams->def( 'search_limit', 50 );

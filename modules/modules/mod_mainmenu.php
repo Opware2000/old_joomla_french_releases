@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_mainmenu.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: mod_mainmenu.php 3592 2006-05-22 15:26:35Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -23,27 +23,45 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 	*/
 	function mosGetMenuLink( $mitem, $level=0, &$params, $open=null ) {
 		global $Itemid, $mosConfig_live_site, $mainframe;
+		
 		$txt = '';
-
+		
 		switch ($mitem->type) {
 			case 'separator':
 			case 'component_item_link':
-			break;
-			case 'content_item_link':
-			$temp = split("&task=view&id=", $mitem->link);
-			$mitem->link .= '&Itemid='. $mainframe->getItemid($temp[1]);
-			break;
+				break;
+				
 			case 'url':
-			if ( eregi( 'index.php\?', $mitem->link ) ) {
-				if ( !eregi( 'Itemid=', $mitem->link ) ) {
-					$mitem->link .= '&Itemid='. $mitem->id;
+				if ( eregi( 'index.php\?', $mitem->link ) ) {
+					if ( !eregi( 'Itemid=', $mitem->link ) ) {
+						$mitem->link .= '&Itemid='. $mitem->id;
+					}
 				}
-			}
-			break;
+				break;
+				
+			case 'content_item_link':
 			case 'content_typed':
+				// load menu params
+				$menuparams = new mosParameters( $mitem->params, $mainframe->getPath( 'menu_xml', $mitem->type ), 'menu' );
+				
+				$unique_itemid = $menuparams->get( 'unique_itemid', 1 );
+				
+				if ( $unique_itemid ) {
+					$mitem->link .= '&Itemid='. $mitem->id;
+				} else {
+					$temp = split('&task=view&id=', $mitem->link);
+					
+					if ( $mitem->type == 'content_typed' ) {
+						$mitem->link .= '&Itemid='. $mainframe->getItemid($temp[1], 1, 0);
+					} else {
+						$mitem->link .= '&Itemid='. $mainframe->getItemid($temp[1], 0, 1);
+					}
+				}
+				break;
+
 			default:
-			$mitem->link .= '&Itemid='. $mitem->id;
-			break;
+				$mitem->link .= '&Itemid='. $mitem->id;
+				break;
 		}
 
 		// Active Menu highlighting
@@ -58,44 +76,68 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 			$id = '';
 		}
 
+		if ( $params->get( 'full_active_id' ) ) {
+			// support for `active_menu` of 'Link - Component Item'	
+			if ( $id == '' && $mitem->type == 'component_item_link' ) {
+				parse_str( $mitem->link, $url );
+				if ( $url['Itemid'] == $current_itemid ) {
+					$id = 'id="active_menu'. $params->get( 'class_sfx' ) .'"';
+				}
+			}
+			
+			// support for `active_menu` of 'Link - Url' if link is relative
+			if ( $id == '' && $mitem->type == 'url' && strpos( 'http', $mitem->link ) === false) {
+				parse_str( $mitem->link, $url );
+				if ( isset( $url['Itemid'] ) ) {
+					if ( $url['Itemid'] == $current_itemid ) {
+						$id = 'id="active_menu'. $params->get( 'class_sfx' ) .'"';
+					}
+				}
+			}
+		}
+
+		// replace & with amp; for xhtml compliance
 		$mitem->link = ampReplace( $mitem->link );
 
-		if ( strcasecmp( substr( $mitem->link,0,4 ), 'http' ) ) {
-			$mitem->link = sefRelToAbs( $mitem->link );
-		}
+		// run through SEF convertor
+		$mitem->link = sefRelToAbs( $mitem->link );
 
 		$menuclass = 'mainlevel'. $params->get( 'class_sfx' );
 		if ($level > 0) {
 			$menuclass = 'sublevel'. $params->get( 'class_sfx');
 		}
+		
+		// replace & with amp; for xhtml compliance
+		// remove slashes from excaped characters
+		$mitem->name = stripslashes( ampReplace($mitem->name) );
 
 		switch ($mitem->browserNav) {
 			// cases are slightly different
 			case 1:
-			// open in a new window
-			$txt = '<a href="'. $mitem->link .'" target="_blank" class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</a>';
-			break;
+				// open in a new window
+				$txt = '<a href="'. $mitem->link .'" target="_blank" class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</a>';
+				break;
 
 			case 2:
-			// open in a popup window
-			$txt = "<a href=\"#\" onclick=\"javascript: window.open('". $mitem->link ."', '', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=550'); return false\" class=\"$menuclass\" ". $id .">". $mitem->name ."</a>\n";
-			break;
+				// open in a popup window
+				$txt = "<a href=\"#\" onclick=\"javascript: window.open('". $mitem->link ."', '', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=550'); return false\" class=\"$menuclass\" ". $id .">". $mitem->name ."</a>\n";
+				break;
 
 			case 3:
-			// don't link it
-			$txt = '<span class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</span>';
-			break;
+				// don't link it
+				$txt = '<span class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</span>';
+				break;
 
-			default:	// formerly case 2
-			// open in parent window
-			$txt = '<a href="'. $mitem->link .'" class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</a>';
-			break;
+			default:	
+				// open in parent window
+				$txt = '<a href="'. $mitem->link .'" class="'. $menuclass .'" '. $id .'>'. $mitem->name .'</a>';
+				break;
 		}
 
 		if ( $params->get( 'menu_images' ) ) {
-			$menu_params = new stdClass();
-			$menu_params = new mosParameters( $mitem->params );
-			$menu_image = $menu_params->def( 'menu_image', -1 );
+			$menu_params 	= new stdClass();
+			$menu_params 	= new mosParameters( $mitem->params );
+			$menu_image 	= $menu_params->def( 'menu_image', -1 );
 			if ( ( $menu_image != '-1' ) && $menu_image ) {
 				$image = '<img src="'. $mosConfig_live_site .'/images/stories/'. $menu_image .'" border="0" alt="'. $mitem->name .'"/>';
 				if ( $params->get( 'menu_images_align' ) ) {
@@ -153,83 +195,83 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 			$intUserType = 0;
 		}
 
-		if ($mosConfig_shownoauth) {
-			$sql = "SELECT m.*"
-			. "\n FROM #__menu AS m"
-			. "\n WHERE menutype = '". $params->get( 'menutype' ) ."'"
-			. "\n AND published = 1"
-			. "\n ORDER BY parent, ordering";
-		} else {
-			$sql = "SELECT m.*"
-			. "\n FROM #__menu AS m"
-			. "\n WHERE menutype = '". $params->get( 'menutype' ) ."'"
-			. "\n AND published = 1"
-			. "\n AND access <= $my->gid"
-			. "\n ORDER BY parent, ordering";
-		}
+		$and = '';
+		if ( !$mosConfig_shownoauth ) {
+			$and = "\n AND access <= $my->gid";
+		}		
+		$sql = "SELECT m.*"
+		. "\n FROM #__menu AS m"
+		. "\n WHERE menutype = '". $params->get( 'menutype' ) ."'"
+		. "\n AND published = 1"
+		. $and
+		. "\n ORDER BY parent, ordering";
 		$database->setQuery( $sql );
 		$rows = $database->loadObjectList( 'id' );
 
 		// indent icons
 		switch ( $params->get( 'indent_image' ) ) {
 			case '1':
-			// Default images
-			$imgpath = $mosConfig_live_site .'/images/M_images';
-			for ( $i = 1; $i < 7; $i++ ) {
-				$img[$i] = '<img src="'. $imgpath .'/indent'. $i .'.png" alt="" />';
-			}
-			break;
-			case '2':
-			// Use Params
-			$imgpath = $mosConfig_live_site .'/images/M_images';
-			for ( $i = 1; $i < 7; $i++ ) {
-				if ( $params->get( 'indent_image'. $i ) == '-1' ) {
-					$img[$i] = NULL;
-				} else {
-					$img[$i] = '<img src="'. $imgpath .'/'. $params->get( 'indent_image'. $i ) .'" alt="" />';
+				// Default images
+				$imgpath = $mosConfig_live_site .'/images/M_images';
+				for ( $i = 1; $i < 7; $i++ ) {
+					$img[$i] = '<img src="'. $imgpath .'/indent'. $i .'.png" alt="" />';
 				}
-			}
-			break;
+				break;
+				
+			case '2':
+				// Use Params
+				$imgpath = $mosConfig_live_site .'/images/M_images';
+				for ( $i = 1; $i < 7; $i++ ) {
+					if ( $params->get( 'indent_image'. $i ) == '-1' ) {
+						$img[$i] = NULL;
+					} else {
+						$img[$i] = '<img src="'. $imgpath .'/'. $params->get( 'indent_image'. $i ) .'" alt="" />';
+					}
+				}
+				break;
+				
 			case '3':
-			// None
-			for ( $i = 1; $i < 7; $i++ ) {
-				$img[$i] = NULL;
-			}
-			break;
+				// None
+				for ( $i = 1; $i < 7; $i++ ) {
+					$img[$i] = NULL;
+				}
+				break;
+			
 			default:
-			// Template
-			$imgpath = $mosConfig_live_site .'/templates/'. $cur_template .'/images';
-			for ( $i = 1; $i < 7; $i++ ) {
-				$img[$i] = '<img src="'. $imgpath .'/indent'. $i .'.png" alt="" />';
-			}
-			break;
+				// Template
+				$imgpath = $mosConfig_live_site .'/templates/'. $cur_template .'/images';
+				for ( $i = 1; $i < 7; $i++ ) {
+					$img[$i] = '<img src="'. $imgpath .'/indent'. $i .'.png" alt="" />';
+				}
+				break;
 		}
 
 		$indents = array(
-		// block prefix / item prefix / item suffix / block suffix
-		array( '<table width="100%" border="0" cellpadding="0" cellspacing="0">', '<tr align="left"><td>' , '</td></tr>', '</table>' ),
-		array( '', '<div style="padding-left: 4px">'. $img[1] , '</div>', '' ),
-		array( '', '<div style="padding-left: 8px">'. $img[2] , '</div>', '' ),
-		array( '', '<div style="padding-left: 12px">'. $img[3] , '</div>', '' ),
-		array( '', '<div style="padding-left: 16px">'. $img[4] , '</div>', '' ),
-		array( '', '<div style="padding-left: 20px">'. $img[5] , '</div>', '' ),
-		array( '', '<div style="padding-left: 24px">'. $img[6] , '</div>', '' ),
+			// block prefix / item prefix / item suffix / block suffix
+			array( '<table width="100%" border="0" cellpadding="0" cellspacing="0">', '<tr align="left"><td>' , '</td></tr>', '</table>' ),
+			array( '', '<div style="padding-left: 4px">'. $img[1] , '</div>', '' ),
+			array( '', '<div style="padding-left: 8px">'. $img[2] , '</div>', '' ),
+			array( '', '<div style="padding-left: 12px">'. $img[3] , '</div>', '' ),
+			array( '', '<div style="padding-left: 16px">'. $img[4] , '</div>', '' ),
+			array( '', '<div style="padding-left: 20px">'. $img[5] , '</div>', '' ),
+			array( '', '<div style="padding-left: 24px">'. $img[6] , '</div>', '' ),
 		);
 
 		// establish the hierarchy of the menu
 		$children = array();
 		// first pass - collect children
 		foreach ($rows as $v ) {
-			$pt = $v->parent;
-			$list = @$children[$pt] ? $children[$pt] : array();
+			$pt 	= $v->parent;
+			$list 	= @$children[$pt] ? $children[$pt] : array();
 			array_push( $list, $v );
 			$children[$pt] = $list;
 		}
 
 		// second pass - collect 'open' menus
-		$open = array( $Itemid );
-		$count = 20; // maximum levels - to prevent runaway loop
-		$id = $Itemid;
+		$open 	= array( $Itemid );
+		$count 	= 20; // maximum levels - to prevent runaway loop
+		$id 	= $Itemid;
+		
 		while (--$count) {
 			if (isset($rows[$id]) && $rows[$id]->parent > 0) {
 				$id = $rows[$id]->parent;
@@ -247,7 +289,6 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 	* hierarchial menu
 	*/
 	function mosRecurseVIMenu( $id, $level, &$children, &$open, &$indents, &$params ) {
-		global $Itemid;
 		if (@$children[$id]) {
 			$n = min( $level, count( $indents )-1 );
 
@@ -303,53 +344,71 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 		if (count( $links )) {
 			switch ($style) {
 				case 1:
-				echo '<ul id="'. $menuclass .'">';
-				foreach ($links as $link) {
-					echo '<li>' . $link . '</li>';
-				}
-				echo '</ul>';
-				break;
+					echo '<ul id="'. $menuclass .'">';
+					foreach ($links as $link) {
+						echo '<li>' . $link . '</li>';
+					}
+					echo '</ul>';
+					break;
+				
 				default:
-				echo '<table width="100%" border="0" cellpadding="0" cellspacing="1">';
-				echo '<tr>';
-				echo '<td nowrap="nowrap">';
-				echo '<span class="'. $menuclass .'"> '. $params->get( 'end_spacer' ) .' </span>';
-				echo implode( '<span class="'. $menuclass .'"> '. $params->get( 'spacer' ) .' </span>', $links );
-				echo '<span class="'. $menuclass .'"> '. $params->get( 'end_spacer' ) .' </span>';
-				echo '</td></tr>';
-				echo '</table>';
-				break;
+					$spacer_start 	= $params->get( 'spacer' );
+					$spacer_end 	= $params->get( 'end_spacer' );
+					
+					echo '<table width="100%" border="0" cellpadding="0" cellspacing="1">';
+					echo '<tr>';
+						echo '<td nowrap="nowrap">';
+						
+							if ( $spacer_end ) {
+								echo '<span class="'. $menuclass .'"> '. $spacer_end .' </span>';
+							}
+							
+							if ( $spacer_start ) {
+								$html = '<span class="'. $menuclass .'"> '. $spacer_start .' </span>';
+								echo implode( $html, $links );
+							} else {
+								echo implode( '', $links );
+							}
+							
+							if ( $spacer_end ) {
+								echo '<span class="'. $menuclass .'"> '. $spacer_end .' </span>';
+							}
+						
+						echo '</td>';
+					echo '</tr>';
+					echo '</table>';
+					break;
 			}
 		}
 	}
 }
-$params->def( 'menutype', 'mainmenu' );
-$params->def( 'class_sfx', '' );
-$params->def( 'menu_images', 0 );
-$params->def( 'menu_images_align', 0 );
-$params->def( 'expand_menu', 0 );
-$params->def( 'activate_parent', 	0 );
-$params->def( 'indent_image', 0 );
-$params->def( 'indent_image1', 'indent1.png' );
-$params->def( 'indent_image2', 'indent2.png' );
-$params->def( 'indent_image3', 'indent3.png' );
-$params->def( 'indent_image4', 'indent4.png' );
-$params->def( 'indent_image5', 'indent5.png' );
-$params->def( 'indent_image6', 'indent.png' );
-$params->def( 'spacer', '' );
-$params->def( 'end_spacer', '' );
 
-$menu_style = $params->get( 'menu_style', 'vert_indent' );
+$params->def('menutype', 			'mainmenu');
+$params->def('class_sfx', 			'');
+$params->def('menu_images', 		0);
+$params->def('menu_images_align', 	0);
+$params->def('expand_menu', 		0);
+$params->def('activate_parent', 	0);
+$params->def('indent_image', 		0);
+$params->def('indent_image1', 		'indent1.png');
+$params->def('indent_image2', 		'indent2.png');
+$params->def('indent_image3', 		'indent3.png');
+$params->def('indent_image4', 		'indent4.png');
+$params->def('indent_image5', 		'indent5.png');
+$params->def('indent_image6', 		'indent.png');
+$params->def('spacer', 				'');
+$params->def('end_spacer', 			'');
+$params->def('full_active_id', 		0);
 
-switch ( $menu_style ) {
+switch ( $params->get( 'menu_style', 'vert_indent' ) ) {
 	case 'list_flat':
 		mosShowHFMenu( $params, 1 );
 		break;
-
+	
 	case 'horiz_flat':
 		mosShowHFMenu( $params, 0 );
 		break;
-
+	
 	default:
 		mosShowVIMenu( $params );
 		break;
