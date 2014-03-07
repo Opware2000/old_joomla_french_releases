@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: banners.class.php 1334 2005-12-07 05:32:52Z eddieajau $
+* @version $Id: banners.class.php 5070 2006-09-15 16:24:06Z friesengeist $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -99,7 +99,7 @@ class mosBanner extends mosDBTable {
 	function clicks() {
 		$query = "UPDATE #__banner"
 		. "\n SET clicks = ( clicks + 1 )"
-		. "\n WHERE bid = $this->bid"
+		. "\n WHERE bid = " . (int) $this->bid
 		;
 		$this->_db->setQuery( $query );
 		$this->_db->query();

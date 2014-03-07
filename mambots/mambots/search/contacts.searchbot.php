@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contacts.searchbot.php 3713 2006-05-29 03:59:33Z stingrey $
+* @version $Id: contacts.searchbot.php 5055 2006-09-14 16:38:01Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -77,7 +77,7 @@ function botSearchContacts( $text, $phrase='', $ordering='' ) {
 	$query = "SELECT a.name AS title,"
 	. "\n CONCAT_WS( ', ', a.name, a.con_position, a.misc ) AS text,"
 	. "\n '' AS created,"
-	. "\n CONCAT_WS( ' / ', '$section', b.title ) AS section,"
+	. "\n CONCAT_WS( ' / ', " . $database->Quote( $section ) . ", b.title ) AS section,"
 	. "\n '2' AS browsernav,"
 	. "\n CONCAT( 'index.php?option=com_contact&task=view&contact_id=', a.id ) AS href"
 	. "\n FROM #__contact_details AS a"
@@ -94,8 +94,8 @@ function botSearchContacts( $text, $phrase='', $ordering='' ) {
 	. "\n OR a.fax LIKE '%$text%' )"
 	. "\n AND a.published = 1"
 	. "\n AND b.published = 1"
-	. "\n AND a.access <= $my->gid"
-	. "\n AND b.access <= $my->gid"
+	. "\n AND a.access <= " . (int) $my->gid
+	. "\n AND b.access <= " . (int) $my->gid
 	. "\n GROUP BY a.id"
 	. "\n ORDER BY $order"
 	;

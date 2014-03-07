@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_quickicon.php 4806 2006-08-28 17:17:08Z stingrey $
+* @version $Id: mod_quickicon.php 5571 2006-10-26 05:20:13Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,7 +16,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 if (!defined( '_JOS_QUICKICON_MODULE' )) {
 	/** ensure that functions are declared only once */
-	define( '_JOS_QUICKICON_MODULE', 1 );	
+	define( '_JOS_QUICKICON_MODULE', 1 );
 
 	function quickiconButton( $link, $image, $text ) {
 		?>
@@ -30,10 +30,8 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 		</div>
 		<?php
 	}
-	
+
 	$securitycheck 	= intval( $params->get( 'securitycheck', 1 ) );
-	$versioncheck 	= intval( $params->get( 'versioncheck', 1 ) );
-	
 	?>
 	<div id="cpanel">
 		<?php
@@ -47,7 +45,7 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 		quickiconButton( $link, 'addedit.png', 'Articles statiques' );
 	
 		$link = 'index2.php?option=com_frontpage';
-		quickiconButton( $link, 'frontpage.png', 'Page d\'accueil' );
+		quickiconButton( $link, 'frontpage.png', 'Articles en page d\'accueil' );
 	
 		$link = 'index2.php?option=com_sections&amp;scope=content';
 		quickiconButton( $link, 'sections.png', 'Sections' );
@@ -82,23 +80,14 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 			$link = 'index2.php?option=com_config&hidemainmenu=1';
 			quickiconButton( $link, 'config.png', 'Configuration globale' );
 		}
-		/*
-		$link = 'index2.php?option=com_admin&task=versioncheck';
-		quickiconButton( $link, 'version_check.png', 'V&eacute;rification de version' );
-		*/
-		
-		if ($versioncheck) {
-		// show version check
-			josVersionCheck('88%',0);
-		}
-		
+
 		if ($securitycheck) {
 		// show security setting check
 			josSecurityCheck('88%');
 		}
 		?>
-	</div>	
-	<div style="clear:both;"> </div>	
+	</div>
+	<div style="clear:both;"> </div>
 	<?php
 }
 ?>

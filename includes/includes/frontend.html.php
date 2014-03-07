@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.html.php 4697 2006-08-24 00:01:32Z stingrey $
+* @version $Id: frontend.html.php 5132 2006-09-22 15:59:38Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -300,7 +300,7 @@ class modules_html {
 			?>
 			<tr>
 				<th valign="top">
-					<?php echo $module->title; ?>
+					<?php echo htmlspecialchars( $module->title ); ?>
 				</th>
 			</tr>
 			<?php
@@ -356,7 +356,7 @@ class modules_html {
 				//echo $number;
 				?>
 				<h3>
-					<?php echo $module->title; ?>
+					<?php echo htmlspecialchars( $module->title ); ?>
 				</h3>
 				<?php
 			}
@@ -388,7 +388,7 @@ class modules_html {
 					<div>
 						<?php
 						if ($module->showtitle != 0) {
-							echo "<h3>$module->title</h3>";
+							echo "<h3>" . htmlspecialchars( $module->title ) . "</h3>";
 						}
 
 						if ( $type ) {

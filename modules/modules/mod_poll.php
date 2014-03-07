@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_poll.php 4584 2006-08-19 21:43:44Z stingrey $
+* @version $Id: mod_poll.php 5909 2006-12-01 16:22:26Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -59,7 +59,7 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 
 				$query = "SELECT id, text"
 				. "\n FROM #__poll_data"
-				. "\n WHERE pollid = $poll->id"
+				. "\n WHERE pollid = " . (int) $poll->id
 				. "\n AND text != ''"
 				. "\n ORDER BY id";
 				$database->setQuery($query);
@@ -102,7 +102,7 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 			var check 		= 0;
 
 			if ( '<?php echo $voted; ?>' != 'z' ) {
-				alert('<?php echo _ALREADY_VOTE; ?>');
+				alert('<?php echo addslashes( _ALREADY_VOTE ); ?>');
 				return;
 			}
 			for(var i = 0; i < radioLength; i++) {
@@ -112,7 +112,7 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 				}
 			}		
 			if (check == 0) {
-				alert('<?php echo _NO_SELECTION; ?>');
+				alert('<?php echo addslashes( _NO_SELECTION ); ?>');
 			}
 		}		
 		//-->

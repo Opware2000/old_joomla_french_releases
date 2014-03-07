@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: logout.php 3280 2006-04-25 21:41:34Z stingrey $
+* @version $Id: logout.php 5608 2006-10-30 22:24:43Z facedancer $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,8 +24,8 @@ if ( $_VERSION->SITE == 1 ) {
 		$currentDate = date( "Y-m-d\TH:i:s" );
 		
 		$query = "UPDATE #__users"
-		. "\n SET lastvisitDate = '$currentDate'"
-		. "\n WHERE id = ". $_SESSION['session_user_id']
+		. "\n SET lastvisitDate = " . $database->Quote( $currentDate )
+		. "\n WHERE id = " . (int) $_SESSION['session_user_id']
 		;
 		$database->setQuery( $query );
 	
@@ -37,7 +37,7 @@ if ( $_VERSION->SITE == 1 ) {
 	// delete db session record corresponding to currently logged in user
 	if ( isset( $_SESSION['session_id'] ) && $_SESSION['session_id'] != '' ) {
 		$query = "DELETE FROM #__session"
-		. "\n WHERE session_id = '". $_SESSION['session_id'] ."'"
+		. "\n WHERE session_id = " . $database->Quote( $_SESSION['session_id'] )
 		;
 		$database->setQuery( $query );
 	
@@ -52,28 +52,8 @@ $fullname 	= '';
 $id 		= '';
 $session_id = '';
 
-// destroy PHP session of currently logged in user
-session_unregister( 'session_id' );
-session_unregister( 'session_user_id' );
-session_unregister( 'session_username' );
-session_unregister( 'session_usertype' );
-session_unregister( 'session_logintime' );
-
-if (session_is_registered( 'session_id' )) {
-	session_destroy();
-}
-if (session_is_registered( 'session_user_id' )) {
-	session_destroy();
-}
-if (session_is_registered( 'session_username' )) {
-	session_destroy();
-}
-if (session_is_registered( 'session_usertype' )) {
-	session_destroy();
-}
-if (session_is_registered( 'session_logintime' )) {
-	session_destroy();
-}
+// destroy PHP session
+session_destroy();
 
 // return to site homepage
 mosRedirect( '../index.php' );

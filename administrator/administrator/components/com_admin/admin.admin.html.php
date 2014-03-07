@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.admin.html.php 4801 2006-08-28 16:10:28Z stingrey $
+* @version $Id: admin.admin.html.php 5612 2006-11-01 05:01:48Z Saka $
 * @package Joomla
 * @subpackage Admin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -46,17 +46,17 @@ class HTML_admin_misc {
 
 	function get_php_setting($val, $colour=0, $yn=1) {
 		$r =  (ini_get($val) == '1' ? 1 : 0);
-		
+
 		if ($colour) {
 			if ($yn) {
 				$r = $r ? '<span style="color: green;">ON</span>' : '<span style="color: red;">OFF</span>';
 			} else {
-				$r = $r ? '<span style="color: red;">ON</span>' : '<span style="color: green;">OFF</span>';			
+				$r = $r ? '<span style="color: red;">ON</span>' : '<span style="color: green;">OFF</span>';
 			}
-			
-			return $r; 
+
+			return $r;
 		} else {
-			return $r ? 'ON' : 'OFF';			
+			return $r ? 'ON' : 'OFF';
 		}
 	}
 
@@ -84,7 +84,7 @@ class HTML_admin_misc {
 			</th>
 		</tr>
 		</table>
-		
+
 		<?php
 		$tabs->startPane("sysinfo");
 		$tabs->startTab("Info. Syst&egrave;me","system-page");
@@ -101,7 +101,7 @@ class HTML_admin_misc {
 					josSecurityCheck();
 					?>
 				</td>
-			</tr>			
+			</tr>
 			<tr>
 				<td valign="top" width="250">
 					<strong>PHP h&eacute;berg&eacute; sur:</strong>
@@ -159,17 +159,9 @@ class HTML_admin_misc {
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
-					<?php
-					// show version check
-						josVersionCheck('95%');
-					?>
-				</td>
-			</tr>			
-			<tr>
 				<td colspan="2" style="height: 10px;">
 				</td>
-			</tr>			
+			</tr>
 			<tr>
 				<td valign="top">
 					<strong>Principaux param&egrave;trages PHP:</strong>
@@ -535,10 +527,7 @@ class HTML_admin_misc {
 							<a href="<?php echo $mosConfig_live_site;?>/administrator/index3.php?option=com_admin&task=sysinfo" target="helpFrame">
 								Infos&nbsp;Syst&egrave;me</a>
 							|
-							<a href="<?php echo $mosConfig_live_site;?>/administrator/index3.php?option=com_admin&task=versioncheck" target="helpFrame">
-								Veacute;rification de la version</a>
-							|
-							<a href="http://www.joomla.org/content/blogcategory/32/66/" target="_blank">
+							<a href="http://www.joomla.org/latest10" target="_blank">
 								Derni&egrave;re&nbsp;Version</a>
 						</td>
 					</tr>

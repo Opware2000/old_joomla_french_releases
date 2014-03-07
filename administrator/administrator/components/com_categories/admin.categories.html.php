@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 4070 2006-06-20 16:09:29Z stingrey $
+* @version $Id: admin.categories.html.php 6000 2006-12-13 19:52:58Z friesengeist $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -103,7 +103,7 @@ class categories_html {
 				<?php
 			}
 			?>
-			<th width="5%" nowrap>
+			<th width="5%" nowrap="nowrap">
 			ID	Cat&eacute;gorie		</th>
 			<?php
 			if ( $type == 'content') {
@@ -127,11 +127,13 @@ class categories_html {
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row 	= &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$row->sect_link = 'index2.php?option=com_sections&task=editA&hidemainmenu=1&id='. $row->section;
 
 			$link = 'index2.php?option=com_categories&section='. $section .'&task=editA&hidemainmenu=1&id='. $row->id;
-
+			if ($row->checked_out_contact_category) {
+				$row->checked_out = $row->checked_out_contact_category;
+			}
 			$access 	= mosCommonHTML::AccessProcessing( $row, $i );
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 			$published 	= mosCommonHTML::PublishedProcessing( $row, $i );
@@ -389,93 +391,92 @@ class categories_html {
 				</table>
 			</td>
 			<td valign="top" width="40%">
-			<?php
-			if ( $row->id > 0 ) {
-			?>
-				<table class="adminform">
-				<tr>
-					<th colspan="2">
-					Lier au Menu
-					</th>
-				<tr>
-				<tr>
-					<td colspan="2">
-					Ceci va cr&eacute;er un nouvel &eacute;l&eacute;ment dans le menu s&eacute;lectionn&eacute;
-					<br />
-					<br />
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100">
-					S&eacute;lectionner un menu
-					</td>
-					<td>
-					<?php echo $lists['menuselect']; ?>
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100">
-					S&eacute;lectionner un type de menu
-					</td>
-					<td>
-					<?php echo $lists['link_type']; ?>
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100">
-					Nom de l'&eacute;l&eacute;ment de menu
-					</td>
-					<td>
-					<input type="text" name="link_name" class="inputbox" value="" size="25" />
-					</td>
-				<tr>
-				<tr>
-					<td>
-					</td>
-					<td>
-					<input name="menu_link" type="button" class="button" value="Lier au Menu" onClick="submitbutton('menulink');" />
-					</td>
-				<tr>
-				<tr>
-					<th colspan="2">
-					El&eacute;ment de menu existants
-					</th>
-				</tr>
 				<?php
-				if ( $menus == NULL ) {
+				if ( $row->id > 0 ) {
+					?>
+					<table class="adminform">
+					<tr>
+						<th colspan="2">
+						Lier au Menu
+						</th>
+					<tr>
+					<tr>
+						<td colspan="2">
+						Ceci va cr&eacute;er un nouvel &eacute;l&eacute;ment dans le menu s&eacute;lectionn&eacute;
+						<br /><br />
+						</td>
+					<tr>
+					<tr>
+						<td valign="top" width="100">
+						S&eacute;lectionner un menu
+						</td>
+						<td>
+						<?php echo $lists['menuselect']; ?>
+						</td>
+					<tr>
+					<tr>
+						<td valign="top" width="100">
+						S&eacute;lectionner un type de menu
+						</td>
+						<td>
+						<?php echo $lists['link_type']; ?>
+						</td>
+					<tr>
+					<tr>
+						<td valign="top" width="100">
+						Nom de l'&eacute;l&eacute;ment de menu
+						</td>
+						<td>
+						<input type="text" name="link_name" class="inputbox" value="" size="25" />
+						</td>
+					<tr>
+					<tr>
+						<td>
+						</td>
+						<td>
+						<input name="menu_link" type="button" class="button" value="Lier au Menu" onClick="submitbutton('menulink');" />
+						</td>
+					<tr>
+					<tr>
+						<th colspan="2">
+						El&eacute;ment de menu existants
+						</th>
+					</tr>
+					<?php
+					if ( $menus == NULL ) {
+						?>
+						<tr>
+							<td colspan="2">
+							Aucun
+							</td>
+						</tr>
+						<?php
+					} else {
+						mosCommonHTML::menuLinksSecCat( $menus );
+					}
 					?>
 					<tr>
 						<td colspan="2">
-						Aucun
 						</td>
 					</tr>
+					</table>
 					<?php
 				} else {
-					mosCommonHTML::menuLinksSecCat( $menus );
-				}
-				?>
-				<tr>
-					<td colspan="2">
-					</td>
-				</tr>
-				</table>
-			<?php
-			} else {
-			?>
-			<table class="adminform" width="40%">
-				<tr>
-						<th>&nbsp;
-						
+					?>
+					<table class="adminform" width="40%">
+					<tr>
+						<th>
+						&nbsp;
 						</th>
 					</tr>
 					<tr>
 						<td>
 						El&eacute;ment de menu disponibles apr&egrave;s l'enregistrement
 						</td>
-				</tr>
-			</table>
-			<?php
-			}
+					</tr>
+					</table>
+					<?php
+				}
 				// content
 				if ( $row->section > 0 || $row->section == 'content' ) {
 					?>
@@ -490,11 +491,11 @@ class categories_html {
 						<td colspan="2">
 						<?php echo $lists['folders']; ?>
 						</td>
-					<tr>	
-					</table>		
+					<tr>
+					</table>
 					<?php
 				}
-			?>
+				?>
 			</td>
 		</tr>
 		</table>
@@ -527,6 +528,22 @@ class categories_html {
 		</table>
 
 		<br />
+		<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancel') {
+				submitform( pressbutton );
+				return;
+			}
+
+			// do field validation
+			if (!getSelectedValue( 'adminForm', 'sectionmove' )) {
+				alert( "Please select a Section to move the Category to" );
+			} else {
+				submitform( pressbutton );
+			}
+		}
+		</script>
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>
@@ -600,6 +617,22 @@ class categories_html {
 		</table>
 
 		<br />
+		<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancel') {
+				submitform( pressbutton );
+				return;
+			}
+
+			// do field validation
+			if (!getSelectedValue( 'adminForm', 'sectionmove' )) {
+				alert( "Sélectionnez une Section vers laquelle copier la Catégorie" );
+			} else {
+				submitform( pressbutton );
+			}
+		}
+		</script>
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_mainmenu.php 3592 2006-05-22 15:26:35Z stingrey $
+* @version $Id: mod_mainmenu.php 5941 2006-12-06 13:23:38Z predator $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -32,7 +32,7 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 				break;
 				
 			case 'url':
-				if ( eregi( 'index.php\?', $mitem->link ) ) {
+				if ( eregi( 'index.php\?', $mitem->link ) && !eregi( 'http', $mitem->link ) && !eregi( 'https', $mitem->link ) ) {
 					if ( !eregi( 'Itemid=', $mitem->link ) ) {
 						$mitem->link .= '&Itemid='. $mitem->id;
 					}
@@ -197,11 +197,11 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 
 		$and = '';
 		if ( !$mosConfig_shownoauth ) {
-			$and = "\n AND access <= $my->gid";
+			$and = "\n AND access <= " . (int) $my->gid;
 		}		
 		$sql = "SELECT m.*"
 		. "\n FROM #__menu AS m"
-		. "\n WHERE menutype = '". $params->get( 'menutype' ) ."'"
+		. "\n WHERE menutype = " . $database->Quote( $params->get( 'menutype' ) )
 		. "\n AND published = 1"
 		. $and
 		. "\n ORDER BY parent, ordering";
@@ -322,11 +322,11 @@ if (!defined( '_MOS_MAINMENU_MODULE' )) {
 
 		$and = '';
 		if ( !$mosConfig_shownoauth ) {
-			$and = "\n AND access <= $my->gid";
+			$and = "\n AND access <= " . (int) $my->gid;
 		}
 		$sql = "SELECT m.*"
 		. "\n FROM #__menu AS m"
-		. "\n WHERE menutype = '". $params->get( 'menutype' ) ."'"
+		. "\n WHERE menutype = " . $database->Quote( $params->get( 'menutype' ) )
 		. "\n AND published = 1"
 		. $and
 		. "\n AND parent = 0"

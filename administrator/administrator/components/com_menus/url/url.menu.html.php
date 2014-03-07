@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: url.menu.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: url.menu.html.php 5539 2006-10-21 18:15:59Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -71,7 +71,7 @@ class url_menu_html {
 					Nom du lien:
 					</td>
 					<td width="80%">
-					<input class="inputbox" type="text" name="name" size="50" maxlength="150" value="<?php echo $menu->name; ?>" />
+					<input class="inputbox" type="text" name="name" size="50" maxlength="150" value="<?php echo htmlspecialchars( $menu->name, ENT_QUOTES ); ?>" />
 					</td>
 				</tr>
 				<tr>

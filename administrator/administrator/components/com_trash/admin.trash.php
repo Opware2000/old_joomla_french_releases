@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.trash.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: admin.trash.php 5410 2006-10-10 22:08:59Z Saka $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -54,66 +54,79 @@ switch ($task) {
 */
 function viewTrash( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
-	
+
+	$catid 		= $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 'content' );
 	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
-	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 10 ) );
+	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 ) );
 
 	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
-	
-	// get the total number of content
-	$query = "SELECT count(*)"
-	. "\n FROM #__content AS c"
-	. "\n LEFT JOIN #__categories AS cc ON cc.id = c.catid"
-	. "\n LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope = 'content'"
-	. "\n WHERE c.state = -2"
-	;
-	$database->setQuery( $query );
-	$total_content 		= $database->loadResult();
-	$pageNav_content 	= new mosPageNav( $total_content, $limitstart, $limit );
 
-	// Query content items
-	$query = 	"SELECT c.*, g.name AS groupname, cc.name AS catname, s.name AS sectname"
-	. "\n FROM #__content AS c"
-	. "\n LEFT JOIN #__categories AS cc ON cc.id = c.catid"
-	. "\n LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope='content'"
-	. "\n INNER JOIN #__groups AS g ON g.id = c.access"
-	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
-	. "\n WHERE c.state = -2"
-	. "\n ORDER BY s.name, cc.name, c.title"
-	;
-	$database->setQuery( $query, $pageNav_content->limitstart, $pageNav_content->limit );
-	$contents = $database->loadObjectList();
+	if ($catid=="content") {
+		// get the total number of content
+		$query = "SELECT count(*)"
+		. "\n FROM #__content AS c"
+		. "\n LEFT JOIN #__categories AS cc ON cc.id = c.catid"
+		. "\n LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope = 'content'"
+		. "\n WHERE c.state = -2"
+		;
+		$database->setQuery( $query );
+		$total 		= $database->loadResult();
+		$pageNav 	= new mosPageNav( $total, $limitstart, $limit );
 
-	$query = "SELECT count(*)"
-	. "\n FROM #__menu AS m"
-	. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
-	. "\n WHERE m.published = -2"
-	;
-	$database->setQuery( $query );
-	$total_menu 	= $database->loadResult();
-	$pageNav_menu 	= new mosPageNav( $total_menu, $limitstart, $limit );
+		// Query content items
+		$query = 	"SELECT c.*, g.name AS groupname, cc.name AS catname, s.name AS sectname"
+		. "\n FROM #__content AS c"
+		. "\n LEFT JOIN #__categories AS cc ON cc.id = c.catid"
+		. "\n LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope='content'"
+		. "\n INNER JOIN #__groups AS g ON g.id = c.access"
+		. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
+		. "\n WHERE c.state = -2"
+		. "\n ORDER BY s.name, cc.name, c.title"
+		;
+		$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
+		$content = $database->loadObjectList();
 
-	// Query menu items
-	$query = 	"SELECT m.*"
-	. "\n FROM #__menu AS m"
-	. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
-	. "\n WHERE m.published = -2"
-	. "\n ORDER BY m.menutype, m.ordering, m.ordering, m.name"
-	;
-	$database->setQuery( $query, $pageNav_menu->limitstart, $pageNav_menu->limit );
-	$menus = $database->loadObjectList();
-
-	$num = $total_content;
-	if ( $limit < $total_content ) {
-		$num = $limit;
-	}	
-	for ( $i = 0; $i < $num; $i++ ) {
-		if ( ( $contents[$i]->sectionid == 0 ) && ( $contents[$i]->catid == 0 ) ) {
-			$contents[$i]->sectname = 'Static Content';
+		$num = $total;
+		if ( $limit < $total ) {
+			$num = $limit;
 		}
+		for ( $i = 0; $i < $num-1; $i++ ) {
+			if ( ( $content[$i]->sectionid == 0 ) && ( $content[$i]->catid == 0 ) ) {
+				$content[$i]->sectname = 'Static Content';
+			}
+		}
+	} else {
+		// get the total number of menu
+		$query = "SELECT count(*)"
+		. "\n FROM #__menu AS m"
+		. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
+		. "\n WHERE m.published = -2"
+		;
+		$database->setQuery( $query );
+		$total 	= $database->loadResult();
+
+		$pageNav 	= new mosPageNav( $total, $limitstart, $limit );
+
+		// Query menu items
+		$query = 	"SELECT m.name AS title, m.menutype AS sectname, m.type AS catname, m.id AS id"
+		. "\n FROM #__menu AS m"
+		. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
+		. "\n WHERE m.published = -2"
+		. "\n ORDER BY m.menutype, m.ordering, m.ordering, m.name"
+		;
+		$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
+		$content = $database->loadObjectList();
 	}
 
-	HTML_trash::showList( $option, $contents, $menus, $pageNav_content, $pageNav_menu );
+	// Build the select list
+	$listselect = array();
+	$listselect[] = mosHTML::makeOption( 'content', 'Content Items' );
+	$listselect[] = mosHTML::makeOption( 'menu', 'Menu Items' );
+	$selected = "all";
+
+	$list = mosHTML::selectList( $listselect, 'catid', 'class="inputbox" size="1" ' . 'onchange="document.adminForm.submit();"', 'value', 'text', $catid );
+
+	HTML_trash::showList( $option, $content, $pageNav, $list, $catid );
 }
 
 
@@ -123,26 +136,26 @@ function viewTrash( $option ) {
 function viewdeleteTrash( $cid, $mid, $option ) {
 	global $database;
 
-	// seperate contentids
-	$cids = implode( ',', $cid );
-	$mids = implode( ',', $mid );
-
-	if ( $cids ) {
+	if (!in_array( 0, $cid )) {
 		// Content Items query
+		mosArrayToInts( $cid );
+		$cids = 'a.id=' . implode( ' OR a.id=', $cid );
 		$query = 	"SELECT a.title AS name"
 		. "\n FROM #__content AS a"
-		. "\n WHERE ( a.id IN ( $cids ) )"
+		. "\n WHERE ( $cids )"
 		. "\n ORDER BY a.title"
 		;
 		$database->setQuery( $query );
 		$items 	= $database->loadObjectList();
 		$id 	= $cid;
 		$type 	= 'content';
-	} else if ( $mids ) {
+	} else if (!in_array( 0, $mid )) {
 		// Content Items query
+		mosArrayToInts( $mid );
+		$mids = 'a.id=' . implode( ' OR a.id=', $mid );
 		$query = 	"SELECT a.name"
 		. "\n FROM #__menu AS a"
-		. "\n WHERE ( a.id IN ( $mids ) )"
+		. "\n WHERE ( $mids )"
 		. "\n ORDER BY a.name"
 		;
 		$database->setQuery( $query );
@@ -192,26 +205,26 @@ function deleteTrash( $cid, $option ) {
 function viewrestoreTrash( $cid, $mid, $option ) {
 	global $database;
 
-	// seperate contentids
-	$cids = implode( ',', $cid );
-	$mids = implode( ',', $mid );
-
-	if ( $cids ) {
+	if (!in_array( 0, $cid )) {
 		// Content Items query
+		mosArrayToInts( $cid );
+		$cids = 'a.id=' . implode( ' OR a.id=', $cid );
 		$query = "SELECT a.title AS name"
 		. "\n FROM #__content AS a"
-		. "\n WHERE ( a.id IN ( $cids ) )"
+		. "\n WHERE ( $cids )"
 		. "\n ORDER BY a.title"
 		;
 		$database->setQuery( $query );
 		$items = $database->loadObjectList();
 		$id = $cid;
 		$type = "content";
-	} else if ( $mids ) {
+	} else if (!in_array( 0, $mid )) {
 		// Content Items query
+		mosArrayToInts( $mid );
+		$mids = 'a.id=' . implode( ' OR a.id=', $mid );
 		$query = "SELECT a.name"
 		. "\n FROM #__menu AS a"
-		. "\n WHERE ( a.id IN ( $mids ) )"
+		. "\n WHERE ( $mids )"
 		. "\n ORDER BY a.name"
 		;
 		$database->setQuery( $query );
@@ -237,20 +250,20 @@ function restoreTrash( $cid, $option ) {
 	// restores to an unpublished state
 	$state 		= 0;
 	$ordering 	= 9999;
-	//seperate contentids
-	$cids 		= implode( ',', $cid );
 
 	if ( $type == 'content' ) {
 	// query to restore content items
+		mosArrayToInts( $cid );
+		$cids = 'id=' . implode( ' OR id=', $cid );
 		$query = "UPDATE #__content"
-		. "\n SET state = $state, ordering = $ordering"
-		. "\n WHERE id IN ( $cids )"
+		. "\n SET state = " . (int) $state . ", ordering = " . (int) $ordering
+		. "\n WHERE ( $cids )"
 		;
 		$database->setQuery( $query );
 		if ( !$database->query() ) {
 			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 			exit();
-		}					
+		}
 	} else if ( $type == 'menu' ) {
 		sort( $cid );
 
@@ -263,7 +276,7 @@ function restoreTrash( $cid, $option ) {
 			if ( $row->parent != 0 ) {
 				$query = "SELECT id"
 				. "\n FROM #__menu"
-				. "\n WHERE id = $row->parent"
+				. "\n WHERE id = " . (int) $row->parent
 				. "\n AND ( published = 0 OR published = 1 )"
 				;
 				$database->setQuery( $query );
@@ -272,8 +285,8 @@ function restoreTrash( $cid, $option ) {
 				if ( !$check ) {
 				// if menu items parent is not found that are published/unpublished make it a root menu item
 					$query  = "UPDATE #__menu"
-					. "\n SET parent = 0, published = $state, ordering = 9999"
-					. "\n WHERE id = $id"
+					. "\n SET parent = 0, published = " . (int) $state . ", ordering = 9999"
+					. "\n WHERE id = " . (int) $id
 					;
 				}
 			}
@@ -281,11 +294,11 @@ function restoreTrash( $cid, $option ) {
 			if ( $check ) {
 			// query to restore menu items
 				$query  = "UPDATE #__menu"
-				. "\n SET published = $state, ordering = 9999"
-				. "\n WHERE id = $id"
+				. "\n SET published = " . (int) $state . ", ordering = 9999"
+				. "\n WHERE id = " . (int) $id
 				;
-			}	
-			
+			}
+
 			$database->setQuery( $query );
 			if ( !$database->query() ) {
 				echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";

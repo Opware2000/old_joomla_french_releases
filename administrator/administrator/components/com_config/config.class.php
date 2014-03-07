@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: config.class.php 4699 2006-08-24 02:17:06Z stingrey $
+* @version $Id: config.class.php 5950 2006-12-06 23:18:11Z facedancer $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -61,8 +61,6 @@ class mosConfig {
 	var $config_live_site			= null;
 	/** @var string */
 	var $config_secret				= null;
-	/** @var int */
-	var $config_versioncheck		= 1;
 	/** @var int */
 	var $config_gzip				= 0;
 	/** @var int */
@@ -182,7 +180,7 @@ class mosConfig {
 	/** @var int */
 	var $config_item_navigation	= 0;
 	/** @var int */
-	var $config_ml_support		= 0;
+	var $config_multilingual_support = 0;
 	/** @var int */
 	var $config_multipage_toc	= 0;
 
@@ -239,6 +237,14 @@ class mosConfig {
 			if (isset( $GLOBALS[$k] ))
 				$this->$v = $GLOBALS[$k];
 		}
+
+		/*
+		*	Maintain the value of $mosConfig_live_site even if
+		*	user signs in with https://
+		*/
+		require('../configuration.php');
+		if( $mosConfig_live_site != $this->config_live_site )
+			$this->config_live_site = $mosConfig_live_site;
 	}
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.poll.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: toolbar.poll.php 5012 2006-09-11 19:35:26Z friesengeist $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -27,7 +27,7 @@ switch ($task) {
 
 		$query = "SELECT published"
 		. "\n FROM #__polls"
-		. "\n WHERE id = $cid[0]"
+		. "\n WHERE id = " . (int) $cid[0]
 		;
 		$database->setQuery( $query );
 		$published = $database->loadResult();
@@ -42,7 +42,7 @@ switch ($task) {
 
 		$query = "SELECT published"
 		. "\n FROM #__polls"
-		. "\n WHERE id = $id"
+		. "\n WHERE id = " . (int) $id
 		;
 		$database->setQuery( $query );
 		$published = $database->loadResult();

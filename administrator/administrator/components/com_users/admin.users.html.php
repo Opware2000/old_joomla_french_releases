@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.users.html.php 3513 2006-05-15 20:52:25Z stingrey $
+* @version $Id: admin.users.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ class HTML_users {
 			Filter:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="inputbox" onChange="document.adminForm.submit();" />
 			</td>
 			<td width="right">
 			<?php echo $lists['type'];?>
@@ -144,6 +144,9 @@ class HTML_users {
 	function edituser( &$row, &$contact, &$lists, $option, $uid, &$params ) {
 		global $my, $acl;
 		global $mosConfig_live_site;
+
+		mosMakeHtmlSafe( $row );
+
 		$tabs = new mosTabs( 0 );
 
 		mosCommonHTML::loadOverlib();

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: search.html.php 4584 2006-08-19 21:43:44Z stingrey $
+* @version $Id: search.html.php 4953 2006-09-06 13:07:03Z predator $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -204,6 +204,7 @@ class search_html {
 				}
 				?>
 			</td>
+		</tr>	
 		<?php
 	}
 

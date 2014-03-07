@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sections.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
+* @version $Id: sections.searchbot.php 5055 2006-09-14 16:38:01Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -79,7 +79,7 @@ function botSearchSections( $text, $phrase='', $ordering='' ) {
 	. "\n OR a.title LIKE '%$text%'"
 	. "\n OR a.description LIKE '%$text%' )"
 	. "\n AND a.published = 1"
-	. "\n AND a.access <= $my->gid"
+	. "\n AND a.access <= " . (int) $my->gid
 	. "\n AND ( m.type = 'content_section' OR m.type = 'content_blog_section' )"
 	. "\n GROUP BY a.id"
 	. "\n ORDER BY $order"

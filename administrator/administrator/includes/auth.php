@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: auth.php 4746 2006-08-24 23:58:47Z stingrey $
+* @version $Id: auth.php 6022 2006-12-18 22:30:07Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,8 +17,15 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 $basePath 	= dirname( __FILE__ );
 require( $basePath . '/../../globals.php' );
 
-//$basePath 	= dirname( __FILE__ );
+// $basepath reintialization required as globals.php will kill initial when RGs Emulation `Off` 
+$basePath 	= dirname( __FILE__ );
 require( $basePath . '/../../configuration.php' );
+
+// SSL check - $http_host returns <live site url>:<port number if it is 443>
+$http_host = explode(':', $_SERVER['HTTP_HOST'] );
+if( (!empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) != 'off' || isset( $http_host[1] ) && $http_host[1] == 443) && substr( $mosConfig_live_site, 0, 8 ) != 'https://' ) {
+	$mosConfig_live_site = 'https://'.substr( $mosConfig_live_site, 7 );
+}
 
 if (!defined( '_MOS_MAMBO_INCLUDED' )) {
 	$path = $basePath . '/../../includes/joomla.php';

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: newsfeeds.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
+* @version $Id: newsfeeds.searchbot.php 5055 2006-09-14 16:38:01Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -99,7 +99,7 @@ function botSearchNewsfeedslinks( $text, $phrase='', $ordering='' ) {
 	$query = "SELECT a.name AS title,"
 	. "\n '' AS created,"
 	. "\n a.link AS text,"
-	. "\n CONCAT_WS( ' / ','". _SEARCH_NEWSFEEDS ."', b.title )AS section,"
+	. "\n CONCAT_WS( ' / '," . $database->Quote( _SEARCH_NEWSFEEDS ) . ", b.title )AS section,"
 	. "\n CONCAT( 'index.php?option=com_newsfeeds&task=view&feedid=', a.id ) AS href,"
 	. "\n '1' AS browsernav"
 	. "\n FROM #__newsfeeds AS a"
@@ -107,7 +107,7 @@ function botSearchNewsfeedslinks( $text, $phrase='', $ordering='' ) {
 	. "\n WHERE ( $where )"
 	. "\n AND a.published = 1"
 	. "\n AND b.published = 1"
-	. "\n AND b.access <= $my->gid"
+	. "\n AND b.access <= " . (int) $my->gid
 	. "\n ORDER BY $order"
 	;
 	$database->setQuery( $query, 0, $limit );

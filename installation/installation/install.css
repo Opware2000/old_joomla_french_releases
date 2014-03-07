@@ -1,5 +1,5 @@
 /**
-* @version $Id: install.css 4698 2006-08-24 01:57:11Z stingrey $
+* @version $Id: install.css 5017 2006-09-12 01:44:29Z pasamio $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -35,7 +35,7 @@ body {
         position: relative;
         width: 100%;
         background: url(header_version.png) no-repeat;
-        background-position: bottom right;
+        background-position: top right;
         margin: 0px;
         padding: 0px;
 }

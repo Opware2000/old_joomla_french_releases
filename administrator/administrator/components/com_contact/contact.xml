@@ -77,9 +77,9 @@
 		<param name="bannedSubject" type="text" default="" label="Sujets bannis" size="40" description="Les sujets contenant l'un des mots de ce champ seront bannis. Séparez les mot d'un point-virgule. Par exemple : spam;mortage;diploma" />
 		<param name="bannedText" type="text" default="" label="Textes bannis" size="40" description="Les texte de message contenant l'un des mots de ce champ seront bannis. Séparez les mot d'un point-virgule. Par exemple : spam;mortage;diploma" />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
-		<param name="session" type="radio" default="1" label="Vérification de Session" description="Vérifier l'existence d'un cookie de session. Cela signifie que les utilisateurs non enregistrés et connectés n'auront pas le droit d'envoyer des emails.">
-			<option value="0">Masquer</option>
-			<option value="1">Afficher</option>
+		<param name="sessionCheck" type="radio" default="1" label="Vérification de Session" description="Vérifier l'existence d'un cookie de session. Cela signifie que les utilisateurs non enregistrés et connectés n'auront pas le droit d'envoyer des emails.">
+			<option value="0">Off</option>
+			<option value="1">On</option>
 		</param>
 	</params>
 </mosinstall>

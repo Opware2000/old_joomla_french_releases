@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.html.php 4054 2006-06-19 19:47:14Z stingrey $
+* @version $Id: weblinks.html.php 4872 2006-08-31 17:22:48Z predator $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -201,7 +201,7 @@ class HTML_weblinks {
 				?>
 				<li>
 					<b>
-					<?php echo $cat->name;?>
+					<?php echo stripslashes( $cat->name );?>
 					</b>
 					&nbsp;
 					<span class="small">
@@ -214,7 +214,7 @@ class HTML_weblinks {
 				?>
 				<li>
 					<a href="<?php echo sefRelToAbs( $link ); ?>" class="category<?php echo $params->get( 'pageclass_sfx' ); ?>">
-					<?php echo $cat->name;?>
+					<?php echo stripslashes( $cat->name );?>
 					</a>
 					&nbsp;
 					<span class="small">

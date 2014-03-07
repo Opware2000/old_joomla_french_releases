@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: rss.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: rss.php 5070 2006-09-15 16:24:06Z friesengeist $
 * @package Joomla
 * @subpackage Syndicate
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -241,8 +241,8 @@ function feedFrontpage( $showFeed ) {
 	. "\n AND a.access = 0"
 	. "\n AND cat.access = 0"
 	. "\n AND sec.access = 0"
-	. "\n AND ( a.publish_up = '$nullDate' OR a.publish_up <= '$now' )"
-	. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
+	. "\n AND ( a.publish_up = " . $database->Quote( $nullDate ) . " OR a.publish_up <= " . $database->Quote( $now ) . " )"
+	. "\n AND ( a.publish_down = " . $database->Quote( $nullDate ) . " OR a.publish_down >= " . $database->Quote( $now ) . " )"
 	. "\n ORDER BY $orderby"
 	;
 	$database->setQuery( $query, 0, $info[ 'count' ] );

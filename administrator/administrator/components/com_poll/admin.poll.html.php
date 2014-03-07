@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.html.php 2613 2006-02-25 01:44:55Z stingrey $
+* @version $Id: admin.poll.html.php 5948 2006-12-06 22:42:31Z facedancer $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -58,7 +58,7 @@ class HTML_poll {
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$link 	= 'index2.php?option=com_poll&task=editA&hidemainmenu=1&id='. $row->id;
 
 			$task 	= $row->published ? 'unpublish' : 'publish';
@@ -195,7 +195,7 @@ class HTML_poll {
 				<?php echo ($i+1); ?>
 				</td>
 				<td>
-				<input class="inputbox" type="text" name="polloption[<?php echo $options[$i]->id; ?>]" value="<?php echo stripslashes($options[$i]->text); ?>" size="60" />
+				<input class="inputbox" type="text" name="polloption[<?php echo $options[$i]->id; ?>]" value="<?php echo htmlspecialchars( stripslashes($options[$i]->text) ); ?>" size="60" />
 				</td>
 			</tr>
 			<?php

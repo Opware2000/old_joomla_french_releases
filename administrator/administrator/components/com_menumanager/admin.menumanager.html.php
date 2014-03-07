@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menumanager.html.php 2752 2006-03-12 00:40:47Z stingrey $
+* @version $Id: admin.menumanager.html.php 5026 2006-09-13 18:45:52Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -84,6 +84,7 @@ class HTML_menumanager {
 				$count = $pageNav->limit;
 		for ($m = $start; $m < $start+$count; $m++) {
 			$menu = $menus[$m];
+			$menu->type = htmlspecialchars( $menu->type );
 			$link 	= 'index2.php?option=com_menumanager&task=edit&hidemainmenu=1&menu='. $menu->type;
 			$linkA 	= 'index2.php?option=com_menus&menutype='. $menu->type;
 			?>
@@ -150,6 +151,7 @@ class HTML_menumanager {
 		global $mosConfig_live_site;
 
 		$new = $row->menutype ? 0 : 1;
+		$row->menutype = htmlspecialchars( $row->menutype );
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {

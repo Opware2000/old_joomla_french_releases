@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.massmail.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.massmail.php 4997 2006-09-10 20:01:47Z friesengeist $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -81,24 +81,27 @@ function sendMail() {
 		// Get sending email address
 		$query = "SELECT email"
 		. "\n FROM #__users"
-		. "\n WHERE id = $my->id"
+		. "\n WHERE id = " . (int) $my->id
 		;
 		$database->setQuery( $query );
 		$my->email = $database->loadResult();
 
+		mosArrayToInts( $to['users'] );
+		$user_ids = 'id=' . implode( ' OR id=', $to['users'] );
+
 		// Get all users email and group except for senders
 		$query = "SELECT email"
 		. "\n FROM #__users"
-		. "\n WHERE id != $my->id"
-		. ( $gou !== '0' ? " AND id IN (" . implode( ',', $to['users'] ) . ")" : '' )
+		. "\n WHERE id != " . (int) $my->id
+		. ( $gou !== '0' ? " AND ( $user_ids )" : '' )
 		;
 		$database->setQuery( $query );
 		$rows = $database->loadObjectList();
 
 		// Build e-mail message format
-		$message_header 	= sprintf( _MASSMAIL_MESSAGE, $mosConfig_sitename );
+		$message_header 	= sprintf( _MASSMAIL_MESSAGE, html_entity_decode($mosConfig_sitename, ENT_QUOTES) );
 		$message 			= $message_header . $message_body;
-		$subject 			= $mosConfig_sitename. ' / '. stripslashes( $subject);
+		$subject 	= html_entity_decode($mosConfig_sitename, ENT_QUOTES) . ' / '. stripslashes( $subject);
 
 		//Send email
 		foreach ($rows as $row) {

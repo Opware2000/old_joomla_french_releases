@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: modulewindow.php 4674 2006-08-23 16:06:56Z stingrey $
+* @version $Id: modulewindow.php 5862 2006-11-27 22:54:44Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,15 +26,15 @@ switch ($option) {
 			echo _NOT_AUTH;
 			return;
 		}
-		break;		
-		
+		break;
+
 	default:
 		echo _NOT_AUTH;
 		return;
-		break;		
+		break;
 }
 
-$title 	= mosGetParam( $_REQUEST, 'title', 0 );
+$title 	= stripslashes( mosGetParam( $_REQUEST, 'title', 0 ) );
 $css 	= mosGetParam( $_REQUEST, 't', '');
 $row 	= null;
 
@@ -43,7 +43,7 @@ $database->debug( $mosConfig_debug );
 
 $query = "SELECT *"
 . "\n FROM #__modules"
-. "\n WHERE title = '$title'"
+. "\n WHERE title = " . $database->Quote( $title )
 ;
 $database->setQuery( $query );
 $database->loadObject( $row );
@@ -88,6 +88,7 @@ content = content.replace('src=\"images', 'src=\"../../images');
 title = title.replace('src=\"images', 'src=\"../../images');
 content = content.replace('src=\"images', 'src=\"../../images');
 </script>
+<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
 </head>
 
 <body style="background-color:#FFFFFF">

@@ -23,7 +23,7 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo $mosConfig_sitename; ?> - Administration [Joomla]</title>
+<title><?php echo $mosConfig_sitename; ?> - Administration [Joomla!]</title>
 <link rel="stylesheet" href="templates/joomla_admin/css/template_css.css" type="text/css" />
 <link rel="stylesheet" href="templates/joomla_admin/css/theme.css" type="text/css" />
 <script language="JavaScript" src="<?php echo $mosConfig_live_site; ?>/includes/js/JSCookMenu_mini.js" type="text/javascript"></script>
@@ -32,6 +32,16 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 <?php
 include_once( $mosConfig_absolute_path . '/editor/editor.php' );
 initEditor();
+
+// Workaround to include custom head tags from components
+if (isset( $mainframe->_head['custom'] ))
+{
+	$head = array();
+	foreach ($mainframe->_head['custom'] as $html) {
+		$head[] = $html;
+	}
+	echo implode( "\n", $head ) . "\n";
+}
 ?>
 <meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
 <meta name="Generator" content="Joomla! Système de Gestion de contenu" />
@@ -92,7 +102,7 @@ initEditor();
 			<div align="center" class="smallgrey">
 				<?php echo $version; ?>
 				<br />
-				<a href="http://www.joomla.org/content/blogcategory/32/66/" target="_blank">Check for latest Version</a>
+				<a href="http://www.joomla.org/latest10" target="_blank">Identifier la dernière version stable</a>
 			</div>			
 			<?php
 			if ( $mosConfig_debug ) {

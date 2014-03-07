@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_unread.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_unread.php 5026 2006-09-13 18:45:52Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,7 +17,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 $query = "SELECT COUNT(*)"
 . "\n FROM #__messages"
 . "\n WHERE state = 0"
-. "\n AND user_id_to = $my->id"
+. "\n AND user_id_to = " . (int) $my->id
 ;
 $database->setQuery( $query );
 $unread = $database->loadResult();

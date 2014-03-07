@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pollwindow.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: pollwindow.php 5862 2006-11-27 22:54:44Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -15,6 +15,7 @@
 define( "_VALID_MOS", 1 );
 
 require_once( '../includes/auth.php' );
+include_once ( $mosConfig_absolute_path . '/language/' . $mosConfig_lang . '.php' );
 
 $database = new database( $mosConfig_host, $mosConfig_user, $mosConfig_password, $mosConfig_db, $mosConfig_dbprefix );
 $database->debug( $mosConfig_debug );
@@ -24,24 +25,29 @@ $css = mosGetParam( $_REQUEST, 't', '' );
 
 $query = "SELECT title"
 . "\n FROM #__polls"
-. "\n WHERE id = $pollid"
+. "\n WHERE id = " . (int) $pollid
 ;
 $database->setQuery( $query );
 $title = $database->loadResult();
 
 $query = "SELECT text"
 . "\n FROM #__poll_data"
-. "\n WHERE pollid = $pollid"
+. "\n WHERE pollid = " . (int) $pollid
 . "\n ORDER BY id"
 ;
 $database->setQuery( $query );
 $options = $database->loadResultArray();
+
+$iso = split( '=', _ISO );
+// xml prolog
+echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Poll Preview</title>
 	<link rel="stylesheet" href="../../templates/<?php echo $css; ?>/css/template_css.css" type="text/css">
+	<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
 </head>
 
 <body>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contentwindow.php 4674 2006-08-23 16:06:56Z stingrey $
+* @version $Id: contentwindow.php 5862 2006-11-27 22:54:44Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -20,26 +20,28 @@ include_once ( $mosConfig_absolute_path . '/language/' . $mosConfig_lang . '.php
 // limit access to functionality
 $option = strval( mosGetParam( $_SESSION, 'option', '' ) );
 $task 	= strval( mosGetParam( $_SESSION, 'task', '' ) );
+
 switch ($option) {
 	case 'com_content':
+	case 'com_typedcontent':
 		if ( $task != 'edit' && $task != 'editA'  && $task != 'new' ) {
 			echo _NOT_AUTH;
 			return;
 		}
-		break;		
-		
+		break;
+
 	default:
 		echo _NOT_AUTH;
 		return;
-		break;		
+		break;
 }
 
 $css = mosGetParam( $_REQUEST, 't', '' );
 
 // css file handling
 // check to see if template exists
-if ( $css != '' && !is_dir($mosConfig_absolute_path .'/administrator/templates/'. $css .'/css/template_css.css' )) {
-	$css 	= 'rhuk_solarflare_ii';
+if ( $css != '' && is_dir($mosConfig_absolute_path .'/templates/'. $css .'/css/template_css.css' )) {
+	$css 	= $css;
 } else if ( $css == '' ) {
 	$css 	= 'rhuk_solarflare_ii';
 }
@@ -80,6 +82,7 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 			alltext += temp[i] + temp2[i+1];
 		}
 	</script>
+<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
 </head>
 <body style="background-color:#FFFFFF">
 <table align="center" width="90%" cellspacing="2" cellpadding="2" border="0">

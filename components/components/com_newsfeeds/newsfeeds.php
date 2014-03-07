@@ -1,6 +1,6 @@
 <?php
 /** module to display newsfeeds
-* version $Id: newsfeeds.php 4542 2006-08-15 13:49:12Z predator $
+* version $Id: newsfeeds.php 5070 2006-09-15 16:24:06Z friesengeist $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -45,7 +45,7 @@ function listFeeds( $catid ) {
 	. "\n WHERE a.published = 1"
 	. "\n AND cc.section = 'com_newsfeeds'"
 	. "\n AND cc.published = 1"
-	. "\n AND cc.access <= $my->gid"
+	. "\n AND cc.access <= " . (int) $my->gid
 	. "\n GROUP BY cc.id"
 	. "\n ORDER BY cc.ordering"
 	;
@@ -58,7 +58,7 @@ function listFeeds( $catid ) {
 		// url links info for category
 		$query = "SELECT *"
 		. "\n FROM #__newsfeeds"
-		. "\n WHERE catid = $catid"
+		. "\n WHERE catid = " . (int) $catid
 		 . "\n AND published = 1"
 		. "\n ORDER BY ordering"
 		;
@@ -68,9 +68,9 @@ function listFeeds( $catid ) {
 		// current category info
 		$query = "SELECT id, name, description, image, image_position"
 		. "\n FROM #__categories"
-		. "\n WHERE id = $catid"
+		. "\n WHERE id = " . (int) $catid
 		. "\n AND published = 1"
-		. "\n AND access <= $my->gid"
+		. "\n AND access <= " . (int) $my->gid
 		;
 		$database->setQuery( $query );
 		$database->loadObject( $currentcat );

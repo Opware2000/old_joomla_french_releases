@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: database.php 4546 2006-08-16 23:41:44Z facedancer $
+* @version $Id: database.php 5903 2006-12-01 02:01:55Z friesengeist $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -78,7 +78,7 @@ class database {
 					exit();
 				}
 			}
-		} else {		
+		} else {
 			if (!($this->_resource = @mysql_connect( $host, $user, $pass, true ))) {
 				$mosSystemError = 2;
 				if ($goOffline) {
@@ -133,9 +133,9 @@ class database {
 		if (version_compare(phpversion(), '4.3.0', '<')) {
 			$string = mysql_escape_string($text);
 		} else 	{
-			$string = mysql_real_escape_string($text);
+			$string = mysql_real_escape_string($text, $this->_resource);
 		}
-		
+
 		return $string;
 	}
 	/**
@@ -275,9 +275,11 @@ class database {
 	*/
 	function query() {
 		global $mosConfig_debug;
-		if ($this->_limit > 0 || $this->_offset > 0) {
+		if ($this->_limit > 0 && $this->_offset == 0) {
+			$this->_sql .= "\nLIMIT $this->_limit";
+		} else if ($this->_limit > 0 || $this->_offset > 0) {
 			$this->_sql .= "\nLIMIT $this->_offset, $this->_limit";
-		}		
+		}
 		if ($this->_debug) {
 			$this->_ticker++;
 	  		$this->_log[] = $this->_sql;
@@ -510,18 +512,18 @@ class database {
 	}
 	/**
 	* Load a list of database rows (numeric column indexing)
-	* @param string The field name of a primary key
+	* @param int Value of the primary key
 	* @return array If <var>key</var> is empty as sequential list of returned records.
 	* If <var>key</var> is not empty then the returned array is indexed by the value
 	* the database key.  Returns <var>null</var> if the query fails.
 	*/
-	function loadRowList( $key='' ) {
+	function loadRowList( $key=null ) {
 		if (!($cur = $this->query())) {
 			return null;
 		}
 		$array = array();
 		while ($row = mysql_fetch_row( $cur )) {
-			if ($key) {
+			if ( !is_null( $key ) ) {
 				$array[$row[$key]] = $row;
 			} else {
 				$array[] = $row;
@@ -535,6 +537,7 @@ class database {
 	*
 	* { Description }
 	*
+	* @param string $table This is expected to be a valid (and safe!) table name
 	* @param [type] $keyName
 	* @param [type] $verbose
 	*/
@@ -569,6 +572,7 @@ class database {
 	*
 	* { Description }
 	*
+	* @param string $table This is expected to be a valid (and safe!) table name
 	* @param [type] $updateNulls
 	*/
 	function updateObject( $table, &$object, $keyName, $updateNulls=true ) {
@@ -622,7 +626,7 @@ class database {
 		return $this->loadResultArray();
 	}
 	/**
-	 * @param array A list of table names
+	 * @param array A list of valid (and safe!) table names
 	 * @return array A list the create SQL for the tables
 	 */
 	function getTableCreate( $tables ) {
@@ -639,7 +643,7 @@ class database {
 		return $result;
 	}
 	/**
-	 * @param array A list of table names
+	 * @param array A list of valid (and safe!) table names
 	 * @return array An array of fields by table
 	 */
 	function getTableFields( $tables ) {
@@ -672,7 +676,6 @@ class database {
 *
 * Parent classes to all database derived objects.  Customisation will generally
 * not involve tampering with this object.
-* @package Joomla
 * @author Andrew Eddie <eddieajau@users.sourceforge.net
 */
 class mosDBTable {
@@ -791,13 +794,13 @@ class mosDBTable {
 	*/
 	function load( $oid=null ) {
 		$k = $this->_tbl_key;
-		
+
 		if ($oid !== null) {
 			$this->$k = $oid;
 		}
-		
+
 		$oid = $this->$k;
-		
+
 		if ($oid === null) {
 			return false;
 		}
@@ -818,13 +821,13 @@ class mosDBTable {
 		}
 
 		$this->reset();
-		
+
 		$query = "SELECT *"
 		. "\n FROM $this->_tbl"
-		. "\n WHERE $this->_tbl_key = '$oid'"
+		. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $oid )
 		;
 		$this->_db->setQuery( $query );
-		
+
 		return $this->_db->loadObject( $this );
 	}
 
@@ -848,19 +851,21 @@ class mosDBTable {
 	function store( $updateNulls=false ) {
 		$k = $this->_tbl_key;
 
-		if ($this->$k) {
-			$ret = $this->_db->updateObject( $this->_tbl, $this, $this->_tbl_key, $updateNulls );
+		if ($this->$k != 0) {
+			$ret = $this->_db->updateObject($this->_tbl, $this, $this->_tbl_key, $updateNulls);
 		} else {
-			$ret = $this->_db->insertObject( $this->_tbl, $this, $this->_tbl_key );
+			$ret = $this->_db->insertObject($this->_tbl, $this, $this->_tbl_key);
 		}
-		if( !$ret ) {
-			$this->_error = strtolower(get_class( $this ))."::store failed <br />" . $this->_db->getErrorMsg();
+
+		if (!$ret) {
+			$this->_error = strtolower(get_class($this))."::store failed <br />" . $this->_db->getErrorMsg();
 			return false;
 		} else {
 			return true;
 		}
 	}
 	/**
+	* @param string $where This is expected to be a valid (and safe!) SQL expression
 	*/
 	function move( $dirn, $where='' ) {
 		$k = $this->_tbl_key;
@@ -868,17 +873,17 @@ class mosDBTable {
 		$sql = "SELECT $this->_tbl_key, ordering FROM $this->_tbl";
 
 		if ($dirn < 0) {
-			$sql .= "\n WHERE ordering < $this->ordering";
+			$sql .= "\n WHERE ordering < " . (int) $this->ordering;
 			$sql .= ($where ? "\n	AND $where" : '');
 			$sql .= "\n ORDER BY ordering DESC";
 			$sql .= "\n LIMIT 1";
 		} else if ($dirn > 0) {
-			$sql .= "\n WHERE ordering > $this->ordering";
+			$sql .= "\n WHERE ordering > " . (int) $this->ordering;
 			$sql .= ($where ? "\n	AND $where" : '');
 			$sql .= "\n ORDER BY ordering";
 			$sql .= "\n LIMIT 1";
 		} else {
-			$sql .= "\nWHERE ordering = $this->ordering";
+			$sql .= "\nWHERE ordering = " . (int) $this->ordering;
 			$sql .= ($where ? "\n AND $where" : '');
 			$sql .= "\n ORDER BY ordering";
 			$sql .= "\n LIMIT 1";
@@ -891,8 +896,8 @@ class mosDBTable {
 		$row = null;
 		if ($this->_db->loadObject( $row )) {
 			$query = "UPDATE $this->_tbl"
-			. "\n SET ordering = '$row->ordering'"
-			. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+			. "\n SET ordering = " . (int) $row->ordering
+			. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 
@@ -903,8 +908,8 @@ class mosDBTable {
 //echo 'B: ' . $this->_db->getQuery();
 
 			$query = "UPDATE $this->_tbl"
-			. "\n SET ordering = '$this->ordering'"
-			. "\n WHERE $this->_tbl_key = '". $row->$k. "'"
+			. "\n SET ordering = " . (int) $this->ordering
+			. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $row->$k )
 			;
 			$this->_db->setQuery( $query );
 //echo 'C: ' . $this->_db->getQuery();
@@ -917,8 +922,8 @@ class mosDBTable {
 			$this->ordering = $row->ordering;
 		} else {
 			$query = "UPDATE $this->_tbl"
-			. "\n SET ordering = '$this->ordering'"
-			. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+			. "\n SET ordering = " . (int) $this->ordering
+			. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 //echo 'D: ' . $this->_db->getQuery();
@@ -932,7 +937,7 @@ class mosDBTable {
 	}
 	/**
 	* Compacts the ordering sequence of the selected records
-	* @param string Additional where query to limit ordering to a particular subset of records
+	* @param string Additional where query to limit ordering to a particular subset of records. This is expected to be a valid (and safe!) SQL expression
 	*/
 	function updateOrder( $where='' ) {
 		$k = $this->_tbl_key;
@@ -983,8 +988,8 @@ class mosDBTable {
 			if ($orders[$i]->ordering >= 0) {
 				$orders[$i]->ordering = $i+1;
 				$query = "UPDATE $this->_tbl"
-				. "\n SET ordering = '". $orders[$i]->ordering ."'"
-				. "\n WHERE $k = '". $orders[$i]->$k ."'"
+				. "\n SET ordering = " . (int) $orders[$i]->ordering
+				. "\n WHERE $k = " . $this->_db->Quote( $orders[$i]->$k )
 				;
 				$this->_db->setQuery( $query);
 				$this->_db->query();
@@ -996,8 +1001,8 @@ class mosDBTable {
 		if ($shift == 0) {
 			$order = $n+1;
 			$query = "UPDATE $this->_tbl"
-			. "\n SET ordering = '$order'"
-			. "\n WHERE $k = '". $this->$k ."'"
+			. "\n SET ordering = " . (int) $order
+			. "\n WHERE $k = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 			$this->_db->query();
@@ -1011,39 +1016,45 @@ class mosDBTable {
 	*	can be overloaded/supplemented by the child class
 	*	@param string $msg Error message returned
 	*	@param int Optional key index
-	*	@param array Optional array to compiles standard joins: format [label=>'Label',name=>'table name',idfield=>'field',joinfield=>'field']
+	*	@param array Optional array to compiles standard joins: format [label=>'Label',name=>'table name',idfield=>'field',joinfield=>'field']. This is expected to hold only valid (and safe!) SQL expressions
 	*	@return true|false
 	*/
 	function canDelete( $oid=null, $joins=null ) {
 		$k = $this->_tbl_key;
 		if ($oid) {
-			$this->$k = intval( $oid );
+			$this->$k = $oid;
 		}
 		if (is_array( $joins )) {
 			$select = $k;
 			$join = '';
 			foreach( $joins as $table ) {
-				$select .= ",\n COUNT(DISTINCT {$table['idfield']}) AS {$table['idfield']}";
-				$join .= "\n LEFT JOIN {$table['name']} ON {$table['joinfield']} = $k";
+				$tblName = $this->getEscaped( $table['name'] );
+				$idField = $this->getEscaped( $table['idfield'] );
+				$jnField = $this->getEscaped( $table['joinfield'] );
+				$select .= ",\n COUNT(DISTINCT `$tblName`.`$idField`) AS `count_".substr($tblName, 3)."_$idField`";
+				$join .= "\n LEFT JOIN `$tblName` ON `$tblName`.`$jnField` = `$this->_tbl`.`$k`";
 			}
 
 			$query = "SELECT $select"
-			. "\n FROM $this->_tbl"
+			. "\n FROM `$this->_tbl`"
 			. $join
-			. "\n WHERE $k = ". $this->$k
-			. "\n GROUP BY $k"
+			. "\n WHERE `$this->_tbl`.`$k` = ". (int) $this->$k
+			. "\n GROUP BY `$this->_tbl`.`$k`"
 			;
 			$this->_db->setQuery( $query );
 
-			if ($obj = $this->_db->loadObject()) {
+			$obj = null;
+			if (!$this->_db->loadObject($obj)) {
 				$this->_error = $this->_db->getErrorMsg();
 				return false;
 			}
 			$msg = array();
 			foreach( $joins as $table ) {
-				$k = $table['idfield'];
+				$tblName = $this->getEscaped( $table['name'] );
+				$idField = $this->getEscaped( $table['idfield'] );
+				$k = 'count_'.substr($tblName, 3).'_'.$idField;
 				if ($obj->$k) {
-					$msg[] = $AppUI->_( $table['label'] );
+					$msg[] = $table['label'];
 				}
 			}
 
@@ -1075,7 +1086,7 @@ class mosDBTable {
 		}
 
 		$query = "DELETE FROM $this->_tbl"
-		. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+		. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 		;
 		$this->_db->setQuery( $query );
 
@@ -1107,8 +1118,8 @@ class mosDBTable {
 			$user_id = intval( $user_id );
 			// new way of storing editor, by id
 			$query = "UPDATE $this->_tbl"
-			. "\n SET checked_out = $user_id, checked_out_time = '$time'"
-			. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+			. "\n SET checked_out = $user_id, checked_out_time = " . $this->_db->Quote( $time )
+			. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 
@@ -1118,8 +1129,8 @@ class mosDBTable {
 			$user_id = $this->_db->Quote( $user_id );
 			// old way of storing editor, by name
 			$query = "UPDATE $this->_tbl"
-			. "\n SET checked_out = 1, checked_out_time = '$time', editor = $user_id"
-			. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+			. "\n SET checked_out = 1, checked_out_time = " . $this->_db->Quote( $time ) . ", editor = $user_id"
+			. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 
@@ -1140,7 +1151,7 @@ class mosDBTable {
 			$this->_error = "WARNING: ".strtolower(get_class( $this ))." does not support checkin.";
 			return false;
 		}
-		
+
 		$k 			= $this->_tbl_key;
 		$nullDate 	= $this->_db->getNullDate();
 
@@ -1149,11 +1160,11 @@ class mosDBTable {
 		}
 		if ($this->$k == NULL) {
 			return false;
-		}		
-		
+		}
+
 		$query = "UPDATE $this->_tbl"
-		. "\n SET checked_out = 0, checked_out_time = '$nullDate'"
-		. "\n WHERE $this->_tbl_key = ". $this->$k
+		. "\n SET checked_out = 0, checked_out_time = " . $this->_db->Quote( $nullDate )
+		. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->$k )
 		;
 		$this->_db->setQuery( $query );
 
@@ -1177,7 +1188,7 @@ class mosDBTable {
 
 		$query = "UPDATE $this->_tbl"
 		. "\n SET hits = ( hits + 1 )"
-		. "\n WHERE $this->_tbl_key = '$this->id'"
+		. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $this->id )
 		;
 		$this->_db->setQuery( $query );
 		$this->_db->query();
@@ -1186,24 +1197,24 @@ class mosDBTable {
 			$now = date( 'Y-m-d' );
 			$query = "SELECT hits"
 			. "\n FROM #__core_log_items"
-			. "\n WHERE time_stamp = '$now'"
-			. "\n AND item_table = '$this->_tbl'"
-			. "\n AND item_id = ". $this->$k
+			. "\n WHERE time_stamp = " . $this->_db->Quote( $now )
+			. "\n AND item_table = " . $this->_db->Quote( $this->_tbl )
+			. "\n AND item_id = " . $this->_db->Quote( $this->$k )
 			;
 			$this->_db->setQuery( $query );
 			$hits = intval( $this->_db->loadResult() );
 			if ($hits) {
 				$query = "UPDATE #__core_log_items"
 				. "\n SET hits = ( hits + 1 )"
-				. "\n WHERE time_stamp = '$now'"
-				. "\n AND item_table = '$this->_tbl'"
-				. "\n AND item_id = " . $this->$k
+				. "\n WHERE time_stamp = " . $this->_db->Quote( $now )
+				. "\n AND item_table = " . $this->_db->Quote( $this->_tbl )
+				. "\n AND item_id = " . $this->_db->Quote( $this->$k )
 				;
 				$this->_db->setQuery( $query );
 				$this->_db->query();
 			} else {
 				$query = "INSERT INTO #__core_log_items"
-				. "\n VALUES ( '$now', '$this->_tbl', ". $this->$k .", 1 )"
+				. "\n VALUES ( " . $this->_db->Quote( $now ) . ", " . $this->_db->Quote( $this->_tbl ) . ", " . $this->_db->Quote( $this->$k ) . ", 1 )"
 				;
 				$this->_db->setQuery( $query );
 				$this->_db->query();
@@ -1227,7 +1238,7 @@ class mosDBTable {
 	/**
 	* Generic save function
 	* @param array Source array for binding to class vars
-	* @param string Filter for the order updating
+	* @param string Filter for the order updating. This is expected to be a valid (and safe!) SQL expression
 	* @returns TRUE if completely successful, FALSE if partially or not succesful
 	* NOTE: Filter will be deprecated in verion 1.1
 	*/
@@ -1244,10 +1255,10 @@ class mosDBTable {
 		if (!$this->checkin()) {
 			return false;
 		}
-		
+
 		if ($order_filter) {
 			$filter_value = $this->$order_filter;
-			$this->updateOrder( $order_filter ? "`$order_filter` = '$filter_value'" : '' );
+			$this->updateOrder( $order_filter ? "`$order_filter` = " . $this->_db->Quote( $filter_value ) : '' );
 		}
 		$this->_error = '';
 		return true;
@@ -1262,27 +1273,28 @@ class mosDBTable {
 
 	/**
 	 * Generic Publish/Unpublish function
-	 * @param array An array of id numbers
-	 * @param integer 0 if unpublishing, 1 if publishing
-	 * @param integer The id of the user performnig the operation
-	 * @since 1.0.4
+	 * @param	array	An array of id numbers
+	 * @param	integer	0 if unpublishing, 1 if publishing
+	 * @param	integer	The id of the user performnig the operation
+	 * @since	1.0.4
 	 */
 	function publish( $cid=null, $publish=1, $user_id=0 ) {
 		mosArrayToInts( $cid, array() );
-		$user_id = intval( $user_id );
-		$publish = intval( $publish );
+		$user_id	= (int) $user_id;
+		$publish	= (int) $publish;
+		$k			= $this->_tbl_key;
 
 		if (count( $cid ) < 1) {
 			$this->_error = "No items selected.";
 			return false;
 		}
 
-		$cids = 'id=' . implode( ' OR id=', $cid );
+		$cids = $this->_tbl_key . '=' . implode( ' OR ' . $this->_tbl_key . '=', $cid );
 
 		$query = "UPDATE $this->_tbl"
-		. "\n SET published = " . intval( $publish )
+		. "\n SET published = " . (int) $publish
 		. "\n WHERE ($cids)"
-		. "\n AND (checked_out = 0 OR checked_out = $user_id)"
+		. "\n AND (checked_out = 0 OR checked_out = " . (int) $user_id . ")"
 		;
 		$this->_db->setQuery( $query );
 		if (!$this->_db->query()) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_latest.php 4500 2006-08-13 22:45:33Z eddiea $
+* @version $Id: mod_latest.php 5675 2006-11-07 23:12:11Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -55,7 +55,7 @@ foreach ($rows as $row) {
 	?>
 	<tr>
 		<td>
-		<a href="<?php echo $link; ?>"">
+		<a href="<?php echo $link; ?>">
 		<?php echo htmlspecialchars($row->title, ENT_QUOTES);?>
 		</a>
 		</td>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 4500 2006-08-13 22:45:33Z eddiea $
+* @version $Id: pageNavigation.php 5830 2006-11-21 18:59:45Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -103,11 +103,11 @@ class mosPageNav {
 
 		if ($this_page > 1) {
 			$page = ($this_page - 2) * $this->limit;
-			$html .= "\n<a href=\"#beg\" class=\"pagenav\" title=\"first page\" onclick=\"javascript: document.adminForm.limitstart.value=0; document.adminForm.submit();return false;\"><< Première</a>";
-			$html .= "\n<a href=\"#prev\" class=\"pagenav\" title=\"previous page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\">< Précédente</a>";
+			$html .= "\n<a href=\"#beg\" class=\"pagenav\" title=\"first page\" onclick=\"javascript: document.adminForm.limitstart.value=0; document.adminForm.submit();return false;\">&lt;&lt;&nbsp;Première</a>";
+			$html .= "\n<a href=\"#prev\" class=\"pagenav\" title=\"previous page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\">&lt;&nbsp;Précédente</a>";
 		} else {
-			$html .= "\n<span class=\"pagenav\">< Première</span>";
-			$html .= "\n<span class=\"pagenav\"><< Précédente</span>";
+			$html .= "\n<span class=\"pagenav\">&lt;&lt;&nbsp;Première</span>";
+			$html .= "\n<span class=\"pagenav\">&lt;&nbsp;Précédente</span>";
 		}
 
 		for ($i=$start_loop; $i <= $stop_loop; $i++) {
@@ -122,11 +122,11 @@ class mosPageNav {
 		if ($this_page < $total_pages) {
 			$page = $this_page * $this->limit;
 			$end_page = ($total_pages-1) * $this->limit;
-			$html .= "\n<a href=\"#next\" class=\"pagenav\" title=\"next page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\"> Suivante ></a>";
-			$html .= "\n<a href=\"#end\" class=\"pagenav\" title=\"end page\" onclick=\"javascript: document.adminForm.limitstart.value=$end_page; document.adminForm.submit();return false;\"> Dernière >></a>";
+			$html .= "\n<a href=\"#next\" class=\"pagenav\" title=\"next page\" onclick=\"javascript: document.adminForm.limitstart.value=$page; document.adminForm.submit();return false;\"> Suivante&nbsp;&gt;</a>";
+			$html .= "\n<a href=\"#end\" class=\"pagenav\" title=\"end page\" onclick=\"javascript: document.adminForm.limitstart.value=$end_page; document.adminForm.submit();return false;\"> Dernière&nbsp;&gt;&gt;</a>";
 		} else {
-			$html .= "\n<span class=\"pagenav\">Suivante ></span>";
-			$html .= "\n<span class=\"pagenav\">Dernière >></span>";
+			$html .= "\n<span class=\"pagenav\">Suivante&nbsp;&gt;</span>";
+			$html .= "\n<span class=\"pagenav\">Dernière&nbsp;&gt;&gt;</span>";
 		}
 		return $html;
 	}
@@ -135,9 +135,9 @@ class mosPageNav {
 		$html = '<table class="adminlist"><tr><th colspan="3">';
 		$html .= $this->getPagesLinks();
 		$html .= '</th></tr><tr>';
-		$html .= '<td nowrap="true" width="48%" align="right">Eléments par page</td>';
+		$html .= '<td nowrap="nowrap" width="48%" align="right">Eléments par page</td>';
 		$html .= '<td>' .$this->getLimitBox() . '</td>';
-		$html .= '<td nowrap="true" width="48%" align="left">' . $this->getPagesCounter() . '</td>';
+		$html .= '<td nowrap="nowrap" width="48%" align="left">' . $this->getPagesCounter() . '</td>';
 		$html .= '</tr></table>';
   		return $html;
 	}

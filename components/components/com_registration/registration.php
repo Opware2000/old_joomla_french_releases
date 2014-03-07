@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.php 4572 2006-08-19 16:39:43Z friesengeist $
+* @version $Id: registration.php 5914 2006-12-02 03:53:59Z pasamio $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -59,21 +59,18 @@ function sendNewPass( $option ) {
 	global $mosConfig_mailfrom, $mosConfig_fromname;
 
 	// simple spoof check security
-	josSpoofCheck();	
-	
+	josSpoofCheck();
+
 	$_live_site = $mosConfig_live_site;
 	$_sitename 	= $mosConfig_sitename;
 
-	// ensure no malicous sql gets past
-	$checkusername	= mosGetParam( $_POST, 'checkusername', '' );
-	$checkusername	= $database->getEscaped( $checkusername );
-	$confirmEmail	= mosGetParam( $_POST, 'confirmEmail', '');
-	$confirmEmail	= $database->getEscaped( $confirmEmail );
+	$checkusername	= stripslashes( mosGetParam( $_POST, 'checkusername', '' ) );
+	$confirmEmail	= stripslashes( mosGetParam( $_POST, 'confirmEmail', '') );
 
 	$query = "SELECT id"
 	. "\n FROM #__users"
-	. "\n WHERE username = '$checkusername'"
-	. "\n AND email = '$confirmEmail'"
+	. "\n WHERE username = " . $database->Quote( $checkusername )
+	. "\n AND email = " . $database->Quote( $confirmEmail )
 	;
 	$database->setQuery( $query );
 	if (!($user_id = $database->loadResult()) || !$checkusername || !$confirmEmail) {
@@ -90,8 +87,8 @@ function sendNewPass( $option ) {
 
 	$newpass = md5( $newpass );
 	$sql = "UPDATE #__users"
-	. "\n SET password = '$newpass'"
-	. "\n WHERE id = $user_id"
+	. "\n SET password = " . $database->Quote( $newpass )
+	. "\n WHERE id = " . (int) $user_id
 	;
 	$database->setQuery( $sql );
 	if (!$database->query()) {
@@ -125,13 +122,18 @@ function saveRegistration() {
 	}
 
 	// simple spoof check security
-	josSpoofCheck();	
-	
+	josSpoofCheck();
+
 	$row = new mosUser( $database );
 
 	if (!$row->bind( $_POST, 'usertype' )) {
 		mosErrorAlert( $row->getError() );
 	}
+
+	$row->name		= trim( $row->name );
+	$row->email		= trim( $row->email );
+	$row->username	= trim( $row->username );
+	$row->password	= trim( $row->password );
 
 	mosMakeHtmlSafe($row);
 
@@ -159,13 +161,13 @@ function saveRegistration() {
 	}
 	$row->checkin();
 
-	$name 		= $row->name;
-	$email 		= $row->email;
-	$username 	= $row->username;
+	$name 		= trim($row->name);
+	$email 		= trim($row->email);
+	$username 	= trim($row->username);
 
 	$subject 	= sprintf (_SEND_SUB, $name, $mosConfig_sitename);
 	$subject 	= html_entity_decode($subject, ENT_QUOTES);
-	
+
 	if ($mosConfig_useractivation == 1){
 		$message = sprintf (_USEND_MSG_ACTIVATE, $name, $mosConfig_sitename, $mosConfig_live_site."/index.php?option=com_registration&task=activate&activation=".$row->activation, $mosConfig_live_site, $username, $pwd);
 	} else {
@@ -173,7 +175,7 @@ function saveRegistration() {
 	}
 
 	$message = html_entity_decode($message, ENT_QUOTES);
-	
+
 	// check if Global Config `mailfrom` and `fromname` values exist
 	if ($mosConfig_mailfrom != '' && $mosConfig_fromname != '') {
 		$adminName2 	= $mosConfig_fromname;
@@ -188,7 +190,7 @@ function saveRegistration() {
 		$database->setQuery( $query );
 		$rows = $database->loadObjectList();
 		$row2 			= $rows[0];
-		
+
 		$adminName2 	= $row2->name;
 		$adminEmail2 	= $row2->email;
 	}
@@ -211,12 +213,12 @@ function saveRegistration() {
 	;
 	$database->setQuery( $query );
 	$admins = $database->loadObjectList();
-	
+
 	foreach ( $admins as $admin ) {
 		// send email to admin & super admin set to recieve system emails
 		mosMail($adminEmail2, $adminName2, $admin->email, $subject2, $message2);
 	}
-		
+
 	if ( $mosConfig_useractivation == 1 ){
 		echo _REG_COMPLETE_ACTIVATE;
 	} else {
@@ -232,15 +234,14 @@ function activate( $option ) {
 		// They're already logged in, so redirect them to the home page
 		mosRedirect( 'index.php' );
 	}
-		
+
 
 	if ($mosConfig_allowUserRegistration == '0' || $mosConfig_useractivation == '0') {
 		mosNotAuth();
 		return;
 	}
 
-	$activation = mosGetParam( $_REQUEST, 'activation', '' );
-	$activation = $database->getEscaped( $activation );
+	$activation = stripslashes( mosGetParam( $_REQUEST, 'activation', '' ) );
 
 	if (empty( $activation )) {
 		echo _REG_ACTIVATE_NOT_FOUND;
@@ -249,7 +250,7 @@ function activate( $option ) {
 
 	$query = "SELECT id"
 	. "\n FROM #__users"
-	. "\n WHERE activation = '$activation'"
+	. "\n WHERE activation = " . $database->Quote( $activation )
 	. "\n AND block = 1"
 	;
 	$database->setQuery( $query );
@@ -258,14 +259,18 @@ function activate( $option ) {
 	if ($result) {
 		$query = "UPDATE #__users"
 		. "\n SET block = 0, activation = ''"
-		. "\n WHERE activation = '$activation'"
+		. "\n WHERE activation = " . $database->Quote( $activation )
 		. "\n AND block = 1"
 		;
 		$database->setQuery( $query );
 		if (!$database->query()) {
-			echo "SQL error" . $database->stderr(true);
+			if(!defined(_REG_ACTIVATE_FAILURE)) {
+				DEFINE('_REG_ACTIVATE_FAILURE', '<div class="componentheading">Activation Failed!</div><br />The system was unable to activate your account, please contact the site administrator.');
+			}
+			echo _REG_ACTIVATE_FAILURE;
+		} else {
+			echo _REG_ACTIVATE_COMPLETE;
 		}
-		echo _REG_ACTIVATE_COMPLETE;
 	} else {
 		echo _REG_ACTIVATE_NOT_FOUND;
 	}

@@ -18,6 +18,10 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 define( '_404', 'Nous sommes désolés mais la page demandée n\'a pu être trouvée.' );
 define( '_404_RTS', 'Retour au site' );
 
+define( '_SYSERR1', 'Driver de base de données non disponible' );
+define( '_SYSERR2', 'Echec de la connexion au serveur de base de données' );
+define( '_SYSERR3', 'Echec de la connexion à la base de données' );
+
 /** common */
 DEFINE('_LANGUAGE','fr'); // Paramètre initial 'en'
 DEFINE('_NOT_AUTH','Vous n\'êtes pas autorisé(e) à accéder à cette ressource.<br />Vous devez vous connecter.');
@@ -85,13 +89,14 @@ DEFINE('_LOGIN_INCOMPLETE','Merci de renseigner votre nom d\'utilisateur et votr
 DEFINE('_LOGIN_BLOCKED','Votre accès a été bloqué. Veuillez contacter un administrateur.');
 DEFINE('_LOGIN_INCORRECT','Nom d\'utilisateur ou mot de passe incorrect. Merci de réessayer.');
 DEFINE('_LOGIN_NOADMINS','Vous ne pouvez pas vous identifier. Aucun administrateur n\'a été déclaré.');
-DEFINE('_CMN_JAVASCRIPT','!Avertissement! Votre navigateur doit autoriser le javascript pour pour bénéficier de toutes les fonctions de navigation du site.');
+DEFINE('_CMN_JAVASCRIPT','!Avertissement! Votre navigateur doit autoriser le javascript pour bénéficier de toutes les fonctions de navigation du site.');
 
 DEFINE('_NEW_MESSAGE','Un nouveau message privé vient de vous être envoyé');
 DEFINE('_MESSAGE_FAILED','Cet utilisateur a bloqué sa boîte de réception. Envoi du message impossible.');
 
 DEFINE('_CMN_IFRAMES', 'Cette option ne fonctionnera pas correctement car votre navigateur ne supporte pas les frames internes (iframes)');
 
+DEFINE('_INSTALL_3PD_WARN','ATTENTION: Installer une extension tierce peut compromettre la sécurité de votre serveur. La mise à jour de Joomla! ne met pas à jour les extensions tierces installées sur votre site.<br />Pour plus d\'information sur la sécurisation de votre site vous pouvez consulter le <a href="http://forum.joomlafacile.com/showthread.php?t=22432" target="_blank" style="color: blue; text-decoration: underline;">forum Joomla.fr</a>. La liste des extensions vulnérables est consultable à <a href="http://forum.joomlafacile.com/showthread.php?t=23533" target="_blank" style="color: blue; text-decoration: underline;"> cette adresse</a>.');
 DEFINE('_INSTALL_WARN','Pour votre sécurité, merci de supprimer le répertoire d\'installation ainsi que tous les fichiers et sous-dossiers qu\'il contient. Ensuite vous pourrez rafraîchir cette page');
 DEFINE('_TEMPLATE_WARN','<font color=\"red\"><B>Fichier template non trouvé! Le fichier recherché&nbsp;:</b></font>');
 DEFINE('_NO_PARAMS','Aucun paramètre défini pour ce module');
@@ -110,9 +115,10 @@ DEFINE('_SEL_SECTION','- Sélectionner une section -');
 DEFINE('_SEL_AUTHOR','- Sélectionner un auteur -');
 DEFINE('_SEL_POSITION','- Sélectionner une position -');
 DEFINE('_SEL_TYPE','- Sélectionner un type -');
-DEFINE('_EMPTY_CATEGORY','Cette catégorie ne contient aucune publication');
+DEFINE('_EMPTY_CATEGORY','Cette catégorie ne contient aucun article publié');
 DEFINE('_EMPTY_BLOG','Aucune publication à afficher');
 DEFINE('_NOT_EXIST','Cette page est indisponible.<br />Veuillez faire un autre choix dans le menu général.');
+DEFINE('_SUBMIT_BUTTON','Envoyer');
 
 /** classes/html/modules.php */
 DEFINE('_BUTTON_VOTE','Voter');
@@ -335,19 +341,18 @@ DEFINE('_REGWARN_EMAIL_INUSE', 'Cet e-mail est déjà présent dans notre base de d
 DEFINE('_SEND_SUB','Profil de %s inscrit à %s');
 DEFINE('_USEND_MSG_ACTIVATE', 'Bonjour %s,
 
-Merci de vous étre enregistré(e) sur %s. Votre compte a été créé correctement, il ne vous reste qu\'à l\'activer.
-Pour l\'activer vous pouvez cliquer sur le lien ci-dessous ou le copier/coller dans votre navigateur:
+Merci de vous être enregistré(e) sur %s. Votre compte a été créé correctement, il ne vous reste plus qu\'à l\'activer en cliquant sur le lien ci-dessous:
 %s
 
-Après l\'activation vous pourrez vous connecter à %s en utilisant le nom d\'utilisateur et le mot de passe suivant:
+Après activation de votre compte vous pourrez vous connecter à %s en utilisant le nom d\'utilisateur et le mot de passe suivant:
 
 Nom d\'Utilisateur - %s
 Mot de passe - %s');
 DEFINE('_USEND_MSG', 'Bonjour %s,
 
-Merci de vous étre enregistré(e) sur %s.
+Merci de vous être enregistré(e) sur %s.
 
-Vous pouvez maintenant vous connecter à %s en utilisant votre nom d\'utilisateur et mot de passe choisis lors de votre inscription.');
+Vous pouvez maintenant vous connecter à %s en utilisant les nom d\'utilisateur et mot de passe choisis lors de votre inscription.');
 DEFINE('_USEND_MSG_NOPASS','Bonjour $name,\n\nVous avez été inscrit(e) comme utilisateur $mosConfig_live_site.\n'
 .'Vous pouvez vous connecter au site $mosConfig_live_site avec le nom d\'utilisateur et le mot de passe que vous avez choisi.\n\n'
 .'Ne répondez pas à cet e-mail. Il a été envoyé automatiquement pour votre information\n');
@@ -360,13 +365,14 @@ Nom - %s
 e-mail - %s
 Nom d\'Utilisateur - %s
 
-Ne répondez pas é ce message, il a été généré automatiquement pour votre information');
+Ne répondez pas à ce message, il a été généré automatiquement pour votre information');
 DEFINE('_REG_COMPLETE_NOPASS','<div class="componentheading">Inscription complète.</div><br />'
 .'Vous pouvez vous connecter.<br />');
 DEFINE('_REG_COMPLETE', '<div class="componentheading">Inscription complète.</div><br />Vous pouvez maintenant vous connecter.');
 DEFINE('_REG_COMPLETE_ACTIVATE', '<div class="componentheading">Enregistrement effectué.</div><br />Votre profil a été créé correctement pour confirmer et finir votre enregistrement nous vous avons adressé un lien d\'activation par e-mail. Avant de vous connecter sur ce site, il est impératif d\'activer votre compte en utilisant le lien contenu dans cet e-mail d\'activation.');
 DEFINE('_REG_ACTIVATE_COMPLETE', '<div class="componentheading">Activation effectuée.</div><br />Votre profil a été correctement activé. Vous pouvez maintenant vous connecter en utilisant le nom d\'utilisateur et mot de passe choisis lors de votre inscription.');
 DEFINE('_REG_ACTIVATE_NOT_FOUND', '<div class="componentheading">Lien d\'activation invalide.</div><br />Le lien fait référence à un profil inexitsant ou déjà activé dans notre base de données.');
+DEFINE('_REG_ACTIVATE_FAILURE', '<div class="componentheading">L\'activation de votre compte a échoué!</div><br />Veuillez contacter l\'administrateur du site.');
 
 /** classes/html/registration.php */
 DEFINE('_PROMPT_PASSWORD','Perdu votre mot de passe&nbsp;?'); 
@@ -415,7 +421,7 @@ DEFINE('_DATE_FORMAT','l, F d Y');  //Uses PHP's DATE Command Format - Depreciat
 /**
 * Modifier la ligne en accord avec le format de date que vous souhaitez voir apparaitre sur votre site
 *
-*e.g. DEFINE('_DATE_FORMAT_LC','%A, %d %B %Y %H:%M'); // Référez-vous é l'utilisation de la commande PHP strftime
+*e.g. DEFINE('_DATE_FORMAT_LC','%A, %d %B %Y %H:%M'); // Référez-vous à l'utilisation de la commande PHP strftime
 */
 DEFINE('_DATE_FORMAT_LC','%d-%m-%Y'); // Référez-vous à l'utilisation de la commande PHP strftime
 /** la ligne initiale dans le fichier source en anglais :  DEFINE('_DATE_FORMAT_LC2','%A, %d %B %Y %H:%M'); */
@@ -510,6 +516,9 @@ DEFINE('_MEMBER_COUNT','%s membre');
 DEFINE('_MEMBERS_COUNT','%s membres');
 DEFINE('_ONLINE',' en ligne');
 DEFINE('_NONE','Aucun utilisateur enregistré en ligne');
+
+/** modules/mod_banners */
+DEFINE('_BANNER_ALT','Publicité');
 
 /** modules/mod_random_image */
 DEFINE('_NO_IMAGES','Aucune image');

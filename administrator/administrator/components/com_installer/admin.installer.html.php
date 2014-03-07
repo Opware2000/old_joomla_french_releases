@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.installer.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.installer.html.php 5992 2006-12-13 00:18:18Z friesengeist $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -29,7 +29,13 @@ function writableCell( $folder ) {
 class HTML_installer {
 
 	function showInstallForm( $title, $option, $element, $client = "", $p_startdir = "", $backLink="" ) {
+		if (!defined( '_INSTALL_3PD_WARN' )) {
+			define( '_INSTALL_3PD_WARN', 'ATTENTION: Installer des extensions tierces peut compromettre la sécurité de votre serveur. La mise à jour de Joomla! n\'entraîne pas la mise à jour des extensions tierces installées sur votre site.<br />Pour plus d\'informations sur la sécurisation de votre site, veuillez consulter le <a href="http://forum.joomlafacile.com/showthread.php?t=22432" target="_blank" style="color: blue; text-decoration: underline;"> forum Joomla.fr</a>.<br /><br />La liste des extensions vulnérables est consultable à <a href="http://forum.joomlafacile.com/showthread.php?t=23533" target="_blank" style="color: blue; text-decoration: underline;"> cette adresse</a>.' );
+		}
 		?>
+		<div style="margin: 10px 0px; padding: 5px 15px 5px 35px; min-height: 25px; border: 1px solid #cc0000; background: #ffffcc; text-align: left; color: red; font-weight: bold; background-image: url(../includes/js/ThemeOffice/warning.png); background-repeat: no-repeat; background-position: 10px 50%;">
+			<?php echo _INSTALL_3PD_WARN; ?>
+		</div>
 		<script language="javascript" type="text/javascript">
 		function submitbutton3(pressbutton) {
 			var form = document.adminForm_dir;
@@ -48,7 +54,7 @@ class HTML_installer {
 			<th class="install">
 			<?php echo $title;?>
 			</th>
-			<td align="right" nowrap="true">
+			<td align="right" nowrap="nowrap">
 			<?php echo $backLink;?>
 			</td>
 		</tr>

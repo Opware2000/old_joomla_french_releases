@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.newsfeeds.html.php 2693 2006-03-07 18:13:12Z stingrey $
+* @version $Id: admin.newsfeeds.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -68,7 +68,7 @@ class HTML_newsfeeds {
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$link 	= 'index2.php?option=com_newsfeeds&task=editA&hidemainmenu=1&id='. $row->id;
 
 			$img 	= $row->published ? 'tick.png' : 'publish_x.png';

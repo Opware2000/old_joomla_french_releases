@@ -16,6 +16,11 @@
 			<option value="1">Oui</option>
 		</param>
 		<param name="@spacer" type="spacer" default="" label="" description="" />		
+		<param name="firebots" type="radio" default="1" label="Mambots" description="Autoriser des Mambots à agir sur ce module">
+			<option value="0">Non</option>
+			<option value="1">Oui</option>
+		</param>
+		<param name="@spacer" type="spacer" default="" label="" description="" />
 		<param name="rssurl" type="text" size="50" default="" label="RSS URL" description="Entrer l'URL du flux RSS/RDF" />
 		<param name="rsstitle" type="radio" default="1" label="Titre du Flux" description="Affiche de le titre du Flux">
 			<option value="1">Oui</option>
@@ -35,9 +40,6 @@
 			<option value="0">Non</option>
 		</param>
 		<param name="word_count" type="text" size="6" default="0" label="Nombre de Mots" description="Vous permet de limiter de limiter le texte de decription visible. 0 affiche tout le texte." />
-		<param name="cache" type="radio" default="0" label="Activer le Cache" description="Choisir de placer le contenu du module en cache">
-			<option value="0">Non</option>
-			<option value="1">Oui</option>
-		</param>
+		<param name="rsscache" type="text" size="6" default="3600" label="Durée de vie du cache RSS" description="Durée de vie du cache pour ce flux RSS" />
 	</params>
 </mosinstall>

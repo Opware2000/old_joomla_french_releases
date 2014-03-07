@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content_item_link.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: content_item_link.class.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -54,7 +54,7 @@ class content_item_link_menu {
 			. "\n FROM #__content AS a"
 			. "\n LEFT JOIN #__categories AS c ON a.catid = c.id"
 			. "\n LEFT JOIN #__sections AS s ON a.sectionid = s.id"
-			. "\n WHERE a.id = $temp[1]"
+			. "\n WHERE a.id = " . (int) $temp[1]
 			;
 			$database->setQuery( $query );
 			$content = $database->loadObjectlist();
@@ -105,14 +105,14 @@ class content_item_link_menu {
 				$query = "SELECT s.title"
 				. "\n FROM #__sections AS s"
 				. "\n WHERE s.scope = 'content'"
-				. "\n AND s.id = $content->sectionid"
+				. "\n AND s.id = " . (int) $content->sectionid
 				;
 				$database->setQuery( $query );
 				$section = $database->loadResult();
 
 				$query = "SELECT c.title"
 				. "\n FROM #__categories AS c"
-				. "\n WHERE c.id = $content->catid"
+				. "\n WHERE c.id = " . (int) $content->catid
 				;
 				$database->setQuery( $query );
 				$category = $database->loadResult();

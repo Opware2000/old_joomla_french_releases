@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_archive.php 4500 2006-08-13 22:45:33Z eddiea $
+* @version $Id: mod_archive.php 5883 2006-11-29 23:26:33Z predator $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,21 +24,24 @@ $query = "SELECT MONTH( created ) AS created_month, created, id, sectionid, titl
 ;
 $database->setQuery( $query, 0, $count );
 $rows = $database->loadObjectList();
-?>
-<ul>
-<?php
+
+if( count( $rows ) ) {
+
+echo '<ul>';
+
 foreach ( $rows as $row ) {
-	$created_month 	= mosFormatDate ( $row->created, "%m" );
-	$month_name 	= mosFormatDate ( $row->created, "%B" );
-	$created_year 	= mosFormatDate ( $row->created, "%Y" );
-	$link			= sefRelToAbs( 'index.php?option=com_content&amp;task=archivecategory&amp;year='. $created_year .'&amp;month='. $created_month .'&amp;module=1' );
-	$text			= $month_name .', '. $created_year;
-	?>
-	<li>
-		<a href="<?php echo $link; ?>">
-			<?php echo $text; ?></a>
-	</li>
-	<?php
+        $created_month  = mosFormatDate ( $row->created, "%m" );
+        $month_name     = mosFormatDate ( $row->created, "%B" );
+        $created_year   = mosFormatDate ( $row->created, "%Y" );
+        $link			= sefRelToAbs( 'index.php?option=com_content&amp;task=archivecategory&amp;year='. $created_year .'&amp;month='. $created_month .'&amp;module=1' );
+        $text           = $month_name .', '. $created_year;
+        ?>
+        <li>
+                <a href="<?php echo $link; ?>">
+                        <?php echo $text; ?></a>
+        </li>
+        <?php
+}
+echo '</ul>';
 }
 ?>
-</ul>

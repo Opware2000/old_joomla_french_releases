@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: banners.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: banners.php 5070 2006-09-15 16:24:06Z friesengeist $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -57,7 +57,7 @@ function viewbanner() {
 	if ($database->loadObject( $banner )) {
 		$query = "UPDATE #__banner"
 		. "\n SET impmade = impmade + 1"
-		. "\n WHERE bid = $banner->bid"
+		. "\n WHERE bid = " . (int) $banner->bid
 		;
 		$database->setQuery( $query );
 		if(!$database->query()) {
@@ -71,7 +71,9 @@ function viewbanner() {
 			if ($banner->imptotal == $banner->impmade) {
 				$query = "INSERT INTO #__bannerfinish"
 				. "\n ( cid, type, name, impressions, clicks, imageurl, datestart, dateend )"
-				. "\n VALUES ( $banner->cid, '$banner->type', '$banner->name', $banner->impmade, $banner->clicks, '$banner->imageurl', '$banner->date', 'now()' )"
+				. "\n VALUES ( " . (int) $banner->cid . ", " . $database->Quote( $banner->type ) . ", "
+				. $database->Quote( $banner->name ) . ", " . (int) $banner->impmade . ", " . (int) $banner->clicks
+				. ", " . $database->Quote( $banner->imageurl ) . ", " . $database->Quote( $banner->date ) . ", 'now()' )"
 				;
 				$database->setQuery( $query );
 				if(!$database->query()) {
@@ -79,7 +81,7 @@ function viewbanner() {
 				}
 
 				$query = "DELETE FROM #__banner"
-				. "\n WHERE bid = $banner->bid"
+				. "\n WHERE bid = " . (int) $banner->bid
 				;
 				$database->setQuery($query);
 				if(!$database->query()) {

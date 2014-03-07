@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 4802 2006-08-28 16:18:33Z stingrey $
+* @version $Id: admin.config.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -116,7 +116,7 @@ class HTML_config {
 		<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 		<table cellpadding="1" cellspacing="1" border="0" width="100%">
 		<tr>
-			<td width="250"><table class="adminheading"><tr><th nowrap class="config">Configuration Globale</th></tr></table></td>
+			<td width="250"><table class="adminheading"><tr><th nowrap="nowrap" class="config">Configuration Globale</th></tr></table></td>
 			<td width="270">
 				<span class="componentheading">configuration.php est :
 				<?php echo is_writable( '../configuration.php' ) ? '<b><font color="green"> Modifiable</font></b>' : '<b><font color="red"> Non modifiable</font></b>' ?>
@@ -235,10 +235,13 @@ class HTML_config {
 			</tr>
 			<tr>
 				<td>Longueur des listes:</td>
-				<td><?php echo $lists['list_limit']; ?><?php
+				<td>
+				<?php echo $lists['list_limit']; ?>
+				<?php
 					$tip = 'Longueur par d&eacute;faut des listes pour tous les utilisateurs du backend';
 					echo mosToolTip( $tip );
-				?></td>
+					?>
+				</td>
 			</tr>
 			<tr>
 				<td>Ic&ocirc;ne "Favori" du site:</td>
@@ -273,7 +276,7 @@ class HTML_config {
 			<tr>
 				<td width="185">Fuseau horaire du serveur:</td>
 				<td>
-				<input class="text_area" type="text" name="config_offset" size="15" value="<?php echo $row->config_offset; ?>" disabled="true"/>
+				<input class="text_area" type="text" name="config_offset" size="15" value="<?php echo $row->config_offset; ?>" disabled="disabled" />
 				</td>
 			</tr>
 			<tr>
@@ -393,7 +396,7 @@ class HTML_config {
 				<td>&nbsp;</td>
 			</tr>
 			</table>
-			<input type="hidden" name="config_ml_support" value="<?php echo $row->config_ml_support?>">
+			<input type="hidden" name="config_multilingual_support" value="<?php echo $row->config_multilingual_support?>">
 			<?php
 		$tabs->endTab();
 		$tabs->startTab("Database","db-page");
@@ -799,10 +802,7 @@ class HTML_config {
 			<?php
 		$tabs->endTab();
 		$tabs->endPane();
-		
-		// show version check
-			josVersionCheck();
-		
+
 		// show security setting check
 		josSecurityCheck();
 		?>

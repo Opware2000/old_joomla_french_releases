@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.menus.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: toolbar.menus.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -38,7 +38,7 @@ switch ($task) {
 		if ( $cid[0] ) {
 			$query = "SELECT type"
 			. "\n FROM #__menu"
-			. "\n WHERE id = $cid[0]"
+			. "\n WHERE id = " . (int) $cid[0]
 			;
 			$database->setQuery( $query );
 			$type = $database->loadResult();

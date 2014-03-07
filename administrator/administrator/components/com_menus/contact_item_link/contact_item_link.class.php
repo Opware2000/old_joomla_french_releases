@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact_item_link.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: contact_item_link.class.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -49,7 +49,7 @@ class contact_item_link_menu {
 			$temp = explode( 'contact_id=', $menu->link );
 			$query = "SELECT *"
 			. "\n FROM #__contact_details AS a"
-			. "\n WHERE a.id = $temp[1]"
+			. "\n WHERE a.id = " . (int) $temp[1]
 			;
 			$database->setQuery( $query );
 			$contact = $database->loadObjectlist();

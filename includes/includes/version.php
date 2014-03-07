@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: version.php 4811 2006-08-28 18:37:27Z stingrey $
+* @version $Id: version.php 6086 2006-12-24 19:13:59Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,15 +26,15 @@ class joomlaVersion {
 	/** @var string Development Status */
 	var $DEV_STATUS = 'Stable';
 	/** @var int Sub Release Level */
-	var $DEV_LEVEL 	= '11';
+	var $DEV_LEVEL 	= '12';
 	/** @var int build Number */
-	var $BUILD	 	= '$Revision: 4811 $';
+	var $BUILD	 	= '$Revision: 6086 $';
 	/** @var string Codename */
-	var $CODENAME 	= 'Sunbow';
+	var $CODENAME 	= 'Sunfire';
 	/** @var string Date */
-	var $RELDATE 	= '28 August 2006';
+	var $RELDATE 	= '25 December 2006';
 	/** @var string Time */
-	var $RELTIME 	= '20:00';
+	var $RELTIME 	= '01:00';
 	/** @var string Timezone */
 	var $RELTZ 		= 'UTC';
 	/** @var string Copyright Text */
@@ -46,9 +46,9 @@ class joomlaVersion {
 	/** @var string Whether site has restricted functionality mostly used for demo sites: 0 is default */
 	var $RESTRICT	= 0;
 	/** @var string Whether site is still in development phase (disables checks for /installation folder) - should be set to 0 for package release: 0 is default */
-	var $SVN		= 0;
+	var $SVN			= 0;
 
-	
+
 	/**
 	 * @return string Long format version
 	 */

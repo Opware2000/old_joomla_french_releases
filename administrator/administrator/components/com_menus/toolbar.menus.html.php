@@ -74,7 +74,7 @@ class TOOLBAR_menus {
 		mosMenuBar::startTable();
 		if ( !$id ) {
 			$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=new&hidemainmenu=1';
-			mosMenuBar::back( 'Back', $link );
+			mosMenuBar::back( 'Retour', $link );
 			mosMenuBar::spacer();
 		}
 		mosMenuBar::save();

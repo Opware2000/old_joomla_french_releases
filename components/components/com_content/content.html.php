@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.html.php 4561 2006-08-18 22:07:24Z stingrey $
+* @version $Id: content.html.php 5928 2006-12-06 00:49:07Z friesengeist $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -25,7 +25,7 @@ class HTML_content {
 	* Draws a Content List
 	* Used by Content Category & Content Section
 	*/
-	function showContentList( $title, &$items, &$access, $id=0, $sectionid=NULL, $gid, &$params, &$pageNav, $other_categories, &$lists, $order ) {
+	function showContentList( $title, &$items, &$access, $id=0, $sectionid=NULL, $gid, &$params, &$pageNav, $other_categories, &$lists, $order, $categories_exist ) {
 		global $Itemid, $mosConfig_live_site;
 
 		if ( $sectionid ) {
@@ -41,7 +41,7 @@ class HTML_content {
 		if ( $params->get( 'page_title' ) ) {
 			?>
 			<div class="componentheading<?php echo $params->get( 'pageclass_sfx' ); ?>">
-			<?php echo $title->name; ?>
+			<?php echo htmlspecialchars( $title->name, ENT_QUOTES ); ?>
 			</div>
 			<?php
 		}
@@ -82,7 +82,7 @@ class HTML_content {
 				<?php
 			}
 			// New Content Icon
-			if ( ( $access->canEdit || $access->canEditOwn ) && count( $other_categories ) > 0 ) {
+			if ( ( $access->canEdit || $access->canEditOwn ) && $categories_exist ) {
 				$link = sefRelToAbs( 'index.php?option=com_content&amp;task=new&amp;sectionid='. $id .'&amp;Itemid='. $Itemid );
 				?>
 				<a href="<?php echo $link; ?>">
@@ -91,7 +91,7 @@ class HTML_content {
 				<br /><br />
 				<?php
 			}
-			?>				
+			?>
 			</td>
 		</tr>
 		<tr>
@@ -120,14 +120,16 @@ class HTML_content {
 	* Display links to categories
 	*/
 	function showCategories( &$params, &$items, $gid, &$other_categories, $catid, $id, $Itemid ) {
+		if(!count($other_categories)) return;
 		?>
 		<ul>
 		<?php
 		foreach ( $other_categories as $row ) {
+			$row->name = htmlspecialchars( stripslashes( ampReplace( $row->name ) ), ENT_QUOTES );
 			if ( $catid != $row->id ) {
 				?>
 				<li>
-					<?php				
+					<?php
 					if ( $row->access <= $gid ) {
 						$link = sefRelToAbs( 'index.php?option=com_content&amp;task=category&amp;sectionid='. $id .'&amp;id='. $row->id .'&amp;Itemid='. $Itemid );
 						?>
@@ -139,7 +141,7 @@ class HTML_content {
 							&nbsp;<i>( <?php echo $row->numitems; echo _CHECKED_IN_ITEMS;?> )</i>
 							<?php
 						}
-						
+
 						// Writes Category Description
 						if ( $params->get( 'cat_description' ) && $row->description ) {
 							?>
@@ -148,7 +150,7 @@ class HTML_content {
 							echo $row->description;
 						}
 					} else {
-						echo $row->name; 
+						echo $row->name;
 						?>
 						<a href="<?php echo sefRelToAbs( 'index.php?option=com_registration&amp;task=register' ); ?>">
 							( <?php echo _E_REGISTERED; ?> )</a>
@@ -192,7 +194,7 @@ class HTML_content {
 							</td>
 							<?php
 						}
-	
+
 						if ( $params->get( 'order_select' ) ) {
 							?>
 							<td align="right" width="100%" nowrap="nowrap">
@@ -203,7 +205,7 @@ class HTML_content {
 							</td>
 							<?php
 						}
-	
+
 						if ( $params->get( 'display' ) ) {
 							?>
 							<td align="right" width="100%" nowrap="nowrap">
@@ -216,9 +218,9 @@ class HTML_content {
 								if ( $lists['filter'] ) {
 									$filter = '&amp;filter='. $lists['filter'];
 								}
-	
+
 								$link = 'index.php?option=com_content&amp;task=category&amp;sectionid='. $sectionid .'&amp;id='. $catid .'&amp;Itemid='. $Itemid . $order . $filter;
-								
+
 								echo '&nbsp;&nbsp;&nbsp;'. _PN_DISPLAY_NR .'&nbsp;';
 								echo $pageNav->getLimitBox( $link );
 								?>
@@ -232,7 +234,7 @@ class HTML_content {
 			</tr>
 			<?php
 		}
-		
+
 		if ( $params->get( 'headings' ) ) {
 			?>
 			<tr>
@@ -273,9 +275,9 @@ class HTML_content {
 		$k = 0;
 		foreach ( $items as $row ) {
 			$row->created = mosFormatDate ($row->created, $params->get( 'date_format' ));
-			
+
 			// calculate Itemid
-			HTML_content::_Itemid( $row );			
+			HTML_content::_Itemid( $row );
 			?>
 			<tr class="sectiontableentry<?php echo ($k+1) . $params->get( 'pageclass_sfx' ); ?>" >
 				<?php
@@ -375,7 +377,7 @@ class HTML_content {
 	* Display links to content items
 	*/
 	function showLinks( &$rows, $links, $total, $i=0, $show=1, $ItemidCount=NULL ) {
-		global $mainframe;
+		global $mainframe, $Itemid;
 
 		if ( $show ) {
 			?>
@@ -385,25 +387,25 @@ class HTML_content {
 				</strong>
 			</div>
 			<?php
-		}		
+		}
 		?>
 		<ul>
 		<?php
 		for ( $z = 0; $z < $links; $z++ ) {
-			if ( $i >= $total ) {
+			if (!isset( $rows[$i] )) {
 				// stops loop if total number of items is less than the number set to display as intro + leading
 				break;
 			}
-			
-			$_Itemid = $mainframe->getItemid( $rows[$i]->id, 0, 0  );
-			
+
+			$_Itemid = $Itemid;
+
 			if ( $_Itemid && $_Itemid != 99999999 ) {
 			// where Itemid value is returned, do not add Itemid to url
 				$Itemid_link = '&amp;Itemid='. $_Itemid;
 			} else {
 			// where Itemid value is NOT returned, do not add Itemid to url
 				$Itemid_link = '';
-			}	
+			}
 
 			$link = sefRelToAbs( 'index.php?option=com_content&amp;task=view&amp;id='. $rows[$i]->id . $Itemid_link )
 			?>
@@ -437,16 +439,16 @@ class HTML_content {
 		if ( isset($row->page_title) && $row->page_title ) {
 			$mainframe->setPageTitle( $row->title .' '. $row->page_title );
 		}
-		
+
 		// calculate Itemid
 		HTML_content::_Itemid( $row );
-		
+
 		// determines the link and `link text` of the readmore button & linked title
 		HTML_content::_linkInfo( $row, $params );
-		
+
 		// link used by print button
 		$print_link = $mosConfig_live_site. '/index2.php?option=com_content&amp;task=view&amp;id=' . $row->id .'&amp;pop=1&amp;page='. $page . $row->Itemid_link;
-		
+
 		// process the new bots
 		$_MAMBOTS->loadBotGroup( 'content' );
 		$results = $_MAMBOTS->trigger( 'onPrepareContent', array( &$row, &$params, $page ), true );
@@ -514,7 +516,7 @@ class HTML_content {
 				<?php
 				// displays Table of Contents
 				HTML_content::TOC( $row );
-	
+
 				// displays Item Text
 				echo ampReplace( $row->text );
 				?>
@@ -529,9 +531,9 @@ class HTML_content {
 		HTML_content::ReadMore( $row, $params );
 		?>
 		</table>
-		
+
 		<span class="article_seperator">&nbsp;</span>
-		
+
 		<?php
 		$results = $_MAMBOTS->trigger( 'onAfterDisplayContent', array( &$row, &$params, $page ) );
 		echo trim( implode( "\n", $results ) );
@@ -551,13 +553,7 @@ class HTML_content {
 	*/
 	function _Itemid( &$row ) {
 		global $task, $Itemid, $mainframe;
-		
-		if ( $task != 'view' && $task != 'category' ) {
-			$row->_Itemid = $mainframe->getItemid( $row->id, 0, 0 );
-		} else {
-			// when viewing a content item, it is not necessary to calculate the Itemid
-			$row->_Itemid = $Itemid;
-		}
+		$row->_Itemid = $Itemid;
 		
 		if ( $row->_Itemid && $row->_Itemid != 99999999 ) {
 			// where Itemid value is returned, do not add Itemid to url
@@ -565,7 +561,7 @@ class HTML_content {
 		} else {
 			// where Itemid value is NOT returned, do not add Itemid to url
 			$row->Itemid_link = '';
-		}	
+		}
 	}
 
 	/**
@@ -573,23 +569,23 @@ class HTML_content {
 	*/
 	function _linkInfo( &$row, &$params ) {
 		global $my;
-		
+
 		$row->link_on 	= '';
 		$row->link_text	= '';
-		
+
 		if ($params->get( 'readmore' ) || $params->get( 'link_titles' )) {
 			if ( $params->get( 'intro_only' ) ) {
 				// checks if the item is a public or registered/special item
 				if ( $row->access <= $my->gid ) {
 					$row->link_on = sefRelToAbs( 'index.php?option=com_content&amp;task=view&amp;id=' . $row->id . $row->Itemid_link );
-					
+
 					if ( isset($row->readmore) && @$row->readmore) {
 						// text for the readmore link
 						$row->link_text = _READ_MORE;
 					}
 				} else {
 					$row->link_on = sefRelToAbs( 'index.php?option=com_registration&amp;task=register' );
-					
+
 					if ( isset($row->readmore) && @$row->readmore ) {
 						// text for the readmore link if accessible only if registered
 						$row->link_text	= _READ_MORE_REGISTER;
@@ -676,11 +672,11 @@ class HTML_content {
 	*/
 	function PdfIcon( &$row, &$params, $hide_js ) {
 		global $mosConfig_live_site;
-		
+
 		if ( $params->get( 'pdf' ) && !$params->get( 'popup' ) && !$hide_js ) {
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 			$link 	= $mosConfig_live_site. '/index2.php?option=com_content&amp;do_pdf=1&amp;id='. $row->id;
-			
+
 			if ( $params->get( 'icons' ) ) {
 				$image = mosAdminMenus::ImageCheck( 'pdf_button.png', '/images/M_images/', NULL, NULL, _CMN_PDF, _CMN_PDF );
 			} else {
@@ -701,18 +697,18 @@ class HTML_content {
 	*/
 	function EmailIcon( &$row, &$params, $hide_js ) {
 		global $mosConfig_live_site, $Itemid, $task;
-		
+
 		if ( $params->get( 'email' ) && !$params->get( 'popup' ) && !$hide_js ) {
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=400,height=250,directories=no,location=no';
-			
+
 			if ($task == 'view') {
 				$_Itemid = '&amp;itemid='. $Itemid;
 			} else {
 				$_Itemid = '';
 			}
-			
+
 			$link 	= $mosConfig_live_site .'/index2.php?option=com_content&amp;task=emailform&amp;id='. $row->id . $_Itemid;
-			
+
 			if ( $params->get( 'icons' ) ) {
 				$image = mosAdminMenus::ImageCheck( 'emailButton.png', '/images/M_images/', NULL, NULL, _CMN_EMAIL, _CMN_EMAIL );
 			} else {
@@ -810,11 +806,11 @@ class HTML_content {
 	*/
 	function CreateDate( &$row, &$params ) {
 		$create_date = null;
-		
+
 		if ( intval( $row->created ) != 0 ) {
 			$create_date = mosFormatDate( $row->created );
 		}
-		
+
 		if ( $params->get( 'createdate' ) ) {
 			?>
 			<tr>
@@ -856,11 +852,11 @@ class HTML_content {
 	*/
 	function ModifiedDate( &$row, &$params ) {
 		$mod_date = null;
-		
+
 		if ( intval( $row->modified ) != 0) {
 			$mod_date = mosFormatDate( $row->modified );
 		}
-		
+
 		if ( ( $mod_date != '' ) && $params->get( 'modifydate' ) ) {
 			?>
 			<tr>
@@ -895,9 +891,9 @@ class HTML_content {
 	*/
 	function Navigation( &$row, &$params ) {
 		global $task;
-		
+
 		$link_part	= 'index.php?option=com_content&amp;task=view&amp;id=';
-		
+
 		// determines links to next and prev content items within category
 		if ( $params->get( 'item_navigation' ) ) {
 			if ( $row->prev ) {
@@ -905,14 +901,14 @@ class HTML_content {
 			} else {
 				$row->prev = 0;
 			}
-			
+
 			if ( $row->next ) {
 				$row->next = sefRelToAbs( $link_part . $row->next . $row->Itemid_link );
 			} else {
 				$row->next = 0;
 			}
 		}
-		
+
 		if ( $params->get( 'item_navigation' ) && ( $task == 'view' ) && !$params->get( 'popup' ) && ( $row->prev || $row->next ) ) {
 			?>
 			<table align="center" style="margin-top: 25px;">
@@ -926,7 +922,7 @@ class HTML_content {
 					</th>
 					<?php
 				}
-				
+
 				if ( $row->prev && $row->next ) {
 					?>
 					<td width="50">&nbsp;
@@ -934,7 +930,7 @@ class HTML_content {
 					</td>
 					<?php
 				}
-				
+
 				if ( $row->next ) {
 					?>
 					<th class="pagenav_next">
@@ -964,7 +960,7 @@ class HTML_content {
 		mosMakeHtmlSafe( $row );
 
 		require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/HTML_toolbar.php' );
-		
+
 		// used for spoof hardening
 		$validate = josSpoofValue();
 
@@ -1011,13 +1007,13 @@ class HTML_content {
 			catch(e){}
 			// do field validation
 			if (form.title.value == "") {
-				alert ( "<?php echo _E_WARNTITLE; ?>" );
+				alert ( "<?php echo addslashes( _E_WARNTITLE ); ?>" );
 			} else if (parseInt('<?php echo $row->sectionid;?>')) {
 				// for content items
 				if (getSelectedValue('adminForm','catid') < 1) {
-					alert ( "<?php echo _E_WARNCAT; ?>" );
+					alert ( "<?php echo addslashes( _E_WARNCAT ); ?>" );
 				//} else if (form.introtext.value == "") {
-				//	alert ( "<?php echo _E_WARNTEXT; ?>" );
+				//	alert ( "<?php echo addslashes( _E_WARNTEXT ); ?>" );
 				} else {
 					<?php
 					getEditorContents( 'editor1', 'introtext' );
@@ -1026,7 +1022,7 @@ class HTML_content {
 					submitform(pressbutton);
 				}
 			//} else if (form.introtext.value == "") {
-			//	alert ( "<?php echo _E_WARNTEXT; ?>" );
+			//	alert ( "<?php echo addslashes( _E_WARNTEXT ); ?>" );
 			} else {
 				// for static content
 				<?php
@@ -1042,7 +1038,7 @@ class HTML_content {
 
 		function WarnUser(){
 			if (document.adminForm.goodexit.value==0) {
-				alert('<?php echo _E_WARNUSER;?>');
+				alert('<?php echo addslashes( _E_WARNUSER );?>');
 				window.location="<?php echo sefRelToAbs("index.php?option=com_content&task=".$task."&sectionid=".$sectionid."&id=".$row->id."&Itemid=".$Itemid); ?>";
 			}
 		}
@@ -1191,9 +1187,9 @@ class HTML_content {
 					<input class="button" type="button" value="<?php echo _E_INSERT; ?>" onclick="addSelectedToList('adminForm','imagefiles','imagelist')" />
 				</td>
 				<td width="2%">
-					<input class="button" type="button" value=">>" onclick="addSelectedToList('adminForm','imagefiles','imagelist')" title="Add"/>
+					<input class="button" type="button" value=">>" onclick="addSelectedToList('adminForm','imagefiles','imagelist')" title="<?php echo _E_ADD; ?>"/>
 					<br/>
-					<input class="button" type="button" value="<<" onclick="delSelectedFromList('adminForm','imagelist')" title="Remove"/>
+					<input class="button" type="button" value="<<" onclick="delSelectedFromList('adminForm','imagelist')" title="<?php echo _E_REMOVE; ?>"/>
 				</td>
 				<td valign="top">
 					<?php echo $lists['imagelist'];?>
@@ -1408,10 +1404,10 @@ class HTML_content {
 	*/
 	function emailForm( $uid, $title, $template='', $itemid ) {
 		global $mainframe;
-		
+
 		// used for spoof hardening
 		$validate = josSpoofValue();
-		
+
 		$mainframe->setPageTitle( $title );
 		$mainframe->addCustomHeadTag( '<link rel="stylesheet" href="templates/'. $template .'/css/template_css.css" type="text/css" />' );
 		?>

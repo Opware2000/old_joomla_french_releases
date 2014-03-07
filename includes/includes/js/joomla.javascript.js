@@ -1,6 +1,6 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version $Id: joomla.javascript.js 3562 2006-05-20 12:27:49Z stingrey $
+* @version $Id: joomla.javascript.js 5689 2006-11-09 00:55:42Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -268,8 +268,9 @@ function previewImage( list, image, base_path ) {
 	form = document.adminForm;
 	srcList = eval( "form." + list );
 	srcImage = eval( "document." + image );
-	var fileName = srcList.options[srcList.selectedIndex].text;
-	var fileName2 = srcList.options[srcList.selectedIndex].value;
+	var srcOption = srcList.options[(srcList.selectedIndex < 0) ? 0 : srcList.selectedIndex];
+	var fileName = srcOption.text;
+	var fileName2 = srcOption.value;
 	if (fileName.length == 0 || fileName2.length == 0) {
 		srcImage.src = 'images/blank.gif';
 	} else {

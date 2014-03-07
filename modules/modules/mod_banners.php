@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_banners.php 2456 2006-02-18 01:36:30Z stingrey $
+* @version $Id: mod_banners.php 6085 2006-12-24 18:59:57Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,11 +17,13 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 // clientids must be an integer
 $clientids = $params->get( 'banner_cids', '' );
 
-$where 	= '';
 $banner = null;
 
+$where = '';
 if ( $clientids != '' ) {
-	$where = "\n AND cid IN ( $clientids )";
+	$clientidsArray = explode( ',', $clientids );
+	mosArrayToInts( $clientidsArray );
+	$where = "\n AND ( cid=" . implode( " OR cid=", $clientidsArray ) . " )";
 }
 
 $query = "SELECT *"
@@ -45,7 +47,7 @@ if ($numrows){
 
 	$query = "UPDATE #__banner"
 	. "\n SET impmade = impmade + 1"
-	. "\n WHERE bid = $banner->bid"
+	. "\n WHERE bid = " . (int) $banner->bid
 	;
 	$database->setQuery( $query );
 	if(!$database->query()) {
@@ -59,7 +61,9 @@ if ($numrows){
 		if ($banner->imptotal == $banner->impmade) {
 
 			$query = "INSERT INTO #__bannerfinish ( cid, type, name, impressions, clicks, imageurl, datestart, dateend )"
-			. "\n VALUES ( $banner->cid, '$banner->type', '$banner->name', $banner->impmade, $banner->clicks, '$banner->imageurl', '$banner->date', 'now()' )"
+			. "\n VALUES ( " . (int) $banner->cid . ", " . $database->Quote( $banner->type ) . ", "
+			. $database->Quote( $banner->name ) . ", " . (int) $banner->impmade . ", " . (int) $banner->clicks
+			. ", " . $database->Quote( $banner->imageurl ) . ", " . $database->Quote( $banner->date ) . ", 'now()' )"
 			;
 			$database->setQuery($query);
 			if(!$database->query()) {
@@ -67,7 +71,7 @@ if ($numrows){
 			}
 
 			$query = "DELETE FROM #__banner"
-			. "\n WHERE bid = $banner->bid"
+			. "\n WHERE bid = " . (int) $banner->bid
 			;
 			$database->setQuery($query);
 			if(!$database->query()) {
@@ -80,6 +84,7 @@ if ($numrows){
 		} else if (eregi( "(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$", $banner->imageurl )) {
 			$imageurl 	= $mosConfig_live_site .'/images/banners/'. $banner->imageurl;
 			$link		= sefRelToAbs( 'index.php?option=com_banners&amp;task=click&amp;bid='. $banner->bid );
+			if( !defined('_BANNER_ALT') ) DEFINE('_BANNER_ALT','Advertisement');
 			echo '<a href="'. $link .'" target="_blank"><img src="'. $imageurl .'" border="0" alt="Advertisement" /></a>';
 
 		} else if (eregi("\.swf$", $banner->imageurl)) {

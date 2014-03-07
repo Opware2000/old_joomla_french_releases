@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index3.php 4750 2006-08-25 01:08:30Z stingrey $
+* @version $Id: index3.php 6022 2006-12-18 22:30:07Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,6 +21,13 @@ if (!file_exists( '../configuration.php' )) {
 
 require( '../globals.php' );
 require_once( '../configuration.php' );
+
+// SSL check - $http_host returns <live site url>:<port number if it is 443>
+$http_host = explode(':', $_SERVER['HTTP_HOST'] );
+if( (!empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) != 'off' || isset( $http_host[1] ) && $http_host[1] == 443) && substr( $mosConfig_live_site, 0, 8 ) != 'https://' ) {
+	$mosConfig_live_site = 'https://'.substr( $mosConfig_live_site, 7 );
+}
+
 require_once( $mosConfig_absolute_path . '/includes/joomla.php' );
 include_once( $mosConfig_absolute_path . '/language/'. $mosConfig_lang. '.php' );
 require_once( $mosConfig_absolute_path . '/administrator/includes/admin.php' );
@@ -60,9 +67,9 @@ initGzip();
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo $mosConfig_sitename; ?> - Administration [Joomla]</title>
-<link rel="stylesheet" href="templates/<?php echo $mainframe->getTemplate(); ?>/css/template_css.css" type="text/css">
-<link rel="stylesheet" href="templates/<?php echo $mainframe->getTemplate(); ?>/css/theme.css" type="text/css">
+<title><?php echo $mosConfig_sitename; ?> - Administration [Joomla!]</title>
+<link rel="stylesheet" href="templates/<?php echo $mainframe->getTemplate(); ?>/css/template_css.css" type="text/css" />
+<link rel="stylesheet" href="templates/<?php echo $mainframe->getTemplate(); ?>/css/theme.css" type="text/css" />
 <script language="JavaScript" src="../includes/js/JSCookMenu_mini.js" type="text/javascript"></script>
 <script language="JavaScript" src="includes/js/ThemeOffice/theme.js" type="text/javascript"></script>
 <script language="JavaScript" src="../includes/js/joomla.javascript.js" type="text/javascript"></script>

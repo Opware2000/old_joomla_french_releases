@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.templates.html.php 2355 2006-02-14 10:05:00Z stingrey $
+* @version $Id: admin.templates.html.php 5830 2006-11-21 18:59:45Z Saka $
 * @package Joomla
 * @subpackage Templates
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -58,7 +58,7 @@ class HTML_templates {
 			<th class="templates">
 			Gestionnaire de Template <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
 			</th>
-			<td align="right" nowrap="true">
+			<td align="right" nowrap="nowrap">
 			Pr&eacute;visualiser le template			</td>
 			<td align="right">
 			<input type="checkbox" name="doPreview" checked="checked"/>

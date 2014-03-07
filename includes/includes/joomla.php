@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.php 4801 2006-08-28 16:10:28Z stingrey $
+* @version $Id: joomla.php 5993 2006-12-13 00:24:58Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -105,7 +105,7 @@ DEFINE( '_CURRENT_SERVER_TIME', $now );
 DEFINE( '_CURRENT_SERVER_TIME_FORMAT', '%Y-%m-%d %H:%M:%S' );
 
 // Non http/https URL Schemes
-$url_schemes = 'data:, file:, ftp:, gopher:, imap:, ldap:, mailto:, news:, nntp:, telnet:, javascript:, irc:';
+$url_schemes = 'data:, file:, ftp:, gopher:, imap:, ldap:, mailto:, news:, nntp:, telnet:, javascript:, irc:, mms:';
 DEFINE( '_URL_SCHEMES', $url_schemes );
 	
 // disable strict mode in MySQL 5
@@ -777,57 +777,57 @@ class mosMainFrame {
 				} else {
 					$session_life_admin = 1800;
 				}
-				
-				// purge expired admin sessions only		
+
+				// purge expired admin sessions only
 				$past = time() - $session_life_admin;
 				$query = "DELETE FROM #__session"
-				. "\n WHERE time < '$past'"
+				. "\n WHERE time < '" . (int) $past . "'"
 				. "\n AND guest = 1"
 				. "\n AND gid = 0"
 				. "\n AND userid <> 0"
 				;
 				$this->_db->setQuery( $query );
-				$this->_db->query();	
-				
+				$this->_db->query();
+
 				// update session timestamp
 				$current_time = time();
 				$query = "UPDATE #__session"
-				. "\n SET time = '$current_time'"
-				. "\n WHERE session_id = '$session_id'"
+				. "\n SET time = " . $this->_db->Quote( $current_time )
+				. "\n WHERE session_id = " . $this->_db->Quote( $session_id )
 				;
 				$this->_db->setQuery( $query );
 				$this->_db->query();
-				
+
 				// set garbage cleaning timeout
 				$this->setSessionGarbageClean();
-				
+
 				// check against db record of session
 				$query = "SELECT COUNT( session_id )"
 				. "\n FROM #__session"
-				. "\n WHERE session_id = '$session_id'"
+				. "\n WHERE session_id = " . $this->_db->Quote( $session_id )
 				. "\n AND username = ". $this->_db->Quote( $my->username )
 				. "\n AND userid = ". intval( $my->id )
 				;
 				$this->_db->setQuery( $query );
 				$count = $this->_db->loadResult();
-				
+
 				// if no entry in session table that corresponds boot from admin area
 				if ( $count == 0 ) {
 					$link 	= NULL;
-					
+
 					if ($_SERVER['QUERY_STRING']) {
 						$link = 'index2.php?'. $_SERVER['QUERY_STRING'];
 					}
-					
-					// check if site designated as a production site 
+
+					// check if site designated as a production site
 					// for a demo site disallow expired page functionality
 					// link must also be a Joomla link to stop malicious redirection
 					if ( $link && strpos( $link, 'index2.php?option=com_' ) === 0 && $_VERSION->SITE == 1 && @$mosConfig_admin_expired === '1' ) {
 						$now 	= time();
-						
+
 						$file 	= $this->getPath( 'com_xml', 'com_users' );
 						$params =& new mosParameters( $my->params, $file, 'component' );
-						
+
 						// return to expired page functionality
 						$params->set( 'expired', 		$link );
 						$params->set( 'expired_time', 	$now );
@@ -840,13 +840,13 @@ class mosMainFrame {
 							}
 							$saveparams = implode( "\n", $txt );
 						}
-						
+
 						// save expired page info to user data
 						$query = "UPDATE #__users"
-						. "\n SET params = '$saveparams'"
-						. "\n WHERE id = $my->id"
-						. "\n AND username = '$my->username'"
-						. "\n AND usertype = '$my->usertype'"
+						. "\n SET params = ". $this->_db->Quote( $saveparams )
+						. "\n WHERE id = " . (int) $my->id
+						. "\n AND username = ". $this->_db->Quote( $my->username )
+						. "\n AND usertype = ". $this->_db->Quote( $my->usertype )
 						;
 						$this->_db->setQuery( $query );
 						$this->_db->query();
@@ -857,12 +857,16 @@ class mosMainFrame {
 				} else {
 					// load variables into session, used to help secure /popups/ functionality
 					$_SESSION['option'] = $option;
-					$_SESSION['task'] 	= $task;					
+					$_SESSION['task'] 	= $task;
 				}
 			}
 		} else if ($session_id == '') {
-			// no session_id as user has person has not attempted to login
-			echo "<script>document.location.href='index.php?mosmsg=Vous devez vous identifier'</script>\n";
+			// no session_id as user has not attempted to login, or session.auto_start is switched on
+			if (ini_get( 'session.auto_start' ) || !ini_get( 'session.use_cookies' )) {
+				echo "<script>document.location.href='index.php?mosmsg=Vous devez vous identifier. Si le paramètre PHP session.auto_start est sur On ou si le paramètre session.use_cookies est sur Off, vous devrez peut-être les ajuster avant de pouvoir vous identifier.'</script>\n";
+			} else {
+				echo "<script>document.location.href='index.php?mosmsg=Vous devez vous identifier'</script>\n";
+			}
 			exit();
 		} else {
 			// session id does not correspond to required session format
@@ -872,7 +876,7 @@ class mosMainFrame {
 
 		return $my;
 	}
-	
+
 	/*
 	* Function used to set Session Garbage Cleaning
 	* garbage cleaning set at configured session time + 600 seconds
@@ -883,12 +887,12 @@ class mosMainFrame {
 		/** ensure that funciton is only called once */
 		if (!defined( '_JOS_GARBAGECLEAN' )) {
 			define( '_JOS_GARBAGECLEAN', 1 );
-			
+
 			$garbage_timeout = $this->getCfg('session_life_admin') + 600;
 			@ini_set('session.gc_maxlifetime', $garbage_timeout);
 		}
 	}
-	
+
 	/*
 	* Static Function used to generate the Session Cookie Name
 	* Added as of 1.0.8
@@ -896,22 +900,22 @@ class mosMainFrame {
 	*/
 	function sessionCookieName() {
 		global $mainframe;
-		
-		return md5( 'site' . $mainframe->getCfg( 'live_site' ) );		
+
+		return md5( 'site' . $mainframe->getCfg( 'live_site' ) );
 	}
-	
+
 	/*
 	* Static Function used to generate the Session Cookie Value
 	* Added as of 1.0.8
 	* Deperciated 1.1
 	*/
 	function sessionCookieValue( $id=null ) {
-		global $mainframe;		
-	
+		global $mainframe;
+
 		$type 		= $mainframe->getCfg( 'session_type' );
-		
+
 		$browser 	= @$_SERVER['HTTP_USER_AGENT'];
-		
+
 		switch ($type) {
 			case 2:
 			// 1.0.0 to 1.0.7 Compatibility
@@ -920,22 +924,22 @@ class mosMainFrame {
 				break;
 
 			case 1:
-			// slightly reduced security - 3rd level IP authentication for those behind IP Proxy 
+			// slightly reduced security - 3rd level IP authentication for those behind IP Proxy
 				$remote_addr 	= explode('.',$_SERVER['REMOTE_ADDR']);
 				$ip				= $remote_addr[0] .'.'. $remote_addr[1] .'.'. $remote_addr[2];
 				$value 			= mosHash( $id . $ip . $browser );
 				break;
-			
+
 			default:
 			// Highest security level - new default for 1.0.8 and beyond
 				$ip				= $_SERVER['REMOTE_ADDR'];
 				$value 			= mosHash( $id . $ip . $browser );
 				break;
-		}		
+		}
 
 		return $value;
 	}
-	
+
 	/*
 	* Static Function used to generate the Rememeber Me Cookie Name for Username information
 	* Added as of 1.0.8
@@ -946,7 +950,7 @@ class mosMainFrame {
 
 		return $value;
 	}
-	
+
 	/*
 	* Static Function used to generate the Rememeber Me Cookie Name for Password information
 	* Added as of 1.0.8
@@ -957,7 +961,7 @@ class mosMainFrame {
 
 		return $value;
 	}
-	
+
 	/*
 	* Static Function used to generate the Remember Me Cookie Value for Username information
 	* Added as of 1.0.8
@@ -968,7 +972,7 @@ class mosMainFrame {
 
 		return $value;
 	}
-	
+
 	/*
 	* Static Function used to generate the Remember Me Cookie Value for Password information
 	* Added as of 1.0.8
@@ -976,10 +980,10 @@ class mosMainFrame {
 	*/
 	function remCookieValue_Pass( $passwd ) {
 		$value 	= md5( $passwd . mosHash( @$_SERVER['HTTP_USER_AGENT'] ) );
-		
+
 		return $value;
 	}
-	
+
 	/**
 	* Login validation function
 	*
@@ -989,70 +993,65 @@ class mosMainFrame {
 	*/
 	function login( $username=null,$passwd=null, $remember=0, $userid=NULL ) {
 		global $acl, $_VERSION;
-		
-		$bypost = 0;		
-		
+
+		$bypost = 0;
+
 		// if no username and password passed from function, then function is being called from login module/component
 		if (!$username || !$passwd) {
-			$username 	= strval( mosGetParam( $_POST, 'username', '' ) );
-			$passwd 	= strval( mosGetParam( $_POST, 'passwd', '' ) );
+			$username 	= stripslashes( strval( mosGetParam( $_POST, 'username', '' ) ) );
+			$passwd 	= stripslashes( strval( mosGetParam( $_POST, 'passwd', '' ) ) );
 			$passwd 	= md5( $passwd );
-			
+
 			$bypost 	= 1;
-			
-			// Session Cookie `name`
-			$sessionCookieName 	= mosMainFrame::sessionCookieName();
-			// Get Session Cookie `value`
-			$sessioncookie 		= strval( mosGetParam( $_COOKIE, $sessionCookieName, null ) );
-			// extra check to ensure that Joomla! sessioncookie exists			
-			if (!($sessioncookie == '-' || strlen($sessioncookie) == 32)) {
-				header( 'HTTP/1.0 403 Forbidden' );
-				mosErrorAlert( _NOT_AUTH );
+
+			// extra check to ensure that Joomla! sessioncookie exists
+			if (!$this->_session->session_id) {
+				mosErrorAlert( _ALERT_ENABLED );
 				return;
 			}
-			
+
 			josSpoofCheck(NULL,1);
 		}
 
 		$row = null;
 		if (!$username || !$passwd) {
-			echo "<script> alert(\""._LOGIN_INCOMPLETE."\"); window.history.go(-1); </script>\n";
+			mosErrorAlert( _LOGIN_INCOMPLETE );
 			exit();
 		} else {
 			if ( $remember && strlen($username) == 32 && strlen($passwd) == 32 && $userid ) {
 			// query used for remember me cookie
 				$harden = mosHash( @$_SERVER['HTTP_USER_AGENT'] );
-				
+
 				$query = "SELECT id, name, username, password, usertype, block, gid"
 				. "\n FROM #__users"
-				. "\n WHERE id = $userid"
+				. "\n WHERE id = " . (int) $userid
 				;
 				$this->_db->setQuery( $query );
 				$this->_db->loadObject($user);
-				
+
 				$check_username = md5( $user->username . $harden );
 				$check_password = md5( $user->password . $harden );
 
 				if ( $check_username == $username && $check_password == $passwd ) {
 					$row = $user;
-				}				
+				}
 			} else {
 			// query used for login via login module
 				$query = "SELECT id, name, username, password, usertype, block, gid"
 				. "\n FROM #__users"
-				. "\n WHERE username = '$username'"
-				. "\n AND password = '$passwd'"
+				. "\n WHERE username = ". $this->_db->Quote( $username )
+				. "\n AND password = ". $this->_db->Quote( $passwd )
 				;
 				$this->_db->setQuery( $query );
 				$this->_db->loadObject( $row );
 			}
-			
+
 			if (is_object($row)) {
 				// user blocked from login
 				if ($row->block == 1) {
 					mosErrorAlert(_LOGIN_BLOCKED);
 				}
-				
+
 				// fudge the group stuff
 				$grp = $acl->getAroGroup( $row->id );
 				$row->gid = 1;
@@ -1070,28 +1069,28 @@ class mosMainFrame {
 				$session->usertype 	= $row->usertype;
 				$session->gid 		= intval( $row->gid );
 				$session->update();
-				
+
 				// check to see if site is a production site
 				// allows multiple logins with same user for a demo site
 				if ( $_VERSION->SITE ) {
 					// delete any old front sessions to stop duplicate sessions
 					$query = "DELETE FROM #__session"
-					. "\n WHERE session_id != '$session->session_id'"
-					. "\n AND username = '$row->username'"
-					. "\n AND userid = $row->id"
-					. "\n AND gid = $row->gid"
+					. "\n WHERE session_id != ". $this->_db->Quote( $session->session_id )
+					. "\n AND username = ". $this->_db->Quote( $row->username )
+					. "\n AND userid = " . (int) $row->id
+					. "\n AND gid = " . (int) $row->gid
 					. "\n AND guest = 0"
 					;
 					$this->_db->setQuery( $query );
-					$this->_db->query();	
+					$this->_db->query();
 				}
-				
+
 				// update user visit data
 				$currentDate = date("Y-m-d\TH:i:s");
-				
+
 				$query = "UPDATE #__users"
-				. "\n SET lastvisitDate = '$currentDate'"
-				. "\n WHERE id = $session->userid"
+				. "\n SET lastvisitDate = ". $this->_db->Quote( $currentDate )
+				. "\n WHERE id = " . (int) $session->userid
 				;
 				$this->_db->setQuery($query);
 				if (!$this->_db->query()) {
@@ -1119,7 +1118,7 @@ class mosMainFrame {
 			}
 		}
 	}
-	
+
 	/**
 	* User logout
 	*
@@ -1127,7 +1126,7 @@ class mosMainFrame {
 	*/
 	function logout() {
 		mosCache::cleanCache();
-		
+
 		$session 			=& $this->_session;
 		$session->guest 	= 1;
 		$session->username 	= '';
@@ -1141,10 +1140,10 @@ class mosMainFrame {
 		$lifetime 		= time() - 86400;
 		$remCookieName 	= mosMainFrame::remCookieName_User();
 		setcookie( $remCookieName, ' ', $lifetime, '/' );
-		
+
 		@session_destroy();
 	}
-	
+
 	/**
 	* @return mosUser A user object with the information from the current session
 	*/
@@ -1161,11 +1160,11 @@ class mosMainFrame {
 		if ($user->id) {
 			$query = "SELECT id, name, email, block, sendEmail, registerDate, lastvisitDate, activation, params"
 			. "\n FROM #__users"
-			. "\n WHERE id = ". intval( $user->id )
+			. "\n WHERE id = " . (int) $user->id
 			;
 			$database->setQuery( $query );
 			$database->loadObject( $my );
-			
+
 			$user->params 			= $my->params;
 			$user->name				= $my->name;
 			$user->email			= $my->email;
@@ -1208,7 +1207,7 @@ class mosMainFrame {
 				$cur_template = 'joomla_admin';
 			}
 		} else {
-			$assigned = ( !empty( $Itemid ) ? " OR menuid = $Itemid" : '' );
+			$assigned = ( !empty( $Itemid ) ? " OR menuid = " . (int) $Itemid : '' );
 
 			$query = "SELECT template"
 			. "\n FROM #__templates_menu"
@@ -1228,7 +1227,7 @@ class mosMainFrame {
 				if ( strlen( $jos_change_template ) >= 40 ) {
 					$jos_change_template = substr($jos_change_template, 0 , 39);
 				}
-				
+
 				// check that template exists in case it was deleted
 				if (file_exists( $mosConfig_absolute_path .'/templates/'. $jos_change_template .'/index.php' )) {
 					$lifetime 		= 60*10;
@@ -1254,45 +1253,45 @@ class mosMainFrame {
 	* @param string The base path from which to load the configuration file
 	*/
 	function _setAdminPaths( $option, $basePath='.' ) {
-		$option = strtolower( $option );
-		
-		$this->_path = new stdClass();
+		$option 		= strtolower( $option );
 
-		// security check to disable use of `/`, `\\` and `:` in $options variable 
+		$this->_path 	= new stdClass();
+
+		// security check to disable use of `/`, `\\` and `:` in $options variable
 		if (strpos($option, '/') !== false || strpos($option, '\\') !== false || strpos($option, ':') !== false) {
 			mosErrorAlert( 'Restricted access' );
 			return;
 		}
-			
+
 		$prefix = substr( $option, 0, 4 );
 		if ($prefix != 'com_' && $prefix != 'mod_') {
 			// ensure backward compatibility with existing links
-			$name = $option;
+			$name 	= $option;
 			$option = "com_$option";
 		} else {
-			$name = substr( $option, 4 );
+			$name 	= substr( $option, 4 );
 		}
-		
+
 		// components
 		if (file_exists( "$basePath/templates/$this->_template/components/$name.html.php" )) {
-			$this->_path->front = "$basePath/components/$option/$name.php";
-			$this->_path->front_html = "$basePath/templates/$this->_template/components/$name.html.php";
+			$this->_path->front 		= "$basePath/components/$option/$name.php";
+			$this->_path->front_html 	= "$basePath/templates/$this->_template/components/$name.html.php";
 		} else if (file_exists( "$basePath/components/$option/$name.php" )) {
-			$this->_path->front = "$basePath/components/$option/$name.php";
-			$this->_path->front_html = "$basePath/components/$option/$name.html.php";
+			$this->_path->front 		= "$basePath/components/$option/$name.php";
+			$this->_path->front_html 	= "$basePath/components/$option/$name.html.php";
 		}
-		
+
 		if (file_exists( "$basePath/administrator/components/$option/admin.$name.php" )) {
-			$this->_path->admin = "$basePath/administrator/components/$option/admin.$name.php";
-			$this->_path->admin_html = "$basePath/administrator/components/$option/admin.$name.html.php";
+			$this->_path->admin 		= "$basePath/administrator/components/$option/admin.$name.php";
+			$this->_path->admin_html 	= "$basePath/administrator/components/$option/admin.$name.html.php";
 		}
-		
+
 		if (file_exists( "$basePath/administrator/components/$option/toolbar.$name.php" )) {
-			$this->_path->toolbar = "$basePath/administrator/components/$option/toolbar.$name.php";
-			$this->_path->toolbar_html = "$basePath/administrator/components/$option/toolbar.$name.html.php";
-			$this->_path->toolbar_default = "$basePath/administrator/includes/toolbar.html.php";
+			$this->_path->toolbar 			= "$basePath/administrator/components/$option/toolbar.$name.php";
+			$this->_path->toolbar_html 		= "$basePath/administrator/components/$option/toolbar.$name.html.php";
+			$this->_path->toolbar_default 	= "$basePath/administrator/includes/toolbar.html.php";
 		}
-		
+
 		if (file_exists( "$basePath/components/$option/$name.class.php" )) {
 			$this->_path->class = "$basePath/components/$option/$name.class.php";
 		} else if (file_exists( "$basePath/administrator/components/$option/$name.class.php" )) {
@@ -1305,11 +1304,11 @@ class mosMainFrame {
 			$this->_path->admin 		= "$basePath/administrator/modules/$option.php";
 			$this->_path->admin_html 	= "$basePath/administrator/modules/mod_$name.html.php";
 		} else if (file_exists("$basePath/administrator/components/$option/admin.$name.php" )) {
-			$this->_path->admin = "$basePath/administrator/components/$option/admin.$name.php";
-			$this->_path->admin_html = "$basePath/administrator/components/$option/admin.$name.html.php";
+			$this->_path->admin 		= "$basePath/administrator/components/$option/admin.$name.php";
+			$this->_path->admin_html 	= "$basePath/administrator/components/$option/admin.$name.html.php";
 		} else {
-			$this->_path->admin = "$basePath/administrator/components/com_admin/admin.admin.php";
-			$this->_path->admin_html = "$basePath/administrator/components/com_admin/admin.admin.html.php";
+			$this->_path->admin 		= "$basePath/administrator/components/com_admin/admin.admin.php";
+			$this->_path->admin_html 	= "$basePath/administrator/components/com_admin/admin.admin.html.php";
 		}
 	}
 	/**
@@ -1431,21 +1430,21 @@ class mosMainFrame {
 
 			$query = "SELECT COUNT(*)"
 			. "\n FROM #__stats_agents"
-			. "\n WHERE agent = '$browser'"
+			. "\n WHERE agent = " . $this->_db->Quote( $browser )
 			. "\n AND type = 0"
 			;
 			$this->_db->setQuery( $query );
 			if ($this->_db->loadResult()) {
 				$query = "UPDATE #__stats_agents"
 				. "\n SET hits = ( hits + 1 )"
-				. "\n WHERE agent = '$browser'"
+				. "\n WHERE agent = " . $this->_db->Quote( $browser )
 				. "\n AND type = 0"
 				;
 				$this->_db->setQuery( $query );
 			} else {
 				$query = "INSERT INTO #__stats_agents"
 				. "\n ( agent, type )"
-				. "\n VALUES ( '$browser', 0 )"
+				. "\n VALUES ( " . $this->_db->Quote( $browser ) . ", 0 )"
 				;
 				$this->_db->setQuery( $query );
 			}
@@ -1455,21 +1454,21 @@ class mosMainFrame {
 
 			$query = "SELECT COUNT(*)"
 			. "\n FROM #__stats_agents"
-			. "\n WHERE agent = '$os'"
+			. "\n WHERE agent = " . $this->_db->Quote( $os )
 			. "\n AND type = 1"
 			;
 			$this->_db->setQuery( $query );
 			if ($this->_db->loadResult()) {
 				$query = "UPDATE #__stats_agents"
 				. "\n SET hits = ( hits + 1 )"
-				. "\n WHERE agent = '$os'"
+				. "\n WHERE agent = " . $this->_db->Quote( $os )
 				. "\n AND type = 1"
 				;
 				$this->_db->setQuery( $query );
 			} else {
 				$query = "INSERT INTO #__stats_agents"
 				. "\n ( agent, type )"
-				. "\n VALUES ( '$os', 1 )"
+				. "\n VALUES ( " . $this->_db->Quote( $os ) . ", 1 )"
 				;
 				$this->_db->setQuery( $query );
 			}
@@ -1485,21 +1484,21 @@ class mosMainFrame {
 
 			$query = "SELECT COUNT(*)"
 			. "\n FROM #__stats_agents"
-			. "\n WHERE agent = '$tldomain'"
+			. "\n WHERE agent = " . $this->_db->Quote( $tldomain )
 			. "\n AND type = 2"
 			;
 			$this->_db->setQuery( $query );
 			if ($this->_db->loadResult()) {
 				$query = "UPDATE #__stats_agents"
 				. "\n SET hits = ( hits + 1 )"
-				. "\n WHERE agent = '$tldomain'"
+				. "\n WHERE agent = " . $this->_db->Quote( $tldomain )
 				. "\n AND type = 2"
 				;
 				$this->_db->setQuery( $query );
 			} else {
 				$query = "INSERT INTO #__stats_agents"
 				. "\n ( agent, type )"
-				. "\n VALUES ( '$tldomain', 2 )"
+				. "\n VALUES ( " . $this->_db->Quote( $tldomain ) . ", 2 )"
 				;
 				$this->_db->setQuery( $query );
 			}
@@ -1512,9 +1511,9 @@ class mosMainFrame {
 	*/
 	function getItemid( $id, $typed=1, $link=1, $bs=1, $bc=1, $gbs=1 ) {
 		global $Itemid;
-		
+
 		$_Itemid = '';
-		
+
 		if ($_Itemid == '' && $typed && $this->getStaticContentCount()) {
 			$exists = 0;
 			foreach( $this->get( '_ContentTyped', array() ) as $key => $value ) {
@@ -1526,23 +1525,23 @@ class mosMainFrame {
 				}
 			}
 			// if id hasnt been checked before initaite query
-			if ( !$exists ) {				
+			if ( !$exists ) {
 				// Search for typed link
 				$query = "SELECT id"
 				. "\n FROM #__menu"
 				. "\n WHERE type = 'content_typed'"
 				. "\n AND published = 1"
-				. "\n AND link = 'index.php?option=com_content&task=view&id=$id'"
+				. "\n AND link = 'index.php?option=com_content&task=view&id=" . (int) $id . "'"
 				;
 				$this->_db->setQuery( $query );
 				// pull existing query storage into temp variable
 				$ContentTyped 		= $this->get( '_ContentTyped', array() );
 				// add query result to temp array storage
-				$ContentTyped[$id] 	= $this->_db->loadResult();	
+				$ContentTyped[$id] 	= $this->_db->loadResult();
 				// save temp array to main array storage
 				$this->set( '_ContentTyped', $ContentTyped );
-				
-				$_Itemid = $ContentTyped[$id];				
+
+				$_Itemid = $ContentTyped[$id];
 			}
 		}
 
@@ -1557,26 +1556,26 @@ class mosMainFrame {
 				}
 			}
 			// if id hasnt been checked before initaite query
-			if ( !$exists ) {				
+			if ( !$exists ) {
 				// Search for item link
 				$query = "SELECT id"
 				."\n FROM #__menu"
 				."\n WHERE type = 'content_item_link'"
 				. "\n AND published = 1"
-				. "\n AND link = 'index.php?option=com_content&task=view&id=$id'"
+				. "\n AND link = 'index.php?option=com_content&task=view&id=" . (int) $id . "'"
 				;
 				$this->_db->setQuery( $query );
 				// pull existing query storage into temp variable
 				$ContentItemLink 		= $this->get( '_ContentItemLink', array() );
 				// add query result to temp array storage
-				$ContentItemLink[$id] 	= $this->_db->loadResult();	
+				$ContentItemLink[$id] 	= $this->_db->loadResult();
 				// save temp array to main array storage
 				$this->set( '_ContentItemLink', $ContentItemLink );
-				
-				$_Itemid = $ContentItemLink[$id];				
+
+				$_Itemid = $ContentItemLink[$id];
 			}
 		}
-				
+
 		if ($_Itemid == '') {
 			$exists = 0;
 			foreach( $this->get( '_ContentSection', array() ) as $key => $value ) {
@@ -1596,7 +1595,7 @@ class mosMainFrame {
 				. "\n LEFT JOIN #__categories AS c ON i.catid = c.id"
 				. "\n LEFT JOIN #__menu AS mc ON mc.componentid = c.id "
 				. "\n WHERE ( ms.type IN ( 'content_section', 'content_blog_section' ) OR mc.type IN ( 'content_blog_category', 'content_category' ) )"
-				. "\n AND i.id = $id"
+				. "\n AND i.id = " . (int) $id
 				. "\n ORDER BY ms.type DESC, mc.type DESC, ms.id, mc.id"
 				;
 				$this->_db->setQuery( $query );
@@ -1607,20 +1606,20 @@ class mosMainFrame {
 						if ($link->stype == 'content_section' && $link->sectionid == $id && !isset($content_section) && $link->spub == 1) {
 							$content_section = $link->sid;
 						}
-						
+
 						if ($link->stype == 'content_blog_section' && $link->sectionid == $id && !isset($content_blog_section) && $link->spub == 1) {
 							$content_blog_section = $link->sid;
-						}						
-						
+						}
+
 						if ($link->ctype == 'content_blog_category' && $link->catid == $id && !isset($content_blog_category) && $link->cpub == 1) {
 							$content_blog_category = $link->cid;
-						}	
-						
+						}
+
 						if ($link->ctype == 'content_category' && $link->catid == $id && !isset($content_category) && $link->cpub == 1) {
 							$content_category = $link->cid;
-						}	
+						}
 					}
-				}			
+				}
 
 				if (!isset($content_section)) {
 					$content_section = null;
@@ -1629,38 +1628,11 @@ class mosMainFrame {
 				// pull existing query storage into temp variable
 				$ContentSection 		= $this->get( '_ContentSection', array() );
 				// add query result to temp array storage
-				$ContentSection[$id] 	= $content_section;	
+				$ContentSection[$id] 	= $content_section;
 				// save temp array to main array storage
 				$this->set( '_ContentSection', $ContentSection );
-				
-				$_Itemid = $ContentSection[$id];		
-			}
-		}
 
-		if ($_Itemid == '') {
-			$exists = 0;
-			foreach( $this->get( '_ContentBlogSection', array() ) as $key => $value ) {
-				// check if id has been tested before, if it is pull from class variable store
-				if ( $key == $id ) {
-					$_Itemid 	= $value;
-					$exists 	= 1;
-					break;
-				}
-			}
-			// if id hasnt been checked before initaite query
-			if ( !$exists ) {
-				if (!isset($content_blog_section)) {
-					$content_blog_section = null;
-				}
-				
-				// pull existing query storage into temp variable
-				$ContentBlogSection 		= $this->get( '_ContentBlogSection', array() );
-				// add query result to temp array storage
-				$ContentBlogSection[$id] 	= $content_blog_section;	
-				// save temp array to main array storage
-				$this->set( '_ContentBlogSection', $ContentBlogSection );
-				
-				$_Itemid = $ContentBlogSection[$id];	
+				$_Itemid = $ContentSection[$id];
 			}
 		}
 
@@ -1679,23 +1651,23 @@ class mosMainFrame {
 				if (!isset($content_blog_category)) {
 					$content_blog_category = null;
 				}
-				
+
 				// pull existing query storage into temp variable
 				$ContentBlogCategory 		= $this->get( '_ContentBlogCategory', array() );
 				// add query result to temp array storage
-				$ContentBlogCategory[$id] 	= $content_blog_category;	
+				$ContentBlogCategory[$id] 	= $content_blog_category;
 				// save temp array to main array storage
 				$this->set( '_ContentBlogCategory', $ContentBlogCategory );
-				
-				$_Itemid = $ContentBlogCategory[$id];				
+
+				$_Itemid = $ContentBlogCategory[$id];
 			}
 		}
 
 		if ($_Itemid == '') {
-			// ensure that query is only called once		
-			if ( !$this->get( '_GlobalBlogSection' ) && !defined( '_JOS_GBS' ) ) {					
+			// ensure that query is only called once
+			if ( !$this->get( '_GlobalBlogSection' ) && !defined( '_JOS_GBS' ) ) {
 				define( '_JOS_GBS', 1 );
-				
+
 				// Search in global blog section
 				$query = "SELECT id "
 				. "\n FROM #__menu "
@@ -1706,8 +1678,35 @@ class mosMainFrame {
 				$this->_db->setQuery( $query );
 				$this->set( '_GlobalBlogSection', $this->_db->loadResult() );
 			}
-			
+
 			$_Itemid = $this->get( '_GlobalBlogSection' );
+		}
+
+		if ($_Itemid == '') {
+			$exists = 0;
+			foreach( $this->get( '_ContentBlogSection', array() ) as $key => $value ) {
+				// check if id has been tested before, if it is pull from class variable store
+				if ( $key == $id ) {
+					$_Itemid 	= $value;
+					$exists 	= 1;
+					break;
+				}
+			}
+			// if id hasnt been checked before initaite query
+			if ( !$exists ) {
+				if (!isset($content_blog_section)) {
+					$content_blog_section = null;
+				}
+
+				// pull existing query storage into temp variable
+				$ContentBlogSection 		= $this->get( '_ContentBlogSection', array() );
+				// add query result to temp array storage
+				$ContentBlogSection[$id] 	= $content_blog_section;
+				// save temp array to main array storage
+				$this->set( '_ContentBlogSection', $ContentBlogSection );
+
+				$_Itemid = $ContentBlogSection[$id];
+			}
 		}
 
 		if ($_Itemid == '') {
@@ -1725,24 +1724,24 @@ class mosMainFrame {
 				if (!isset($content_category)) {
 					$content_category = null;
 				}
-				
+
 				// pull existing query storage into temp variable
 				$ContentCategory 		= $this->get( '_ContentCategory', array() );
 				// add query result to temp array storage
-				//$ContentCategory[$id] 	= $this->_db->loadResult();	
-				$ContentCategory[$id] 	= $content_category;	
+				//$ContentCategory[$id] 	= $this->_db->loadResult();
+				$ContentCategory[$id] 	= $content_category;
 				// save temp array to main array storage
 				$this->set( '_ContentCategory', $ContentCategory );
-				
-				$_Itemid = $ContentCategory[$id];				
+
+				$_Itemid = $ContentCategory[$id];
 			}
 		}
 
 		if ($_Itemid == '') {
-			// ensure that query is only called once		
-			if ( !$this->get( '_GlobalBlogCategory' ) && !defined( '_JOS_GBC' ) ) {					
+			// ensure that query is only called once
+			if ( !$this->get( '_GlobalBlogCategory' ) && !defined( '_JOS_GBC' ) ) {
 				define( '_JOS_GBC', 1 );
-				
+
 				// Search in global blog category
 				$query = "SELECT id "
 				. "\n FROM #__menu "
@@ -1753,14 +1752,14 @@ class mosMainFrame {
 				$this->_db->setQuery( $query );
 				$this->set( '_GlobalBlogCategory', $this->_db->loadResult() );
 			}
-			
+
 			$_Itemid = $this->get( '_GlobalBlogCategory' );
 		}
-		
+
 		if ( $_Itemid != '' ) {
 		// if Itemid value discovered by queries, return this value
 			return $_Itemid;
-		} else if ( $Itemid != 99999999 && $Itemid === 0 ) { 
+		} else if ( $Itemid != 99999999 && $Itemid > 0 ) {
 		// if queries do not return Itemid value, return Itemid of page - if it is not 99999999
 			return $Itemid;
 		}
@@ -1794,10 +1793,10 @@ class mosMainFrame {
 	* @return number of Static Content
 	*/
 	function getStaticContentCount( ) {
-		// ensure that query is only called once		
-		if ( !$this->get( '_StaticContentCount' ) && !defined( '_JOS_SCC' ) ) {		
+		// ensure that query is only called once
+		if ( !$this->get( '_StaticContentCount' ) && !defined( '_JOS_SCC' ) ) {
 			define( '_JOS_SCC', 1 );
-			
+
 			$query = "SELECT COUNT( id )"
 			."\n FROM #__menu "
 			."\n WHERE type = 'content_typed'"
@@ -1807,18 +1806,18 @@ class mosMainFrame {
 			// saves query result to variable
 			$this->set( '_StaticContentCount', $this->_db->loadResult() );
 		}
-		
-		return $this->get( '_StaticContentCount' );		
+
+		return $this->get( '_StaticContentCount' );
 	}
 
 	/**
 	* @return number of Content Item Links
 	*/
 	function getContentItemLinkCount( ) {
-		// ensure that query is only called once		
-		if ( !$this->get( '_ContentItemLinkCount' ) && !defined( '_JOS_CILC' ) ) {		
+		// ensure that query is only called once
+		if ( !$this->get( '_ContentItemLinkCount' ) && !defined( '_JOS_CILC' ) ) {
 			define( '_JOS_CILC', 1 );
-			
+
 			$query = "SELECT COUNT( id )"
 			."\n FROM #__menu "
 			."\n WHERE type = 'content_item_link'"
@@ -1948,10 +1947,10 @@ class mosHTML {
 		if ( is_array( $arr ) ) {
 			reset( $arr );
 		}
-		
+
 		$html 	= "\n<select name=\"$tag_name\" $tag_attribs>";
 		$count 	= count( $arr );
-		
+
 		for ($i=0, $n=$count; $i < $n; $i++ ) {
 			$k = $arr[$i]->$key;
 			$t = $arr[$i]->$text;
@@ -1973,7 +1972,7 @@ class mosHTML {
 			$html .= "\n\t<option value=\"".$k."\"$extra>" . $t . "</option>";
 		}
 		$html .= "\n</select>\n";
-		
+
 		return $html;
 	}
 
@@ -2125,7 +2124,7 @@ class mosHTML {
 			$html .= "\n\t<label for=\"$tag_name$k\">$t</label>";
 		}
 		$html .= "\n";
-		
+
 		return $html;
 	}
 
@@ -2141,7 +2140,7 @@ class mosHTML {
 			mosHTML::makeOption( '0', $no ),
 			mosHTML::makeOption( '1', $yes )
 		);
-		
+
 		return mosHTML::radioList( $arr, $tag_name, $tag_attribs, $selected );
 	}
 
@@ -2227,7 +2226,7 @@ class mosHTML {
 		$text = preg_replace( '/&quot;/', ' ', $text );
 		$text = strip_tags( $text );
 		$text = htmlspecialchars( $text );
-		
+
 		return $text;
 	}
 
@@ -2259,8 +2258,8 @@ class mosHTML {
 				document.write('</a>');
 				document.write('</td>');
 				//-->
-				</script>				
-				<?php			
+				</script>
+				<?php
 			} else {
 				// Print Button - used in pop-up window
 				?>
@@ -2293,7 +2292,7 @@ class mosHTML {
 		$replacement 	.= "\n var path = 'hr' + 'ef' + '=';";
 		$replacement 	.= "\n var addy". $rand ." = '". @$mail[0] ."' + '&#64;';";
 		$replacement 	.= "\n addy". $rand ." = addy". $rand ." + '". implode( "' + '&#46;' + '", $mail_parts ) ."';";
-		
+
 		if ( $mailto ) {
 			// special handling when mail text is different from mail addy
 			if ( $text ) {
@@ -2320,7 +2319,7 @@ class mosHTML {
 		}
 		$replacement 	.= "\n //-->";
 		$replacement 	.= '\n </script>';
-		
+
 		// XHTML compliance `No Javascript` text handling
 		$replacement 	.= "<script language='JavaScript' type='text/javascript'>";
 		$replacement 	.= "\n <!--";
@@ -2405,8 +2404,8 @@ class mosCategory extends mosDBTable {
 		// check for existing name
 		$query = "SELECT id"
 		. "\n FROM #__categories "
-		. "\n WHERE name = '$this->name'"
-		. "\n AND section = '$this->section'"
+		. "\n WHERE name = " . $this->_db->Quote( $this->name )
+		. "\n AND section = " . $this->_db->Quote( $this->section )
 		;
 		$this->_db->setQuery( $query );
 
@@ -2471,8 +2470,8 @@ class mosSection extends mosDBTable {
 		// check for existing name
 		$query = "SELECT id"
 		. "\n FROM #__sections "
-		. "\n WHERE name = '$this->name'"
-		. "\n AND scope = '$this->scope'"
+		. "\n WHERE name = " . $this->_db->Quote( $this->name )
+		. "\n AND scope = " . $this->_db->Quote( $this->scope )
 		;
 		$this->_db->setQuery( $query );
 
@@ -2592,21 +2591,21 @@ class mosContent extends mosDBTable {
 		if ($mapKeysToText) {
 			$query = "SELECT name"
 			. "\n FROM #__sections"
-			. "\n WHERE id = $this->sectionid"
+			. "\n WHERE id = " . (int) $this->sectionid
 			;
 			$database->setQuery( $query );
 			$this->sectionid = $database->loadResult();
 
 			$query = "SELECT name"
 			. "\n FROM #__categories"
-			. "\n WHERE id $this->catid"
+			. "\n WHERE id = " . (int) $this->catid
 			;
 			$database->setQuery( $query );
 			$this->catid = $database->loadResult();
 
 			$query = "SELECT name"
 			. "\n FROM #__users"
-			. "\n WHERE id = $this->created_by"
+			. "\n WHERE id = " . (int) $this->created_by
 			;
 			$database->setQuery( $query );
 			$this->created_by = $database->loadResult();
@@ -2668,12 +2667,6 @@ class mosMenu extends mosDBTable {
 		$this->params = (string) trim( $this->params . ' ' );
 		return true;
 	}
-	
-	function load( $id=null ) {
-		parent::load( $id );
-		
-		$this->name = htmlspecialchars( $this->name, ENT_QUOTES );
-	}
 }
 
 /**
@@ -2726,47 +2719,47 @@ class mosUser extends mosDBTable {
 
 		// Validate user information
 		if (trim( $this->name ) == '') {
-			$this->_error = _REGWARN_NAME;
+			$this->_error = addslashes( _REGWARN_NAME );
 			return false;
 		}
 
 		if (trim( $this->username ) == '') {
-			$this->_error = _REGWARN_UNAME;
+			$this->_error = addslashes( _REGWARN_UNAME );
 			return false;
 		}
 
 		// check that username is not greater than 25 characters
 		$username = $this->username;
 		if ( strlen($username) > 25 ) {
-			$this->username = substr( $username, 0, 25 ); 
+			$this->username = substr( $username, 0, 25 );
 		}
 		
 		// check that password is not greater than 50 characters
 		$password = $this->password;
 		if ( strlen($password) > 50 ) {
-			$this->password = substr( $password, 0, 50 ); 
+			$this->password = substr( $password, 0, 50 );
 		}
 		
 		if (eregi( "[\<|\>|\"|\'|\%|\;|\(|\)|\&|\+|\-]", $this->username) || strlen( $this->username ) < 3) {
-			$this->_error = sprintf( _VALID_AZ09, _PROMPT_UNAME, 2 );
+			$this->_error = sprintf( addslashes( _VALID_AZ09 ), addslashes( _PROMPT_UNAME ), 2 );
 			return false;
 		}
 
 		if ((trim($this->email == "")) || (preg_match("/[\w\.\-]+@\w+[\w\.\-]*?\.\w{1,4}/", $this->email )==false)) {
-			$this->_error = _REGWARN_MAIL;
+			$this->_error = addslashes( _REGWARN_MAIL );
 			return false;
 		}
 
 		// check for existing username
 		$query = "SELECT id"
 		. "\n FROM #__users "
-		. "\n WHERE username = '$this->username'"
+		. "\n WHERE username = " . $this->_db->Quote( $this->username )
 		. "\n AND id != " . (int)$this->id
 		;
 		$this->_db->setQuery( $query );
 		$xid = intval( $this->_db->loadResult() );
 		if ($xid && $xid != intval( $this->id )) {
-			$this->_error = _REGWARN_INUSE;
+			$this->_error = addslashes( _REGWARN_INUSE );
 			return false;
 		}
 
@@ -2774,13 +2767,13 @@ class mosUser extends mosDBTable {
 			// check for existing email
 			$query = "SELECT id"
 			. "\n FROM #__users "
-			. "\n WHERE email = '$this->email'"
-			. "\n AND id != " . (int)$this->id
+			. "\n WHERE email = " . $this->_db->Quote( $this->email )
+			. "\n AND id != " . (int) $this->id
 			;
 			$this->_db->setQuery( $query );
 			$xid = intval( $this->_db->loadResult() );
 			if ($xid && $xid != intval( $this->id )) {
-				$this->_error = _REGWARN_EMAIL_INUSE;
+				$this->_error = addslashes( _REGWARN_EMAIL_INUSE );
 				return false;
 			}
 		}
@@ -2829,10 +2822,10 @@ class mosUser extends mosDBTable {
 			$this->$k = intval( $oid );
 		}
 		$aro_id = $acl->get_object_id( 'users', $this->$k, 'ARO' );
-//		$acl->del_object( $aro_id, 'ARO', true );
+		$acl->del_object( $aro_id, 'ARO', true );
 
 		$query = "DELETE FROM $this->_tbl"
-		. "\n WHERE $this->_tbl_key = '". $this->$k ."'"
+		. "\n WHERE $this->_tbl_key = " . (int) $this->$k
 		;
 		$this->_db->setQuery( $query );
 
@@ -2841,7 +2834,7 @@ class mosUser extends mosDBTable {
 
 			// :: private messaging
 			$query = "DELETE FROM #__messages_cfg"
-			. "\n WHERE user_id = ". $this->$k .""
+			. "\n WHERE user_id = " . (int) $this->$k
 			;
 			$this->_db->setQuery( $query );
 			if (!$this->_db->query()) {
@@ -2849,7 +2842,7 @@ class mosUser extends mosDBTable {
 				return false;
 			}
 			$query = "DELETE FROM #__messages"
-			. "\n WHERE user_id_to = ". $this->$k .""
+			. "\n WHERE user_id_to = " . (int) $this->$k
 			;
 			$this->_db->setQuery( $query );
 			if (!$this->_db->query()) {
@@ -2881,6 +2874,7 @@ class mosUser extends mosDBTable {
 		$objects = $acl->get_group_objects( $group_id, 'ARO', 'RECURSE');
 
 		if (isset( $objects['users'] )) {
+			mosArrayToInts( $objects['users'] );
 			$gWhere = '(id =' . implode( ' OR id =', $objects['users'] ) . ')';
 
 			$query = "SELECT id AS value, name AS text"
@@ -2937,13 +2931,13 @@ function mosGetParam( &$arr, $name, $def=null, $mask=0 ) {
 	$return = null;
 	if (isset( $arr[$name] )) {
 		$return = $arr[$name];
-		
+
 		if (is_string( $return )) {
 			// trim data
 			if (!($mask&_MOS_NOTRIM)) {
 				$return = trim( $return );
 			}
-			
+
 			if ($mask&_MOS_ALLOWRAW) {
 				// do nothing
 			} else if ($mask&_MOS_ALLOWHTML) {
@@ -2954,13 +2948,13 @@ function mosGetParam( &$arr, $name, $def=null, $mask=0 ) {
 					$noHtmlFilter = new InputFilter( /* $tags, $attr, $tag_method, $attr_method, $xss_auto */ );
 				}
 				$return = $noHtmlFilter->process( $return );
-				
+
 				if (empty($return) && is_numeric($def)) {
 				// if value is defined and default value is numeric set variable type to integer
 					$return = intval($return);
-				}				
+				}
 			}
-			
+
 			// account for magic quotes setting
 			if (!get_magic_quotes_gpc()) {
 				$return = addslashes( $return );
@@ -3008,9 +3002,10 @@ function mosBindArrayToObject( $array, &$obj, $ignore='', $prefix=NULL, $checkSl
 		return (false);
 	}
 
+	$ignore = ' ' . $ignore . ' ';
 	foreach (get_object_vars($obj) as $k => $v) {
 		if( substr( $k, 0, 1 ) != '_' ) {			// internal attributes of an object are ignored
-			if (strpos( $ignore, $k) === false) {
+			if (strpos( $ignore, ' ' . $k . ' ') === false) {
 				if ($prefix) {
 					$ak = $prefix . $k;
 				} else {
@@ -3114,6 +3109,7 @@ function mosErrorAlert( $text, $action='window.history.go(-1);', $mode=1 ) {
 
 		case 1:
 		default:
+			echo "<meta http-equiv=\"Content-Type\" content=\"text/html; "._ISO."\" />";
 			echo "<script>alert('$text'); $action</script> \n";
 			//echo '<noscript>';
 			//mosRedirect( @$_SERVER['HTTP_REFERER'], $text );
@@ -3171,8 +3167,17 @@ function mosPathName($p_path,$p_addtrailingslash = true) {
 				$retval .= '\\';
 			}
 		}
+
+		// Check if UNC path
+		$unc = substr($retval,0,2) == '\\\\' ? 1 : 0;
+
 		// Remove double \\
 		$retval = str_replace( '\\\\', '\\', $retval );
+
+		// If UNC path, we have to add one \ in front or everything breaks!
+		if ( $unc == 1 ) {
+			$retval = '\\'.$retval;
+		}
 	} else {
 		$retval = str_replace( '\\', '/', $p_path );
 		if ($p_addtrailingslash) {
@@ -3180,8 +3185,17 @@ function mosPathName($p_path,$p_addtrailingslash = true) {
 				$retval .= '/';
 			}
 		}
+
+		// Check if UNC path
+		$unc = substr($retval,0,2) == '//' ? 1 : 0;
+
 		// Remove double //
 		$retval = str_replace('//','/',$retval);
+
+		// If UNC path, we have to add one / in front or everything breaks!
+		if ( $unc == 1 ) {
+			$retval = '/'.$retval;
+		}
 	}
 
 	return $retval;
@@ -3378,28 +3392,28 @@ class mosSession extends mosDBTable {
 	function generateId() {
 		$failsafe 	= 20;
 		$randnum 	= 0;
-		
+
 		while ($failsafe--) {
 			$randnum 		= md5( uniqid( microtime(), 1 ) );
 			$new_session_id = mosMainFrame::sessionCookieValue( $randnum );
-			
+
 			if ($randnum != '') {
 				$query = "SELECT $this->_tbl_key"
 				. "\n FROM $this->_tbl"
-				. "\n WHERE $this->_tbl_key = '$new_session_id'"
+				. "\n WHERE $this->_tbl_key = " . $this->_db->Quote( $new_session_id )
 				;
 				$this->_db->setQuery( $query );
 				if(!$result = $this->_db->query()) {
 					die( $this->_db->stderr( true ));
 				}
-				
+
 				if ($this->_db->getNumRows($result) == 0) {
 					break;
 				}
 			}
 		}
-		
-		$this->_session_cookie 	= $randnum;			
+
+		$this->_session_cookie 	= $randnum;
 		$this->session_id 		= $new_session_id;
 	}
 
@@ -3416,7 +3430,7 @@ class mosSession extends mosDBTable {
 	 */
 	function purge( $inc=1800, $and='' ) {
 		global $mainframe;
-		
+
 		if ($inc == 'core') {
 			$past_logged 	= time() - $mainframe->getCfg( 'lifetime' );
 			$past_guest 	= time() - 900;
@@ -3424,12 +3438,12 @@ class mosSession extends mosDBTable {
 			$query = "DELETE FROM $this->_tbl"
 			. "\n WHERE ("
 			// purging expired logged sessions
-			. "\n ( time < '$past_logged' )"
+			. "\n ( time < '" . (int) $past_logged . "' )"
 			. "\n AND guest = 0"
 			. "\n AND gid > 0"
 			. "\n ) OR ("
 			// purging expired guest sessions
-			. "\n ( time < '$past_guest' )"
+			. "\n ( time < '" . (int) $past_guest . "' )"
 			. "\n AND guest = 1"
 			. "\n AND userid = 0"
 			. "\n )"
@@ -3438,7 +3452,7 @@ class mosSession extends mosDBTable {
 		// kept for backward compatability
 			$past = time() - $inc;
 			$query = "DELETE FROM $this->_tbl"
-			. "\n WHERE ( time < '$past' )"
+			. "\n WHERE ( time < '" . (int) $past . "' )"
 			. $and
 			;
 		}
@@ -3469,7 +3483,7 @@ function mosObjectToArray($p_obj) {
 */
 function mosGetBrowser( $agent ) {
 	global $mosConfig_absolute_path;
-	
+
 	require( $mosConfig_absolute_path .'/includes/agent_browser.php' );
 
 	if (preg_match( "/msie[\/\sa-z]*([\d\.]*)/i", $agent, $m )
@@ -3509,7 +3523,7 @@ function mosGetBrowser( $agent ) {
 */
 function mosGetOS( $agent ) {
 	global $mosConfig_absolute_path;
-	
+
 	require( $mosConfig_absolute_path .'/includes/agent_os.php' );
 
 	foreach ($osSearchOrder as $key) {
@@ -3592,32 +3606,33 @@ function mosMakeHtmlSafe( &$mixed, $quote_style=ENT_QUOTES, $exclude_keys='' ) {
 */
 function mosMenuCheck( $Itemid, $menu_option, $task, $gid ) {
 	global $database, $mainframe;
-	
+
 	if ( $Itemid != '' && $Itemid != 0 && $Itemid != 99999999 ) {
 		$query = "SELECT *"
 		. "\n FROM #__menu"
-		. "\n WHERE id = $Itemid"
+		. "\n WHERE id = " . (int) $Itemid
 		;
 	} else {
-		$dblink = "index.php?option=$menu_option";
-		
+		$dblink = "index.php?option=" . $database->getEscaped( $menu_option );
+
 		if ($task != '') {
-			$dblink	.= "&task=$task";
+			$dblink	.= "&task=" . $database->getEscaped( $task );
 		}
-		
+
 		$query = "SELECT *"
 		. "\n FROM #__menu"
-		. "\n WHERE link LIKE '$dblink%'"
+		. "\n WHERE published = 1 AND"
+		. "\n link LIKE '$dblink%'"
 		;
 	}
 	$database->setQuery( $query );
 	$results 	= $database->loadObjectList();
 	$access 	= 0;
-	
+
 	foreach ($results as $result) {
 		$access = max( $access, $result->access );
 	}
-	
+
 	// save menu information to global mainframe
 	if(isset($results[0])) {
 		// loads menu info of particular Itemid
@@ -3626,7 +3641,7 @@ function mosMenuCheck( $Itemid, $menu_option, $task, $gid ) {
 		// loads empty Menu info
 		$mainframe->set( 'menu', new mosMenu($database) );
 	}
-	
+
 	return ($access <= $gid);
 }
 
@@ -3799,7 +3814,15 @@ function mosCreateMail( $from='', $fromname='', $subject, $body ) {
 * @return boolean
 */
 function mosMail( $from, $fromname, $recipient, $subject, $body, $mode=0, $cc=NULL, $bcc=NULL, $attachment=NULL, $replyto=NULL, $replytoname=NULL ) {
-	global $mosConfig_debug;
+	global $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_debug;
+
+	// Allow empty $from and $fromname settings (backwards compatibility)
+	if ($from == '') {
+		$from = $mosConfig_mailfrom;
+	}
+	if ($fromname == '') {
+		$fromname = $mosConfig_fromname;
+	}
 
 	// Filter from, fromname and subject
 	if (!JosIsValidEmail( $from ) || !JosIsValidName( $fromname ) || !JosIsValidName( $subject )) {
@@ -3904,7 +3927,7 @@ function mosMail( $from, $fromname, $recipient, $subject, $body, $mode=0, $cc=NU
  */
 function JosIsValidEmail( $email ) {
 	$valid = preg_match( '/^[\w\.\-]+@\w+[\w\.\-]*?\.\w{1,4}$/', $email );
-	
+
 	return $valid;
 }
 
@@ -3938,13 +3961,13 @@ function JosIsValidName( $string ) {
  */
 function initGzip() {
 	global $mosConfig_gzip, $do_gzip_compress;
-	
+
 	$do_gzip_compress = FALSE;
 	if ($mosConfig_gzip == 1) {
 		$phpver 	= phpversion();
 		$useragent 	= mosGetParam( $_SERVER, 'HTTP_USER_AGENT', '' );
 		$canZip 	= mosGetParam( $_SERVER, 'HTTP_ACCEPT_ENCODING', '' );
-		
+
 		$gzip_check 	= 0;
 		$zlib_check 	= 0;
 		$gz_check		= 0;
@@ -3952,10 +3975,10 @@ function initGzip() {
 		$sid_check		= 0;
 		if ( strpos( $canZip, 'gzip' ) !== false) {
 			$gzip_check = 1;
-		}		
+		}
 		if ( extension_loaded( 'zlib' ) ) {
 			$zlib_check = 1;
-		}		
+		}
 		if ( function_exists('ob_gzhandler') ) {
 			$gz_check = 1;
 		}
@@ -3980,7 +4003,7 @@ function initGzip() {
 					$do_gzip_compress = TRUE;
 					ob_start();
 					ob_implicit_flush(0);
-					
+
 					header( 'Content-Encoding: gzip' );
 					return;
 				}
@@ -4023,11 +4046,10 @@ function doGzip() {
 */
 function mosMakePassword($length=8) {
 	$salt 		= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	$len 		= strlen($salt);
 	$makepass	= '';
 	mt_srand(10000000*(double)microtime());
 	for ($i = 0; $i < $length; $i++)
-	$makepass .= $salt[mt_rand(0,$len - 1)];
+		$makepass .= $salt[mt_rand(0,61)];
 	return $makepass;
 }
 
@@ -4070,9 +4092,9 @@ class mosMambotHandler {
 	var $_bots				= null;
 	/** @var int Index of the mambot being loaded */
 	var $_loading			= null;
-	
+
 	/** Added as of 1.0.8 to ensure queries are only called once **/
-	
+
 	/** @var array An array of the content mambots in the system */
 	var $_content_mambots	= null;
 	/** @var array An array of the content mambot params */
@@ -4107,23 +4129,23 @@ class mosMambotHandler {
 				if (!defined( '_JOS_CONTENT_MAMBOTS' )) {
 					/** ensure that query is only called once */
 					define( '_JOS_CONTENT_MAMBOTS', 1 );
-	
+
 					$query = "SELECT folder, element, published, params"
 					. "\n FROM #__mambots"
-					. "\n WHERE access <= $gid"
+					. "\n WHERE access <= " . (int) $gid
 					. "\n AND folder = 'content'"
 					. "\n ORDER BY ordering"
 					;
 					$database->setQuery( $query );
-				
+
 					// load query into class variable _content_mambots
 					if (!($this->_content_mambots = $database->loadObjectList())) {
 						//echo "Error loading Mambots: " . $database->getErrorMsg();
 						return false;
 					}
 				}
-				
-				// pull bots to be processed from class variable 
+
+				// pull bots to be processed from class variable
 				$bots = $this->_content_mambots;
 				break;
 
@@ -4131,22 +4153,22 @@ class mosMambotHandler {
 				$query = "SELECT folder, element, published, params"
 				. "\n FROM #__mambots"
 				. "\n WHERE published >= 1"
-				. "\n AND access <= $gid"
-				. "\n AND folder = '$group'"
+				. "\n AND access <= " . (int) $gid
+				. "\n AND folder = " . $database->Quote( $group )
 				. "\n ORDER BY ordering"
 				;
 				$database->setQuery( $query );
-			
+
 				if (!($bots = $database->loadObjectList())) {
 					//echo "Error loading Mambots: " . $database->getErrorMsg();
 					return false;
 				}
 				break;
 		}
-		
+
 		// load bots found by queries
 		$n = count( $bots);
-		for ($i = 0; $i < $n; $i++) {			
+		for ($i = 0; $i < $n; $i++) {
 			$this->loadBot( $bots[$i]->folder, $bots[$i]->element, $bots[$i]->published, $bots[$i]->params );
 		}
 
@@ -4341,8 +4363,8 @@ class mosAdminMenus {
 		if ( $id ) {
 			$query = "SELECT ordering AS value, name AS text"
 			. "\n FROM #__menu"
-			. "\n WHERE menutype = '$row->menutype'"
-			. "\n AND parent = $row->parent"
+			. "\n WHERE menutype = " . $database->Quote ( $row->menutype )
+			. "\n AND parent = " . (int) $row->parent
 			. "\n AND published != -2"
 			. "\n ORDER BY ordering"
 			;
@@ -4379,14 +4401,14 @@ class mosAdminMenus {
 
 		$id = '';
 		if ( $row->id ) {
-			$id = "\n AND id != $row->id";
+			$id = "\n AND id != " . (int) $row->id;
 		}
-		
+
 		// get a list of the menu items
 		// excluding the current menu item and its child elements
 		$query = "SELECT m.*"
 		. "\n FROM #__menu m"
-		. "\n WHERE menutype = '$row->menutype'"
+		. "\n WHERE menutype = " . $database->Quote( $row->menutype )
 		. "\n AND published != -2"
 		. $id
 		. "\n ORDER BY parent, ordering"
@@ -4396,7 +4418,7 @@ class mosAdminMenus {
 
 		// establish the hierarchy of the menu
 		$children = array();
-			
+
 		if ( $mitems ) {
 			// first pass - collect children
 			foreach ( $mitems as $v ) {
@@ -4409,17 +4431,17 @@ class mosAdminMenus {
 
 		// second pass - get an indent list of the items
 		$list = mosTreeRecurse( 0, '', array(), $children, 20, 0, 0 );
-			
+
 		// assemble menu items to the array
 		$mitems 	= array();
 		$mitems[] 	= mosHTML::makeOption( '0', 'Top' );
-		
+
 		foreach ( $list as $item ) {
 			$mitems[] = mosHTML::makeOption( $item->id, '&nbsp;&nbsp;&nbsp;'. $item->treename );
 		}
 
 		$output = mosHTML::selectList( $mitems, 'parent', 'class="inputbox" size="10"', 'value', 'text', $row->parent );
-		
+
 		return $output;
 	}
 
@@ -4436,7 +4458,7 @@ class mosAdminMenus {
 	*/
 	function Link( &$row, $id, $link=NULL ) {
 		global $mainframe;
-		
+
 		if ( $id ) {
 			switch ($row->type) {
 				case 'content_item_link':
@@ -4450,10 +4472,10 @@ class mosAdminMenus {
 						$temp = split( '&task=view&id=', $row->link);
 						$row->link .= '&Itemid='. $mainframe->getItemid($temp[1], 0, 0);
 					}
-					
+
 					$link = $row->link;
 					break;
-				
+
 				default:
 					if ( $link ) {
 						$link = $row->link;
@@ -4461,11 +4483,11 @@ class mosAdminMenus {
 						$link = $row->link .'&amp;Itemid='. $row->id;
 					}
 					break;
-			}			
+			}
 		} else {
 			$link = NULL;
 		}
-		
+
 		return $link;
 	}
 
@@ -4526,12 +4548,12 @@ class mosAdminMenus {
 						$list_temp[] 	= mosHTML::makeOption( -999, '----' );
 						$mitems_spacer 	= $mitems_a->menutype;
 					}
-					
+
 					// do not display `url` menu item types that contain `index.php` and `Itemid`
 					if (!($mitems_a->type == 'url' && strpos($mitems_a->link, 'index.php') !== false && strpos($mitems_a->link, 'Itemid=') !== false)) {
 						$text 			= $mitems_a->menutype .' | '. $list_a->treename;
 						$list_temp[] 	= mosHTML::makeOption( $list_a->id, $text );
-						
+
 						if ( strlen($text) > $text_count) {
 							$text_count = strlen($text);
 						}
@@ -4554,13 +4576,13 @@ class mosAdminMenus {
 			// adds space, in select box which is not saved
 			$mitems[] = mosHTML::makeOption( -999, '----' );
 		}
-		if ( $none ) {
+		if ( $unassigned ) {
 			// prepare an array with 'all' as the first item
 			$mitems[] = mosHTML::makeOption( 99999999, 'Unassigned' );
 			// adds space, in select box which is not saved
 			$mitems[] = mosHTML::makeOption( -999, '----' );
 		}
-		
+
 		// append the rest of the menu items to the array
 		foreach ($list as $item) {
 			$mitems[] = mosHTML::makeOption( $item->value, $item->text );
@@ -4695,13 +4717,13 @@ class mosAdminMenus {
 		if ( !$directory ) {
 			$directory = '/images/stories';
 		}
-		
+
 		if ( !$javascript ) {
 			$javascript = "onchange=\"javascript:if (document.forms[0].image.options[selectedIndex].value!='') {document.imagelib.src='..$directory/' + document.forms[0].image.options[selectedIndex].value} else {document.imagelib.src='../images/blank.png'}\"";
 		}
-		
+
 		$imageFiles = mosReadDirectory( $mosConfig_absolute_path . $directory );
-		$images = array(  mosHTML::makeOption( '', '- Sélectionner une image -' ) );
+		$images 	= array(  mosHTML::makeOption( '', '- Sélectionner une image -' ) );
 		foreach ( $imageFiles as $file ) {
 			if ( eregi( "bmp|gif|jpg|png", $file ) ) {
 				$images[] = mosHTML::makeOption( $file );
@@ -4753,7 +4775,7 @@ class mosAdminMenus {
 		;
 		$database->setQuery( $query );
 		if ( $nouser ) {
-			$users[] = mosHTML::makeOption( '0', '- No User -' );
+			$users[] = mosHTML::makeOption( '0', '- Aucun utilisateur -' );
 			$users = array_merge( $users, $database->loadObjectList() );
 		} else {
 			$users = $database->loadObjectList();
@@ -4794,7 +4816,7 @@ class mosAdminMenus {
 
 		$query = "SELECT id AS value, name AS text"
 		. "\n FROM #__categories"
-		. "\n WHERE section = '$section'"
+		. "\n WHERE section = " . $database->Quote( $section )
 		. "\n AND published = 1"
 		. "\n ORDER BY $order"
 		;
@@ -4843,7 +4865,7 @@ class mosAdminMenus {
 
 		$query = "SELECT *"
 		. "\n FROM #__menu"
-		. "\n WHERE type = '$type'"
+		. "\n WHERE type = " . $database->Quote( $type )
 		. "\n AND published = 1"
 		. $and
 		;
@@ -4908,7 +4930,7 @@ class mosAdminMenus {
 			}
 		}
 	}
-	
+
 	/**
 	* Internal function to recursive scan the media manager directories
 	* @param string Path to scan
@@ -4918,17 +4940,17 @@ class mosAdminMenus {
 	*/
 	function ReadImagesX( &$folders, &$images ) {
 		global $mosConfig_absolute_path;
-		
-		if ( $folders[0]->value != '*0*' ) {	
+
+		if ( $folders[0]->value != '*0*' ) {
 			foreach ( $folders as $folder ) {
 				$imagePath 	= $mosConfig_absolute_path .'/images/stories' . $folder->value;
 				$imgFiles 	= mosReadDirectory( $imagePath );
 				$folderPath = $folder->value .'/';
-				
+
 				foreach ($imgFiles as $file) {
 					$ff 	= $folderPath . $file;
 					$i_f 	= $imagePath .'/'. $file;
-					
+
 					if ( eregi( "bmp|gif|jpg|png", $file ) && is_file( $i_f ) ) {
 						// leading / we don't need
 						$imageFile = substr( $ff, 1 );
@@ -4945,7 +4967,7 @@ class mosAdminMenus {
 	function GetImageFolders( &$temps, $path ) {
 		if ( $temps[0]->value != 'None' ) {
 			foreach( $temps as $temp ) {
-				if ( substr( $temp->value, -1, 1 ) != '/' ) { 
+				if ( substr( $temp->value, -1, 1 ) != '/' ) {
 					$temp 		= $temp->value .'/';
 					$folders[] 	= mosHTML::makeOption( $temp, $temp );
 				} else {
@@ -4957,10 +4979,10 @@ class mosAdminMenus {
 		} else {
 			$folders[] 	= mosHTML::makeOption( 'None Selected' );
 		}
-		
+
 		$javascript 	= "onchange=\"changeDynaList( 'imagefiles', folderimages, document.adminForm.folders.options[document.adminForm.folders.selectedIndex].value, 0, 0);\"";
 		$getfolders 	= mosHTML::selectList( $folders, 'folders', 'class="inputbox" size="1" '. $javascript, 'value', 'text', '/' );
-		
+
 		return $getfolders;
 	}
 
@@ -4974,7 +4996,7 @@ class mosAdminMenus {
 		} else {
 			$base = '/';
 		}
-		
+
 		if ( !isset($images[$base] ) ) {
 			$images[$base][] = mosHTML::makeOption( '' );
 		}
@@ -4987,7 +5009,7 @@ class mosAdminMenus {
 
 	function GetSavedImages( &$row, $path ) {
 		$images2 = array();
-		
+
 		foreach( $row->images as $file ) {
 			$temp = explode( '|', $file );
 			if( strrchr($temp[0], '/') ) {
@@ -4997,7 +5019,7 @@ class mosAdminMenus {
 			}
 			$images2[] = mosHTML::makeOption( $file, $filename );
 		}
-		
+
 		$javascript	= "onchange=\"previewImage( 'imagelist', 'view_imagelist', '$path/' ); showImageProps( '$path/' ); \"";
 		$imagelist 	= mosHTML::selectList( $images2, 'imagelist', 'class="inputbox" size="10" '. $javascript, 'value', 'text' );
 
@@ -5010,13 +5032,13 @@ class mosAdminMenus {
 	* Also can be used in conjunction with the menulist param to create the chosen image
 	* load the default or use no image
 	*/
-	function ImageCheck( $file, $directory='/images/M_images/', $param=NULL, $param_directory='/images/M_images/', $alt=NULL, $name='image', $type=1, $align='middle', $title=NULL, $admin=NULL ) {
+	function ImageCheck( $file, $directory='/images/M_images/', $param=NULL, $param_directory='/images/M_images/', $alt=NULL, $name=NULL, $type=1, $align='middle', $title=NULL, $admin=NULL ) {
 		global $mosConfig_absolute_path, $mosConfig_live_site, $mainframe;
 
 		$cur_template = $mainframe->getTemplate();
 
-		$name 	= ( $name 	? ' name="'. $name .'"' 	: '' );		
-		$title 	= ( $title 	? ' title="'. $title .'"' 	: '' );		
+		$name 	= ( $name 	? ' name="'. $name .'"' 	: '' );
+		$title 	= ( $title 	? ' title="'. $title .'"' 	: '' );
 		$alt 	= ( $alt 	? ' alt="'. $alt .'"' 		: ' alt=""' );
 		$align 	= ( $align 	? ' align="'. $align .'"' 	: '' );
 
@@ -5026,7 +5048,7 @@ class mosAdminMenus {
 		} else {
 			$path 	= '/templates/'. $cur_template .'/images/';
 		}
-		
+
 		if ( $param ) {
 			$image = $mosConfig_live_site. $param_directory . $param;
 			if ( $type ) {
@@ -5058,18 +5080,18 @@ class mosAdminMenus {
 	* load the default or use no image
 	*/
 	function ImageCheckAdmin( $file, $directory='/administrator/images/', $param=NULL, $param_directory='/administrator/images/', $alt=NULL, $name=NULL, $type=1, $align='middle', $title=NULL ) {
-/*		
-		global $mosConfig_absolute_path, $mosConfig_live_site, $mainframe;		
-		
+/*
+		global $mosConfig_absolute_path, $mosConfig_live_site, $mainframe;
+
 		$cur_template = $mainframe->getTemplate();
 
-		$name 	= ( $name 	? ' name="'. $name .'"' 	: '' );		
-		$title 	= ( $title 	? ' title="'. $title .'"' 	: '' );		
+		$name 	= ( $name 	? ' name="'. $name .'"' 	: '' );
+		$title 	= ( $title 	? ' title="'. $title .'"' 	: '' );
 		$alt 	= ( $alt 	? ' alt="'. $alt .'"' 		: ' alt=""' );
 		$align 	= ( $align 	? ' align="'. $align .'"' 	: '' );
 
 		$path 	= '/administrator/templates/'. $cur_template .'/images/';
-		
+
 		if ( $param ) {
 			$image = $mosConfig_live_site. $param_directory . $param;
 			if ( $type ) {
@@ -5091,9 +5113,9 @@ class mosAdminMenus {
 			}
 		}
 */
-		// functionality consolidated into ImageCheck 
+		// functionality consolidated into ImageCheck
 		$image = mosAdminMenus::ImageCheck( $file, $directory, $param, $param_directory, $alt, $name, $type, $align, $title, $admin=1 );
-		
+
 		return $image;
 	}
 
@@ -5274,7 +5296,7 @@ class mosCommonHTML {
 			</tr>
 			<tr>
 				<td width="90px" valign="top">
-				Statut
+				Etat
 				</td>
 				<td>
 				<?php
@@ -5361,7 +5383,7 @@ class mosCommonHTML {
 			</tr>
 			<tr>
 				<td width="90px" valign="top">
-				Statut
+				Etat
 				</td>
 				<td>
 				<?php
@@ -5393,8 +5415,9 @@ class mosCommonHTML {
 		if ( $overlib ) {
 			$date 				= mosFormatDate( $row->checked_out_time, '%A, %d %B %Y' );
 			$time				= mosFormatDate( $row->checked_out_time, '%H:%M' );
+			$editor				= addslashes( htmlspecialchars( html_entity_decode( $row->editor, ENT_QUOTES ) ) );
 			$checked_out_text 	= '<table>';
-			$checked_out_text 	.= '<tr><td>'. $row->editor .'</td></tr>';
+			$checked_out_text 	.= '<tr><td>'. $editor .'</td></tr>';
 			$checked_out_text 	.= '<tr><td>'. $date .'</td></tr>';
 			$checked_out_text 	.= '<tr><td>'. $time .'</td></tr>';
 			$checked_out_text 	.= '</table>';
@@ -5416,7 +5439,6 @@ class mosCommonHTML {
 			?>
 			<script language="javascript" type="text/javascript" src="<?php echo $mosConfig_live_site;?>/includes/js/overlib_mini.js"></script>
 			<script language="javascript" type="text/javascript" src="<?php echo $mosConfig_live_site;?>/includes/js/overlib_hideform_mini.js"></script>
-			<div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
 			<?php
 			// change state so it isnt loaded a second time
 			$mainframe->set( 'loadOverlib', true );
@@ -5490,8 +5512,8 @@ class mosCommonHTML {
 	* Special handling for newfeed encoding and possible conflicts with page encoding and PHP version
 	* Added 1.0.8
 	* Static Function
-	*/	
-	function newsfeedEncoding( $rssDoc, $text ) {		
+	*/
+	function newsfeedEncoding( $rssDoc, $text ) {
 		if (!defined( '_JOS_FEED_ENCODING' )) {
 		// determine encoding of feed
 			$feed 			= $rssDoc->toNormalizedString(true);
@@ -5505,10 +5527,10 @@ class mosCommonHTML {
 			// non utf-8 page
 				$utf8 = 0;
 			}
-			
+
 			define( '_JOS_FEED_ENCODING', $utf8 );
 		}
-		
+
 		if (!defined( '_JOS_SITE_ENCODING' )) {
 		// determine encoding of page
 			if ( strpos( strtolower( _ISO ), 'utf' ) !== false ) {
@@ -5518,12 +5540,12 @@ class mosCommonHTML {
 			// non utf-8 page
 				$utf8 = 0;
 			}
-			
+
 			define( '_JOS_SITE_ENCODING', $utf8 );
 
 		}
 
-		if ( phpversion() >= 5 ) {		
+		if ( phpversion() >= 5 ) {
 		// handling for PHP 5
 			if ( _JOS_FEED_ENCODING ) {
 			// handling for utf-8 feed
@@ -5564,14 +5586,14 @@ class mosCommonHTML {
 				// non utf-8 page
 					$encoding = 'html_entity_decode';
 				}
-			}								
+			}
 		}
-		
+
 		if ( $encoding ) {
 			$text = $encoding( $text );
 		}
 		$text = str_replace('&apos;', "'", $text);
-		
+
 		return $text;
 	}
 }
@@ -5619,7 +5641,7 @@ function mosSendAdminMail( $adminName, $adminEmail, $email, $type, $title, $auth
 	$subject = _MAIL_SUB." '$type'";
 	$message = _MAIL_MSG;
 	eval ("\$message = \"$message\";");
-	
+
 	mosMail($mosConfig_mailfrom, $mosConfig_fromname, $adminEmail, $subject, $message);
 }
 
@@ -5628,7 +5650,7 @@ function mosSendAdminMail( $adminName, $adminEmail, $email, $type, $title, $auth
 */
 function mosPathWay() {
 	global $mosConfig_absolute_path;
-	
+
 	$Itemid = intval( mosGetParam( $_REQUEST, 'Itemid', '' ) );
 	require_once ( $mosConfig_absolute_path . '/includes/pathway.php' );
 }
@@ -5671,15 +5693,15 @@ function ampReplace( $text ) {
 */
 function mosPrepareSearchContent( $text, $length=200, $searchword ) {
 	// strips tags won't remove the actual jscript
-	$text = preg_replace( "'<script[^>]*>.*?</script>'si", "", $text );	
+	$text = preg_replace( "'<script[^>]*>.*?</script>'si", "", $text );
 	$text = preg_replace( '/{.+?}/', '', $text);
-	
+
 	//$text = preg_replace( '/<a\s+.*?href="([^"]+)"[^>]*>([^<]+)<\/a>/is','\2', $text );
-	
+
 	// replace line breaking tags with whitespace
 	$text = preg_replace( "'<(br[^/>]*?/|hr[^/>]*?/|/(div|h[1-6]|li|p|td))>'si", ' ', $text );
-	
-	$text = mosSmartSubstr( strip_tags( $text ), $length, $searchword ); 
+
+	$text = mosSmartSubstr( strip_tags( $text ), $length, $searchword );
 
 	return $text;
 }
@@ -5765,15 +5787,16 @@ function mosChmod($path) {
  */
 function mosArrayToInts( &$array, $default=null ) {
 	if (is_array( $array )) {
-		$n = count( $array );
-		for ($i = 0; $i < $n; $i++) {
-			$array[$i] = intval( $array[$i] );
+		foreach( $array as $key => $value ) {
+			$array[$key] = (int) $value;
 		}
 	} else {
 		if (is_null( $default )) {
-			return array();
+			$array = array();
+			return array(); // Kept for backwards compatibility
 		} else {
-			return array( $default );
+			$array = array( (int) $default );
+			return array( $default ); // Kept for backwards compatibility
 		}
 	}
 }
@@ -5786,15 +5809,15 @@ function josGetArrayInts( $name, $type=NULL ) {
 	if ( $type == NULL ) {
 		$type = $_POST;
 	}
-	
+
 	$array = mosGetParam( $type, $name, array(0) );
-	
+
 	mosArrayToInts( $array );
-	
+
 	if (!is_array( $array )) {
 		$array = array(0);
 	}
-	
+
 	return $array;
 }
 
@@ -5904,7 +5927,7 @@ function mosBackTrace() {
 	}
 }
 
-function josSpoofCheck( $header=NULL, $alt=NULL ) {	
+function josSpoofCheck( $header=NULL, $alt=NULL ) {
 	$validate 	= mosGetParam( $_POST, josSpoofValue($alt), 0 );
 
 	// probably a spoofing attack
@@ -5913,16 +5936,16 @@ function josSpoofCheck( $header=NULL, $alt=NULL ) {
 		mosErrorAlert( _NOT_AUTH );
 		return;
 	}
-	
+
 	// First, make sure the form was posted from a browser.
 	// For basic web-forms, we don't care about anything
-	// other than requests from a browser:   
+	// other than requests from a browser:
 	if (!isset( $_SERVER['HTTP_USER_AGENT'] )) {
 		header( 'HTTP/1.0 403 Forbidden' );
 		mosErrorAlert( _NOT_AUTH );
 		return;
 	}
-	
+
 	// Make sure the form was indeed POST'ed:
 	//  (requires your html form to use: action="post")
 	if (!$_SERVER['REQUEST_METHOD'] == 'POST' ) {
@@ -5930,7 +5953,7 @@ function josSpoofCheck( $header=NULL, $alt=NULL ) {
 		mosErrorAlert( _NOT_AUTH );
 		return;
 	}
-	
+
 	if ($header) {
 	// Attempt to defend against header injections:
 		$badStrings = array(
@@ -5940,22 +5963,28 @@ function josSpoofCheck( $header=NULL, $alt=NULL ) {
 			'bcc:',
 			'cc:'
 		);
-		
+
 		// Loop through each POST'ed value and test if it contains
 		// one of the $badStrings:
-		foreach ($_POST as $k => $v){
-			foreach ($badStrings as $v2) {
-				if (strpos( $v, $v2 ) !== false) {
-					header( "HTTP/1.0 403 Forbidden" );
+		_josSpoofCheck( $_POST, $badStrings );
+	}
+}
+
+function _josSpoofCheck( $array, $badStrings ) {
+	// Loop through each $array value and test if it contains
+	// one of the $badStrings
+	foreach( $array as $v ) {
+		if (is_array( $v )) {
+			_josSpoofCheck( $v, $badStrings );
+		} else {
+			foreach ( $badStrings as $v2 ) {
+				if ( stripos( $v, $v2 ) !== false ) {
+					header( 'HTTP/1.0 403 Forbidden' );
 					mosErrorAlert( _NOT_AUTH );
-					return;
+					exit(); // mosErrorAlert dies anyway, double check just to make sure
 				}
 			}
-		}   
-		
-		// Made it past spammer test, free up some memory
-		// and continue rest of script:   
-		unset($k, $v, $v2, $badStrings);
+		}
 	}
 }
 
@@ -5963,24 +5992,24 @@ function josSpoofCheck( $header=NULL, $alt=NULL ) {
  * Method to determine a hash for anti-spoofing variable names
  *
  * @return	string	Hashed var name
- * @static	 
+ * @static
  */
 function josSpoofValue($alt=NULL) {
 	global $mainframe;
-	
+
 	if ($alt) {
 		if ( $alt == 1 ) {
 			$random		= date( 'Ymd' );
 		} else {
 			$random		= $alt . date( 'Ymd' );
 		}
-	} else {		
+	} else {
 		$random		= date( 'dmY' );
 	}
 	// the prefix ensures that the hash is non-numeric
 	// otherwise it will be intercepted by globals.php
 	$validate 	= 'j' . mosHash( $mainframe->getCfg( 'db' ) . $random );
-	
+
 	return $validate;
 }
 

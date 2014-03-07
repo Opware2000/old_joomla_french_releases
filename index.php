@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 4750 2006-08-25 01:08:30Z stingrey $
+* @version $Id: index.php 6022 2006-12-18 22:30:07Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,13 +16,20 @@ define( '_VALID_MOS', 1 );
 
 // checks for configuration file, if none found loads installation page
 if (!file_exists( 'configuration.php' ) || filesize( 'configuration.php' ) < 10) {
-	$self = str_replace( '/index.php','', strtolower( $_SERVER['PHP_SELF'] ) ). '/';
+	$self = rtrim( dirname( $_SERVER['PHP_SELF'] ), '/\\' ) . '/';
 	header("Location: http://" . $_SERVER['HTTP_HOST'] . $self . "installation/index.php" );
 	exit();
 }
 
 require( 'globals.php' );
 require_once( 'configuration.php' );
+
+// SSL check - $http_host returns <live site url>:<port number if it is 443>
+$http_host = explode(':', $_SERVER['HTTP_HOST'] );
+if( (!empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) != 'off' || isset( $http_host[1] ) && $http_host[1] == 443) && substr( $mosConfig_live_site, 0, 8 ) != 'https://' ) {
+	$mosConfig_live_site = 'https://'.substr( $mosConfig_live_site, 7 );
+}
+
 require_once( 'includes/joomla.php' );
 
 //Installation sub folder check, removed for work with SVN
@@ -59,8 +66,8 @@ if ($option == '') {
 		$query = "SELECT id, link"
 		. "\n FROM #__menu"
 		. "\n WHERE menutype = 'mainmenu'"
-		. "\n AND id = '$Itemid'"
-		. "\n AND published = '1'"
+		. "\n AND id = " . (int) $Itemid
+		. "\n AND published = 1"
 		;
 		$database->setQuery( $query );
 	} else {
@@ -143,18 +150,28 @@ if ($option == 'login') {
 		?>
 		<script language="javascript" type="text/javascript">
 		<!--//
-		alert( "<?php echo _LOGIN_SUCCESS; ?>" );
+		alert( "<?php echo addslashes( _LOGIN_SUCCESS ); ?>" );
 		//-->
 		</script>
 		<?php
 	}
 
 	if ( $return && !( strpos( $return, 'com_registration' ) || strpos( $return, 'com_login' ) ) ) {
-	// checks for the presence of a return url 
+	// checks for the presence of a return url
 	// and ensures that this url is not the registration or login pages
-		mosRedirect( $return );
+		// If a sessioncookie exists, redirect to the given page. Otherwise, take an extra round for a cookiecheck
+		if (isset( $_COOKIE[mosMainFrame::sessionCookieName()] )) {
+			mosRedirect( $return );
+		} else {
+			mosRedirect( $mosConfig_live_site .'/index.php?option=cookiecheck&return=' . urlencode( $return ) );
+		}
 	} else {
-		mosRedirect( $mosConfig_live_site .'/index.php' );
+		// If a sessioncookie exists, redirect to the start page. Otherwise, take an extra round for a cookiecheck
+		if (isset( $_COOKIE[mosMainFrame::sessionCookieName()] )) {
+			mosRedirect( $mosConfig_live_site .'/index.php' );
+		} else {
+			mosRedirect( $mosConfig_live_site .'/index.php?option=cookiecheck&return=' . urlencode( $mosConfig_live_site .'/index.php' ) );
+		}
 	}
 
 } else if ($option == 'logout') {
@@ -165,18 +182,25 @@ if ($option == 'login') {
 		?>
 		<script language="javascript" type="text/javascript">
 		<!--//
-		alert( "<?php echo _LOGOUT_SUCCESS; ?>" );
+		alert( "<?php echo addslashes( _LOGOUT_SUCCESS ); ?>" );
 		//-->
 		</script>
 		<?php
 	}
 
 	if ( $return && !( strpos( $return, 'com_registration' ) || strpos( $return, 'com_login' ) ) ) {
-	// checks for the presence of a return url 
+	// checks for the presence of a return url
 	// and ensures that this url is not the registration or logout pages
 		mosRedirect( $return );
 	} else {
 		mosRedirect( $mosConfig_live_site.'/index.php' );
+	}
+} else if ($option == 'cookiecheck') {
+	// No cookie was set upon login. If it is set now, redirect to the given page. Otherwise, show error message.
+	if (isset( $_COOKIE[mosMainFrame::sessionCookieName()] )) {
+		mosRedirect( $return );
+	} else {
+		mosErrorAlert( _ALERT_ENABLED );
 	}
 }
 
@@ -206,7 +230,7 @@ ob_start();
 if ($path = $mainframe->getPath( 'front' )) {
 	$task 	= strval( mosGetParam( $_REQUEST, 'task', '' ) );
 	$ret 	= mosMenuCheck( $Itemid, $option, $task, $gid );
-	
+
 	if ($ret) {
 		require_once( $path );
 	} else {

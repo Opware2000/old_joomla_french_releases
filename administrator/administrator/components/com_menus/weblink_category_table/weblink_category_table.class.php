@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblink_category_table.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: weblink_category_table.class.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -53,7 +53,7 @@ class weblink_category_table_menu {
 			. "\n FROM #__categories"
 			. "\n WHERE section = 'com_weblinks'"
 			. "\n AND published = 1"
-			. "\n AND id = ". $menu->componentid
+			. "\n AND id = " . (int) $menu->componentid
 			;
 			$database->setQuery( $query );
 			$category = $database->loadResult();

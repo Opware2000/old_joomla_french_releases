@@ -13,7 +13,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
  * @package	 PHP_Compat
  * @link		http://php.net/function.file_get_contents
  * @author	  Aidan Lister <aidan@php.net>
- * @version	 $Revision: 47 $
+ * @version	 $Revision: 4986 $
  * @internal	resource_context is not supported
  * @since		PHP 5
  * @require	 PHP 4.0.1 (trigger_error)
@@ -56,7 +56,7 @@ if (!defined('FILE_APPEND')) {
  * @package	 PHP_Compat
  * @link		http://php.net/function.file_put_contents
  * @author	  Aidan Lister <aidan@php.net>
- * @version	 $Revision: 47 $
+ * @version	 $Revision: 4986 $
  * @internal	resource_context is not supported
  * @since		PHP 5
  * @require	 PHP 4.0.1 (trigger_error)
@@ -120,5 +120,25 @@ if (!function_exists('file_put_contents')) {
 		return $bytes;
 	}
 }
-
+/**
+ * Add functionanlity of html_entity_decode() to PHP under 4.3
+ *
+ * @category	PHP
+ * @package	 PHP_Compat
+ * @link		http://php.net/function.html_entity_decode
+ * @since		PHP 4.3
+ * @require	 PHP 4.0.1 
+ */
+if (!function_exists('html_entity_decode')) {
+	function html_entity_decode($string)
+	{
+   		// Replace numeric
+   		$string = preg_replace('~&#x([0-9a-f]+);~ei', 'chr(hexdec("\\1"))', $string);
+   		$string = preg_replace('~&#([0-9]+);~e', 'chr(\\1)', $string);
+   		
+   		$trans_tbl = get_html_translation_table(HTML_ENTITIES);
+   		$trans_tbl = array_flip($trans_tbl);
+   		return strtr($string, $trans_tbl);
+	}
+}
 ?>

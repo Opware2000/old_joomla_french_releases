@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.weblinks.html.php 88 2005-09-16 02:10:02Z stingrey $
+* @version $Id: admin.weblinks.html.php 5023 2006-09-13 12:36:21Z friesengeist $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -36,7 +36,7 @@ class HTML_weblinks {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 			<td width="right">
 			<?php echo $lists['catid'];?>

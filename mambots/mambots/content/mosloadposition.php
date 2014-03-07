@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosloadposition.php 2574 2006-02-23 18:48:16Z stingrey $
+* @version $Id: mosloadposition.php 5873 2006-11-28 23:31:00Z facedancer $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,7 +26,7 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
 	if ( strpos( $row->text, 'mosloadposition' ) === false ) {
 		return true;
 	}
-	
+
  	// expression to search for
  	$regex = '/{mosloadposition\s*.*?}/i';
 
@@ -35,7 +35,7 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
 		$row->text = preg_replace( $regex, '', $row->text );
 		return true;
 	}
-	
+
 	// find all instances of mambot and put in $matches
 	preg_match_all( $regex, $row->text, $matches );
 
@@ -54,14 +54,14 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
 			;
 			$database->setQuery( $query );
 			$database->loadObject($mambot);
-					
+
 			// save query to class variable
 			$_MAMBOTS->_content_mambot_params['mosloadposition'] = $mambot;
 		}
-		
+
 		// pull query data from class variable
 		$mambot = $_MAMBOTS->_content_mambot_params['mosloadposition'];
-		
+
 	 	$botParams = new mosParameters( $mambot->params );
 
 	 	$style	= $botParams->def( 'style', -2 );
@@ -89,7 +89,7 @@ function processPositions ( &$row, &$matches, $count, $regex, $style ) {
 		foreach ( $positions as $position ) {
 	 		if ( $position == @$load ) {
 				$modules	= loadPosition( $load, $style );
-				$row->text 	= preg_replace( '{'. $matches[0][$i] .'}', $modules, $row->text );
+				$row->text 	= str_replace($matches[0][$i], $modules, $row->text);
 				break;
 	 		}
  		}

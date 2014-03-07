@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_fullmenu.php 4801 2006-08-28 16:10:28Z stingrey $
+* @version $Id: mod_fullmenu.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -157,7 +157,7 @@ if (!defined( '_JOS_FULLMENU_MODULE' )) {
 	  				['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Sections','index2.php?option=com_sections&scope=content',null,'Gérer les sections de contenu'],
 					['<img src="../includes/js/ThemeOffice/add_section.png" />','Gestion des Catégories','index2.php?option=com_categories&section=content',null,'Gérer les catégories de contenu'],
 					_cmSplit,
-	  				['<img src="../includes/js/ThemeOffice/home.png" />','Gestion de la page d\'accueil','index2.php?option=com_frontpage',null,'Gérer les articles en page d\'accueil'],
+	  				['<img src="../includes/js/ThemeOffice/home.png" />','Articles en page d\'accueil','index2.php?option=com_frontpage',null,'Gérer les articles en page d\'accueil'],
 	  				['<img src="../includes/js/ThemeOffice/edit.png" />','Gestion des Archives','index2.php?option=com_content&task=showarchive&sectionid=0',null,'Gérer les articles archivés'],
 	  				['<img src="../includes/js/ThemeOffice/globe3.png" />', 'Impressions de Page', 'index2.php?option=com_statistics&task=pageimp', null, 'Impressions de Page'],
 				],
@@ -237,7 +237,7 @@ if (!defined( '_JOS_FULLMENU_MODULE' )) {
 				[null,'Mambots',null,null,'Gestion des Mambots',
 	<?php
 			if ($editAllMambots) {
-	?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Site Mambots', "index2.php?option=com_mambots", null, 'Gérer les mambots du site'],
+	?>				['<img src="../includes/js/ThemeOffice/module.png" />', 'Mambots du site', "index2.php?option=com_mambots", null, 'Gérer les mambots du site'],
 	<?php
 			}
 	?>			],
@@ -277,14 +277,14 @@ if (!defined( '_JOS_FULLMENU_MODULE' )) {
 		// System Sub-Menu
 		/*
 	?>			_cmSplit,
-	  			[null,'System',null,null,'Gestion du système',
+	  			[null,'Système',null,null,'Gestion du système',
 	  				['<img src="../includes/js/ThemeOffice/joomla_16x16.png" />', 'V&eacute;rification de version', 'index2.php?option=com_admin&task=versioncheck', null,'V&eacute;rification de version'], 				
 	  				['<img src="../includes/js/ThemeOffice/sysinfo.png" />', 'Information Système', 'index2.php?option=com_admin&task=sysinfo', null,'Information Système'],
 	<?php
 		*/
 	?>			_cmSplit,
-	  			[null,'System',null,null,'System Management',
-	  				['<img src="../includes/js/ThemeOffice/joomla_16x16.png" />', 'V&eacute;rification de version', 'http://www.joomla.org/content/blogcategory/32/66/', '_blank','V&eacute;rification de version'], 				
+	  			[null,'Système',null,null,'Gestion du système',
+	  				['<img src="../includes/js/ThemeOffice/joomla_16x16.png" />', 'V&eacute;rification de version', 'http://www.joomla.org/latest10', '_blank','V&eacute;rification de version'], 				
 	  				['<img src="../includes/js/ThemeOffice/sysinfo.png" />', 'Information Système', 'index2.php?option=com_admin&task=sysinfo', null,'Information Système'],
 	<?php
 	  		if ($canConfig) {

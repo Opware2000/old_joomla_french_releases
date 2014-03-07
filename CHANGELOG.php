@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: CHANGELOG.php 4765 2006-08-25 19:25:06Z stingrey $
+* @version $Id: CHANGELOG.php 6087 2006-12-24 19:19:44Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -39,12 +39,433 @@ code fixes.
 
 
 ----------------------------------------------------------------------------------------
----------------- 1.0.11 RC Released -- [25-August-2006 20:00 UTC] ------------------
+--------------- 1.0.12 Stable Released -- [25-December-2006 01:00 UTC] -----------------
+
+24-Dec-2006 Rob Schley
+ # Fixed two hard coded alt tags
+ + Added new language constant _BANNER_ALT
+ ^ Preparations for Stable packaging
+ # Removed local help screen content and replaced it with links to the online versions
 
 
-This Release Contains the following 24 Security Fixes
+19-Dec-2006 Rob Schley
+ + Added 119 help screen files.
+ ^ Changed 20 help screen titles.
+ # Fixed several grammar problems throughtout the Joomla! core
 
-Joomla! utilizes the Open Web Application Security Project (OWASP) tOP tEN pROJECT to categorize security vunerabilities found within Joomla!
+
+18-Dec-2006 Enno Klasing
+ # Fixed [artf5166] : Server Time offset issue, while submitting news
+ # Fixed [artf6439] : https switchover
+
+
+18-Dec-2006 Rob Schley
+ # Fixed bug in offline.php when using the database class without a working database connection.
+ # Fixed spelling and grammar mistakes in english.php as per suggestions.
+
+
+15-Dec-2006 Enno Klasing
+ # Fixed sample data: removed (nonexistent) RSS feed from OSM
+ # Fixed redirect to installation directory: removed need for lowercase directory names
+
+
+13-Dec-2006 Rob Schley
+ # Fixed spelling and grammar errors in com_menus
+ # Fixed changelog formatting.
+
+
+13-Dec-2006 Enno Klasing
+ + Added security warning message to the installer component
+ # Fixed [artf6522] : Quotes in User Name breaks checkedOut overlib
+ * SECURITY A1 [ Medium Level ] : Removed unneeded legacy functions
+
+
+12-Dec-2006 Enno Klasing
+ # Fixed bug in TinyMCE: help screen disabled
+ # Fixed IE7 display bug with mosTabs
+ # Fixed [artf7028] : Two bugs in TinyMCE
+
+
+11-Dec-2006 Enno Klasing
+ # Fixed [artf7021] : Bug with com_messages and message titles including a single quote
+
+
+10-Dec-2006 Rob Schley
+ # Fixed grammar problems in SQL data.
+ # Fixed grammar problem in com_config.
+ # Fixed usages of "Joomla!" missing the exclamation point.
+
+
+10-Dec-2006 Enno Klasing
+ # Fixed [artf6762] : mos_section showing unexpected behavior
+ # Fixed IE7 display bug in the toolbar of the polls component
+
+
+07-Dec-2006 Rob Schley
+ # Fixed [artf6863] : Changed the include file from template_css.css to offline.css to avoid conflicting styles
+
+
+07-Dec-2006 Enno Klasing
+ # Fixed [artf6296] : josSpoofCheck does not check arrays and generates php warning
+
+
+06-Dec-2006 Marko Schmuck
+ # Fixed [artf6884] : mosimage align=right causes problems in IE6
+ # Fixed [artf6779] : Link-URL containing character ] breaks
+
+
+06-Dec-2006 Enno Klasing
+ # Fixed [artf6922] : Registration not working as expected (JavaScript popups)
+
+
+06-Dec-2006 Mateusz Krzeszowiec
+ # Fixed [artf6832] : getItemid() function in joomla.php will not return correct $Itemid
+ # Fixed [artf6522] : Quotes in User Name breaks checkedOut overlib, continued
+ # Fixed [artf6786] : sef.php and multilingual config
+
+
+05-Dec-2006 Rastin Mehr
+ # Fixed [artf6751] : Banner upload target directory bug
+ # Fixed [artf6522] : Quotes in User Name breaks checkedOut overlib, fixed similiar bugs from another report
+
+
+02-Dec-2006 Sam Moffatt
+ # Fixed [artf6484] : com_registration bug (removed SQL error message)
+
+
+01-Dec-2006 Enno Klasing
+ # Fixed [artf6903] : Anchors to Frontpage in SEF-URLs
+ # Fixed [artf6901] : LIMIT in MySQL queries
+ # Fixed [artf6844] : Javascript escape bug for poll.php
+ # Fixed [artf5788] : Frontpage content item category links enable section links
+
+
+30-Nov-2006 Rastin Mehr
+ # Fixed [artf6577] : Registration name, username & email cleanups: spaces not allowed
+
+
+30-Nov-2006 Emir Sakic
+ # Fixed [artf6841] : Submit Contact Form doesn't work with deactivated cookies
+ # Fixed [artf6846] : Error with new document - without categories
+
+
+30-Nov-2006 Mateusz Krzeszowiec
+ # Fixed [artf6786] : sef.php and multilingual config
+
+
+30-Nov-2006 Marko Schmuck
+ # Fixed [artf6921] : [patch] fixing a bug on modules/mod_archive.php
+ # Fixed [artf6876] : Orphan user information in phpGACL tables after user was deleted
+
+
+29-Nov-2006 Mateusz Krzeszowiec
+ # Fixed [artf6749] : bot mosloadposition stippes $
+ # Fixed [artf1527] : "open_basedir restriction" warning
+
+
+28-Nov-2006 Enno Klasing
+ # Fixed [artf6766] : Login form; you are not authorized...
+ # Fixed [artf6765] : Login form problem
+ # Fixed [artf6567] : Change error message for cookie test failure
+
+
+27-Nov-2006 Enno Klasing
+ # Fixed [artf6860] : Admin Login and PHP's session.auto_start
+
+
+27-Nov-2006 Emir Sakic
+ # Fixed [artf6865] : Relocate <script> element below <title> and <meta> elements for XHTML compliance
+ # Fixed [artf6863] : Extra CSS include for styling offline.php
+ # Fixed [artf6858] : Encoding/Template issues on backend
+ # Fixed [artf6859] : Bug in com_content security check for new content
+
+
+25-Nov-2006 Rastin Mehr
+ # Fixed [artf6439] : https switchover not working (as did in mambo 4.5.2 and early joomla)
+
+
+21-Nov-2006 Emir Sakic
+ # Fixed [artf6847] : XHTML syntax incompliance
+ # Fixed [artf6833] : Javascript alert messages on IE display without proper encoding in Internet Explorer
+
+
+21-Nov-2006 Marko Schmuck
+ # Fixed [artf6828] : Poorly formed HTML in admin.contact.html.php
+
+
+21-Nov-2006 Andrew Eddie
+ # Added 3 new language constants for systems errors (namely database issues)
+
+
+20-Nov-2006 Marko Schmuck
+ # Fixed [artf6673] : Untranslated submit button, content component
+
+
+20-Nov-2006 Enno Klasing
+ # Fixed [artf6816] : Hit counter not correct if caching is enabled
+ # Fixed [artf6753] : add banner client ID in admin view
+
+
+19-Nov-2006 Enno Klasing
+ # Fixed [artf6764] : IE7 Table Alignment Bug
+
+
+15-Nov-2006 Marko Schmuck
+ # Fixed [artf6763] : Joomla.php - build the multiple select list
+ # Fixed [artf6752] : mms:// not resolving in menus
+
+
+15-Nov-2006 Enno Klasing
+ # Fixed [artf6613] : User rating, second rating, incorrect message
+
+
+15-Nov-2006 Mateusz Krzeszowiec
+ # Fixed [artf5926] : Few other Itemid issues solved
+
+
+14-Nov-2006 Marko Schmuck
+ # Fixed : css file handling in content backend preview
+
+
+13-Nov-2006 Enno Klasing
+ # Fixed [artf5924] : JavaScript and HTML-Error in mod_wrapper
+
+
+12-Nov-2006 Alex Kempkens
+ # Fixed [artf6713] : double title in the pathway
+
+
+12-Nov-2006 Mateusz Krzeszowiec
+ # Fixed [artf6611] : Admin, copy section issues
+
+
+11-Nov-2006 Enno Klasing
+ # Fixed [artf6720] : Wrong markup on com_media
+
+
+10-Nov-2006 Emir Sakic
+ # Fixed [artf6709] : Media Manager Error for uploading a file, without select anything
+
+
+09-Nov-2006 Enno Klasing
+ # Fixed [artf6058] : Apostrophes not stripslashed in Category names
+
+
+09-Nov-2006 Emir Sakic
+ # Fixed [artf6175] : Javascript - Error in function previewImage()
+
+
+08-Nov-2006 Rey Gigataras
+ # Fixed [artf6689] : TinyMCE updated to 2.0.8
+ # Fixed [artf6689] : TinyMCE GZip compressors updated to 1.0.9
+
+
+08-Nov-2006 Enno Klasing
+ # Fixed [artf6528] : Wrong markup in two admin modules
+ # Fixed [artf6350] : overDiv not created in proper place
+
+
+03-Nov-2006 Alex Kempkens
+ # Fixed [artf6415] : Tooltip or function is not correct in Global Configuration
+ # Fixed [artf6650] : Flyover help not translated in com_content
+
+
+03-Nov-2006 Mateusz Krzeszowiec
+ # Fixed [artf6542] : Quotes in User Name lost when editing
+ # Fixed [artf6522] : Quotes in User Name breaks checkedOut overlib
+
+
+03-Nov-2006 Enno Klasing
+ # Fixed [artf6589] : Missing index.html files
+ # Fixed [artf6500] : media manager too easily classifies a file as a mediafile
+
+
+02-Nov-2006 Samuel Moffatt
+ # Fixed [artf6484] : com_registration bug
+
+
+01-Nov-2006 Emir Sakic
+ ^ Changed new version and forum security links to universal ones with redirects on joomla.org
+ # Fixed [artf6131] : UNC support in Joomla
+ # Fixed wrong align of drop-down lists in admin content item manager
+
+
+30-Oct-2006 Mateusz Krzeszowiec
+ # Fixed [artf6132] : Admin Session not completely emptied on logout, also removed some code (doublecheck) in administrator/logout.php continued
+
+
+29-Oct-2006 Mateusz Krzeszowiec
+ # Fixed [artf6132] : Admin Session not completely emptied on logout, also removed some code (doublecheck) in administrator/logout.php
+ # Fixed templates/madeyourweb/images/indent1.png and indent2.png file size
+ # Fixed [artf6160] : Admin, copy category issues, changed message after copy
+ # Fixed : Admin, move category issues, changed message after move
+ # Fixed [artf6581] : #__poll_data install SQL incorrect
+
+
+26-Oct-2006 Emir Sakic
+ ^ Removed version check - [artf6486] : Remove "Your Joomla! Installation is ... days old" messages
+
+
+22-Oct-2006 Mateusz Krzeszowiec
+ # Fixed [artf6441] : Incorrect spelling Poll
+ # Fixed [artf6160] : Admin, copy category issues
+ # Fixed : Admin, move category issues
+ # Fixed : Small security issue in com_categories - no input validation
+
+
+21-Oct-2006 Enno Klasing
+ # Fixed [artf6253] : Content Blog Section, several notices
+ # Fixed [artf6440] : Menu name htmlentitized when toggling published/unpublished
+
+
+19-Oct-2006 Enno Klasing
+ # Fixed [artf6470] : pageNavigation/php - minor bug/improvement
+ # Fixed [artf5890] : Content item count incorrect (public/registered)
+
+
+18-Oct-2006 Marko Schmuck
+ # Fixed [artf5229] : database.php: loadRowList($key) not working as expected
+
+
+16-Oct-2006 Alex Kempkens
+ ^ little query issue for multilingual support (frontpage/search bot)
+
+
+15-Oct-2006 Enno Klasing
+ # Fixed [artf6430] : htaccess tweak
+
+
+15-Oct-2006 Emir Sakic
+# Fixed [artf5760] : 'more' functionality in blogs showing links even though they shouldn't
+# Fixed [artf6058] : Apostrophes not stripslashed in Category names
+
+
+11-Oct-2006 Emir Sakic
+# Fixed [artf6141] : check all in com_trash for menu items
+
+
+10-Oct-2006 Emir Sakic
+^ Refactored admin trash manager to be consistent with other managers
+# Fixed [artf6141] : com_trash administrative component navigation problem
+
+
+04-Oct-2006 Sam Moffatt
+# Fixed [artf5955] : get_group_parents() with default $recurse parameter
+# Fixed [artf6181] : Search: Itemid in com_search also gets wrong Itemid's
+# Fixed [artf6172] : (FRONTEND)mosPageNavigation::writeLeafsCounter doesn't diplay correct page numbers
+# Fixed [artf6169] : showCategories produces non w3c valid list
+
+
+03-Oct-2006 Mateusz Krzeszowiec
+# Fixed [artf5926] : Incorrect determination of Itemid for content items links in Blog - Content Section, look in tracker for details
+
+
+01-Oct-2006 Mateusz Krzeszowiec
+ # Fixed [artf6074] : Joomla! using trashed menu item permission level in some cases
+ # Fixed [artf6084] : com_content division by zero warning
+ # Fixed [artf6153] : Invalid constant in field description
+
+
+23-Sep-2006 Mateusz Krzeszowiec
+ # Fixed [artf6004] : Search results include several hits for the same document
+ # Fixed [artf6041] : username when sending PM instead of name
+ # Fixed [artf5989] : not optimal mosMakePassword()
+
+
+22-Sep-2006 Enno Klasing
+ # Fixed [artf5983] : Undefined variables in com_content
+ # Fixed [artf5985] : Missing htmlspecialchars for module title
+ # Fixed [artf5934] : Mail sent via "Email a friend" has bad link
+ # Fixed [artf6011] : HTML entities appearing in plain-text emails from com_content
+ # Fixed [artf5986] : mosMail and empty sender information
+ # Fixed [artf6075] : "CheckIn My Items" checks in all Items
+
+
+22-Sep-2006 Marko Schmuck
+ # Fixed [artf5507] : "&" character in Global Site Meta Description field results in "&amp;amp;"
+ # Fixed [artf5788] : Frontpage content item category links enable section links, and section links generate '&' and not '&amp;' in their html
+
+
+20-Sep-2006 Emir Sakic
+ # Fixed [artf5202] : administrator typed content search pagination problem
+ # Fixed [artf5908] : Menu Item in Pathway not linked when custom pathway appended
+
+
+18-Sep-2006 Mateusz Krzeszowiec
+ # Fixed [artf5848] : Poll component not displaying info, XML file moved to proper directory
+
+
+18-Sep-2006 Sam Moffatt
+ # Fixed [artf5887] : mosMakePath mkdir with trailing slash not working (when using hardened PHP)
+
+
+17-Sep-2006 Enno Klasing
+ # Full scale audit of all database queries
+ # Altered mosArrayToInts to allow arrays with non-numeric indexes
+ # Added check to com_categories if requested table exists
+ # Fixed [artf5961] : mosMessage::send() uses noninitialized variables
+
+
+14-Sep-2006 Marko Schmuck
+ # Fixed [artf5481] : Parameter values not made HTML safe in editing form input control
+ # Fixed [artf5906] : "New" icon missing in sections with categories but no content
+ # Fixed [artf5166] : Server Time offset issue, while submitting news
+
+
+14-Sep-2006 Sam Moffatt
+ # Fixed [artf5476] : Template media import broken. Cannot import media files.
+
+
+12-Sep-2006 Sam Moffatt
+ # Fixed [artf5866] : com_content uses corrupted global $id for page navigation
+ # Fixed [artf5719] : header_version.png right top
+
+
+10-Sep-2006 Marko Schmuck
+ # Fixed [artf5761] : single quote in sitename formats incorrectly with massmail
+ # Fixed [artf5249] : Image align="center" command is Invalid - Should be align="middle"
+
+
+09-Sep-2006 Marko Schmuck
+ # Fixed [artf5753] : ampersand in action URL of showArchiveCategory form should be an entity
+ # Fixed [artf5493][topic,81903] : Search error in PHP5 arraymerge - search for static content without a menulink
+
+
+06-Sep-2006 Marko Schmuck
+ # Fixed [artf5367] : Better mysql statement in content.searchbot.php
+ # Fixed [artf5141] : image attribute name="image" breaks xhtml compliance when output multiple times
+ # Fixed [artf5811] : Search component generates invalid html
+
+
+06-Sep-2006 Andrew Eddie
+ # Fixed [artf5799] : mysql_real_escape_string called incorrectly in database.php
+ # Fixed [artf5581] : canDelete method doesn't work
+
+
+31-August-2006 Mateusz Krzeszowiec
+ # Fixed [artf5780] : lack of 'new' task in allowed tasks check
+ # Fixed [artf5779] : lack of 'com_typedcontent' option in allowed options check
+
+
+31-August-2006 Marko Schmuck
+ # Fixed [artf5770] : $query variable not defined in functions in gacl.api.class.php
+ # Fixed [artf3978] : mosBindArrayToObject ignore bug
+ # Fixed [artf5169] : mosDBTable::publish hard coded key again
+ # Fixed [artf5280] : SEF drops anchors
+ # Fixed [topic,90725] : incorrect timezone values in config_offset_user dropdown
+ # Fixed [artf5766] : Bannerupload failt
+ # Fixed [artf5727] : mosTabs parent div class name error
+ # Fixed [artf5432] : slashes not stripped in WebLinks
+ # Fixed [artf5215][artf5412] : Successfully Saved Item: {title} ... slashes not stripped from title
+
+
+----------------------------------------------------------------------------------------
+---------------- 1.0.11 Stable Released -- [28-August-2006 20:00 UTC] ------------------
+
+
+This Release Contains the following 26 Security Fixes
+
+Joomla! utilizes the Open Web Application Security Project (OWASP) Top Ten Project to categorize security vunerabilities found within Joomla!
 http://www.owasp.org/index.php/OWASP_Top_Ten_Project
 
 --- - - - - - - - - ---
@@ -54,88 +475,97 @@ http://www.owasp.org/index.php/OWASP_Top_Ten_Project
 A1 Unvalidated Input
  * Secured mosMail() against unvalidated input
  * Secured JosIsValidEmail() - in previous versions the existance of an email address somewhere in the string was sufficient
- 
-A6 Injection Flaws 
+
+A6 Injection Flaws
  * Fixed remote execution issue in PEAR.php
  * Fixed Zend Hash Del Key Or Index Vulnerability
- 
+
 --- - - - - - - - - ---
- 
+
 04 MEDIUM Level Threats fixed
 
 A1 Unvalidated Input
  * globals.php not included in administrator/index.php
- 
-A2 Broken Access Control  
+
+A2 Broken Access Control
  * Added Missing defined( '_VALID_MOS' ) checks
  * Limit Admin `Upload Image` from uploading below `/images/stories/` directory
  * Fixed do_pdf command bypassing the user authentication
 
 --- - - - - - - - - ---
 
-16 LOW Level Threats fixed
+18 LOW Level Threats fixed
 
 A1 Unvalidated Input
  * Hardened Admin `User Manager`
  * Hardened poll module
  * Fixed josSpoofValue function to ensure the hash is a string
- 
-A2 Broken Access Control  
+
+A2 Broken Access Control
  * Secured com_content to not allow the tasks 'emailform' and 'emailsend' if $mosConfig_hideEmail is set
  * Fixed emailform com_content task bypassing the user authentication
- * Limit access to Admin `Popups` functionality 
- 
-A4 Cross Site Scripting 
- * Fixed XSS injection issue in Admin `Module Manager`
- * Fixed XSS injection issue in Admin `Help` 
- * Fixed XSS injection issue in Admin `Upload Image` 
- * Fixed XSS injection issue in Search 
+ * Limit access to Admin `Popups` functionality
 
-A6 Injection Flaws 
+A4 Cross Site Scripting
+ * Fixed XSS injection issue in Admin `Module Manager`
+ * Fixed XSS injection issue in Admin `Help`
+ * Fixed XSS injection issue in Search
+
+A6 Injection Flaws
  * Harden loading of globals.php by using require() instead of include_once();
+ * Block potential misuse of $option variable
+ * Block against injection issue in Admin `Upload Image`
  * Secured against possible injection attacks on ->load()
  * Secured against injection attack on content submissions where frontpage is selected
  * Secured against possible injection attack thru mosPageNav constructor
  * Secured against possible injection attack thru saveOrder functions
  * Add exploit blocking rules to htaccess
+ * Harden ACL from possible injection attacks
 
 
 -- -- -- -- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- ---- -- --
 
 
+28-Aug-2006 Rey Gigataras
+ # SECURITY A6 [ LOW Level ]: Block potential misuse of $option variable
+
+
+28-Aug-2006 Andrew Eddie
+ # SECURITY A6 [ LOW Level ]: Harden ACL from possible injection attacks
+
+
 24-Aug-2006 Rey Gigataras
  # SECURITY A6 [ LOW Level ]: Add exploit blocking rules to htaccess
  # SECURITY A6 [ LOW Level ]: Harden loading of globals.php by using require() instead of include_once();
- 
- + Installation Security Warning check 
+
+ + Installation Security Warning check
+ + Admin & Installation Version age warning
 
 
 23-Aug-2006 Rey Gigataras
  # SECURITY A2 [ MEDIUM Level ]: Missing defined( '_VALID_MOS' ) checks
- 
- + Admin Security Warning check 
- 
+
+ + Admin Security Warning check
+
 
 21-Aug-2006 Rey Gigataras
  # SECURITY A1 [ LOW Level ]: Hardened Admin `User Manager`
- 
- + Live Joomla! Version Check functionality
- 
+
 
 19-Aug-2006 Rey Gigataras
  # SECURITY A2 [ MEDIUM Level ]: Limit Admin `Upload Image` from uploading below `/images/stories/` directory
- # SECURITY A2 [ LOW Level ]: Limit access to Admin `Popups` functionality 
+ # SECURITY A2 [ LOW Level ]: Limit access to Admin `Popups` functionality
  # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Admin `Module Manager`
- # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Admin `Help` 
- # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Admin `Upload Image` 
- # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Search 
+ # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Admin `Help`
+ # SECURITY A4 [ LOW Level ]: [topic,73761] : XSS injection issue in Search
+ # SECURITY A6 [ LOW Level ]: [topic,73761] : Block against injection issue in Admin `Upload Image`
 
 
 19-Aug-2006 Enno Klasing
  # SECURITY A1 [ HIGH Level ]: Secured mosMail() against unvalidated input
  # SECURITY A1 [ HIGH  Level ]: Secured JosIsValidEmail() - in previous versions the existance of an email address somewhere in the string was sufficient
  # SECURITY A2 [ LOW Level ]: Secured com_content to not allow the tasks 'emailform' and 'emailsend' if $mosConfig_hideEmail is set
- 
+
  # Fixed : Empty subject in com_content mail2friend no longer possible
  # Fixed : Show error message if com_content mail2friend fails
  # Fixed : Show error message if com_contact mail fails
@@ -143,11 +573,11 @@ A6 Injection Flaws
 
 
 18-Aug-2006 Rey Gigataras
- # SECURITY A1 [ MEDIUM Level ]: globals.php not included in administrator/index.php 
+ # SECURITY A1 [ MEDIUM Level ]: globals.php not included in administrator/index.php
  # SECURITY A2 [ MEDIUM Level ]: do_pdf command bypasses the user authentication
  # SECURITY A2 [ LOW Level ]: emailform com_content task bypasses the user authentication
  # SECURITY A1 [ LOW Level ]: harden poll module
- 
+
  # Fixed [topic,72209] : Mambots fired on Modules
  + enable selective disabling of `Email Cloaking` bot via {emailcloak=off}
 
@@ -159,7 +589,7 @@ A6 Injection Flaws
 
 
 17-Aug-2006 Mateusz Krzeszowiec
- # Fixed logging query before applying LIMIT 
+ # Fixed logging query before applying LIMIT
 
 
 15-Aug-2006 Marko Schmuck
@@ -191,7 +621,7 @@ A6 Injection Flaws
 
 27-July-2006 Robin Muilwijk
  # SECURITY A2 [ MEDIUM Level ]: [artf5335] : missing direct access line
- 
+
  # Fixed [artf5282] : missing table row tag and self closing tag
  # Fixed [artf5297] : small html errors
 
@@ -207,7 +637,7 @@ A6 Injection Flaws
  # Fixed [artf5126] : includes/database.php uses deprecated function
  # Fixed [artf5171] : mosGetParam Default value issue
  # Fixed [artf5112] : A mere mistake in the file contact.html.php
- 
+
 
 --------------------------------------------------------------------------------------
 ---------------- 1.0.10 Stable Released -- [26-June-2006 00:00 UTC] ------------------
@@ -219,21 +649,21 @@ Joomla! utilizes the Open Web Application Security Project (OWASP) web applicati
 http://www.owasp.org/index.php/OWASP_Top_Ten_Project
 
 
-03 HIGH Level Threats fixed in 1.0.10 
+03 HIGH Level Threats fixed in 1.0.10
 
 A1 Unvalidated Input
  * A1 - Secured `Remember Me` functionality against SQL injection attacks
  * A1 - Secured `Related Items` module against SQL injection attacks
  * A1 - Secured `Weblinks` submission against SQL injection attacks
- 
- 
-01 MEDIUM Level Threats fixed in 1.0.10 
+
+
+01 MEDIUM Level Threats fixed in 1.0.10
 
 A4 Cross Site Scripting
  * A4 - Secured SEF from XSS vulnerability
 
 
-05 LOW Level Threats fixed in 1.0.10 
+05 LOW Level Threats fixed in 1.0.10
 
 A1 Unvalidated Input
  * A1 - Hardened frontend submission forms against spoofing
@@ -249,7 +679,7 @@ A4 Cross Site Scripting
 
 25-June-2006 Rey Gigataras
  # SECURITY A1 [ Low Level ]: mosgetparam sets variable type to integer if default value is detected as numeric
- 
+
  # Fixed [artf5091] : Missing closing "}" in one of PatFactory templates
  # Fixed [topic,71858] : Content Archive issue when caching on
  # Fixed [topic,71859] : Unable to login frontend
@@ -258,8 +688,8 @@ A4 Cross Site Scripting
 
 23-June-2006 Rey Gigataras
  # SECURITY A1 [ Low Level ]: mosmsg hardened
- 
- # Fixed [artf5059] : Blog ordering, items by - most hits 
+
+ # Fixed [artf5059] : Blog ordering, items by - most hits
  # Fixed [artf4969] : Missing Itemid in readmore with multi category blog
  # Fixed [artf5083] : Problem with Description/Description Image parameters of "List - Content Section"
  # Fixed [topic,67719] : Email Cloaking Ads extra space after cloaked address
@@ -274,7 +704,7 @@ A4 Cross Site Scripting
 
 
 21-June-2006 David Gal
- # Fixed [topic,66858] : Can't set language 
+ # Fixed [topic,66858] : Can't set language
 
 
 21-June-2006 Rey Gigataras
@@ -284,7 +714,7 @@ A4 Cross Site Scripting
 
  # Fixed [artf4976] : htaccess file instructions confusing users
  # Fixed [artf4917] : PHP getenv function fails in ISAPI mode
- # Fixed [topic,69083] : mambots not being applied to `User` Module content 
+ # Fixed [topic,69083] : mambots not being applied to `User` Module content
  # Fixed [topic,69894] : Filter doesn't work when cache on
 
 
@@ -292,7 +722,7 @@ A4 Cross Site Scripting
  # Fixed [artf5025] : Category Titles with an Apostraphe leave a leading slash
  # Fixed [artf4927] : blocked user receives wrong error message
  # Fixed [topic,70612] : Very small text error in file sample_data.sql
- # Fixed [topic,69871] : mossef notice 
+ # Fixed [topic,69871] : mossef notice
  # Fixed [topic,68031] : Problems with banner.php
  # Fixed [topic,67826] : content.html weblinks.html display issues in Opera
  # Fixed [topic,67594] : Extra space in content.html.php
@@ -320,7 +750,7 @@ A4 Cross Site Scripting
  # Fixed [topic,67115] : Error warning frontend.php
  # Fixed [topic,67144] : Check for status of SEF in mossef incorrectly commented out
  # Fixed [topic,67279] : Voting/Rating not working when disabled globally, but enabled locally for selected items
- 
+
  # PERFORMANCE [topic,63468] : mod_fullmenu unnecessary count of archived items in section query
 
 
@@ -346,13 +776,13 @@ Joomla! utilizes the Open Web Application Security Project (OWASP) web applicati
 http://www.owasp.org/index.php/OWASP_Top_Ten_Project
 
 
-12 Low Level Threats fixed in 1.0.9 
+12 Low Level Threats fixed in 1.0.9
 
 A1 Unvalidated Input
  * A1 - Harden mosmsg
  * A1 - Hardening of backend `User Manager` to stop 'Adminstrators' from being able to create 'Super Administrator' users
- 
-A2 Broken Access Control 
+
+A2 Broken Access Control
  * A2 - Breadcrumbs title visibility even when access restricted
  * A2 - 'Edit Your Details' page now needs a published menu item to be accessible
  * A2 - 'Check-In My Items' page now needs a published menu item to be accessible
@@ -362,7 +792,7 @@ A2 Broken Access Control
  * A2 - Ensure module caching does not inadvertently make special level modules visible to registered users
  * A2 - Add ability to totally disable access to frontend login page
  * A2 - Add ability to disable frontend user params
- 
+
 A3 - Broken Authentication and Session Management
  * A3 - Changes to access level of user account will kill any active session for that user
 
@@ -390,8 +820,8 @@ A3 - Broken Authentication and Session Management
 
 01-June-2006 Rey Gigataras
  # Fixed : New Global Config params (added in 1.0.9) not created on clean install
- 
- 
+
+
 31-May-2006 Rey Gigataras
  # SECURITY A2 [ Low Level ]: New `Global Config` param to allow disabling of Frontend Login
  # SECURITY A2 [ Low Level ]: New `Global Config` param to allow disabling of Frontend User params
@@ -410,11 +840,11 @@ A3 - Broken Authentication and Session Management
 
 29-May-2006 Rey Gigataras
  # SECURITY A2 [ Low Level ]: [artf4752] : caching makes modules assigned to special user visible to registered users
- 
+
  # Fixed [artf4812] : In footer.php (C) should be &copy;
  # Fixed [artf4806] : typo in mambots/search/contacts.searchbot.php causes sef errors
- # Fixed [artf4752] : patTemplate strip comments problems 
- # Fixed [artf4752] : rss.php unnecessary logic code check 
+ # Fixed [artf4752] : patTemplate strip comments problems
+ # Fixed [artf4752] : rss.php unnecessary logic code check
  # Fixed [topic,64994] : problem with related items
  # Fixed [topic,64046] : adding new content Frontend fails with Authorization Error
 
@@ -431,15 +861,15 @@ A3 - Broken Authentication and Session Management
 
 22-May-2006 Rey Gigataras
  # PERFORMANCE [topic,63468] : slow auto-login because of new MD5 calculations on whole users DB
- 
+
  # Fixed [topic,63446] : Category and Section
 
 
 21-May-2006 Rey Gigataras
- # Fixed [artf4714] : Can't add Menu Item :: Link - Static Content 
+ # Fixed [artf4714] : Can't add Menu Item :: Link - Static Content
  # Fixed : "Unique Itemid" handling for `Link - Content Item`
  # Fixed : Add "Unique Itemid" handling for `Link - Static Content`
- # Fixed [artf4714] : Can't add Menu Item :: Link - Static Content 
+ # Fixed [artf4714] : Can't add Menu Item :: Link - Static Content
  # Fixed [topic,62056] : Copyright date
 
 
@@ -452,13 +882,13 @@ A3 - Broken Authentication and Session Management
 18-May-2006 Rey Gigataras
  # Fixed [artf4700] : pathway ampReplaces item name twice
  # Fixed [artf4712] : 'type' of $mosConfig_error_reporting does not match code
- 
+
  + Remember Expired Admin page functionality
 
 
 17-May-2006 Rey Gigataras
  # Fixed [artf4673] : setlocale
- # Fixed [artf4685] : unhandled fragment identifier with core SEF enabled 
+ # Fixed [artf4685] : unhandled fragment identifier with core SEF enabled
  # Fixed [artf4678] : Print, PDF and email buttons aren't accessible
  # Fixed [topic,62124] : Hover for icons when editing content in front-end
  # Fixed [topic,62165] : Canot login - admin_session_life not set
@@ -467,27 +897,27 @@ A3 - Broken Authentication and Session Management
 15-May-2006 Rey Gigataras
  # Fixed [topic,61926] : Frontend static language text
  # Fixed [topic,61971] : E-mail cloaking broken, TinyMCE `mce_href` problem
- # Fixed : Frontend Content editing does not display correct publishing date/time 
+ # Fixed : Frontend Content editing does not display correct publishing date/time
  # Fixed : Frontend Content editing incorrect handling of 'Never' in `Finish Publishing`
  # Fixed : Incorrect date/time values on `Content Items Manager` and `Static Content Manager` pages
 
 
 14-May-2006 Rey Gigataras
  * SECURITY A2 [ Low Level ]: add ability to selectively disable certain types of syndicated feeds
- 
+
  ^ Upgrade to TinyMCE 2.0.6.1
- 
+
  # Fixed [topic,61897] : Changing any parameter for logged user returns to login screen
 
 
 13-May-2006 Rey Gigataras
  * SECURITY A1 [ Low Level ]: [artf4529] : User with access to administration area can easly create super administrator.
- 
+
  # Fixed [artf4555] : Slight Bug in registration system
  # Fixed [artf4641] : Module sites with one template - modules should not show up - itemid issue
  # Fixed : `Itemid=99999999` appearing in next & prev navigation links
  # Fixed : `Itemid=` appearing in `Blog` links items
- 
+
 
 13-May-2006 Andrew Eddie
  # Fixed [artf3302] : PatTemplate custom Functions getpage() undefined
@@ -505,7 +935,7 @@ A3 - Broken Authentication and Session Management
  # Fixed [artf4614] : Warning in mosCreateGUID
  # Fixed [artf4619] : task=category shows unpublished items
  # Fixed [artf4621] : Media manager with long filenames = no button
- # Fixed [artf4613] : Sub Menu Item deletion Security Bug 
+ # Fixed [artf4613] : Sub Menu Item deletion Security Bug
  # Fixed [artf4613] : Restoring menu items without a valid parent
  # Fixed [topic,59258] : bug when editing user profile
  # Fixed [topic,61190] : Menu Item Inconsistency
@@ -521,14 +951,14 @@ A3 - Broken Authentication and Session Management
 
 28-Apr-2006 Alex Kempkens
  # Fixed artf : Language loading incorrect in offline mode (related to Joom!Fish language changes)
- 
- 
+
+
 27-Apr-2006 Rey Gigataras
  + Support for restricting ability to access certain functionality for demo sites
 
  # Fixed [artf4527] : incorrect style in function botNoEditorEditorArea
- # Fixed [topic,57926] : mod_poll.php Warning 
- 
+ # Fixed [topic,57926] : mod_poll.php Warning
+
 
 26-Apr-2006 Rey Gigataras
  # Fixed [artf3912] : Pear's cache lite and safe_mode
@@ -554,7 +984,7 @@ A3 - Broken Authentication and Session Management
 
 20-Apr-2006 Rey Gigataras
  * SECURITY A3 [ Low Level ]: Allow only one session per user account in Admin Backend
- 
+
  + Allow `save` and `apply` actions to be completed before logging out expired sessions
 
 
@@ -590,7 +1020,7 @@ A3 - Broken Authentication and Session Management
  # Fixed : SEF.php incorrect handling of `mailto` & `javascript` links
  # Fixed : $shownoauth default value in `configuration.php-dist`
  # Fixed : `live_bookmarks` not being disbaled properly by security check;
- # Fixed : admin `contact` and `weblink` ordering 
+ # Fixed : admin `contact` and `weblink` ordering
 
 
 08-Apr-2006 Rey Gigataras
@@ -610,7 +1040,7 @@ A3 - Broken Authentication and Session Management
  * SECURITY A2 [ Low Level ]: check for menu item added to 'Check-In My Items' page
  * SECURITY A2 [ Low Level ]: check for menu item added to 'Submit News' page
  * SECURITY A2 [ Low Level ]: check for menu item added to 'Submit Weblink' page
- 
+
  # Fixed [artf4282] : Extra Empty Menu Span Tags
 
 
@@ -646,7 +1076,7 @@ A3 - Broken Authentication and Session Management
  # Fixed [artf4028] : url to the site is added to the entered link in a menu item (SEF disabled)
  # Fixed [artf4102] : mosimage.php - Erroneous right alignment of images
  # Fixed [artf4131] : com_contact displays non-localized message
- 
+
  ^ Upgrade to TinyMCE 2.0.5.1
  ^ Upgrade to TinyMCE compressor 1.0.8
  ^ TinyMCE remove `Help` tab in help popup
@@ -656,8 +1086,8 @@ A3 - Broken Authentication and Session Management
 27-Mar-2006 Alex Kempkens
  # corrcted searchbot; finding dynamic content while searching for static
  # updated core-SEF support for new multilingual_content config var
- 
- 
+
+
 24-Mar-2006 Alex Kempkens
  + Check for mambot/system directory in installer and installation dialogs
  # [artf4066]	content sections not being translated
@@ -672,9 +1102,9 @@ A3 - Broken Authentication and Session Management
 
 15-Mar-2006 Rey Gigataras
  # Fixed [artf3927] : Typo in Installer Screen
- # Fixed [artf3940] : single quotes/apostrophes (') 
- # Fixed [topic,46202.0.html] : Problem found in Session id function 
- 
+ # Fixed [artf3940] : single quotes/apostrophes (')
+ # Fixed [topic,46202.0.html] : Problem found in Session id function
+
 
 13-Mar-2006 Rey Gigataras
  ^ PERFORMANCE : com_content only add call to jos_content_rating where voting option activated
@@ -702,7 +1132,7 @@ A3 - Broken Authentication and Session Management
 10-Mar-2006 Rey Gigataras
  # Fixed [artf3885] : Remove the last hardcoded texts
  # Fixed [artf3713] : Joomla still doesn't work with SQL mode enabled
- 
+
  ^ Ensure showPathway is only called once
 
 
@@ -719,14 +1149,14 @@ A3 - Broken Authentication and Session Management
  # Fixed [topic,41627.0.html] : "Undefined variable: filter"
  # Fixed [topic,43315.0.html] : Static text in content.php
  # Fixed [topic,41466.0.html] : NullDate AND '0000-00-00 00:00:00'
- 
+
  ^ Global define of _CURRENT_SERVER_TIME
  ^ sef.php optimization
 
 
 07-Mar-2006 Rey Gigataras
  + Show whether Cache directory is writable where it is used - com_newsfeeds, com_syndicate, custom modules
- 
+
  # Fixed [artf3818] : Path error for agent_browser.php in joomla.php
  # Fixed ensure all require and include calls are using absolute paths
 
@@ -736,30 +1166,30 @@ A3 - Broken Authentication and Session Management
  # Fixed [artf3745] : includes/joomla.php on line 790 setSessionGarbageClean
  # Fixed [topic,41619.0.html] : mosimage caption problem
  # Fixed [topic,42023.0.html] : sample data error with Link - Static Content CID value
- 
+
 
 02-Mar-2006 Rey Gigataras
  # Fixed [artf3728] : Error if change the "Syndicate" name in db table "jos_components"
  # Fixed [artf3731] : mod_newsflash shows errors when no items are available
- # Fixed [artf3733] : Site (frontend): url to the site is added to the entered link in a content item. 
- # Fixed [artf3696] : Typo Site Mambot: Edit [ TinyMCE WYSIWYG Editor ] 
+ # Fixed [artf3733] : Site (frontend): url to the site is added to the entered link in a content item.
+ # Fixed [artf3696] : Typo Site Mambot: Edit [ TinyMCE WYSIWYG Editor ]
  # Fixed [artf3658] : "New" Content Link/Image Showing With No Categories Present
  # Fixed [artf3697] : sefreltoabs error with links to other sites
 
 
 01-Mar-2006 Rey Gigataras
  * SECURITY A1 [ Low Level ]: Harden mosmsg
- 
+
  # Fixed [artf3656] : contact-component, dropdown
 
 
 28-Feb-2006 Rey Gigataras
  # Fixed [artf3655] : Login module error
  # Fixed [artf3668] : mosemailcloak bug with mailto:
- # Fixed [artf3681] : invalid markup in com_content showCategories() 
- # Fixed [artf3688] : Hardcoded text in contact.html.php 
- # Fixed [artf3664] : Image links gets preceeded by "Live Site" URL after v1.0.8 upgrade 
- # Fixed [artf3703] : configuration.php-dist has a typo 
+ # Fixed [artf3681] : invalid markup in com_content showCategories()
+ # Fixed [artf3688] : Hardcoded text in contact.html.php
+ # Fixed [artf3664] : Image links gets preceeded by "Live Site" URL after v1.0.8 upgrade
+ # Fixed [artf3703] : configuration.php-dist has a typo
  # Fixed [topic,41404.0.html] : configuration.php-dist missing `;`
 
 
@@ -776,25 +1206,25 @@ Medium Level Threat
 
  * Disallow `Weblink` item from being accessible when 'unpublished'
  * Disallow `Polls` item from being accessible when 'unpublished'
- 
+
  * Disallow `Newfeeds` item from being accessible when category 'unpublished'
- * Disallow `Weblinks` item from being accessible when category 'unpublished' 
- 
+ * Disallow `Weblinks` item from being accessible when category 'unpublished'
+
  * Disallow `Content` item from being accessible despite section/category 'access level'
  * Disallow `Newsfeed` item from being accessible despite category 'access level'
- * Disallow `Weblink` item from being accessible despite category 'access level' 
- 
+ * Disallow `Weblink` item from being accessible despite category 'access level'
+
  * Disallow `Content` item from being visible despite category 'access level' in `Content Section` view  - `Blog - Content Section` & `Blog - Content Section Archive`
 
- * Disallow `Content` items from being viewable when category/section 'unpublished' - mod_newsflash 
- 
- 
+ * Disallow `Content` items from being viewable when category/section 'unpublished' - mod_newsflash
+
+
  Low Level Threat
  * Harden frontend Session ID
  * Harden against multiple Admin SQL Injection Vulnerabilities
  * Disable ability to enter more than one email address in Contact Component contact form
  * Harden Contact Component with param option to check for existance of session cookie - enabled by default
- * Addiotnal check for correct Admin session name 
+ * Addiotnal check for correct Admin session name
 
  * Disallow access to syndication functionality
  * Disallow `Newsfeeds` Categories from being accessible when 'unpublished'
@@ -825,18 +1255,18 @@ Medium Level Threat
  # Fixed [topic,40568.0.html] : Conversion of &amp; to & when editing 'new' modules, breaking xhtml compliance
  # Fixed [topic,40568.0.html] : Itemid=99999999 visible when navigating polls
  # Fixed [artf3630] : Site name printed twice in the popup window title (print, email to friend)
- 
+
  ^ Upgraded to TinyMCE 2.0.4
- 
+
  - Depreciated Admin templates - mambo_admin & mambo_admin_blue
 
 
 24-Feb-2006 Rey Gigataras
- * SECURITY [ Low Level ]: Add check for correct Admin session name 
- 
+ * SECURITY [ Low Level ]: Add check for correct Admin session name
+
  # Fixed HTTP_ACCEPT_ENCODING problems
  # Fixed incorrect handling of external links with mossef
-   
+
  ^ Special Flag to allow different login behaviour of site for Production vs online Demo site
 
 
@@ -853,16 +1283,16 @@ Medium Level Threat
  # Fixed [artf3591] : Error if unpublish menu item
  # Fixed [topic,39295.0.html] : SEF handling of custom .htaccess reconfigured urls
  # Fixed [topic,39295.0.html] : mod_login return value incorrectly returning 'index.php?' if coming from site homepage
- 
+
  ^ Frontend Session Tracking cookie uses `Expire at End of Session`, rather than expiry by a set time to resolve issues with incorrect system clocks
- 
+
 
 21-Feb-2006 Rey Gigataras
  * SECURITY [ Medium Level ]: Real server path disclosure in mod_templatechooser
 
- # Fixed [topic,39295.0.html] : Incorrect favicon path in installer 
+ # Fixed [topic,39295.0.html] : Incorrect favicon path in installer
  # Fixed [topic,39295.0.html] : Admin logout does not clear/delete session being logged out
- 
+
  ^ Remember Me Cookie amalgamated into a single cookie.
 
 
@@ -886,14 +1316,14 @@ Medium Level Threat
  ^ PERFORMANCE : Reduce queries used by search bots to load params
  ^ PERFORMANCE : 'editor-xtd' bot group loaded only once - affect = reduction in queries
  ^ Refactored session handling code for Admin sessions
- 
+
  + session.gc_maxlifetime setting for Admin Sessions
 
 
 17-Feb-2006 Rey Gigataras
  # Fixed [artf3543] : Rev 2393 Language Manager Error
  # Fixed [topic,22061.0.html] : Wrapper Autoheight ability set to off by default, as causes javascript errors when used on sites not on your domain
- # Fixed [topic,30542.0.html] : MySQL 5 support in strict mode 
+ # Fixed [topic,30542.0.html] : MySQL 5 support in strict mode
  # Fixed [artf3605] : Spelling error when saving content
  # Fixed [artf3576] : Javascript conflict in mod_wrapper
 
@@ -904,15 +1334,15 @@ Medium Level Threat
 
  + new Admin Session Life Global Config param, allowing setting of admin session idle logout time
  + query debug mode to backend
- 
+
 
 16-Feb-2006 Rey Gigataras
  # Fixed [artf3523] : mosemailcloak issue with mailto params
  # Fixed : disable mossef bot from working on mailto links
  # Fixed [topic,36637.0.html] : SEF deactivated relative & absolute url handling
  # Fixed [topic,36637.0.html] : Session username not correct for those coming from `Remember Me` cookie
- 
- + PERFORMANCE : Simple check for all bots to determine whether they should process further 
+
+ + PERFORMANCE : Simple check for all bots to determine whether they should process further
  ^ PERFORMANCE : Reduce queries used by bots to load params - mosemailcloak, mosimage, mosloadposition, mospaging - affect = reduction in queries
  ^ PERFORMANCE : 'editor-xtd' bot group loaded only when needed - affect = reduction in queries
 
@@ -925,16 +1355,16 @@ Medium Level Threat
 
 14-Feb-2006 Rey Gigataras
  * SECURITY [ Low Level ]: Disable ability to enter more than one email address in Contact Component contact form
- 
+
  # Fixed [artf3144] : NULL values from SQL tables not loaded
  # Fixed [topic,31769.0.html] : $access variable conflict com_content
  # Fixed [topic,32201.0.html] : mod_related_items urls not xhtml compliant
  # Fixed [topic,31185.0.html] : heading in pagination not working
- # Fixed [topic,10947.0.html] : Add Prefix check to installer  
- # Fixed [artf3082] : Template preview *still* not available 
+ # Fixed [topic,10947.0.html] : Add Prefix check to installer
+ # Fixed [artf3082] : Template preview *still* not available
  # Fixed [artf2925] : mosGetParam has side affects
- # Fixed [topic,38017.0.html] : Content -> New -> Cancel 
- 
+ # Fixed [topic,38017.0.html] : Content -> New -> Cancel
+
  ^ Upgraded TinyMCE to 2.0.3 & TinyMCE GZip Compressor to 1.0.7
 
 
@@ -950,14 +1380,14 @@ Medium Level Threat
  * SECURITY [ Low Level ]: Content Search returns items despite section 'access level'
  * SECURITY [ Low Level ]: Newsfeed Search returns items despite category 'state'
  * SECURITY [ Low Level ]: Weblink Search returns items despite category 'state'
- 
+
  # Fixed [artf3391] : Aphostrophes in Category: Edit
  # Fixed [artf3291] : Alert() problem
  # Fixed [artf3188] : Unnecessary table cell in contact.html.php
  # Fixed [artf3121] : css errors in tiny_mce and rhuk_solarflare_ii template
  # Fixed [artf3181] : Task routing class
  # Fixed [artf3400] : showCalendar does not get value of date
- # Fixed [artf3348] : Bold tag overrides css in mod_poll.php 
+ # Fixed [artf3348] : Bold tag overrides css in mod_poll.php
  # Fixed [artf3120] : &and & &link not defined in admin.categories.php
  # Fixed [artf3446] : Problems with mosimage with caption
  # Fixed [artf3100] : Incorrect Response Headers for Missing Pages
@@ -970,7 +1400,7 @@ Medium Level Threat
 11-Feb-2006 Rey Gigataras
  * SECURITY [ Medium Level ]: Protect against real server path disclosure via syndication component
  * SECURITY [ Medium Level ]: Limit arbitrary file creation via syndication component
- 
+
  # Fixed [artf3397] : link to menu and loss of images list
  # Fixed [artf3109] : 1.0.7 "The XML page cannot be displayed ERROR" ob_gzhandler issue
  # Fixed [artf3447] : TinyMCE and relative urls
@@ -981,26 +1411,26 @@ Medium Level Threat
  # Fixed [artf3402] : Missing param in module
  # Fixed [artf3067] : Reopen: Unhandled fragment identifier with core SEF enabled
  # Fixed [topic,31813.0.html] : new .htaccess gives proper 404s [Steve Graham]
- 
+
  + Disable session.use_trans_sid to .htaccess
 
 
 10-Feb-2006 Rey Gigataras
  * SECURITY [ Low Level ]: Harden frontend Session ID
- 
+
  # Fixed [artf3421] : Session cleanup relies on administrator login
  # Fixed [artf3307] : Error in code - non critical, but logout setcookie not working
- # Fixed [artf3126] : Short open PHP tag in pathway.php 
+ # Fixed [artf3126] : Short open PHP tag in pathway.php
  # Fixed [artf3126] : [artf3413] : small problem with variable in xml_domit_lite_parser.php
  # Fixed [topic,34620.0.html] : Excessive Joomla Sessions, and AOL Login Problem [Steve Graham]
  # Fixed mosWarning() $title error
- 
- + New Session Type Global Config param 
+
+ + New Session Type Global Config param
 
 08-Feb-2006 Rey Gigataras
- * SECURITY [ Medium Level ]: # Fixed : `Content` items viewable when category/section 'unpublished' - mod_newsflash 
+ * SECURITY [ Medium Level ]: # Fixed : `Content` items viewable when category/section 'unpublished' - mod_newsflash
  * SECURITY [ Low Level ]: # Fixed : `Content` item links visible despite category/section 'access level' - mod_newsflash, mod_latestnews, mod_mostread
- 
+
  # Fixed [artf3393] : Latestnews doesn't show static content
 
 
@@ -1022,16 +1452,16 @@ Medium Level Threat
  * SECURITY [ Low Level ]: # Fixed : `Newsfeeds` Categories accessible despite category 'access level'
  * SECURITY [ Low Level ]: # Fixed : `Weblinks` Categories accessible despite category 'access level'
  * SECURITY [ Low Level ]: # Fixed : `Content Category` view accessible despite section/category 'access level' - `Table - Content Category`
- * SECURITY [ Low Level ]: # Fixed : `Content Category` view accessible despite category 'access level' - `Blog - Content Category` & `Blog - Content Category Archive` 
+ * SECURITY [ Low Level ]: # Fixed : `Content Category` view accessible despite category 'access level' - `Blog - Content Category` & `Blog - Content Category Archive`
  * SECURITY [ Low Level ]: # Fixed : `Content Section` view accessible despite section 'access level' - `Table - Content Section`
 
  ^ Contact Items display Authorization block text if category 'access level' denies access
  ^ Blog pages display Authorization block text if section/category 'access level' denies access
- 
- 
+
+
 29-Jan-2006 Rey Gigataras
- * SECURITY [ Medium Level ]: # Fixed : `Weblinks` item accessible when category 'unpublished' 
- 
+ * SECURITY [ Medium Level ]: # Fixed : `Weblinks` item accessible when category 'unpublished'
+
  ^ Blog pages display Authorization block text if section/category being unpublished
 
 
@@ -1104,7 +1534,7 @@ Low Level Threat
  # Fixed [artf3038] : Warning: array_search(): Wrong datatype for second argument in
  # Fixed [artf3037] : New 404 tags aren't translated
  # Fixed [artf3035] : Bug with mod_newsflash
- 
+
 12-Jan-2006 Alex Kempkens
  # Fixed mosFormateDate, handling offset's with value 0
 
@@ -1113,11 +1543,11 @@ Low Level Threat
  # Fixed [artf2070] : mosHTML:encoding_converter() breaks with &ouml;
  # Fixed missing <li> tag in newsfeed component
  # Fixed [artf1487] : Media Manager breaks when illegal characters in uploaded file name
- # Fixed [artf2108] : Saving a parent inside of a child 
+ # Fixed [artf2108] : Saving a parent inside of a child
  + caching support to `Frontpage` component
  + missing param for `Table - Weblink Category`
  - sef handling in mod_search.php as SEF
- - unnecessary `checked out` check in  mod_latestnews.php and mod_mostread.php 
+ - unnecessary `checked out` check in  mod_latestnews.php and mod_mostread.php
  - unnecessary param variable in mod_latestnews.php
 
 10-Jan-2006 Rey Gigataras
@@ -1134,8 +1564,8 @@ Low Level Threat
  * SECURITY [ Low Level ]: Fixed [artf2950] : Information leak with Vcard hide function
  * SECURITY [ Low Level ]: changed `VCard` param option for new Contacts now set to `hide`
  # Fixed DOMIT bugs [identified by sarahk] http://sarahk.pcpropertymanager.com/blog/using-domit-rss/225/
- # Fixed [artf2793] : New user confirmation link warning on login 
- # Fixed [artf2732] : Pagination in the Blog section/category doesnt work 
+ # Fixed [artf2793] : New user confirmation link warning on login
+ # Fixed [artf2732] : Pagination in the Blog section/category doesnt work
  # Fixed [artf2943] : Incorrect Redirect for Weblinks
  # Fixed [artf2945] : Undefined constant in php_http_exceptions.php
 
@@ -1153,7 +1583,7 @@ Low Level Threat
 
 04-Jan-2006 Rey Gigataras
  * SECURITY [ Low Level ]: Fixed [artf2050] : Itemid in index2.php
- # Fixed Related items Module shows Expired items - Mambo Tracker [#7590] 
+ # Fixed Related items Module shows Expired items - Mambo Tracker [#7590]
  # Fixed [artf2185] : Changing weblinks possible for everyone
 
 03-Jan-2006 Andy Miller
@@ -1171,7 +1601,7 @@ Low Level Threat
  # Fixed [artf2780] : Newsflash Read More bad link
  # Fixed [artf2786] : Newsflash module not picking up "linked title" global setting
  # Fixed [artf2810] : 1.0.x changelog incorrectly states release date of 1.0.5
- 
+
 30-Dec-2005 Rey Gigataras
  # Fixed `Unlimited` banner impressions option
  # Fixed [artf2776] : Multiple banners not possible
@@ -1181,7 +1611,7 @@ Low Level Threat
  # Fixed [artf2646] : name="" not valid XHTML
  # Fixed [artf2747] : title_alias is missing in mambots
  # Fixed `Reset Clicks` button not working in admin component `Banner Manager`
- # Fixed [artf2712] : Clicks reset on save 
+ # Fixed [artf2712] : Clicks reset on save
 
 29-Dec-2005 Andrew Eddie
  ^ SEF error handling throws to new /templates/404.php file

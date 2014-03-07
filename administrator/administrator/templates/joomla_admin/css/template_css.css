@@ -1,5 +1,5 @@
 /**
-* @version $Id: template_css.css 1594 2005-12-31 04:51:00Z stingrey $
+* @version $Id: template_css.css 5855 2006-11-27 03:06:27Z rmdstudio $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -62,7 +62,7 @@ a:active {
 }
 
 table#toolbar {
-	margin-right: 10px;
+	margin: 3px 10px;
 }
 
 table#toolbar a.toolbar {
@@ -287,9 +287,11 @@ table.adminlist th a:hover {
 
 table.adminlist tr.row0 {
 	background-color: #F9F9F9;
+	text-align: left;
 }
 table.adminlist tr.row1 {
 	background-color: #FFF;
+	text-align: left;
 }
 table.adminlist td {
 	border-bottom: 1px solid #e5e5e5;

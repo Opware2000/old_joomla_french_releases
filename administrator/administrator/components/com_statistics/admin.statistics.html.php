@@ -240,7 +240,7 @@ class HTML_statistics {
 			<td align="right">
 				<?php
 				if ( !$showResults ) {
-					echo mosWarning('Activating this can dramatically slow and even lock your site as it is a highly query intensive operation');
+					echo mosWarning('Si cette option est activée elle peut réduire considérablement les performances de votre site');
 				}
 				?>
 			</td>
@@ -248,11 +248,11 @@ class HTML_statistics {
 				<?php
 				if ( $showResults ) {
 					?>
-					<input name="search_results" type="button" class="button" value="Hide Search Results" onclick="submitbutton('searches');">
+					<input name="search_results" type="button" class="button" value="Masquer les résultats" onclick="submitbutton('searches');">
 					<?php
 				} else {
 					?>
-					<input name="search_results" type="button" class="button" value="Show Search Results" onclick="submitbutton('searchesresults');">
+					<input name="search_results" type="button" class="button" value="Afficher les résultats" onclick="submitbutton('searchesresults');">
 					<?php
 				}
 				?>

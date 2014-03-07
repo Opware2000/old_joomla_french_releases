@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: admin.sections.php 5874 2006-11-29 00:21:35Z facedancer $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -20,8 +20,8 @@ require_once( $mainframe->getPath( 'admin_html' ) );
 define( 'COM_IMAGE_BASE', $mosConfig_absolute_path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'stories' );
 
 // get parameters from the URL or submitted form
-$scope 		= mosGetParam( $_REQUEST, 'scope', '' );
-$section 	= mosGetParam( $_REQUEST, 'scope', '' );
+$scope 		= stripslashes( mosGetParam( $_REQUEST, 'scope', '' ) );
+$section 	= stripslashes( mosGetParam( $_REQUEST, 'scope', '' ) );
 
 $cid 		= josGetArrayInts( 'cid' );
 
@@ -114,7 +114,7 @@ function showSections( $scope, $option ) {
 	// get the total number of records
 	$query = "SELECT COUNT(*)"
 	. "\n FROM #__sections"
-	. "\n WHERE scope = '$scope'"
+	. "\n WHERE scope = " . $database->Quote( $scope )
 	;
 	$database->setQuery( $query );
 	$total = $database->loadResult();
@@ -127,7 +127,7 @@ function showSections( $scope, $option ) {
 	. "\n LEFT JOIN #__content AS cc ON c.id = cc.sectionid"
 	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
 	. "\n LEFT JOIN #__groups AS g ON g.id = c.access"
-	. "\n WHERE scope = '$scope'"
+	. "\n WHERE scope = " . $database->Quote( $scope )
 	. "\n GROUP BY c.id"
 	. "\n ORDER BY c.ordering, c.name"
 	;
@@ -143,7 +143,7 @@ function showSections( $scope, $option ) {
 	for ( $i = 0; $i < $count; $i++ ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__categories AS a"
-		. "\n WHERE a.section = '". $rows[$i]->id ."'"
+		. "\n WHERE a.section = '" . (int) $rows[$i]->id . "'"
 		. "\n AND a.published != -2"
 		;
 		$database->setQuery( $query );
@@ -154,7 +154,7 @@ function showSections( $scope, $option ) {
 	for ( $i = 0; $i < $count; $i++ ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__content AS a"
-		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
+		. "\n WHERE a.sectionid = " . (int) $rows[$i]->id
 		. "\n AND a.state != -2"
 		;
 		$database->setQuery( $query );
@@ -165,7 +165,7 @@ function showSections( $scope, $option ) {
 	for ( $i = 0; $i < $count; $i++ ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__content AS a"
-		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
+		. "\n WHERE a.sectionid = " . (int) $rows[$i]->id
 		. "\n AND a.state = -2"
 		;
 		$database->setQuery( $query );
@@ -192,7 +192,7 @@ function editSection( $uid=0, $scope='', $option ) {
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
-		$msg = 'La section '. $row->title .' est actuellement édité par un autre administrateur';
+		$msg = 'La section '. $row->title .' est actuellement éditée par un autre administrateur';
 		mosRedirect( 'index2.php?option='. $option .'&scope='. $row->scope .'&mosmsg='. $msg );
 	}
 
@@ -202,7 +202,7 @@ function editSection( $uid=0, $scope='', $option ) {
 		if ( $row->id > 0 ) {
 			$query = "SELECT *"
 			. "\n FROM #__menu"
-			. "\n WHERE componentid = '". $row->id ."'"
+			. "\n WHERE componentid = " . (int) $row->id
 			. "\n AND ( type = 'content_archive_section' OR type = 'content_blog_section' OR type = 'content_section' )"
 			;
 			$database->setQuery( $query );
@@ -259,7 +259,7 @@ function editSection( $uid=0, $scope='', $option ) {
 	// build the html select list for ordering
 	$query = "SELECT ordering AS value, title AS text"
 	. "\n FROM #__sections"
-	. "\n WHERE scope='$row->scope' ORDER BY ordering"
+	. "\n WHERE scope=" . $database->Quote( $row->scope ) . " ORDER BY ordering"
 	;
 	$lists['ordering'] 			= mosAdminMenus::SpecificOrdering( $row, $uid, $query );
 
@@ -301,9 +301,9 @@ function editSection( $uid=0, $scope='', $option ) {
 function saveSection( $option, $scope, $task ) {
 	global $database;
 
-	$menu 		= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
+	$menu 		= stripslashes( strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) ) );
 	$menuid		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
-	$oldtitle 	= strval( mosGetParam( $_POST, 'oldtitle', null ) );
+	$oldtitle 	= stripslashes( strval( mosGetParam( $_POST, 'oldtitle', null ) ) );
 
 	$row = new mosSection( $database );
 	if (!$row->bind( $_POST )) {
@@ -317,8 +317,8 @@ function saveSection( $option, $scope, $task ) {
 	if ( $oldtitle ) {
 		if ( $oldtitle != $row->title ) {
 			$query = "UPDATE #__menu"
-			. "\n SET name = '$row->title'"
-			. "\n WHERE name = '$oldtitle'"
+			. "\n SET name = " . $database->Quote( $row->title )
+			. "\n WHERE name = " . $database->Quote( $oldtitle )
 			. "\n AND type = 'content_section'"
 			;
 			$database->setQuery( $query );
@@ -328,7 +328,7 @@ function saveSection( $option, $scope, $task ) {
 
 	// handling for MOSImage directories
 	$folders 		= mosGetParam( $_POST, 'folders', array() );
-	$folders 		= implode( ',', $folders );	
+	$folders 		= implode( ',', $folders );
 	if ( strpos( $folders, '*1*' ) !== false  ) {
 		$folders 	= '*1*';
 	} else if ( strpos( $folders, '*0*' ) !== false ) {
@@ -391,12 +391,13 @@ function removeSections( $cid, $scope, $option ) {
 		exit;
 	}
 
-	$cids = implode( ',', $cid );
+	mosArrayToInts( $cid );
+	$cids = 's.id=' . implode( ' OR s.id=', $cid );
 
 	$query = "SELECT s.id, s.name, COUNT(c.id) AS numcat"
 	. "\n FROM #__sections AS s"
 	. "\n LEFT JOIN #__categories AS c ON c.section=s.id"
-	. "\n WHERE s.id IN ( $cids )"
+	. "\n WHERE ( $cids )"
 	. "\n GROUP BY s.id"
 	;
 	$database->setQuery( $query );
@@ -416,9 +417,10 @@ function removeSections( $cid, $scope, $option ) {
 	}
 
 	if (count( $cid )) {
-		$cids = implode( ',', $cid );
+		mosArrayToInts( $cid );
+		$cids = 'id=' . implode( ' OR id=', $cid );
 		$query = "DELETE FROM #__sections"
-		. "\n WHERE id IN ( $cids )"
+		. "\n WHERE ( $cids )"
 		;
 		$database->setQuery( $query );
 		if (!$database->query()) {
@@ -458,7 +460,6 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 		exit;
 	}
 
-	$cids = implode( ',', $cid );
 	$count = count( $cid );
 	if ( $publish ) {
 		if ( !$count ){
@@ -467,10 +468,13 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 		}
 	}
 
+	mosArrayToInts( $cid );
+	$cids = 'id=' . implode( ' OR id=', $cid );
+
 	$query = "UPDATE #__sections"
-	. "\n SET published = " . intval( $publish )
-	. "\n WHERE id IN ( $cids )"
-	. "\n AND ( checked_out = 0 OR ( checked_out = $my->id ) )"
+	. "\n SET published = " . (int) $publish
+	. "\n WHERE ( $cids )"
+	. "\n AND ( checked_out = 0 OR ( checked_out = " . (int) $my->id  . " ) )"
 	;
 	$database->setQuery( $query );
 	if (!$database->query()) {
@@ -485,10 +489,12 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 
 	// check if section linked to menu items if unpublishing
 	if ( $publish == 0 ) {
+		mosArrayToInts( $cid );
+		$cids = 'componentid=' . implode( ' OR componentid=', $cid );
 		$query = "SELECT id"
 		. "\n FROM #__menu"
 		. "\n WHERE type = 'content_section'"
-		. "\n AND componentid IN ( $cids )"
+		. "\n AND ( $cids )"
 		;
 		$database->setQuery( $query );
 		$menus = $database->loadObjectList();
@@ -496,8 +502,8 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 		if ($menus) {
 			foreach ($menus as $menu) {
 				$query = "UPDATE #__menu"
-				. "\n SET published = " . intval( $publish )
-				. "\n WHERE id = $menu->id"
+				. "\n SET published = " . (int) $publish
+				. "\n WHERE id = " . (int) $menu->id
 				;
 				$database->setQuery( $query );
 				$database->query();
@@ -535,8 +541,8 @@ function orderSection( $uid, $inc, $option, $scope ) {
 
 	$row = new mosSection( $database );
 	$row->load( (int)$uid );
-	$row->move( $inc, "scope = '$row->scope'" );
-	
+	$row->move( $inc, "scope = " . $database->Quote( $row->scope ) );
+
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -556,18 +562,21 @@ function copySectionSelect( $option, $cid, $section ) {
 	}
 
 	## query to list selected categories
-	$cids = implode( ',', $cid );
+	mosArrayToInts( $cid );
+	$cids = 'a.section=' . implode( ' OR a.section=', $cid );
 	$query = "SELECT a.name, a.id"
 	. "\n FROM #__categories AS a"
-	. "\n WHERE a.section IN ( $cids )"
+	. "\n WHERE ( $cids )"
 	;
 	$database->setQuery( $query );
 	$categories = $database->loadObjectList();
 
 	## query to list items from categories
+	//mosArrayToInts( $cid ); // Just done a few lines earlier
+	$cids = 'a.sectionid=' . implode( ' OR a.sectionid=', $cid );
 	$query = "SELECT a.title, a.id"
 	. "\n FROM #__content AS a"
-	. "\n WHERE a.sectionid IN ( $cids )"
+	. "\n WHERE ( $cids )"
 	. "\n ORDER BY a.sectionid, a.catid, a.title"
 	;
 	$database->setQuery( $query );
@@ -583,96 +592,74 @@ function copySectionSelect( $option, $cid, $section ) {
 function copySectionSave( $sectionid ) {
 	global $database;
 
-	$title 		= strval( mosGetParam( $_REQUEST, 'title', '' ) );
-	$contentid 	= mosGetParam( $_REQUEST, 'content', '' );
-	$categoryid = mosGetParam( $_REQUEST, 'category', '' );
+	$title 		= stripslashes( strval( mosGetParam( $_REQUEST, 'title', '' ) ) );
+	$categories = josGetArrayInts( 'category', $_REQUEST, array(0) );
+	$items 		= josGetArrayInts( 'content', $_REQUEST, array(0) );
 
-	// copy section
+	// create new section
+
 	$section = new mosSection ( $database );
-	foreach( $sectionid as $id ) {
-		$section->load( $id );
-		$section->id 	= NULL;
-		$section->title = $title;
-		$section->name 	= $title;
-		if ( !$section->check() ) {
-			echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
-			exit();
-		}
-
-		if ( !$section->store() ) {
-			echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
-			exit();
-		}
-		$section->checkin();
-		$section->updateOrder( "section = " . $database->Quote( $section->id ) );
-		// stores original catid
-		$newsectids[]["old"] = $id;
-		// pulls new catid
-		$newsectids[]["new"] = $section->id;
+	$section->id = null;
+	$section->title = $title;
+	$section->name 	= $title;
+	$section->scope = 'content';
+	$section->published = 1;
+	if ( !$section->check() ) {
+		echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
+		exit();
 	}
-	$sectionMove = $section->id;
+	if ( !$section->store() ) {
+		echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
+		exit();
+	}
+	$section->checkin();
+	$newSectionId = $section->id;
 
-	// copy categories
-	$category = new mosCategory ( $database );
-	foreach( $categoryid as $id ) {
-		$category->load( $id );
+
+	// new section created, now copy categories
+
+	// old/new category lookup array
+	$newOldCatLookup = array();
+
+	foreach( $categories as $categoryId ) {
+		$category = new mosCategory( $database );
+		$category->load( $categoryId );
 		$category->id = NULL;
-		$category->section = $sectionMove;
-		foreach( $newsectids as $newsectid ) {
-			if ( $category->section == $newsectid["old"] ) {
-				$category->section = $newsectid["new"];
-			}
-		}
+		$category->section = $newSectionId;
+
 		if (!$category->check()) {
 			echo "<script> alert('".$category->getError()."'); window.history.go(-1); </script>\n";
 			exit();
 		}
-
 		if (!$category->store()) {
 			echo "<script> alert('".$category->getError()."'); window.history.go(-1); </script>\n";
 			exit();
 		}
 		$category->checkin();
-		$category->updateOrder( "section = " . $database->Quote( $category->section ) );
-		// stores original catid
-		$newcatids[]["old"] = $id;
-		// pulls new catid
-		$newcatids[]["new"] = $category->id;
+		$newOldCatLookup[$categoryId] = $category->id;
 	}
 
-	$content = new mosContent ( $database );
-	foreach( $contentid as $id) {
-		$content->load( $id );
-		$content->id = NULL;
-		$content->hits = 0;
-		foreach( $newsectids as $newsectid ) {
-			if ( $content->sectionid == $newsectid["old"] ) {
-				$content->sectionid = $newsectid["new"];
-			}
-		}
-		foreach( $newcatids as $newcatid ) {
-			if ( $content->catid == $newcatid["old"] ) {
-				$content->catid = $newcatid["new"];
-			}
-		}
-		if (!$content->check()) {
-			echo "<script> alert('".$content->getError()."'); window.history.go(-1); </script>\n";
-			exit();
-		}
+	// categories copied, now copy content items
 
-		if (!$content->store()) {
-			echo "<script> alert('".$content->getError()."'); window.history.go(-1); </script>\n";
+	foreach( $items as $itemId ) {
+		$item = new mosContent( $database );
+		$item->load( $itemId );
+
+		$item->id = null;
+		$item->catid = $newOldCatLookup[$item->catid];
+		$item->sectionid = $newSectionId;
+		if (!$item->check()) {
+			echo "<script> alert('".$item->getError()."'); window.history.go(-1); </script>\n";
 			exit();
 		}
-		$content->checkin();
+		if (!$item->store()) {
+			echo "<script> alert('".$item->getError()."'); window.history.go(-1); </script>\n";
+			exit();
+		}
+		$item->checkin();
 	}
-	$sectionOld = new mosSection ( $database );
-	$sectionOld->load( $sectionMove );
-	
-	// clean any existing cache files
-	mosCache::cleanCache( 'com_content' );
 
-	$msg = 'La section '. $sectionOld-> name .' et toutes ses catégories et articles a été copiée en tant que '. $title;
+	$msg = 'Les catégories et articles des sections sélectionnées ont été copiées vers la section '. $title .' .';
 	mosRedirect( 'index2.php?option=com_sections&scope=content&mosmsg='. $msg );
 }
 
@@ -780,7 +767,7 @@ function saveOrder( &$cid ) {
 				exit();
 			} // if
 			// remember to updateOrder this group
-			$condition = "scope = '$row->scope'";
+			$condition = "scope = " . $database->Quote( $row->scope );
 			$found = false;
 			foreach ( $conditions as $cond )
 				if ($cond[1]==$condition) {
@@ -811,7 +798,7 @@ function recursive_listdir( $base ) {
 	if(is_dir($base)) {
 		$dh = opendir($base);
 		while (false !== ($dir = readdir($dh))) {
-			if (is_dir($base .'/'. $dir) && $dir !== '.' && $dir !== '..' && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
+			if ($dir !== '.' && $dir !== '..' && is_dir($base .'/'. $dir) && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
 				$subbase = $base .'/'. $dir;
 				$dirlist[] = $subbase;
 				$subdirlist = recursive_listdir($subbase);

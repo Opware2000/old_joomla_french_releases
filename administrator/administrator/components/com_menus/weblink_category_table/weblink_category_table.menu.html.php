@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblink_category_table.menu.html.php 266 2005-09-30 04:44:59Z Levis $
+* @version $Id: weblink_category_table.menu.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -87,7 +87,7 @@ class weblink_category_table_menu_html {
 					Nom du lien:
 					</td>
 					<td width="200px">
-					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo $menu->name; ?>"/>
+					<input type="text" name="name" size="30" maxlength="100" class="inputbox" value="<?php echo htmlspecialchars( $menu->name, ENT_QUOTES ); ?>"/>
 					</td>
 					<td>
 					<?php

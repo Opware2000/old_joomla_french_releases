@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.modules.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: toolbar.modules.php 5012 2006-09-11 19:35:26Z friesengeist $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -31,7 +31,7 @@ switch ($task) {
 		if ( $mid ) {
 			$query = "SELECT published"
 			. "\n FROM #__modules"
-			. "\n WHERE id = $mid"
+			. "\n WHERE id = " . (int) $mid
 			;
 			$database->setQuery( $query );
 			$published = $database->loadResult();

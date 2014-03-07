@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.content.html.php 4070 2006-06-20 16:09:29Z stingrey $
+* @version $Id: admin.content.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ class HTML_content {
 
 		<table class="adminheading">
 		<tr>
-			<th class="edit" rowspan="2" nowrap>
+			<th class="edit" rowspan="2" nowrap="nowrap">
 			<?php
 			if ( $all ) {
 				?>
@@ -50,16 +50,16 @@ class HTML_content {
 			<?php
 			if ( $all ) {
 				?>
-				<td width="right" rowspan="2" valign="top">
+				<td align="right" rowspan="2" valign="top">
 				<?php echo $lists['sectionid'];?>
 				</td>
 				<?php
 			}
 			?>
-			<td width="right" valign="top">
+			<td align="right" valign="top">
 			<?php echo $lists['catid'];?>
 			</td>
-			<td width="right" valign="top">
+			<td valign="top">
 			<?php echo $lists['authorid'];?>
 			</td>
 		</tr>
@@ -68,7 +68,7 @@ class HTML_content {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 		</tr>
 		</table>
@@ -100,7 +100,7 @@ class HTML_content {
 			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Sauver Tri" /></a>
 			</th>
 			<th >
-			Acc&eacute;s
+			Acc&egrave;s
 			</th>
 			<th width="2%">
 			ID
@@ -129,6 +129,8 @@ class HTML_content {
 		$nullDate = $database->getNullDate();
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
+
+			mosMakeHtmlSafe($row);
 
 			$link 	= 'index2.php?option=com_content&sectionid='. $redirect .'&task=edit&hidemainmenu=1&id='. $row->id;
 
@@ -207,7 +209,7 @@ class HTML_content {
 				} else {
 					?>
 					<a href="<?php echo $link; ?>" title="Editer Article">
-					<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>
+					<?php echo $row->title; ?>
 					</a>
 					<?php
 				}
@@ -328,16 +330,16 @@ class HTML_content {
 			<?php
 			if ( $all ) {
 				?>
-				<td width="right" rowspan="2" valign="top">
+				<td align="right" rowspan="2" valign="top">
 				<?php echo $lists['sectionid'];?>
 				</td>
 				<?php
 			}
 			?>
-			<td width="right">
+			<td align="right" valign="top">
 			<?php echo $lists['catid'];?>
 			</td>
-			<td width="right">
+			<td valign="top">
 			<?php echo $lists['authorid'];?>
 			</td>
 		</tr>
@@ -346,7 +348,7 @@ class HTML_content {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 		</tr>
 		</table>

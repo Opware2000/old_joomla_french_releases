@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: admin.media.php 5874 2006-11-29 00:21:35Z facedancer $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -162,10 +162,13 @@ function upload() {
 function do_upload($file, $dest_dir) {
 	global $clearUploads;
 
-	if (file_exists($dest_dir.$file['name'])) {
-		mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload FAILED.File already exists" );
+	if (empty($file['name'])) {
+		mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Aucun fichier sélectionné" );
 	}
-	
+	if (file_exists($dest_dir.$file['name'])) {
+		mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "ECHEC. Le fichier existe déjà" );
+	}
+
 	$format = substr( $file['name'], -3 );
 
 	$allowable = array (
@@ -216,7 +219,7 @@ function recursive_listdir( $base ) {
 	if(is_dir($base)) {
 		$dh = opendir($base);
 		while (false !== ($dir = readdir($dh))) {
-			if (is_dir($base .'/'. $dir) && $dir !== '.' && $dir !== '..' && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
+			if ($dir !== '.' && $dir !== '..' && is_dir($base .'/'. $dir) && strtolower($dir) !== 'cvs' && strtolower($dir) !== '.svn') {
 				$subbase = $base .'/'. $dir;
 				$dirlist[] = $subbase;
 				$subdirlist = recursive_listdir($subbase);
@@ -270,7 +273,7 @@ function listImages($listdir) {
 		$images 	= array();
 		$folders 	= array();
 		$docs 		= array();
-		$allowable 	= 'xcf|odg|gif|jpg|png|bmp';
+		$allowable 	= '\.xcf$|\.odg$|\.gif$|\.jpg$|\.png$|\.bmp$';
 
 		while (false !== ($entry = $d->read())) {
 			$img_file = $entry;

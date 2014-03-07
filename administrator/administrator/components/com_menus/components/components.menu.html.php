@@ -150,7 +150,7 @@ class components_menu_html {
 						echo $params->render();
 					} else {
 						?>
-						<strong>La liste des paramètres sera affichée après que vous ayez sauvegardé de nouveau lien</strong>
+						<strong>La liste des paramètres sera affichée après que vous ayez sauvegardé le nouveau lien</strong>
 						<?php
 					}
 					?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.checkin.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.checkin.php 5028 2006-09-14 00:03:34Z friesengeist $
 * @package Joomla
 * @subpackage Checkin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -77,12 +77,12 @@ foreach ($tables as $tn) {
 
 		if ($foundE) {
 			$query = "UPDATE $tn"
-			. "\n SET checked_out = 0, checked_out_time = '$nullDate', editor = NULL"
+			. "\n SET checked_out = 0, checked_out_time = " . $database->Quote( $nullDate ) . ", editor = NULL"
 			. "\n WHERE checked_out > 0"
 			;
 		} else {
 			$query = "UPDATE $tn"
-			. "\n SET checked_out = 0, checked_out_time = '$nullDate'"
+			. "\n SET checked_out = 0, checked_out_time = " . $database->Quote( $nullDate )
 			. "\n WHERE checked_out > 0"
 			;
 		}

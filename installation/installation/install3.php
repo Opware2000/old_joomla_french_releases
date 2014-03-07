@@ -52,7 +52,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Joomla - Web Installer</title>
+<title>Joomla! - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
@@ -114,7 +114,7 @@ function changeDirPermsMode(mode)
 <body onload="document.form.siteUrl.focus();">
 <div id="wrapper">
 	<div id="header">
-		<div id="joomla"><img src="header_install.png" alt="Joomla Installation" /></div>
+		<div id="joomla"><img src="header_install.png" alt="Joomla! Installation" /></div>
 	</div>
 </div>
 <div id="ctr" align="center">
@@ -144,7 +144,7 @@ function changeDirPermsMode(mode)
 			<div class="install-text">
 				  <p>Si l'adresse et le chemin absolu semblent corrects, alors conservez les tels quels. Si vous n'en êtes pas certain, alors contactez l'hébergeur de votre site Internet ou votre administrateur. Habituellement les valeurs affichées conviendront à votre site.<br/>
 				  <br/>Entrez votre adresse email, pour l'administrateur principal du site..<br />
-				  <br/>La configuration des permissions va être utilisée pendant l'installation de Joomla, par le système d'installation de Joomla et par le "gestionnaire de média". Si vous n'êtes pas certain des valeurs à cocher, alors laissez la configuration par défaut pour l'instant. Vous pourrez les changer ultérieurement dans l'espace administrateur sous configuration globale.</p>
+				  <br/>La configuration des permissions va être utilisée pendant l'installation de Joomla!, par le système d'installation de Joomla! et par le "gestionnaire de média". Si vous n'êtes pas certain des valeurs à cocher, alors laissez la configuration par défaut pour l'instant. Vous pourrez les changer ultérieurement dans l'espace administrateur sous configuration globale.</p>
 			</div>
 			<div class="install-form">
 				<div class="form-block">

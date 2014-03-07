@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mambot.class.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: mambot.class.php 4994 2006-09-10 16:33:55Z friesengeist $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -54,7 +54,7 @@ class mosInstallerMambot extends mosInstaller {
 		// Insert mambot in DB
 		$query = "SELECT id"
 		. "\n FROM #__mambots"
-		. "\n WHERE element = '" . $this->elementName() . "'"
+		. "\n WHERE element = " . $database->Quote( $this->elementName() )
 		;
 		$database->setQuery( $query );
 		if (!$database->query()) {
@@ -104,7 +104,7 @@ class mosInstallerMambot extends mosInstaller {
 		$id = intval( $id );
 		$query = "SELECT name, folder, element, iscore"
 		. "\n FROM #__mambots"
-		. "\n WHERE id = $id"
+		. "\n WHERE id = " . (int) $id
 		;
 		$database->setQuery( $query );
 
@@ -184,7 +184,7 @@ class mosInstallerMambot extends mosInstaller {
 		}
 
 		$query = "DELETE FROM #__mambots"
-		. "\n WHERE id = $id"
+		. "\n WHERE id = " . (int) $id
 		;
 		$database->setQuery( $query );
 		if (!$database->query()) {

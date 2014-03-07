@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menus.html.php 4356 2006-07-28 09:18:23Z rmuilwijk $
+* @version $Id: admin.menus.html.php 5993 2006-12-13 00:24:58Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -32,7 +32,7 @@ class HTML_menusections {
 			<th class="menus">
 			Gestion des menus <small><small>[ <?php echo $menutype;?> ]</small></small>
 			</th>
-			<td nowrap="true">
+			<td nowrap="nowrap">
 			Niveaux max.
 			</td>
 			<td>
@@ -42,14 +42,14 @@ class HTML_menusections {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="inputbox" onChange="document.adminForm.submit();" />
 			</td>
 		</tr>
 		<?php
 		if ( $menutype == 'mainmenu' ) {
 			?>
 			<tr>
-				<td align="right" nowrap style="color: red; font-weight: normal;" colspan="5">
+				<td align="right" nowrap="nowrap" style="color: red; font-weight: normal;" colspan="5">
 				<?php echo _MAINMENU_DEL; ?>
 				<br/>
 				<span style="color: black;">
@@ -103,6 +103,7 @@ class HTML_menusections {
 		$i = 0;
 		$n = count( $rows );
 		foreach ($rows as $row) {
+			mosMakeHtmlSafe( $row, ENT_QUOTES, 'treename' );
 			$access 	= mosCommonHTML::AccessProcessing( $row, $i );
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 			$published 	= mosCommonHTML::PublishedProcessing( $row, $i );
@@ -198,7 +199,7 @@ class HTML_menusections {
 			<th class="menus">
 			Crée un nouveau lien dans le menu
 			</th>
-			<td valign="bottom" nowrap style="color: red;">
+			<td valign="bottom" nowrap="nowrap" style="color: red;">
 			<?php //echo _MENU_GROUP; ?>
 			* Veuillez noter que certains types de liens sont affichés plusieurs fois<br />dans des blocs différents, il s'agit toutefois des mêmes types de lien.
 			</td>

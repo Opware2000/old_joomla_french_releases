@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.html.php 4002 2006-06-12 17:30:34Z stingrey $
+* @version $Id: admin.typedcontent.html.php 5948 2006-12-06 22:42:31Z facedancer $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -41,7 +41,7 @@ class HTML_typedcontent {
 			Filtre:&nbsp;
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 			<td>
 			&nbsp;&nbsp;&nbsp;Ordre:&nbsp;
@@ -96,6 +96,7 @@ class HTML_typedcontent {
 		$nullDate = $database->getNullDate();
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
+			mosMakeHtmlSafe($row);
 
 			$now = _CURRENT_SERVER_TIME;
 			if ( $now <= $row->publish_up && $row->state == 1 ) {
@@ -117,12 +118,12 @@ class HTML_typedcontent {
 			}
 			
 			// correct times to include server offset info
-			$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );			
+			$row->publish_up 	= mosFormatDate( $row->publish_up, _CURRENT_SERVER_TIME_FORMAT );
 			if (trim( $row->publish_down ) == $nullDate || trim( $row->publish_down ) == '' || trim( $row->publish_down ) == '-' ) {
 				$row->publish_down = 'Never';
 			}
-			$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );		
-			
+			$row->publish_down 	= mosFormatDate( $row->publish_down, _CURRENT_SERVER_TIME_FORMAT );
+
 			$times = '';
 				if ($row->publish_up == $nullDate) {
 					$times .= "<tr><td>Commence: Toujours</td></tr>";
@@ -146,7 +147,7 @@ class HTML_typedcontent {
 				$task_access = 'accesspublic';
 			}
 
-			$link = 'index2.php?option=com_typedcontent&task=edit&hidemainmenu=1&id='. $row->id;
+			$link 		= 'index2.php?option=com_typedcontent&task=edit&hidemainmenu=1&id='. $row->id;
 
 			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
 
@@ -248,8 +249,8 @@ class HTML_typedcontent {
 		global $database;
 		
 		mosMakeHtmlSafe( $row );
-		
-		$create_date = null;
+
+		$create_date 	= null;
 		$mod_date 		= null;
 		$nullDate 		= $database->getNullDate();
 		
@@ -559,7 +560,7 @@ Fin de publication:
 						<tr>
 							<td width="48%" valign="top">
 								<div align="center">
-									Galerie d'image:
+									Galerie d'images:
 									<br />
 									<?php echo $lists['imagefiles'];?>
 								</div>
@@ -597,13 +598,14 @@ Fin de publication:
 					</td>
 				</tr>
 				<tr>
-					<td>Editer l'image s&eacute;lectionn&eacute;e:
+					<td>
+					Editer l'image s&eacute;lectionn&eacute;e:
 					  <table>
 					    <tr>
 					      <td align="right">
 					        Source
 				          </td>
-							  <td>
+						  <td>
 							    <input type="text" name= "_source" value="" />
 					      </td>
 					    </tr>

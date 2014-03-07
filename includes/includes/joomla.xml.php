@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.xml.php 4044 2006-06-16 17:41:14Z stingrey $
+* @version $Id: joomla.xml.php 5081 2006-09-17 11:18:25Z predator $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -310,7 +310,7 @@ class mosParameters {
 	function _form_text( $name, $value, &$node, $control_name ) {
 		$size = $node->getAttribute( 'size' );
 
-		return '<input type="text" name="'. $control_name .'['. $name .']" value="'. $value .'" class="text_area" size="'. $size .'" />';
+		return '<input type="text" name="'. $control_name .'['. $name .']" value="'. htmlspecialchars($value) .'" class="text_area" size="'. $size .'" />';
 	}
 	/**
 	* @param string The name of the form element
@@ -391,14 +391,14 @@ class mosParameters {
 			. "\n FROM #__categories AS c"
 			. "\n LEFT JOIN #__sections AS s ON s.id=c.section"
 			. "\n WHERE c.published = 1"
-			. "\n AND s.scope = '$scope'"
+			. "\n AND s.scope = " . $database->Quote( $scope )
 			. "\n ORDER BY c.title"
 			;
 		} else {
 			$query 	= "SELECT c.id, c.title"
 				. "\n FROM #__categories AS c"
 				. "\n WHERE c.published = 1"
-				. "\n AND c.section = '$scope'"
+				. "\n AND c.section = " . $database->Quote( $scope )
 				. "\n ORDER BY c.title"
 				;
 		}
@@ -479,7 +479,7 @@ class mosParameters {
  		// convert <br /> tags so they are not visible when editing
  		$value 	= str_replace( '<br />', "\n", $value );
 
- 		return '<textarea name="' .$control_name.'['. $name .']" cols="'. $cols .'" rows="'. $rows .'" class="text_area">'. $value .'</textarea>';
+ 		return '<textarea name="' .$control_name.'['. $name .']" cols="'. $cols .'" rows="'. $rows .'" class="text_area">'. htmlspecialchars($value) .'</textarea>';
 	}
 
 	/**

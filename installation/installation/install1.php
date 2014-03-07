@@ -31,7 +31,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Joomla - Web Installer</title>
+<title>Joomla! - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
@@ -61,7 +61,7 @@ function check() {
 		alert('Vous ne pouvez pas utiliser le préfixe "old_" qui est celui utilisé pour les tables sauvegardées.');
 		f.DBPrefix.focus();
 		formValid=false;
-	} else if ( confirm('Etes vous certain que ces paramètres sont corrects? \nJoomla va maintenant configurer la base de données.')) {
+	} else if ( confirm('Etes vous certain que ces paramètres sont corrects? \nJoomla! va maintenant configurer la base de données.')) {
 		formValid=true;
 	}
 
@@ -73,7 +73,7 @@ function check() {
 <body onload="document.form.DBhostname.focus();">
 <div id="wrapper">
 	<div id="header">
-		<div id="joomla"><img src="header_install.png" alt="Joomla Installation" /></div>
+		<div id="joomla"><img src="header_install.png" alt="Joomla! Installation" /></div>
 	</div>
 </div>
 <div id="ctr" align="center">
@@ -109,11 +109,11 @@ function check() {
   			<div class="clr"></div>
   			<h1>Configuration de la base de données MySQL:</h1>
 	  		<div class="install-text">
-  				<p>L'installation de Joomla sur votre serveur implique 4 étapes simples...</p>
-  				<p>Veuillez entrer le nom du serveur (hostname) sur lequel Joomla va être installé.</p>
-				<p>Entrez le nom d'utilisateur, le mot de passe et le nom de la BDD MySQL que vous allez utiliser avec Joomla.</p>
-				<p>Entrez le préfixe des tables devant étre utilisé par cette installation Joomla et choisissez l'action adéquat à faire lorsqu'il existe des tables d'une installation précédente.</p>
-				<p>Installez les exemples de contenu si vous n'étes pas expérimenté avec Joomla, sinon vous aurez un site presque entiérement vide de contenu pour débuter.</p>
+  				<p>L'installation de Joomla! sur votre serveur implique 4 étapes simples...</p>
+  				<p>Veuillez entrer le nom du serveur (hostname) sur lequel Joomla! va être installé.</p>
+				<p>Entrez le nom d'utilisateur, le mot de passe et le nom de la BDD MySQL que vous allez utiliser avec Joomla!.</p>
+				<p>Entrez le préfixe des tables devant étre utilisé par cette installation Joomla! et choisissez l'action adéquat à faire lorsqu'il existe des tables d'une installation précédente.</p>
+				<p>Installez les exemples de contenu si vous n'étes pas expérimenté avec Joomla!, sinon vous aurez un site presque entiérement vide de contenu pour débuter.</p>
   			</div>
 			<div class="install-form">
   				<div class="form-block">
@@ -160,7 +160,7 @@ function check() {
   							<input class="inputbox" type="text" name="DBname" value="<?php echo "$DBname"; ?>" />
   						</td>
 			  			<td>
-			  				<em>Certains hébergements limitent le nombre de noms de BDD par site. Utilisez dans ce cas le préfixe de table pour distinguer les sites Joomla..</em>
+			  				<em>Certains hébergements limitent le nombre de noms de BDD par site. Utilisez dans ce cas le préfixe de table pour distinguer les sites Joomla!..</em>
 			  			</td>
   					</tr>
   		  			<tr>
@@ -193,7 +193,7 @@ function check() {
 							<label for="DBBackup">Sauvegarder les anciennes tables</label>
 						</td>
   						<td>
-  							<em>Toute sauvegarde de tables d'une installation précédente de Joomla sera remplacée</em>
+  							<em>Toute sauvegarde de tables d'une installation précédente de Joomla! sera remplacée</em>
   						</td>
 			  		</tr>
   		  			<tr>

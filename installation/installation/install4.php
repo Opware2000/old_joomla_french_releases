@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install4.php 3773 2006-06-01 09:49:10Z stingrey $
+* @version $Id: install4.php 5973 2006-12-11 01:26:33Z robs $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -206,7 +206,7 @@ if ($siteUrl) {
 	$config .= "\$mosConfig_fileperms = '".$configArray['filePerms']."';\n";
 	$config .= "\$mosConfig_dirperms = '".$configArray['dirPerms']."';\n";
 	$config .= "\$mosConfig_helpurl = 'http://www.joomlafacile.com';\n";
-	$config .= "\$mosConfig_mbf_content = '0';\n";
+	$config .= "\$mosConfig_multilingual_support = '0';\n";
 	$config .= "\$mosConfig_editor = 'tinymce';\n";
 	$config .= "\$mosConfig_admin_expired = '1';\n";
 	$config .= "\$mosConfig_frontend_login = '1';\n";
@@ -266,10 +266,10 @@ if ($siteUrl) {
 			}
 		}
 		if ($chmodOk) {
-			$chmod_report = 'File and directory permissions successfully changed.';
+			$chmod_report = 'Permissions sur les fichiers et le dossiers modifiées avec succès.';
 		} else {
-			$chmod_report = 'File and directory permissions could not be changed.<br />'.
-							'Please CHMOD Joomla files and directories manually.';
+			$chmod_report = 'Permissions sur les fichiers et le dossiers non modifiées.<br />'.
+							'Vous devrez CHMODer les fichiers et dossiers Joomla! manuellement.';
 		}
 	} // if chmod wanted
 } else {
@@ -296,7 +296,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Joomla - Web Installer</title>
+<title>Joomla! - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
@@ -304,7 +304,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <body>
 <div id="wrapper">
 	<div id="header">
-		<div id="joomla"><img src="header_install.png" alt="Joomla Installation" /></div>
+		<div id="joomla"><img src="header_install.png" alt="Joomla! Installation" /></div>
 	</div>
 </div>
 <div id="ctr" align="center">

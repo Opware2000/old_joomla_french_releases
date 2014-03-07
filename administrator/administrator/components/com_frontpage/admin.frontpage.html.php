@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.frontpage.html.php 2711 2006-03-08 15:07:22Z stingrey $
+* @version $Id: admin.frontpage.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -51,7 +51,7 @@ class HTML_content {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="search" value="<?php echo htmlspecialchars( $search );?>" class="text_area" onChange="document.adminForm.submit();" />
 			</td>
 		</tr>
 		</table>
@@ -96,7 +96,7 @@ class HTML_content {
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$link = 'index2.php?option=com_content&sectionid=0&task=edit&hidemainmenu=1&id='. $row->id;
 
 			$row->sect_link = 'index2.php?option=com_sections&task=editA&hidemainmenu=1&id='. $row->sectionid;

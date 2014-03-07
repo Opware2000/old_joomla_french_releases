@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: user.php 5995 2006-12-13 02:52:43Z friesengeist $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,15 +23,6 @@ $access->canEditOwn = $acl->acl_check( 'action', 'edit', 'users', $my->usertype,
 require_once ( $mainframe->getPath( 'front_html' ) );
 
 switch( $task ) {
-	case 'saveUpload':
-		// check to see if functionality restricted for use as demo site
-		if ( $_VERSION->RESTRICT == 1 ) {
-			mosRedirect( 'index.php?mosmsg=Functionality Restricted' );
-		} else {
-			saveUpload( $mosConfig_dbprefix, $uid, $option, $userfile, $userfile_name, $type, $existingImage );
-		}
-		break;
-
 	case 'UserDetails':
 		userEdit( $option, $my->id, _UPDATE );
 		break;
@@ -58,56 +49,6 @@ switch( $task ) {
 		break;
 }
 
-function saveUpload( $_dbprefix, $uid, $option, $userfile, $userfile_name, $type, $existingImage ) {
-	global $database;
-
-	if ($uid == 0) {
-		mosNotAuth();
-		return;
-	}
-
-	$base_Dir 	= 'images/stories/';
-	$checksize	= filesize($userfile);
-
-	if ($checksize > 50000) {
-		echo "<script> alert(\""._UP_SIZE."\"); window.history.go(-1); </script>\n";
-	} else {
-		if (file_exists($base_Dir.$userfile_name)) {
-			$message=_UP_EXISTS;
-			eval ("\$message = \"$message\";");
-			print "<script> alert('$message'); window.history.go(-1);</script>\n";
-		} else {
-			if ((!strcasecmp(substr($userfile_name,-4),".gif")) || (!strcasecmp(substr($userfile_name,-4),".jpg"))) {
-				if (!move_uploaded_file($userfile, $base_Dir.$userfile_name))
-				{
-					echo _UP_COPY_FAIL." $userfile_name";
-				} else {
-					echo "<script>window.opener.focus;</script>";
-					if ($type=="news") {
-						$op="UserNews";
-					} elseif ($type=="articles") {
-						$op="UserArticle";
-					}
-
-					if ($existingImage!="") {
-						if (file_exists($base_Dir.$existingImage)) {
-							//delete the exisiting file
-							unlink($base_Dir.$existingImage);
-						}
-					}
-					echo "<script>window.opener.document.adminForm.ImageName.value='$userfile_name';</script>";
-					echo "<script>window.opener.document.adminForm.ImageName2.value='$userfile_name';</script>";
-					echo "<script>window.opener.document.adminForm.imagelib.src=null;</script>";
-					echo "<script>window.opener.document.adminForm.imagelib.src='images/stories/$userfile_name';</script>";
-					echo "<script>window.close(); </script>";
-				}
-			} else {
-				echo "<script> alert(\""._UP_TYPE_WARN."\"); window.history.go(-1); </script>\n";
-			}
-		}
-	}
-}
-
 function userEdit( $option, $uid, $submitvalue) {
 	global $database, $mainframe;
 	global $mosConfig_absolute_path;
@@ -121,11 +62,11 @@ function userEdit( $option, $uid, $submitvalue) {
 	;
 	$database->setQuery( $query );
 	$exists = $database->loadResult();
-	if ( !$exists ) {						
+	if ( !$exists ) {
 		mosNotAuth();
 		return;
-	}		
-	
+	}
+
 	require_once( $mosConfig_absolute_path .'/administrator/components/com_users/users.class.php' );
 
 	if ($uid == 0) {
@@ -135,6 +76,10 @@ function userEdit( $option, $uid, $submitvalue) {
 	$row = new mosUser( $database );
 	$row->load( (int)$uid );
 	$row->orig_password = $row->password;
+	
+	$row->name = trim( $row->name );
+	$row->email = trim( $row->email );
+	$row->username = trim( $row->username );
 
 	$file 	= $mainframe->getPath( 'com_xml', 'com_users' );
 	$params =& new mosUserParameters( $row->params, $file, 'component' );
@@ -151,14 +96,14 @@ function userSave( $option, $uid) {
 	if ($uid == 0 || $user_id == 0 || $user_id != $uid) {
 		mosNotAuth();
 		return;
-	}	
-	
+	}
+
 	// simple spoof check security
-	josSpoofCheck();	
-	
+	josSpoofCheck();
+
 	$row = new mosUser( $database );
-	$row->load( (int)$user_id );	
-	
+	$row->load( (int)$user_id );
+
 	$orig_password = $row->password;
 	$orig_username = $row->username;
 
@@ -166,14 +111,18 @@ function userSave( $option, $uid) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+
+	$row->name = trim($row->name);
+	$row->email = trim($row->email);
+	$row->username = trim($row->username);
 	
 	mosMakeHtmlSafe($row);
 
 	if (isset($_POST['password']) && $_POST['password'] != '') {
 		if (isset($_POST['verifyPass']) && ($_POST['verifyPass'] == $_POST['password'])) {
-			$row->password = md5( $row->password );
+			$row->password = md5(trim($row->password));
 		} else {
-			echo "<script> alert(\""._PASS_MATCH."\"); window.history.go(-1); </script>\n";
+			echo "<script> alert(\"".addslashes( _PASS_MATCH )."\"); window.history.go(-1); </script>\n";
 			exit();
 		}
 	} else {
@@ -202,19 +151,19 @@ function userSave( $option, $uid) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-	
+
 	// check if username has been changed
 	if ( $orig_username != $row->username ) {
 		// change username value in session table
 		$query = "UPDATE #__session"
-		. "\n SET username = '$row->username'"
-		. "\n WHERE username = '$orig_username'"
-		. "\n AND userid = $my->id"
-		. "\n AND gid = $my->gid"
+		. "\n SET username = " . $database->Quote($row->username)
+		. "\n WHERE username = " . $database->Quote( $orig_username )
+		. "\n AND userid = " . (int) $my->id
+		. "\n AND gid = " . (int) $my->gid
 		. "\n AND guest = 0"
 		;
 		$database->setQuery( $query );
-		$database->query();		
+		$database->query();
 	}
 
 	mosRedirect( 'index.php', _USER_DETAILS_SAVE );
@@ -239,11 +188,11 @@ function CheckIn( $userid, $access, $option ){
 	;
 	$database->setQuery( $query );
 	$exists = $database->loadResult();
-	if ( !$exists ) {						
+	if ( !$exists ) {
 		mosNotAuth();
 		return;
-	}		
-	
+	}
+
 	$lt = mysql_list_tables($mosConfig_db);
 	$k = 0;
 	echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">";
@@ -270,16 +219,16 @@ function CheckIn( $userid, $access, $option ){
 		if ($checked_out) {
 			if ($editor) {
 				$query = "SELECT checked_out, editor"
-				. "\n FROM $tn"
+				. "\n FROM `$tn`"
 				. "\n WHERE checked_out > 0"
-				. "\n AND checked_out = $userid"
+				. "\n AND checked_out = " . (int) $userid
 				;
 				$database->setQuery( $query );
 			} else {
 				$query = "SELECT checked_out"
-				. "\n FROM $tn"
+				. "\n FROM `$tn`"
 				. "\n WHERE checked_out > 0"
-				. "\n AND checked_out = $userid"
+				. "\n AND checked_out = " . (int) $userid
 				;
 				$database->setQuery( $query );
 			}
@@ -287,15 +236,17 @@ function CheckIn( $userid, $access, $option ){
 			$num = $database->getNumRows( $res );
 
 			if ($editor) {
-				$query = "UPDATE $tn"
-				. "\n SET checked_out = 0, checked_out_time = '$nullDate', editor = NULL"
+				$query = "UPDATE `$tn`"
+				. "\n SET checked_out = 0, checked_out_time = " . $database->Quote( $nullDate ) . ", editor = NULL"
 				. "\n WHERE checked_out > 0"
+				. "\n AND checked_out = " . (int) $userid
 				;
 				$database->setQuery( $query );
 			} else {
-				$query = "UPDATE $tn"
-				. "\n SET checked_out = 0, checked_out_time = '$nullDate'"
+				$query = "UPDATE `$tn`"
+				. "\n SET checked_out = 0, checked_out_time = " . $database->Quote( $nullDate )
 				. "\n WHERE checked_out > 0"
+				. "\n AND checked_out = " . (int) $userid
 				;
 				$database->setQuery( $query );
 			}

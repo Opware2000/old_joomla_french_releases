@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.trash.html.php 3310 2006-04-26 19:22:43Z stingrey $
+* @version $Id: admin.trash.html.php 5830 2006-11-21 18:59:45Z Saka $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,9 +24,8 @@ class HTML_trash {
 	/**
 	* Writes a list of the Trash items
 	*/
-	function showList( $option, $contents, $menus, $pageNav_content, $pageNav_menu ) {
+	function showList( $option, $content, $pageNav, $list, $catid ) {
 		global $my;
-		$tabs = new mosTabs(1);
 		?>
 		<script language="javascript" type="text/javascript">
 		/**
@@ -56,17 +55,10 @@ class HTML_trash {
 		<form action="index2.php?option=com_trash" method="post" name="adminForm">
 		<table class="adminheading">
 		<tr>
-			<th class="trash">Gestionnaire de Corbeille </th>
-		</tr>
-		</table>
-
-		<?php
-		$tabs->startPane("content-pane");
-		$tabs->startTab("Articles","content_items");
-		?>
-		<table class="adminheading" width="90%">
-		<tr>
-			<th><small>Articles</small></th>
+			<th class="trash">Gestionnaire de Corbeille</th>
+			<td width="right">
+				<?php echo $list; ?>
+			</td>
 		</tr>
 		</table>
 
@@ -74,17 +66,17 @@ class HTML_trash {
 		<tr>
 			<th width="20">#</th>
 			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $contents );?>);" />
+			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $content );?>);" />
 			</th>
 			<th width="20px">&nbsp;</th>
 			<th class="title">
 			Titre
 			</th>
 			<th>
-			Section
+			<?php echo ($catid=="content") ? "Section" : "Menu"; ?>
 			</th>
 			<th>
-			Cat&eacute;gorie
+			<?php echo ($catid=="content") ? "Cat&eacute;gorie" : "Type"; ?>
 			</th>
 			<th width="70px">
 			ID
@@ -93,16 +85,23 @@ class HTML_trash {
 		<?php
 		$k = 0;
 		$i = 0;
-		$n = count( $contents );
-		foreach ( $contents as $row ) {
+		$n = count( $content );
+
+		foreach ( $content as $row ) {
 			?>
 			<tr class="<?php echo "row". $k; ?>">
 				<td align="center" width="30px">
-				<?php echo $i + 1 + $pageNav_content->limitstart;?>
+				<?php echo $i + 1 + $pageNav->limitstart;?>
 				</td>
-				<td width="20px" align="center"><?php echo mosHTML::idBox( $i, $row->id ); ?></td>
+				<td width="20px" align="center"><?php
+				if ($catid=="content") {
+					echo mosHTML::idBox( $i, $row->id );
+				} else {
+					echo "<input type=\"checkbox\" id=\"cb$i\" name=\"mid[]\" value=\"$row->id\" onclick=\"isChecked(this.checked);\" />";
+				}
+				?></td>
 				<td width="20px"></td>
-				<td nowrap>
+				<td nowrap="nowrap">
 				<?php
 				echo $row->title;
 				?>
@@ -129,83 +128,7 @@ class HTML_trash {
 		}
 		?>
 		</table>
-		<?php echo $pageNav_content->getListFooter(); ?>
-		<?php
-		$tabs->endTab();
-		$tabs->startTab("Menus","menu_items");
-		?>
-		<table class="adminheading" width="90%">
-		<tr>
-			<th><small>El&eacute;ments de Menu</small></th>
-		</tr>
-		</table>
-
-		<table class="adminlist" width="90%">
-		<tr>
-			<th width="20">#</th>
-			<th width="20">
-			<input type="checkbox" name="toggle1" value="" onClick="checkAll_xtd(<?php echo count( $menus );?>);" />
-			</th>
-			<th width="20px">&nbsp;</th>
-			<th class="title">
-			Titre
-			</th>
-			<th>
-			Menu
-			</th>
-			<th>
-			Type
-			</th>
-			<th width="70px">
-			ID
-			</th>
-		</tr>
-		<?php
-		$k = 0;
-		$i = 0;
-		$n = count( $menus );
-		foreach ( $menus as $row ) {
-			?>
-			<tr class="<?php echo "row". $k; ?>">
-				<td align="center" width="30px">
-				<?php echo $i + 1 + $pageNav_menu->limitstart;?>
-				</td>
-				<td width="30px" align="center">
-				<input type="checkbox" id="cb1<?php echo $i;?>" name="mid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" />
-				</td>
-				<td width="20px"></td>
-				<td nowrap>
-				<?php
-				echo $row->name;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->menutype;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->type;
-				?>
-				</td>
-				<td align="center">
-				<?php
-				echo $row->id;
-				?>
-				</td>
-			</tr>
-			<?php
-			$k = 1 - $k;
-			$i++;
-		}
-		?>
-		</table>
-		<?php echo $pageNav_menu->getListFooter(); ?>
-		<?php
-		$tabs->endTab();
-		$tabs->endPane();
-		?>
+		<?php echo $pageNav->getListFooter(); ?>
 
 		<input type="hidden" name="option" value="com_trash" />
 		<input type="hidden" name="task" value="" />

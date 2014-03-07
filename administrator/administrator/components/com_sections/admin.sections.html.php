@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.html.php 4070 2006-06-20 16:09:29Z stingrey $
+* @version $Id: admin.sections.html.php 5948 2006-12-06 22:42:31Z facedancer $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -64,15 +64,16 @@ class sections_html {
 			<th width="8%">
 			Acc&egrave;s
 			</th>
-			<th width="12%" nowrap>
-			 ID	Section		</th>
-			<th width="12%" nowrap>
+			<th width="12%" nowrap="nowrap">
+			ID	Section
+			</th>
+			<th width="12%" nowrap="nowrap">
 			# Cat&eacute;gories
 			</th>
-			<th width="12%" nowrap>
+			<th width="12%" nowrap="nowrap">
 			# Actives
 			</th>
-			<th width="12%" nowrap>
+			<th width="12%" nowrap="nowrap">
 			# Corbeille
 			</th>
 
@@ -81,7 +82,7 @@ class sections_html {
 		$k = 0;
 		for ( $i=0, $n=count( $rows ); $i < $n; $i++ ) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$link = 'index2.php?option=com_sections&scope=content&task=editA&hidemainmenu=1&id='. $row->id;
 
 			$access 	= mosCommonHTML::AccessProcessing( $row, $i );

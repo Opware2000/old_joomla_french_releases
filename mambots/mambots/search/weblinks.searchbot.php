@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.searchbot.php 2762 2006-03-12 19:09:43Z stingrey $
+* @version $Id: weblinks.searchbot.php 5055 2006-09-14 16:38:01Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -108,7 +108,7 @@ function botSearchWeblinks( $text, $phrase='', $ordering='' ) {
 	$query = "SELECT a.title AS title,"
 	. "\n a.description AS text,"
 	. "\n a.date AS created,"
-	. "\n CONCAT_WS( ' / ', '$section', b.title ) AS section,"
+	. "\n CONCAT_WS( ' / ', " . $database->Quote( $section ) . ", b.title ) AS section,"
 	. "\n '1' AS browsernav,"
 	. "\n a.url AS href"
 	. "\n FROM #__weblinks AS a"
@@ -116,7 +116,7 @@ function botSearchWeblinks( $text, $phrase='', $ordering='' ) {
 	. "\n WHERE ($where)"
 	. "\n AND a.published = 1"
 	. "\n AND b.published = 1"
-	. "\n AND b.access <= $my->gid"
+	. "\n AND b.access <= " . (int) $my->gid
 	. "\n ORDER BY $order"
 	;
 	$database->setQuery( $query, 0, $limit );

@@ -21,7 +21,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
  * NOTE: THIS IS THE RECOMMENDED SETTING FOR YOUR SITE BUT YOU MAY
  * EXPERIENCE PROBLEMS WITH SOME THIRD-PARTY COMPONENTS
  */
-define( 'RG_EMULATION', 0 );
+define( 'RG_EMULATION', 1 );
 
 /**
  * Adds an array to the GLOBALS array and checks that the GLOBALS variable is

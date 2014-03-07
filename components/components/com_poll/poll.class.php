@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.class.php 1329 2005-12-07 03:53:37Z Jinx $
+* @version $Id: poll.class.php 5070 2006-09-15 16:24:06Z friesengeist $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -58,7 +58,7 @@ class mosPoll extends mosDBTable {
 		// check for existing title
 		$query = "SELECT id"
 		. "\n FROM #__polls"
-		. "\n WHERE title = '$this->title'"
+		. "\n WHERE title = " . $this->_db->Quote( $this->title )
 		;
 		$this->_db->setQuery( $query );
 
@@ -80,7 +80,7 @@ class mosPoll extends mosDBTable {
 
 		if (mosDBTable::delete( $oid )) {
 			$query = "DELETE FROM #__poll_data"
-			. "\n WHERE pollid = ". $this->$k
+			. "\n WHERE pollid = " . (int) $this->$k
 			;
 			$this->_db->setQuery( $query );
 			if ( !$this->_db->query() ) {
@@ -88,7 +88,7 @@ class mosPoll extends mosDBTable {
 			}
 
 			$query = "DELETE FROM #__poll_date"
-			. "\n WHERE pollid = ". $this->$k
+			. "\n WHERE poll_id = " . (int) $this->$k
 			;
 			$this->_db->setQuery( $query );
 			if ( !$this->_db->query() ) {
@@ -96,7 +96,7 @@ class mosPoll extends mosDBTable {
 			}
 
 			$query = "DELETE from #__poll_menu"
-			. "\n WHERE pollid = ". $this->$k
+			. "\n WHERE pollid = " . (int) $this->$k
 			;
 			$this->_db->setQuery( $query );
 			if ( !$this->_db->query() ) {

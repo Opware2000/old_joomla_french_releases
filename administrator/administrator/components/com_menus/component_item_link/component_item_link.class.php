@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: component_item_link.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: component_item_link.class.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -49,7 +49,7 @@ class component_item_link_menu {
 			$temp = explode( '&Itemid=', $menu->link );
 			 $query = "SELECT a.name"
 			. "\n FROM #__menu AS a"
-			. "\n WHERE a.link = '$temp[0]'"
+			. "\n WHERE a.link = " . $database->Quote( $temp[0] )
 			;
 			$database->setQuery( $query );
 			$components = $database->loadResult();

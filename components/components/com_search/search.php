@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: search.php 3723 2006-05-29 16:14:03Z stingrey $
+* @version $Id: search.php 5317 2006-10-04 01:50:49Z pasamio $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -34,18 +34,21 @@ function viewSearch() {
 	$restriction = 0;
 	
 	// try to find search component's Itemid
-	$query = "SELECT id"
-		. "\n FROM #__menu"
-		. "\n WHERE type = 'components'"
-		. "\n AND published = 1"
-		. "\n AND link = 'index.php?option=com_search'"
-		;
-	$database->setQuery( $query );
-	$_Itemid = $database->loadResult();
-
-	if ($_Itemid != "") {
-		$Itemid = $_Itemid;
-	}
+	// Only search if we don't have a valid Itemid (e.g. from module)
+	if(!intval($Itemid) || intval($Itemid) == 99999999) {	 
+		$query = "SELECT id"
+			. "\n FROM #__menu"
+			. "\n WHERE type = 'components'"
+			. "\n AND published = 1"
+			. "\n AND link = 'index.php?option=com_search'"
+			;
+		$database->setQuery( $query );
+		$_Itemid = $database->loadResult();
+	
+		if ($_Itemid != "") {
+			$Itemid = $_Itemid;
+		}
+	} 
 
 	$gid = $my->gid;
 
@@ -69,7 +72,7 @@ function viewSearch() {
 	search_html::openhtml( $params );
 
 	$searchword = strval( mosGetParam( $_REQUEST, 'searchword', '' ) );
-	$searchword = $database->getEscaped( trim( $searchword ) );
+	$searchword = trim( stripslashes( $searchword ) );
 	
 	// limit searchword to 20 characters
 	if ( strlen( $searchword ) > 20 ) {
@@ -117,7 +120,7 @@ function viewSearch() {
 	$lists['searchphrase']= mosHTML::radioList( $searchphrases, 'searchphrase', '', $searchphrase );
 
 	// html output
-	search_html::searchbox( htmlspecialchars( stripslashes( $searchword ) ), $lists, $params );
+	search_html::searchbox( htmlspecialchars( $searchword ), $lists, $params );
 
 	if (!$searchword) {
 		if ( count( $_POST ) ) {
@@ -139,7 +142,7 @@ function viewSearch() {
 			search_html::message( _SEARCH_MESSAGE, $params );
 		}
 		
-		$searchword_clean = htmlspecialchars( stripslashes( $searchword ) );
+		$searchword_clean = htmlspecialchars( $searchword );
 		
 		search_html::searchintro( $searchword_clean, $params );
 
@@ -148,7 +151,7 @@ function viewSearch() {
 		$ordering 	= strval( mosGetParam( $_REQUEST, 'ordering', '' ) );
 
 		$_MAMBOTS->loadBotGroup( 'search' );
-		$results 	= $_MAMBOTS->trigger( 'onSearch', array( $searchword, $phrase, $ordering ) );
+		$results 	= $_MAMBOTS->trigger( 'onSearch', array( $database->getEscaped( $searchword ), $phrase, $ordering ) );
 		$totalRows 	= 0;
 
 		$rows = array();
@@ -200,7 +203,7 @@ function viewSearch() {
 		$limitstart = intval( mosGetParam( $_GET, 'limitstart', 0 ) );
 		
 		// prepares searchword for proper display in url
-		$searchword_clean = urlencode(stripslashes($searchword_clean));
+		$searchword_clean = urlencode( $searchword_clean );
 		
 		if ( $n ) {
 		// html output
@@ -229,19 +232,19 @@ function mosLogSearch( $search_term ) {
 	if ( @$mosConfig_enable_log_searches ) {
 		$query = "SELECT hits"
 		. "\n FROM #__core_log_searches"
-		. "\n WHERE LOWER( search_term ) = '$search_term'"
+		. "\n WHERE LOWER( search_term ) = " . $database->Quote( $search_term )
 		;
 		$database->setQuery( $query );
 		$hits = intval( $database->loadResult() );
 		if ( $hits ) {
 			$query = "UPDATE #__core_log_searches"
 			. "\n SET hits = ( hits + 1 )"
-			. "\n WHERE LOWER( search_term ) = '$search_term'"
+			. "\n WHERE LOWER( search_term ) = " . $database->Quote( $search_term )
 			;
 			$database->setQuery( $query );
 			$database->query();
 		} else {
-			$query = "INSERT INTO #__core_log_searches VALUES ( '$search_term', 1 )"
+			$query = "INSERT INTO #__core_log_searches VALUES ( " . $database->Quote( $search_term ) . ", 1 )"
 			;
 			$database->setQuery( $query );
 			$database->query();

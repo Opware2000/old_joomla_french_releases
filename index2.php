@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 4750 2006-08-25 01:08:30Z stingrey $
+* @version $Id: index2.php 6022 2006-12-18 22:30:07Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,6 +16,13 @@ define( '_VALID_MOS', 1 );
 
 require( 'globals.php' );
 require_once( 'configuration.php' );
+
+// SSL check - $http_host returns <live site url>:<port number if it is 443>
+$http_host = explode(':', $_SERVER['HTTP_HOST'] );
+if( (!empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) != 'off' || isset( $http_host[1] ) && $http_host[1] == 443) && substr( $mosConfig_live_site, 0, 8 ) != 'https://' ) {
+	$mosConfig_live_site = 'https://'.substr( $mosConfig_live_site, 7 );
+}
+
 require_once( 'includes/joomla.php' );
 
 // displays offline/maintanance page or bar

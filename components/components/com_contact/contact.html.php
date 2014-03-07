@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact.html.php 4157 2006-07-02 17:58:51Z stingrey $
+* @version $Id: contact.html.php 6085 2006-12-24 18:59:57Z robs $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -258,9 +258,9 @@ class HTML_contact {
 		<!--
 		function validate(){
 			if ( ( document.emailForm.text.value == "" ) || ( document.emailForm.email.value.search("@") == -1 ) || ( document.emailForm.email.value.search("[.*]" ) == -1 ) ) {
-				alert( "<?php echo _CONTACT_FORM_NC; ?>" );
+				alert( "<?php echo addslashes( _CONTACT_FORM_NC ); ?>" );
 			} else if ( ( document.emailForm.email.value.search(";") != -1 ) || ( document.emailForm.email.value.search(",") != -1 ) || ( document.emailForm.email.value.search(" ") != -1 ) ) {
-				alert( "<?php echo _CONTACT_ONE_EMAIL; ?>" );			
+				alert( "<?php echo addslashes( _CONTACT_ONE_EMAIL ); ?>" );
 			} else {
 				document.emailForm.action = "<?php echo sefRelToAbs("index.php?option=com_contact&Itemid=$Itemid"); ?>"
 				document.emailForm.submit();
@@ -446,7 +446,7 @@ class HTML_contact {
 		if ( $contact->image && $params->get( 'image' ) ) {
 			?>
 			<div style="float: right;">
-			<img src="<?php echo $mosConfig_live_site;?>/images/stories/<?php echo $contact->image; ?>" align="middle" alt="Contact" />
+			<img src="<?php echo $mosConfig_live_site;?>/images/stories/<?php echo $contact->image; ?>" align="middle" alt="<?php echo _CONTACT_TITLE; ?>" />
 			</div>
 			<?php
 		}

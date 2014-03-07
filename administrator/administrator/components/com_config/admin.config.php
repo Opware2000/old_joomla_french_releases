@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.php 4802 2006-08-28 16:18:33Z stingrey $
+* @version $Id: admin.config.php 5950 2006-12-06 23:18:11Z facedancer $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -161,8 +161,8 @@ function showconfig( $option) {
 // LOCALE SETTINGS
 
 	$lists['lang'] = mosHTML::selectList( $langs, 'config_lang', 'class="inputbox" size="1"', 'value', 'text', $row->config_lang );
-	
-	$timeoffset = array(	
+
+	$timeoffset = array(
 		mosHTML::makeOption( -12, '(UTC -12:00) International Date Line West'),
 		mosHTML::makeOption( -11, '(UTC -11:00) Midway Island, Samoa'),
 		mosHTML::makeOption( -10, '(UTC -10:00) Hawaii'),
@@ -188,16 +188,16 @@ function showconfig( $option) {
 		mosHTML::makeOption( 5.5, '(UTC +05:30) Bombay, Calcutta, Madras, New Delhi'),
 		mosHTML::makeOption( 5.75, '(UTC +05:45) Kathmandu'),
 		mosHTML::makeOption( 6, '(UTC +06:00) Almaty, Dhaka, Colombo'),
-		mosHTML::makeOption( 6.30, '(UTC +06:30) Yagoon'),
+		mosHTML::makeOption( 6.5, '(UTC +06:30) Yagoon'),
 		mosHTML::makeOption( 7, '(UTC +07:00) Bangkok, Hanoi, Jakarta'),
 		mosHTML::makeOption( 8, '(UTC +08:00) Beijing, Perth, Singapore, Hong Kong'),
-		mosHTML::makeOption( 8.75, '(UTC +08:00) Western Australia'),
+		mosHTML::makeOption( 8.75, '(UTC +08:45) Western Australia'),
 		mosHTML::makeOption( 9, '(UTC +09:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk'),
 		mosHTML::makeOption( 9.5, '(UTC +09:30) Adelaide, Darwin, Yakutsk'),
 		mosHTML::makeOption( 10, '(UTC +10:00) Eastern Australia, Guam, Vladivostok'),
 		mosHTML::makeOption( 10.5, '(UTC +10:30) Lord Howe Island (Australia)'),
 		mosHTML::makeOption( 11, '(UTC +11:00) Magadan, Solomon Islands, New Caledonia'),
-		mosHTML::makeOption( 11.30, '(UTC +11:30) Norfolk Island'),
+		mosHTML::makeOption( 11.5, '(UTC +11:30) Norfolk Island'),
 		mosHTML::makeOption( 12, '(UTC +12:00) Auckland, Wellington, Fiji, Kamchatka'),
 		mosHTML::makeOption( 12.75, '(UTC +12:45) Chatham Island'),
 		mosHTML::makeOption( 13, '(UTC +13:00) Tonga'),
@@ -292,8 +292,6 @@ function showconfig( $option) {
 
 	$lists['item_navigation'] 		= mosHTML::RadioList( $show_hide_r, 'config_item_navigation', 'class="inputbox"', $row->config_item_navigation, 'value', 'text' );
 
-	$lists['ml_support'] 			= mosHTML::yesnoRadioList( 'config_ml_support', 'class="inputbox" onclick="javascript: if (document.adminForm.config_ml_support[1].checked) { alert(\'Vous devez installer le composant Joomfish.\') }"', $row->config_ml_support );
-
 	$lists['multipage_toc'] 		= mosHTML::RadioList( $show_hide_r, 'config_multipage_toc', 'class="inputbox"', $row->config_multipage_toc, 'value', 'text' );
 
 // SHOW EDIT FORM
@@ -316,9 +314,9 @@ function saveconfig( $task ) {
 	if ( $mosConfig_session_type != $row->config_session_type ) {
 		$past = time();
 		$query = "DELETE FROM #__session"
-		. "\n WHERE time < '$past'"
+		. "\n WHERE time < " . $database->Quote( $past )
 		. "\n AND ("
-		. "\n ( guest = 1 AND userid = 0 ) OR ( guest = 0 AND gid > 0 )" 
+		. "\n ( guest = 1 AND userid = 0 ) OR ( guest = 0 AND gid > 0 )"
 		. "\n )"
 		;
 		$database->setQuery( $query );
@@ -333,9 +331,7 @@ function saveconfig( $task ) {
 	$row->config_password 	= $mosConfig_password;
 	
 	// handling of special characters
-	$row->config_sitename			= htmlspecialchars( $row->config_sitename, ENT_QUOTES );	
-	$row->config_MetaDesc			= htmlspecialchars( $row->config_MetaDesc, ENT_QUOTES );	
-	$row->config_MetaKeys			= htmlspecialchars( $row->config_MetaKeys, ENT_QUOTES );	
+	$row->config_sitename			= htmlspecialchars( $row->config_sitename, ENT_QUOTES );
 
 	// handling of quotes (double and single) and amp characters
 	// htmlspecialchars not used to preserve ability to insert other html characters

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 4500 2006-08-13 22:45:33Z eddiea $
+* @version $Id: pageNavigation.php 5511 2006-10-19 12:17:15Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -69,7 +69,7 @@ class mosPageNav {
 		if ($this->total > 0) {
 			$txt .= _PN_RESULTS." $from_result - $to_result "._PN_OF." $this->total";
 		}
-		return $txt;
+		return $to_result ? $txt : '';
 	}
 
 	/**
@@ -77,12 +77,13 @@ class mosPageNav {
 	*/
 	function writeLeafsCounter() {
 		$txt = '';
-		$page = $this->limitstart+1;
+		$page = ceil( ($this->limitstart + 1) / $this->limit );
 		if ($this->total > 0) {
-			$txt .= _PN_PAGE." $page "._PN_OF." $this->total";
+			$total_pages = ceil( $this->total / $this->limit );
+			$txt .= _PN_PAGE." $page "._PN_OF." $total_pages";
 		}
 		return $txt;
-	}
+	}	
 
 	/**
 	* Writes the html links for pages, eg, previous, next, 1 2 3 ... x
@@ -92,8 +93,8 @@ class mosPageNav {
 		$txt = '';
 
 		$displayed_pages = 10;
-		$total_pages = ceil( $this->total / $this->limit );
-		$this_page = ceil( ($this->limitstart+1) / $this->limit );
+		$total_pages = $this->limit ? ceil( $this->total / $this->limit ) : 0;
+		$this_page = $this->limit ? ceil( ($this->limitstart+1) / $this->limit ) : 1;
 		$start_loop = (floor(($this_page-1)/$displayed_pages))*$displayed_pages+1;
 		if ($start_loop + $displayed_pages - 1 < $total_pages) {
 			$stop_loop = $start_loop + $displayed_pages - 1;
@@ -103,12 +104,13 @@ class mosPageNav {
 
 		$link .= '&amp;limit='. $this->limit;
 
-        if (!defined( '_PN_LT' ) || !defined( '_PN_RT' ) ) {
-            DEFINE('_PN_LT','&lt;');
-            DEFINE('_PN_RT','&gt;');
-        }
+		if (!defined( '_PN_LT' ) || !defined( '_PN_RT' ) ) {
+			DEFINE('_PN_LT','&lt;');
+			DEFINE('_PN_RT','&gt;');
+		}
 
-        if (_PN_LT || _PN_RT) $pnSpace = " ";
+		$pnSpace = '';
+		if (_PN_LT || _PN_RT) $pnSpace = "&nbsp;";
 
 		if ($this_page > 1) {
 			$page = ($this_page - 2) * $this->limit;

@@ -1,4 +1,4 @@
-# $Id: joomla.sql 677 2005-10-27 02:13:29Z spacemonkey $
+# $Id: joomla.sql 6070 2006-12-20 02:09:09Z robs $
 
 #
 # Table structure for table `#__banner`
@@ -227,7 +227,7 @@ CREATE TABLE `#__content_rating` (
 #
 # Table structure for table `#__core_log_items`
 #
-# To be implemented in Version 4.6
+# To be implemented
 
 CREATE TABLE `#__core_log_items` (
   `time_stamp` date NOT NULL default '0000-00-00',
@@ -239,7 +239,7 @@ CREATE TABLE `#__core_log_items` (
 #
 # Table structure for table `#__core_log_searches`
 #
-# To be implemented in Version 4.6
+# To be implemented
 
 CREATE TABLE `#__core_log_searches` (
   `search_term` varchar(128) NOT NULL default '',
@@ -495,7 +495,7 @@ CREATE TABLE `#__newsfeeds` (
 CREATE TABLE `#__poll_data` (
   `id` int(11) NOT NULL auto_increment,
   `pollid` int(4) NOT NULL default '0',
-  `text` text NOT NULL default '',
+  `text` text NOT NULL,
   `hits` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `pollid` (`pollid`,`text`(1))

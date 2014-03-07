@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.html.php 1596 2005-12-31 05:40:31Z stingrey $
+* @version $Id: admin.banners.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -43,22 +43,22 @@ class HTML_banners {
 			<th width="20">
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
-			<th align="left" nowrap>
+			<th align="left" nowrap="nowrap">
 			Nom de la banni&egrave;re
 			</th>
-			<th width="10%" nowrap>
+			<th width="10%" nowrap="nowrap">
 			Publi&eacute;e
 			</th>
-			<th width="11%" nowrap>
+			<th width="11%" nowrap="nowrap">
 			Impressions effectu&eacute;es
 			</th>
-			<th width="11%" nowrap>
+			<th width="11%" nowrap="nowrap">
 			Impressions restantes
 			</th>
 			<th width="8%">
 			Clics
 			</th>
-			<th width="8%" nowrap>
+			<th width="8%" nowrap="nowrap">
 			% Clics
 			</th>
 		</tr>
@@ -66,7 +66,7 @@ class HTML_banners {
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$row->id 	= $row->bid;
 			$link 		= 'index2.php?option=com_banners&task=editA&hidemainmenu=1&id='. $row->id;
 
@@ -332,20 +332,23 @@ class HTML_bannerClient {
 			<th width="20">
 			<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
 			</th>
-			<th align="left" nowrap>
+			<th align="left" nowrap="nowrap">
 			Nom du client			</th>
-			<th align="left" nowrap>
+			<th align="left" nowrap="nowrap">
 			Contact
 			</th>
-			<th align="center" nowrap>
+			<th align="center" nowrap="nowrap">
 			Nb. de banni&egrave;res actives
+			</th>
+			<th align="center" nowrap="nowrap">
+			Client ID
 			</th>
 		</tr>
 		<?php
 		$k = 0;
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row = &$rows[$i];
-
+			mosMakeHtmlSafe($row);
 			$row->id 	= $row->cid;
 			$link 		= 'index2.php?option=com_banners&task=editclientA&hidemainmenu=1&id='. $row->id;
 
@@ -358,7 +361,7 @@ class HTML_bannerClient {
 				<td width="20">
 				<?php echo $checked; ?>
 				</td>
-				<td width="40%">
+				<td width="35%">
 				<?php
 				if ( $row->checked_out && ( $row->checked_out != $my->id ) ) {
 					echo $row->name;
@@ -371,11 +374,14 @@ class HTML_bannerClient {
 				}
 				?>
 				</td>
-				<td width="40%">
+				<td width="35%">
 				<?php echo $row->contact;?>
 				</td>
-				<td width="20%" align="center">
+				<td width="15%" align="center">
 				<?php echo $row->bid;?>
+				</td>
+				<td width="15%" align="center">
+				<?php echo $row->cid; ?>
 				</td>
 			</tr>
 			<?php

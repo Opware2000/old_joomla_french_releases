@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: newsfeed_link.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: newsfeed_link.class.php 5045 2006-09-14 13:49:01Z friesengeist $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -51,7 +51,7 @@ class newsfeed_link_menu {
 			$query = "SELECT *, c.title AS category"
 			. "\n FROM #__newsfeeds AS a"
 			. "\n INNER JOIN #__categories AS c ON a.catid = c.id"
-			. "\n WHERE a.id = $temp[1]"
+			. "\n WHERE a.id = " . (int) $temp[1]
 			;
 			$database->setQuery( $query );
 			$newsfeed = $database->loadObjectlist();

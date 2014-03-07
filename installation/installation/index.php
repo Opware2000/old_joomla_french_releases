@@ -23,15 +23,15 @@ require_once( '../includes/version.php' );
 
 /** Include common.php */
 include_once( 'common.php' );
-		view();
+view();
 
 /*
  * Added 1.0.11
  */
-function view() {	
-$sp = ini_get( 'session.save_path' );
+function view() {
+	$sp 		= ini_get( 'session.save_path' );
 
-	$_VERSION 		= new joomlaVersion();				 	
+	$_VERSION 		= new joomlaVersion();
 	$versioninfo 	= $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS;
 	$version 		= $_VERSION->PRODUCT .' '. $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS.' [ '.$_VERSION->CODENAME .' ] '. $_VERSION->RELDATE .' '. $_VERSION->RELTIME .' '. $_VERSION->RELTZ;
 	
@@ -40,7 +40,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Joomla - Web Installer</title>
+<title>Joomla! - Web Installer</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="../images/favicon.ico" />
 <link rel="stylesheet" href="install.css" type="text/css" />
@@ -50,7 +50,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <div id="wrapper">
 <div id="header">
 			<div id="joomla">
-				<img src="header_install.png" alt="Installation Joomla" />
+				<img src="header_install.png" alt="Installation Joomla!" />
 			</div>
 </div>
 </div>
@@ -165,65 +165,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 				</div>
 				<div class="clr"></div>
 				
-				<h1>
-					Vérification de version:
-				</h1>
-
-				<div class="install-text">
-					<p>
-						Il vous est recommandé de toujours installer la dernière version stable de Joomla!
-					</p>
-					<p>
-						Vous trouverez plus d'informations sur <a href="http://www.joomla.org" target="_blank">www.joomla.org</a>
-					</p>
-					<div class="ctr"></div>
-				</div>
-						
-				<div class="install-form">
-					<div class="form-block" style="text-align: center;">
-						<table class="content">
-						<tr>
-							<td class="item">
-								<?php
-								$link 			= 'http://www.joomla.org/content/blogcategory/32/66/';
-								$status 		= 'status=yes,toolbar=yes,scrollbars=yes,titlebar=yes,menubar=yes,resizable=yes,directories=yes,location=yes';
-								
-								$release 		= strtotime($_VERSION->RELDATE);
-								$now	 		= strtotime('now');
-								$age			= ($now - $release) / 86400;	
-								$age			= round($age);		
-								?>
-								<div style="clear: both; margin: 3px; padding: 0px 0px; display: block; float: left;">
-									<table cellpadding="0" cellspacing="0" border="0" width="100%" class="adminheading">
-									<tr>
-										<td colspan="2" style="text-align: center;">
-											<h3 style="font-size: 12px;">
-												<?php
-												if ($age > 1) {							
-													?>
-													<p style="font-weight: normal; padding: 0px; margin: 0px; font-size: 11px;">
-														This version of Joomla! [ <?php echo $versioninfo; ?> ] is  
-													</p>
-													<div style="font-size: 13px; color: #cc0000;">
-														<?php echo $age; ?> days old
-													</div>
-													<?php
-												}
-												?>
-												<div style="margin-top: 10px;">
-													<input name="Button3" type="submit" value="Identifier la dernière version stable" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>'); return false;" />
-												</div>
-											</h3>
-										</td>
-									</tr>
-								    </table>
-								</div>
-							</td>
-						</tr>
-						</table>
-					</div>
-				</div>	
-				<div class="clr"></div>		
+		
 				
 				<?php
 				$wrongSettingsTexts = array();

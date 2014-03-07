@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.php 4805 2006-08-28 17:15:48Z stingrey $
+* @version $Id: admin.php 5617 2006-11-01 23:05:29Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -22,8 +22,8 @@ function mosCountAdminModules(  $position='left' ) {
 
 	$query = "SELECT COUNT( m.id )"
 	. "\n FROM #__modules AS m"
-	. "\n WHERE m.published = '1'"
-	. "\n AND m.position = '$position'"
+	. "\n WHERE m.published = 1"
+	. "\n AND m.position = " . $database->Quote( $position )
 	. "\n AND m.client_id = 1"
 	;
 	$database->setQuery( $query );
@@ -43,7 +43,7 @@ function mosLoadAdminModules( $position='left', $style=0 ) {
 	$query = "SELECT id, title, module, position, content, showtitle, params"
 	. "\n FROM #__modules AS m"
 	. "\n WHERE m.published = 1"
-	. "\n AND m.position = '$position'"
+	. "\n AND m.position = " . $database->Quote( $position )
 	. "\n AND m.client_id = 1"
 	. "\n ORDER BY m.ordering"
 	;
@@ -153,8 +153,8 @@ function mosLoadCustomModule( &$module, &$params ) {
 			$rssDoc->useHTTPClient(true);
 			$rssDoc->useCacheLite(true, $LitePath, $cachePath, $rsscache);
 			$success = $rssDoc->loadRSS( $rssurl );
-			
-			if ( $success )	{		
+
+			if ( $success )	{
 				$totalChannels = $rssDoc->getChannelCount();
 				
 				for ($i = 0; $i < $totalChannels; $i++) {
@@ -283,6 +283,9 @@ function mosMakePath($base, $path='', $mode = NULL) {
 	$n = count( $parts );
 	$ret = true;
 	if ($n < 1) {
+		if (substr( $base, -1, 1 ) == '/') {
+			$base = substr( $base, 0, -1 );
+		}
 		$ret = @mkdir($base, $mode);
 	} else {
 		$path = $base;
@@ -310,7 +313,7 @@ function mosMainBody_Admin() {
 /*
  * Added 1.0.11
  */
-function josSecurityCheck($width='95%') {		
+function josSecurityCheck($width='95%') {
 	$wrongSettingsTexts = array();
 	
 	if ( ini_get('magic_quotes_gpc') != '1' ) {
@@ -343,58 +346,10 @@ function josSecurityCheck($width='95%') {
 				?>
 			</ul>
 			<p style="color: #666;">
-				Vous pouvez consulter cette discussion sur le <a href="http://forum.joomla.org/index.php/topic,81058.0.html" target="_blank">site officiel Joomla! </a> pour plus d'informations.
+				Vous pouvez consulter cette discussion sur le <a href="http://forum.joomlafacile.com/showthread.php?t=22432" target="_blank">forum Joomla.fr</a> pour plus d'informations.
 			</p>
 		</div>
 		<?php
 	}
-}
-
-/*
- * Added 1.0.11
- */
- function josVersionCheck($width='95%',$always=1) {
-	$_VERSION 			= new joomlaVersion();				 	
-	$versioninfo 		= $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS;
-	
-	$link 			= 'http://www.joomla.org/content/blogcategory/32/66/';
-	$status 		= 'status=yes,toolbar=yes,scrollbars=yes,titlebar=yes,menubar=yes,resizable=yes,directories=yes,location=yes';
-	
-	$release 		= strtotime($_VERSION->RELDATE);
-	$now	 		= strtotime('now');
-	$age			= ($now - $release) / 86400;	
-	$age			= round($age);	
-	
-	if ($always) {
-		if ($age > 1) {
-			$check = 1;
-	            } else {
-			$check = 0;			
-	            }
-	    	} else {
-		if ($age > 27) {
-			$check = 1;
-		} else {
-			$check = 0;			
-	    	}
-	    }
-	
- 	if ($check) {
-		?>
-		<div style="clear: both; margin: 3px; margin-top: 15px; padding: 0px 15px; display: block; float: left; border: 1px solid silver; background: white; text-align: center; width: <?php echo $width;?>;">
-			<h3 style="margin-top: 10px; font-size: 12px;" color="#008080">
-				<div style="font-weight: normal; color: #666;">
-						Votre version de Joomla! [ <?php echo $versioninfo; ?> ] est
-				</div>	 
-				<div style="font-size: 13px; color: #CC0000;">
-					âgée de <?php echo $age; ?> jours
-				</div>
-				<div>
-					<input class="button" name="Button3" type="submit" value="Chercher une nouvelle version" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>'); return false;" />							
-					</div>
-				</h3>
-	</div>
-	<?php
-}		
 }
 ?>

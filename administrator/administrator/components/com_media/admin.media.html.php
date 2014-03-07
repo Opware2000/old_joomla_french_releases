@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.html.php 3440 2006-05-11 15:00:59Z stingrey $
+* @version $Id: admin.media.html.php 6070 2006-12-20 02:09:09Z robs $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -20,11 +20,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class HTML_Media {
 	function showMedia($dirPath,$listdir ) {
 		?>
-		<head>
-		<style type="text/css">
-
-		</style>
-		</head>
 		<script language="javascript" type="text/javascript">
 		function dirup(){
 			var urlquery=frames['imgManager'].location.search.substring(1);
@@ -40,7 +35,6 @@ class HTML_Media {
 			frames['imgManager'].location.href='index3.php?option=com_media&task=list&listdir=' + dir;
 		}
 		</script>
-		<body>
 
 		<form action="index2.php" name="adminForm" method="post" enctype="multipart/form-data" >
 		<table width="100%" align="center">
@@ -68,7 +62,7 @@ class HTML_Media {
 							<td>
 								<input class="inputbox" type="text" name="imagecode" style="width:400px" />
 							</td>
-						</tr>						
+						</tr>
 						</table>
 					</td>
 				</tr>
@@ -97,7 +91,7 @@ class HTML_Media {
 									Upload Fichier <small>[ Max = <?php echo ini_get( 'post_max_size' );?> ]</small>
 									&nbsp;&nbsp;&nbsp;&nbsp;
 									<input class="inputbox" type="file" name="upload" id="upload" size="63" />&nbsp;
-							  </td>							
+								</td>
 							</tr>
 							</table>
 						</td>
@@ -130,8 +124,6 @@ class HTML_Media {
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="cb1" id="cb1" value="0" />
 		</form>
-		</body>
-		</html>
 		<?php
 	}
 
@@ -210,7 +202,7 @@ class HTML_Media {
 		} else {
 			$img_dimensions = 'width="'. $info[0] .'" height="'. $info[1] .'"';
 		}
-		
+
 		$overlib = '<table>';
 		$overlib .= '<tr>';
 		$overlib .= '<td>';
@@ -270,8 +262,8 @@ class HTML_Media {
 		$num_files 	= $count[0];
 		$num_dir 	= $count[1];
 
-		if ($listdir=='/') {
-			$listdir='';
+		if ($listdir == '/') {
+			$listdir = '';
 		}
 
 		$link = 'index3.php?option=com_media&amp;task=list&amp;listdir='. $listdir . $path;
@@ -382,7 +374,7 @@ class HTML_Media {
 		if(is_dir($dir)) {
 			$d = dir($dir);
 
-			while (false !== ($entry = $d->read())) {
+			while ( false !== ($entry = $d->read()) ) {
 				if ( substr($entry,0,1) != '.' && is_file($dir . DIRECTORY_SEPARATOR . $entry) && strpos( $entry, '.html' ) === false && strpos( $entry, '.php' ) === false ) {
 					$total_file++;
 				}
@@ -390,10 +382,10 @@ class HTML_Media {
 					$total_dir++;
 				}
 			}
-			
+
 			$d->close();
 		}
-		
+
 		return array( $total_file, $total_dir );
 	}
 
@@ -428,9 +420,8 @@ class HTML_Media {
 
 			return false;
 		}
+		updateDir();
 		</script>
-		</head>
-		<body onload="updateDir()">
 		<style type="text/css">
 		<!--
 		div.imgTotal {

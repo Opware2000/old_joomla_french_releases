@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: messages.class.php 4095 2006-06-21 18:46:51Z stingrey $
+* @version $Id: messages.class.php 5079 2006-09-16 23:11:24Z friesengeist $
 * @package Joomla
 * @subpackage Messages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -57,7 +57,7 @@ class mosMessage extends mosDBTable {
 	}
 	
 	function send( $from_id=null, $to_id=null, $subject=null, $message=null ) {
-		global $database;
+		global $database, $mosConfig_mailfrom, $mosConfig_fromname;
 
 		if (is_object( $this )) {
 			$from_id 	= $from_id ? $from_id : $this->user_id_from;
@@ -68,7 +68,7 @@ class mosMessage extends mosDBTable {
 
 		$query = "SELECT cfg_name, cfg_value"
 		. "\n FROM #__messages_cfg"
-		. "\n WHERE user_id = $to_id"
+		. "\n WHERE user_id = " . (int) $to_id
 		;
 		$database->setQuery( $query );
 		$config = $database->loadObjectList( 'cfg_name' );
@@ -87,7 +87,7 @@ class mosMessage extends mosDBTable {
 				if ($domail) {
 					$query = "SELECT email"
 					. "\n FROM #__users"
-					. "\n WHERE id = $to_id"
+					. "\n WHERE id = " . (int) $to_id
 					;
 					$database->setQuery( $query );
 					$recipient = $database->loadResult();
