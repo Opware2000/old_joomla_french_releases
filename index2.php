@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 323 2005-10-02 14:37:07Z stingrey $
+* @version $Id: index2.php 1261 2005-11-30 19:02:55Z Saka $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -98,6 +98,7 @@ if ($path = $mainframe->getPath( 'front' )) {
 		mosNotAuth();
 	}
 } else {
+	header("HTTP/1.0 404 Not Found");
 	echo _NOT_EXIST;
 }
 $_MOS_OPTION['buffer'] = ob_get_contents();
@@ -118,24 +119,30 @@ if (defined( '_ADMIN_OFFLINE' )) {
 
 // start basic HTML
 if ( $no_html == 0 ) {
-	// needed to seperate the ISO number from the language file constant _ISO
-	$iso = split( '=', _ISO );
-	// xml prolog
-	echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
+	$customIndex2 = 'templates/'. $mainframe->getTemplate() .'/index2.php';
+	if (file_exists( $customIndex2 )) {
+		require( $customIndex2 );
+	} else {
+		// needed to seperate the ISO number from the language file constant _ISO
+		$iso = split( '=', _ISO );
+		// xml prolog
+		echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 	?>
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<link rel="stylesheet" href="templates/<?php echo $cur_template;?>/css/template_css.css" type="text/css" />
-	<link rel="shortcut icon" href="<?php echo $mosConfig_live_site; ?>/images/favicon.ico" />
-	<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
-	<meta name="robots" content="noindex, nofollow">
+		<?php echo $mainframe->getHead(); ?>
+		<link rel="stylesheet" href="templates/<?php echo $cur_template;?>/css/template_css.css" type="text/css" />
+		<link rel="shortcut icon" href="<?php echo $mosConfig_live_site; ?>/images/favicon.ico" />
+		<meta http-equiv="Content-Type" content="text/html; <?php echo _ISO; ?>" />
+		<meta name="robots" content="noindex, nofollow" />
 	</head>
 	<body class="contentpane">
-	<?php mosMainBody(); ?>
+		<?php mosMainBody(); ?>
 	</body>
-	</html>
-	<?php
+</html>
+<?php
+	}
 } else {
 	mosMainBody();
 }

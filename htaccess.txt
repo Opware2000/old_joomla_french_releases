@@ -1,10 +1,12 @@
 ##
-# @version $Id: htaccess.txt 423 2005-10-09 18:23:50Z stingrey $
+# @version $Id: htaccess.txt 1005 2005-11-13 17:33:59Z stingrey $
 # @package Joomla
 # @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 # @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
 # Joomla! is Free Software
 ##
+
+Options +FollowSymLinks
 
 #
 #  mod_rewrite in use
