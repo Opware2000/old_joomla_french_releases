@@ -581,7 +581,7 @@ Fin de publication:
 							</td>
 						</tr>
 						</table>
-						Sub-folder: <?php echo $lists['folders'];?>
+						Sous-répertoire: <?php echo $lists['folders'];?>
 					</td>
 				</tr>
 				<tr valign="top">

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 3754 2006-05-31 12:08:37Z stingrey $
+* @version $Id: admin.config.html.php 4802 2006-08-28 16:18:33Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,7 +22,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 class HTML_config {
 
 	function showconfig( &$row, &$lists, $option) {
-		global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_session_type;
+		global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_session_type, $mainframe;
 		
 		$tabs = new mosTabs(0);
 		?>
@@ -353,7 +353,7 @@ class HTML_config {
 				<?php
 				if (!is_writable( "$mosConfig_absolute_path/media/" )) {
 					echo "<td align=\"left\">";
-					echo mosToolTip('Option non disponible si le répertoire /media est non modifiable');
+					echo mosToolTip('Option non disponible si le r&eacute;pertoire /media est non modifiable');
 					echo "</td>";
 				} else {
 					?>				
@@ -799,6 +799,12 @@ class HTML_config {
 			<?php
 		$tabs->endTab();
 		$tabs->endPane();
+		
+		// show version check
+			josVersionCheck();
+		
+		// show security setting check
+		josSecurityCheck();
 		?>
 		
 		<input type="hidden" name="option" value="<?php echo $option; ?>"/>

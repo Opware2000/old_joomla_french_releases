@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 184 2005-09-19 08:10:30Z eddieajau $
+* @version $Id: pageNavigation.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -27,9 +27,9 @@ class mosPageNav {
 	var $total 		= null;
 
 	function mosPageNav( $total, $limitstart, $limit ) {
-		$this->total 		= intval( $total );
-		$this->limitstart 	= max( $limitstart, 0 );
-		$this->limit 		= max( $limit, 1 );
+		$this->total 		= (int) $total;
+		$this->limitstart 	= (int) max( $limitstart, 0 );
+		$this->limit 		= (int) max( $limit, 1 );
 		if ($this->limit > $this->total) {
 			$this->limitstart = 0;
 		}

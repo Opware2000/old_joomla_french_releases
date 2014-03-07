@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.mambots.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.mambots.php 4826 2006-08-29 06:11:04Z eddiea $
 * @package Joomla
 * @subpackage Mambots
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,10 +24,8 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'mambot
 require_once( $mainframe->getPath( 'admin_html' ) );
 
 $client = strval( mosGetParam( $_REQUEST, 'client', '' ) );
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+
+$cid 	= josGetArrayInts( 'cid' );
 
 switch ( $task ) {
 
@@ -125,9 +123,8 @@ function viewMambots( $option, $client ) {
 	. ( count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : '' )
 	. "\n GROUP BY m.id"
 	. "\n ORDER BY m.folder ASC, m.ordering ASC, m.name ASC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
 		echo $database->stderr();
@@ -184,7 +181,7 @@ function saveMambot( $option, $client, $task ) {
 	} else {
 		$where = "client_id='0'";
 	}
-	$row->updateOrder( "folder = '$row->folder' AND ordering > -10000 AND ordering < 10000 AND ( $where )" );
+	$row->updateOrder( "folder = " . $database->Quote( $row->folder ) . " AND ordering > -10000 AND ordering < 10000 AND ( $where )" );
 
 	switch ( $task ) {
 		case 'apply':
@@ -212,7 +209,7 @@ function editMambot( $option, $uid, $client ) {
 	$row 	= new mosMambot($database);
 
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
@@ -287,8 +284,13 @@ function editMambot( $option, $uid, $client ) {
 
 	$lists['published'] = mosHTML::yesnoRadioList( 'published', 'class="inputbox"', $row->published );
 
+	$path = $mosConfig_absolute_path . "/mambots/$row->folder/$row->element.xml";
+	if (!file_exists( $path )) {
+		$path = '';
+	}
+
 	// get params definitions
-	$params = new mosParameters( $row->params, $mainframe->getPath( 'bot_xml', $row->folder.'/'.$row->element ), 'mambot' );
+	$params = new mosParameters( $row->params, $path, 'mambot' );
 
 	HTML_modules::editMambot( $row, $lists, $params, $option );
 }
@@ -372,7 +374,7 @@ function orderMambot( $uid, $inc, $option, $client ) {
 		$where = "client_id = 0";
 	}
 	$row = new mosMambot( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->move( $inc, "folder='$row->folder' AND ordering > -10000 AND ordering < 10000 AND ($where)"  );
 
 	mosRedirect( 'index2.php?option='. $option );
@@ -400,7 +402,7 @@ function accessMenu( $uid, $access, $option, $client ) {
 	}
 
 	$row = new mosMambot( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -417,13 +419,14 @@ function saveOrder( &$cid ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$order 		= josGetArrayInts( 'order' );
+	
 	$row 		= new mosMambot( $database );
 	$conditions = array();
 
 	// update ordering values
 	for ( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {

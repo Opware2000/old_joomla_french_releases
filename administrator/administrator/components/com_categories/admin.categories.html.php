@@ -360,7 +360,7 @@ class categories_html {
 				</tr>
 				<tr>
 					<td>
-					Niveau d'acc&eagrave;s:
+					Niveau d'acc&egrave;s:
 					</td>
 					<td>
 					<?php echo $lists['access']; ?>
@@ -464,8 +464,8 @@ class categories_html {
 			?>
 			<table class="adminform" width="40%">
 				<tr>
-						<th>
-						&nbsp;
+						<th>&nbsp;
+						
 						</th>
 					</tr>
 					<tr>

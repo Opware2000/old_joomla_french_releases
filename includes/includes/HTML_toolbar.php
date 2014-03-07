@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: HTML_toolbar.php 3534 2006-05-17 14:31:46Z stingrey $
+* @version $Id: HTML_toolbar.php 4675 2006-08-23 16:55:24Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -10,6 +10,9 @@
 * other free or open source software licenses.
 * See COPYRIGHT.php for copyright notices and details.
 */
+
+// no direct access
+defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 /**
 * Utility class for the button bar

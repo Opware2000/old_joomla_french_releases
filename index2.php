@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 3592 2006-05-22 15:26:35Z stingrey $
+* @version $Id: index2.php 4750 2006-08-25 01:08:30Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -14,7 +14,7 @@
 // Set flag that this is a parent file
 define( '_VALID_MOS', 1 );
 
-include_once( 'globals.php' );
+require( 'globals.php' );
 require_once( 'configuration.php' );
 require_once( 'includes/joomla.php' );
 

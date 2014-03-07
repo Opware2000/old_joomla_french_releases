@@ -1,6 +1,6 @@
 <?php
 /** module to display newsfeeds
-* version $Id: newsfeeds.php 3594 2006-05-22 17:29:07Z stingrey $
+* version $Id: newsfeeds.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -167,7 +167,7 @@ function showFeed( $feedid ) {
 	require_once( $mainframe->getPath( 'class' ) );
 	
 	$newsfeed = new mosNewsFeed($database);
-	$newsfeed->load($feedid);
+	$newsfeed->load((int)$feedid);
 
 	/*
 	* Check if newsfeed is published
@@ -178,7 +178,7 @@ function showFeed( $feedid ) {
 	}
 	
 	$category = new mosCategory($database);
-	$category->load($newsfeed->catid);
+	$category->load((int)$newsfeed->catid);
 	
 	/*
 	* Check if newsfeed category is published

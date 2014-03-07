@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.sections.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,10 +22,8 @@ define( 'COM_IMAGE_BASE', $mosConfig_absolute_path . DIRECTORY_SEPARATOR . 'imag
 // get parameters from the URL or submitted form
 $scope 		= mosGetParam( $_REQUEST, 'scope', '' );
 $section 	= mosGetParam( $_REQUEST, 'scope', '' );
-$cid 		= mosGetParam( $_REQUEST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+
+$cid 		= josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'new':
@@ -132,9 +130,8 @@ function showSections( $scope, $option ) {
 	. "\n WHERE scope = '$scope'"
 	. "\n GROUP BY c.id"
 	. "\n ORDER BY c.ordering, c.name"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
 		echo $database->stderr();
@@ -191,7 +188,7 @@ function editSection( $uid=0, $scope='', $option ) {
 
 	$row = new mosSection( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
@@ -350,8 +347,8 @@ function saveSection( $option, $scope, $task ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "scope='$row->scope'" );
-
+	$row->updateOrder( 'scope=' . $database->Quote( $row->scope ) );
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -507,7 +504,7 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 			}
 		}
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -537,9 +534,9 @@ function orderSection( $uid, $inc, $option, $scope ) {
 	global $database;
 
 	$row = new mosSection( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->move( $inc, "scope = '$row->scope'" );
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -607,7 +604,7 @@ function copySectionSave( $sectionid ) {
 			exit();
 		}
 		$section->checkin();
-		$section->updateOrder( "section = '$section->id'" );
+		$section->updateOrder( "section = " . $database->Quote( $section->id ) );
 		// stores original catid
 		$newsectids[]["old"] = $id;
 		// pulls new catid
@@ -636,7 +633,7 @@ function copySectionSave( $sectionid ) {
 			exit();
 		}
 		$category->checkin();
-		$category->updateOrder( "section = '$category->section'" );
+		$category->updateOrder( "section = " . $database->Quote( $category->section ) );
 		// stores original catid
 		$newcatids[]["old"] = $id;
 		// pulls new catid
@@ -671,7 +668,7 @@ function copySectionSave( $sectionid ) {
 	}
 	$sectionOld = new mosSection ( $database );
 	$sectionOld->load( $sectionMove );
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -687,7 +684,7 @@ function accessMenu( $uid, $access, $option ) {
 	global $database;
 
 	$row = new mosSection( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -696,7 +693,7 @@ function accessMenu( $uid, $access, $option ) {
 	if ( !$row->store() ) {
 		return $row->getError();
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -715,7 +712,7 @@ function menuLink( $id ) {
 	$type 	= strval( mosGetParam( $_POST, 'link_type', '' ) );
 
 	$name	= stripslashes( ampReplace($name) );
-
+	
 	switch ( $type ) {
 		case 'content_section':
 			$link 		= 'index.php?option=com_content&task=section&id='. $id;
@@ -755,8 +752,8 @@ function menuLink( $id ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "menutype = '$menu'" );
-
+	$row->updateOrder( "menutype = " . $database->Quote( $menu ) );
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -768,13 +765,14 @@ function saveOrder( &$cid ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$order 		= josGetArrayInts( 'order' );
+	
 	$row 		= new mosSection( $database );
 	$conditions = array();
 
 	// update ordering values
 	for( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {

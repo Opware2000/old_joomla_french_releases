@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.categories.html.php 108 2005-09-16 17:39:25Z stingrey $
+* @version $Id: toolbar.categories.html.php 4344 2006-07-27 19:43:02Z rmuilwijk $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -11,6 +11,9 @@
 * other free or open source software licenses.
 * See COPYRIGHT.php for copyright notices and details.
 */
+
+// no direct access
+defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 /**
 * @package Joomla

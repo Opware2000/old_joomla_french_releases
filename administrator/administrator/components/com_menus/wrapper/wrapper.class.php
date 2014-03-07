@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: wrapper.class.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: wrapper.class.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -26,7 +26,7 @@ class wrapper_menu {
 		global $database, $my, $mainframe;
 
 		$menu = new mosMenu( $database );
-		$menu->load( $uid );
+		$menu->load( (int)$uid );
 
 		// fail if checked out not by 'me'
 		if ($menu->checked_out && $menu->checked_out != $my->id) {
@@ -95,7 +95,7 @@ class wrapper_menu {
 			exit();
 		}
 		$row->checkin();
-		$row->updateOrder( "menutype = '$row->menutype' AND parent = $row->parent" );
+		$row->updateOrder( 'menutype = ' . $database->Quote( $row->menutype ) . ' AND parent = ' . (int) $row->parent );
 
 
 		$msg = 'Elément de menu sauvegardé.';

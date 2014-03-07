@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: banners.php 3494 2006-05-14 23:51:02Z stingrey $
+* @version $Id: banners.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -52,9 +52,8 @@ function viewbanner() {
 	$query = "SELECT *"
 	. "\n FROM #__banner"
 	. "\n WHERE showBanner = 1"
-	. "\n LIMIT $bannum, 1"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $bannum, 1 );
 	if ($database->loadObject( $banner )) {
 		$query = "UPDATE #__banner"
 		. "\n SET impmade = impmade + 1"
@@ -114,7 +113,7 @@ function clickbanner( $bid ) {
 	require_once( $mainframe->getPath( 'class' ) );
 
 	$row = new mosBanner($database);
-	$row->load($bid);
+	$row->load((int)$bid);
 	$row->clicks();
 
 	$pat = "http.*://";

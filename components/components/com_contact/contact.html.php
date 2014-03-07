@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact.html.php 4072 2006-06-20 16:47:46Z stingrey $
+* @version $Id: contact.html.php 4157 2006-07-02 17:58:51Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -417,7 +417,7 @@ class HTML_contact {
 							mosHTML::PrintIcon( $contact, $params, $hide_js, $print_link );
 							?>
 						</tr>
-						</table
+						</table>
 					</td>
 				</tr>
 				<?php

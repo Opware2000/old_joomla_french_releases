@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pathway.php 3548 2006-05-18 06:38:38Z stingrey $
+* @version $Id: pathway.php 4503 2006-08-14 00:59:54Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -154,7 +154,7 @@ function showPathway( $Itemid ) {
 						. "\n FROM #__categories AS c"
 						. "\n LEFT JOIN #__sections AS s"
 						. "\n ON c.section = s.id"
-						. "\n WHERE c.id = $row->catid"
+						. "\n WHERE c.id = " . (int) $row->catid
 						. "\n AND c.access <= $my->id"
 						;
 						$database->setQuery( $query );

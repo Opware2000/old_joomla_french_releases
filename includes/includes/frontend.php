@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.php 4115 2006-06-24 00:27:27Z stingrey $
+* @version $Id: frontend.php 4637 2006-08-22 04:19:08Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -73,16 +73,17 @@ function &initModules() {
 	global $database, $my, $Itemid;
 
 	if (!isset( $GLOBALS['_MOS_MODULES'] )) {
-		$check_Itemid = '';
+		$Itemid 		= intval($Itemid);
+		$check_Itemid 	= '';
 		if ($Itemid) {
-			$check_Itemid = "OR mm.menuid = $Itemid";
+			$check_Itemid = "OR mm.menuid = '". (int) $Itemid ."'";
 		}
 		
 		$query = "SELECT id, title, module, position, content, showtitle, params"
 		. "\n FROM #__modules AS m"
 		. "\n INNER JOIN #__modules_menu AS mm ON mm.moduleid = m.id"
 		. "\n WHERE m.published = 1"
-		. "\n AND m.access <= $my->gid"
+		. "\n AND m.access <= ". (int) $my->gid
 		. "\n AND m.client_id != 1"
 		. "\n AND ( mm.menuid = 0 $check_Itemid )"
 		. "\n ORDER BY ordering";
@@ -201,9 +202,12 @@ function mosShowHead() {
 	$mainframe->addMetaTag( 'robots', 'index, follow' );
 
 	// cache activation
-	// echo $mainframe->getHead();
-	$cache =& mosCache::getCache('com_content');
-	echo $cache->call('mainframe->getHead', $_SERVER['QUERY_STRING'], $id);
+	if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+		$cache =& mosCache::getCache('com_content');	
+		echo $cache->call('mainframe->getHead', @$_SERVER['QUERY_STRING'], $id);
+	} else {
+		echo $mainframe->getHead();
+	}
 
 	if ( isset($mosConfig_sef) && $mosConfig_sef ) {
 		echo "<base href=\"$mosConfig_live_site/\" />\r\n";

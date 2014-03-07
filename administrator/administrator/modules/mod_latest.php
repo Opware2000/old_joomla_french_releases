@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_latest.php 393 2005-10-08 13:37:52Z akede $
+* @version $Id: mod_latest.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,9 +19,8 @@ $query = "SELECT a.id, a.sectionid, a.title, a.created, u.name, a.created_by_ali
 . "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
 . "\n WHERE a.state != -2"
 . "\n ORDER BY created DESC"
-. "\n LIMIT 10"
 ;
-$database->setQuery( $query );
+$database->setQuery( $query, 0, 10 );
 $rows = $database->loadObjectList();
 ?>
 

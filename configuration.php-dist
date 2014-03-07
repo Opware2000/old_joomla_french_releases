@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: configuration.php-dist 3754 2006-05-31 12:08:37Z stingrey $
+* @version $Id: configuration.php-dist 4699 2006-08-24 02:17:06Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -97,5 +97,6 @@ $mosConfig_editor = 'tinymce';
 $mosConfig_admin_expired = '1';
 $mosConfig_frontend_login = '1';
 $mosConfig_frontend_userparams = '1';
+$mosConfig_versioncheck = '1';
 setlocale (LC_ALL, $mosConfig_locale);			// Country locale
 ?>

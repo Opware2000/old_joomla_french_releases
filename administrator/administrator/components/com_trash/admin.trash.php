@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.trash.php 3494 2006-05-14 23:51:02Z stingrey $
+* @version $Id: admin.trash.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,11 +23,8 @@ if (!($acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'comp
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class', 'com_frontpage' ) );
 
-$mid = mosGetParam( $_POST, 'mid', array(0) );
-$cid = mosGetParam( $_POST, 'cid', array(0) );
-if ( !is_array( $cid ) ) {
-	$cid = array(0);
-}
+$mid = josGetArrayInts( 'mid' );
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'deleteconfirm':
@@ -57,12 +54,12 @@ switch ($task) {
 */
 function viewTrash( $option ) {
 	global $database, $mainframe, $mosConfig_list_limit;
-
+	
 	$limit 		= intval( $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit ) );
 	$limitstart = intval( $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 10 ) );
 
 	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
-
+	
 	// get the total number of content
 	$query = "SELECT count(*)"
 	. "\n FROM #__content AS c"
@@ -71,8 +68,8 @@ function viewTrash( $option ) {
 	. "\n WHERE c.state = -2"
 	;
 	$database->setQuery( $query );
-	$total_content = $database->loadResult();
-	$pageNav_content = new mosPageNav( $total_content, $limitstart, $limit );
+	$total_content 		= $database->loadResult();
+	$pageNav_content 	= new mosPageNav( $total_content, $limitstart, $limit );
 
 	// Query content items
 	$query = 	"SELECT c.*, g.name AS groupname, cc.name AS catname, s.name AS sectname"
@@ -93,8 +90,8 @@ function viewTrash( $option ) {
 	. "\n WHERE m.published = -2"
 	;
 	$database->setQuery( $query );
-	$total_menu = $database->loadResult();
-	$pageNav_menu = new mosPageNav( $total_menu, $limitstart, $limit );
+	$total_menu 	= $database->loadResult();
+	$pageNav_menu 	= new mosPageNav( $total_menu, $limitstart, $limit );
 
 	// Query menu items
 	$query = 	"SELECT m.*"
@@ -138,8 +135,8 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 		. "\n ORDER BY a.title"
 		;
 		$database->setQuery( $query );
-		$items = $database->loadObjectList();
-		$id = $cid;
+		$items 	= $database->loadObjectList();
+		$id 	= $cid;
 		$type 	= 'content';
 	} else if ( $mids ) {
 		// Content Items query
@@ -149,8 +146,8 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 		. "\n ORDER BY a.name"
 		;
 		$database->setQuery( $query );
-		$items = $database->loadObjectList();
-		$id = $mid;
+		$items 	= $database->loadObjectList();
+		$id 	= $mid;
 		$type 	= 'menu';
 	}
 
@@ -164,9 +161,9 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 function deleteTrash( $cid, $option ) {
 	global $database;
 	
-	$type = mosGetParam( $_POST, 'type', array(0) );
+	$type 	= mosGetParam( $_POST, 'type', array(0) );
 
-	$total = count( $cid );
+	$total 	= count( $cid );
 
 	if ( $type == 'content' ) {
 		$obj = new mosContent( $database );
@@ -176,7 +173,7 @@ function deleteTrash( $cid, $option ) {
 			$obj->delete( $id );
 			$fp->delete( $id );
 		}
-	} else if ( $type == "menu" ) {
+	} else if ( $type == 'menu' ) {
 		$obj = new mosMenu( $database );
 		foreach ( $cid as $id ) {
 			$id = intval( $id );
@@ -241,7 +238,7 @@ function restoreTrash( $cid, $option ) {
 	$state 		= 0;
 	$ordering 	= 9999;
 	//seperate contentids
-	$cids = implode( ',', $cid );
+	$cids 		= implode( ',', $cid );
 
 	if ( $type == 'content' ) {
 	// query to restore content items
@@ -283,17 +280,17 @@ function restoreTrash( $cid, $option ) {
 			
 			if ( $check ) {
 			// query to restore menu items
-		$query = "UPDATE #__menu"
-		. "\n SET published = $state, ordering = 9999"
+				$query  = "UPDATE #__menu"
+				. "\n SET published = $state, ordering = 9999"
 				. "\n WHERE id = $id"
-		;
-	}
-
-	$database->setQuery( $query );
-	if ( !$database->query() ) {
-		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-		exit();
-	}
+				;
+			}	
+			
+			$database->setQuery( $query );
+			if ( !$database->query() ) {
+				echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+				exit();
+			}	
 		}
 	}	
 

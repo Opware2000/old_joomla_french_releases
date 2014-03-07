@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: config.class.php 3754 2006-05-31 12:08:37Z stingrey $
+* @version $Id: config.class.php 4699 2006-08-24 02:17:06Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -61,6 +61,8 @@ class mosConfig {
 	var $config_live_site			= null;
 	/** @var string */
 	var $config_secret				= null;
+	/** @var int */
+	var $config_versioncheck		= 1;
 	/** @var int */
 	var $config_gzip				= 0;
 	/** @var int */

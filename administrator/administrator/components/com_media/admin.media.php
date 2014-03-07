@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.php 3494 2006-05-14 23:51:02Z stingrey $
+* @version $Id: admin.media.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -33,13 +33,10 @@ function makeSafe( $file ) {
 	return str_replace( '..', '', urldecode( $file ) );
 }
 
-$cid = mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid 		= josGetArrayInts( 'cid' );
 
-$listdir = makeSafe( mosGetParam( $_REQUEST, 'listdir', '' ) );
-$dirPath = makeSafe( mosGetParam( $_POST, 'dirPath', '' ) );
+$listdir 	= makeSafe( mosGetParam( $_REQUEST, 'listdir', '' ) );
+$dirPath 	= makeSafe( mosGetParam( $_POST, 'dirPath', '' ) );
 
 if (is_int(strpos ($listdir, "..")) && $listdir != '') {
 	mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "NO HACKING PLEASE - PAS DE HACKING SVP" );
@@ -165,35 +162,35 @@ function upload() {
 function do_upload($file, $dest_dir) {
 	global $clearUploads;
 
-		if (file_exists($dest_dir.$file['name'])) {
-			mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "ECHEC Upload. Le fichier existe déjà!" );
-		}
+	if (file_exists($dest_dir.$file['name'])) {
+		mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Upload FAILED.File already exists" );
+	}
+	
+	$format = substr( $file['name'], -3 );
 
-		$format = substr( $file['name'], -3 );
+	$allowable = array (
+		'bmp',
+		'csv',
+		'doc',
+		'epg',
+		'gif',
+		'ico',
+		'jpg',
+		'odg',
+		'odp',
+		'ods',
+		'odt',
+		'pdf',
+		'png',
+		'ppt',
+		'swf',
+		'txt',
+		'xcf',
+		'xls'
+	);
 
-		$allowable = array (
-			'bmp',
-			'csv',
-			'doc',
-			'epg',
-			'gif',
-			'ico',
-			'jpg',
-			'odg',
-			'odp',
-			'ods',
-			'odt',
-			'pdf',
-			'png',
-			'ppt',
-			'swf',
-			'txt',
-			'xcf',
-			'xls'
-		);
-
-        $noMatch = 0;
-		foreach( $allowable as $ext ) {
+    $noMatch = 0;
+	foreach( $allowable as $ext ) {
 		if ( strcasecmp( $format, $ext ) == 0 ) {
 			$noMatch = 1;
 		}
@@ -277,18 +274,18 @@ function listImages($listdir) {
 
 		while (false !== ($entry = $d->read())) {
 			$img_file = $entry;
-			if(is_file( COM_MEDIA_BASE .$listdir.'/'.$img_file) && substr($entry,0,1) != '.' && strtolower($entry) !== 'index.html') {
+			if(is_file( COM_MEDIA_BASE .$listdir.'/'.$img_file) && substr($entry,0,1) != '.' && strtolower($entry) !== 'index.html' ) {
 				if (eregi( $allowable, $img_file )) {
-					$image_info = @getimagesize( COM_MEDIA_BASE ."/".$listdir.'/'.$img_file);
-					$file_details['file'] = COM_MEDIA_BASE . $listdir."/".$img_file;
-					$file_details['img_info'] = $image_info;
-					$file_details['size'] = filesize( COM_MEDIA_BASE .$listdir."/".$img_file);
-					$images[$entry] = $file_details;
+					$image_info 				= @getimagesize( COM_MEDIA_BASE ."/".$listdir.'/'.$img_file);
+					$file_details['file'] 		= COM_MEDIA_BASE . $listdir."/".$img_file;
+					$file_details['img_info'] 	= $image_info;
+					$file_details['size'] 		= filesize( COM_MEDIA_BASE .$listdir."/".$img_file);
+					$images[$entry] 			= $file_details;
 				} else {
 					// file is document
-					$file_details['size'] = filesize( COM_MEDIA_BASE .$listdir."/".$img_file);
-					$file_details['file'] = COM_MEDIA_BASE .$listdir."/".$img_file;
-					$docs[$entry] = $file_details;
+					$file_details['size'] 	= filesize( COM_MEDIA_BASE .$listdir."/".$img_file);
+					$file_details['file'] 	= COM_MEDIA_BASE .$listdir."/".$img_file;
+					$docs[$entry] 			= $file_details;
 				}
 			} else if(is_dir( COM_MEDIA_BASE .'/'.$listdir.'/'.$img_file) && substr($entry,0,1) != '.' && strtolower($entry) !== 'cvs') {
 				$folders[$entry] = $img_file;

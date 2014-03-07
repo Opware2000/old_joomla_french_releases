@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.categories.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -21,10 +21,8 @@ define( 'COM_IMAGE_BASE', $mosConfig_absolute_path . DIRECTORY_SEPARATOR . 'imag
 
 // get parameters from the URL or submitted form
 $section 	= strval( mosGetParam( $_REQUEST, 'section', 'content' ) );
-$cid 		= mosGetParam( $_REQUEST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+
+$cid 		= josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'new':
@@ -208,9 +206,8 @@ function showCategories( $section, $option ) {
 	. "\n AND c.published != -2"
 	. "\n GROUP BY c.id"
 	. $order
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
 		echo $database->stderr();
@@ -274,15 +271,15 @@ function editCategory( $uid=0, $section='' ) {
 	
 	$row = new mosCategory( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	// fail if checked out not by 'me'
 	if ($row->checked_out && $row->checked_out != $my->id) {
 		mosRedirect( 'index2.php?option=categories&section='. $row->section, 'La catégorie '. $row->title .' est actuellement éditée par un autre administrateur' );
 	}
 
-	$lists['links']	= 0;
-	$menus 			= NULL;
+	$lists['links']		= 0;
+	$menus 				= NULL;
 	$selected_folders	= NULL;
 	if ( $uid ) {
 		// existing record
@@ -294,7 +291,7 @@ function editCategory( $uid=0, $section='' ) {
 				$and 	= "\n AND type = 'weblink_category_table'";
 				$link 	= 'Tableau - Catégorie de liens web';
 				break;
-
+			
 			case 'com_newsfeeds':
 				$and 	= "\n AND type = 'newsfeed_category_table'";
 				$link 	= 'Tableau - Catégorie de lux RSS';
@@ -488,8 +485,8 @@ function saveCategory( $task ) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-	$row->title = addslashes( $row->title );
-	$row->name	= addslashes( $row->name );
+	$row->title 	= addslashes( $row->title );
+	$row->name		= addslashes( $row->name );
 	
 	// handling for MOSImage directories
 	if ( $row->section > 0 ) {
@@ -524,13 +521,13 @@ function saveCategory( $task ) {
 	}
 	
 	$row->checkin();
-	$row->updateOrder( "section = '$row->section'" );
+	$row->updateOrder( "section = " . $database->Quote( $row->section ) );
 
 	if ( $oldtitle ) {
 		if ($oldtitle != $row->title) {
 			$query = "UPDATE #__menu"
-			. "\n SET name = '$row->title'"
-			. "\n WHERE name = '$oldtitle'"
+			. "\n SET name = " . $database->Quote( $row->title ) 
+			. "\n WHERE name = " . $database->Quote( $oldtitle )
 			. "\n AND type = 'content_category'"
 			;
 			$database->setQuery( $query );
@@ -543,7 +540,7 @@ function saveCategory( $task ) {
 		$row->section != 'com_newsfeeds' &&
 		$row->section != 'com_weblinks') {
 		$query = "UPDATE #__sections SET count=count+1"
-		. "\n WHERE id = '$row->section'"
+		. "\n WHERE id = " . $database->Quote( $row->section )
 		;
 		$database->setQuery( $query );
 	}
@@ -551,7 +548,7 @@ function saveCategory( $task ) {
 		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-
+	
 	if ($redirect == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -601,9 +598,9 @@ function removeCategories( $section, $cid ) {
 	if (intval( $section ) > 0) {
 		$table = 'content';
 	} else if (strpos( $section, 'com_' ) === 0) {
-		$table = substr( $section, 4 );
+		$table = $database->getEscaped( substr( $section, 4 ) );
 	} else {
-		$table = $section;
+		$table = $database->getEscaped( $section );
 	}
 
 	$query = "SELECT c.id, c.name, COUNT( s.catid ) AS numcat"
@@ -638,7 +635,7 @@ function removeCategories( $section, $cid ) {
 			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		}
 	}
-
+	
 	if ($section == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -689,7 +686,7 @@ function publishCategories( $section, $categoryid=null, $cid=null, $publish=1 ) 
 		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-
+	
 	if (count( $cid ) == 1) {
 		$row = new mosCategory( $database );
 		$row->checkin( $cid[0] );
@@ -728,9 +725,9 @@ function orderCategory( $uid, $inc ) {
 	global $database;
 
 	$row = new mosCategory( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->move( $inc, "section = '$row->section'" );
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -815,7 +812,7 @@ function moveCategorySave( $cid, $sectionOld ) {
 	}
 	$sectionNew = new mosSection ( $database );
 	$sectionNew->load( $sectionMove );
-
+	
 	if ($sectionOld == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -879,12 +876,13 @@ function copyCategorySave( $cid, $sectionOld ) {
 	global $database;
 
 	$sectionMove 	= strval( mosGetParam( $_REQUEST, 'sectionmove', '' ) );
-	$contentid 		= mosGetParam( $_REQUEST, 'item', '' );
+	
+	$contentid		= josGetArrayInts( 'item', $_REQUEST );
 	$total 			= count( $contentid  );
 
 	$category = new mosCategory ( $database );
 	foreach( $cid as $id ) {
-		$category->load( $id );
+		$category->load( (int)$id );
 		$category->id 		= NULL;
 		$category->title 	= 'Copy of '. $category->title;
 		$category->name 	= 'Copy of '. $category->name;
@@ -907,13 +905,13 @@ function copyCategorySave( $cid, $sectionOld ) {
 
 	$content = new mosContent ( $database );
 	foreach( $contentid as $id) {
-		$content->load( $id );
+		$content->load( (int)$id );
 		$content->id 		= NULL;
 		$content->sectionid = $sectionMove;
 		$content->hits 		= 0;
 		foreach( $newcatids as $newcatid ) {
-			if ( $content->catid == $newcatid["old"] ) {
-				$content->catid = $newcatid["new"];
+			if ( $content->catid == $newcatid['old'] ) {
+				$content->catid = $newcatid['new'];
 			}
 		}
 		if (!$content->check()) {
@@ -930,7 +928,7 @@ function copyCategorySave( $cid, $sectionOld ) {
 
 	$sectionNew = new mosSection ( $database );
 	$sectionNew->load( $sectionMove );
-
+	
 	if ($sectionOld == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -948,7 +946,7 @@ function accessMenu( $uid, $access, $section ) {
 	global $database;
 
 	$row = new mosCategory( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -957,7 +955,7 @@ function accessMenu( $uid, $access, $section ) {
 	if ( !$row->store() ) {
 		return $row->getError();
 	}
-
+	
 	if ($section == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -980,7 +978,7 @@ function menuLink( $id ) {
 	$type 		= strval( mosGetParam( $_POST, 'link_type', '' ) );
 
 	$name		= stripslashes( ampReplace($name) );
-
+	
 	switch ( $type ) {
 		case 'content_category':
 			$link 		= 'index.php?option=com_content&task=category&sectionid='. $sectionid .'&id='. $id;
@@ -1036,7 +1034,7 @@ function menuLink( $id ) {
 	}
 	$row->checkin();
 	$row->updateOrder( "menutype = '$menu'" );
-
+	
 	if ($redirect == 'content') {
 		// clean any existing cache files
 		mosCache::cleanCache( 'com_content' );
@@ -1050,13 +1048,14 @@ function saveOrder( &$cid, $section ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$order 		= josGetArrayInts( 'order' );
+
 	$row		= new mosCategory( $database );
 	$conditions = array();
 
 	// update ordering values
 	for( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {
@@ -1071,7 +1070,11 @@ function saveOrder( &$cid, $section ) {
 					$found = true;
 					break;
 				} // if
-			if (!$found) $conditions[] = array($row->id, $condition);
+			if (!$found)
+			{
+				$conditions[] = array( $row->id, $condition);
+			}
+				
 		} // if
 	} // for
 

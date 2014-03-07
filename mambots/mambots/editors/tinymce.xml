@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <mosinstall version="1.0.0" type="mambot" group="editors">
 	<name>TinyMCE</name>
 	<version>2.0 RC2</version>
@@ -10,37 +10,37 @@
 	<license>LGPL</license>
 	<description>TinyMCE is a platform independent web based Javascript HTML WYSIWYG editor control.</description>
 	<params>
-		<param name="theme" type="list" default="advanced" label="Functionality" description="Select functionality">
+		<param name="theme" type="list" default="advanced" label="Fonctionnalités" description="Sélectionnez les fonctionnalités">
 			<option value="simple">Simple</option>
-			<option value="advanced">Advanced</option>
+			<option value="advanced">Avancé</option>
 		</param>
  		<param name="@spacer" type="spacer" default="" label="" description="" />
- 		<param name="cleanup" type="radio" default="1" label="Code Cleanup" description="By default TinyMCE will clean your code of certain html elements, like script and center tags, for security and XHTML compliance.  We recommend you do no deactivate this funcitonality">
+ 		<param name="cleanup" type="radio" default="1" label="Nettoyage du code" description="Par défaut TinyMCE va nettoyer le code de certains éléments html comme les balises script ou center, pour des raison de sécurité ou de compatibilité XHTML. Nous vous recommandons de conserver ce paramètre.">
  			<option value="0">Off</option>
  			<option value="1">On</option>
  		</param>
- 		<param name="cleanup_startup" type="radio" default="0" label="Code Cleanup on startup" description="Cleans code on editor load">
+ 		<param name="cleanup_startup" type="radio" default="0" label="Nettoyage du code au démarrage" description="Nettoie le coide au démarrage de l'éditeur">
  			<option value="0">Off</option>
  			<option value="1">On</option>
  		</param>
- 		<param name="autosave" type="radio" default="0" label="Save Warning" description="Save warning - gives warning if you cancel without saving changes">
+ 		<param name="autosave" type="radio" default="0" label="Avertissement de sauvegarde" description="L'avertissement de sauvegarde - vous previent si vous annulez sans sauvegarder les modifications">
  			<option value="0">Off</option>
  			<option value="1">On</option>
  		</param>
- 		<param name="compressed" type="radio" default="0" label="Compressed Version" description="Tiny can be run in compressed mode, leading to slightly faster load speeds.  However, this mode does not always work, especially in IE, so default this is off.  Be careful when enabling this to ensure it works on your system">
+ 		<param name="compressed" type="radio" default="0" label="Version compressée" description="Tiny peut fonctionner en mode compressé et se charger plus rapidement. Néansmoins, ce mode ne fonctionne pas toujours en particulier avec IE ; il est par conséquent désactivé par défaut. Soyez prudent si vous souhaitez l'activer et vérifiez qu'il fonctionne sur votre système!">
  			<option value="0">Off</option>
  			<option value="1">On</option>
  		</param>
  		<param name="@spacer" type="spacer" default="" label="" description="" />
- 		<param name="text_direction" type="list" default="ltr" label="Text Direction" description="Ability to change text direction">
- 			<option value="ltr">Left to Right</option>
- 			<option value="rtl">Right to Left</option>
+ 		<param name="text_direction" type="list" default="ltr" label="Direction du texte" description="Possibilité de changer la direction du texte">
+ 			<option value="ltr">Gauche à Droite</option>
+ 			<option value="rtl">Droite à Gauche</option>
  		</param>
-  		<param name="relative_urls" type="list" default="0" label="Urls" description="URL behaviour">
- 			<option value="0">Absolute</option>
- 			<option value="1">Relative</option>
+  		<param name="relative_urls" type="list" default="0" label="Urls" description="Types d'URLS">
+ 			<option value="0">Absolues</option>
+ 			<option value="1">Relatives</option>
  		</param>
- 		<param name="invalid_elements" type="text" default="applet" label="Prohibited Elements" description="Elements that will be cleaned from the text"/>
+ 		<param name="invalid_elements" type="text" default="applet" label="Elements Interdits" description="Les éléments qui seront nettoyés dans le texte"/>
  		<param name="content_css" type="radio" default="1" label="Template CSS classes" description="By default the bot looks for an editor_content.css file.  If it cant find one it loads template_css.css.  However if you want to force loading of template_css.css than please select `yes`">
  			<option value="0">No</option>
  			<option value="1">Yes</option>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.html.php 4054 2006-06-19 19:47:14Z stingrey $
+* @version $Id: user.html.php 4342 2006-07-27 19:22:19Z rmuilwijk $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -106,6 +106,7 @@ class HTML_user {
 			<td>
 				<input class="inputbox" type="text" name="email" value="<?php echo $row->email;?>" size="40" />
 			</td>
+		</tr>
 		<tr>
 			<td>
 				<?php echo _UNAME; ?>
@@ -144,7 +145,7 @@ class HTML_user {
 		</table>
 
 		<input type="hidden" name="id" value="<?php echo $row->id;?>" />
-		<input type="hidden" name="option" value="<?php echo $option;?>">
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="saveUserEdit" />
 		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>

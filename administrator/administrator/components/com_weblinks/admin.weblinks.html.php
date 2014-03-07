@@ -162,11 +162,11 @@ class HTML_weblinks {
 
 			// do field validation
 			if (form.title.value == ""){
-				alert( "Weblink item must have a title" );
+				alert( "Vous devez donner un nom au lien." );
 			} else if (form.catid.value == "0"){
-				alert( "You must select a category." );
+				alert( "Vous devez sélectionner un catégorie." );
 			} else if (form.url.value == ""){
-				alert( "You must have a url." );
+				alert( "Vous devez saisir une URL." );
 			} else {
 				submitform( pressbutton );
 			}

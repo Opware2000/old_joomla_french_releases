@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.php 3594 2006-05-22 17:29:07Z stingrey $
+* @version $Id: poll.php 4703 2006-08-24 03:39:18Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -39,6 +39,9 @@ switch ($task) {
 function pollAddVote( $uid ) {
 	global $database;
 
+	// simple spoof check security
+	josSpoofCheck(0,'poll');	
+	
 	$redirect = 1;
 
 	$sessionCookieName 	= mosMainFrame::sessionCookieName();
@@ -51,7 +54,7 @@ function pollAddVote( $uid ) {
 	}
 
 	$poll = new mosPoll( $database );
-	if (!$poll->load( $uid )) {
+	if (!$poll->load( (int)$uid )) {
 		echo '<h3>'. _NOT_AUTH .'</h3>';
 		echo '<input class="button" type="button" value="'. _CMN_CONTINUE .'" onClick="window.history.go(-1);">';
 		return;
@@ -77,15 +80,15 @@ function pollAddVote( $uid ) {
 
 	$query = "UPDATE #__poll_data"
 	. "\n SET hits = hits + 1"
-	. "\n WHERE pollid = $poll->id"
-	. "\n AND id = $voteid"
+	. "\n WHERE pollid = ".(int) $poll->id
+	. "\n AND id = ". (int) $voteid
 	;
 	$database->setQuery( $query );
 	$database->query();
 
 	$query = "UPDATE #__polls"
 	. "\n SET voters = voters + 1"
-	. "\n WHERE id = $poll->id"
+	. "\n WHERE id = ".(int) $poll->id
 	;
 	$database->setQuery( $query );
 
@@ -94,7 +97,7 @@ function pollAddVote( $uid ) {
 	$now = _CURRENT_SERVER_TIME;
 	
 	$query = "INSERT INTO #__poll_date"
-	. "\n SET date = '$now', vote_id = $voteid, poll_id = $poll->id"
+	. "\n SET date = '$now', vote_id = ". (int) $voteid .", poll_id = ".(int) $poll->id
 	;
 	$database->setQuery( $query );
 	$database->query();
@@ -114,7 +117,7 @@ function pollresult( $uid ) {
 	global $mainframe;
 
 	$poll = new mosPoll( $database );
-	$poll->load( $uid );
+	$poll->load( (int)$uid );
 
 	// if id value is passed and poll not published then exit
 	if ($poll->id != '' && !$poll->published) {

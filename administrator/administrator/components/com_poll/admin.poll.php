@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.php 2613 2006-02-25 01:44:55Z stingrey $
+* @version $Id: admin.poll.php 4570 2006-08-19 12:37:57Z stingrey $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,10 +24,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid 	= mosGetParam( $_REQUEST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch( $task ) {
 	case 'new':
@@ -88,9 +85,8 @@ function showPolls( $option ) {
 	. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
 	. "\n LEFT JOIN #__poll_data AS d ON d.pollid = m.id AND d.text != ''"
 	. "\n GROUP BY m.id"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 
 	if ($database->getErrorNum()) {
@@ -106,7 +102,7 @@ function editPoll( $uid=0, $option='com_poll' ) {
 
 	$row = new mosPoll( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
@@ -125,7 +121,8 @@ function editPoll( $uid=0, $option='com_poll' ) {
 		$database->setQuery($query);
 		$options = $database->loadObjectList();
 	} else {
-		$row->lag = 3600*24;
+		$row->lag 		= 3600 * 24;
+		$row->published = 1;
 	}
 
 	// get selected pages
@@ -233,8 +230,6 @@ function removePoll( $cid, $option ) {
 */
 function publishPolls( $cid=null, $publish=1, $option ) {
 	global $database, $my;
-
-	$catid = mosGetParam( $_POST, 'catid', array(0) );
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';

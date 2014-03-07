@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.contact.php 3494 2006-05-14 23:51:02Z stingrey $
+* @version $Id: admin.contact.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,10 +24,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 
@@ -120,9 +117,8 @@ function showContacts( $option ) {
 	. "\n LEFT JOIN #__users AS v ON v.id = cd.checked_out"
 	. $where
 	. "\n ORDER BY cd.catid, cd.ordering, cd.name ASC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 
 	// build list of categories
@@ -143,7 +139,7 @@ function editContact( $id, $option ) {
 
 	$row = new mosContact( $database );
 	// load the row from the db table
-	$row->load( $id );
+	$row->load( (int)$id );
 
 	if ($id) {
 		// do stuff for existing records
@@ -300,7 +296,7 @@ function orderContacts( $uid, $inc, $option ) {
 	global $database;
 
 	$row = new mosContact( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->updateOrder();
 	$row->move( $inc, "published >= 0" );
 	$row->updateOrder();

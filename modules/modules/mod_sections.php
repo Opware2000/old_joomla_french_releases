@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_sections.php 2711 2006-03-08 15:07:22Z stingrey $
+* @version $Id: mod_sections.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -32,9 +32,8 @@ $query = "SELECT a.id AS id, a.title AS title, COUNT(b.id) as cnt"
 . "\n GROUP BY a.id"
 . "\n HAVING COUNT( b.id ) > 0"
 . "\n ORDER BY a.ordering"
-. "\n LIMIT $count"
 ;
-$database->setQuery( $query );
+$database->setQuery( $query, 0, $count );
 $rows = $database->loadObjectList();
 
 $bs 	= $mainframe->getBlogSectionCount();

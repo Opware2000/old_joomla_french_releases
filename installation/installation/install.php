@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install.php 2510 2006-02-21 04:59:41Z stingrey $
+* @version $Id: install.php 4675 2006-08-23 16:55:24Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -10,6 +10,9 @@
 * other free or open source software licenses.
 * See COPYRIGHT.php for copyright notices and details.
 */
+
+// Set flag that this is a parent file
+define( "_VALID_MOS", 1 );
 
 if (file_exists( '../configuration.php' ) && filesize( '../configuration.php' ) > 10) {
 	header( 'Location: ../index.php' );
@@ -59,7 +62,7 @@ function writableCell( $folder ) {
 		<div class="clr"></div>
 		<h1>Licence GNU/GPL :</h1>
 		<div class="licensetext">
-				<a href="http://www.joomla.org">Joomla </a> is Free Software released under the GNU/GPL License.
+				<a href="http://www.joomla.org">Joomla </a> est un logiciel libre distribué sous licence GNU/GPL.
 		</div>
 		<div class="clr"></div>
 		<div class="license-form">
@@ -77,7 +80,7 @@ function writableCell( $folder ) {
 	</form>
 </div>
 <div class="ctr">
-	<a href="http://www.joomla.org" target="_blank">Joomla!</a> is Free Software released under the GNU/GPL License.
+	<a href="http://www.joomla.org" target="_blank">Joomla!</a> est un logiciel libre distribué sous licence GNU/GPL.
 </div>
 </body>
 </html>

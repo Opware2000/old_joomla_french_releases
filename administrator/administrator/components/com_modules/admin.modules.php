@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.modules.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.modules.php 4575 2006-08-19 18:52:01Z stingrey $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,7 +24,9 @@ require_once( $mainframe->getPath( 'admin_html' ) );
 
 $client 	= strval( mosGetParam( $_REQUEST, 'client', '' ) );
 $moduleid 	= mosGetParam( $_REQUEST, 'moduleid', null );
-$cid 		= mosGetParam( $_POST, 'cid', array(0) );
+
+$cid 		= josGetArrayInts( 'cid' );
+
 if ($cid[0] == 0 && isset($moduleid) ) {
 	$cid[0] = $moduleid;
 }
@@ -98,11 +100,12 @@ function viewModules( $option, $client ) {
 	$search 			= $database->getEscaped( trim( strtolower( $search ) ) );
 
 	if ($client == 'admin') {
-		$where[] = "m.client_id = '1'";
-		$client_id = 1;
+		$where[] 	= "m.client_id = '1'";
+		$client_id 	= 1;
 	} else {
-		$where[] = "m.client_id = '0'";
-		$client_id = 0;
+		$where[] 	= "m.client_id = '0'";
+		$client_id 	= 0;
+		$client 	= '';
 	}
 
 	// used by filter
@@ -135,9 +138,8 @@ function viewModules( $option, $client ) {
 	. ( count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : '' )
 	. "\n GROUP BY m.id"
 	. "\n ORDER BY position ASC, ordering ASC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
 		echo $database->stderr();
@@ -182,7 +184,7 @@ function copyModule( $option, $uid, $client ) {
 
 	$row = new mosModule( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->title 		= 'Copy of '.$row->title;
 	$row->id 			= 0;
 	$row->iscore 		= 0;
@@ -202,7 +204,7 @@ function copyModule( $option, $uid, $client ) {
 	} else {
 		$where = "client_id='0'";
 	}
-	$row->updateOrder( "position='$row->position' AND ($where)" );
+	$row->updateOrder( 'position=' . $database->Quote( $row->position ) . " AND ($where)" );
 
 	$query = "SELECT menuid"
 	. "\n FROM #__modules_menu"
@@ -260,9 +262,9 @@ function saveModule( $option, $client, $task ) {
 	} else {
 		$where = "client_id=0";
 	}
-	$row->updateOrder( "position='$row->position' AND ( $where )" );
+	$row->updateOrder( 'position=' . $database->Quote( $row->position ) . " AND ($where)" );
 
-	$menus = mosGetParam( $_POST, 'selections', array() );
+	$menus 	= josGetArrayInts( 'selections' );
 
 	// delete old module to menu item associations
 	$query = "DELETE FROM #__modules_menu"
@@ -322,7 +324,7 @@ function editModule( $option, $uid, $client ) {
 	$lists = array();
 	$row = new mosModule( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
 		mosErrorAlert( "Le module ".$row->title." est actuellement édité par un autre administrateur" );
@@ -586,7 +588,7 @@ function orderModule( $uid, $inc, $option ) {
 	$client = strval( mosGetParam( $_POST, 'client', '' ) );
 
 	$row = new mosModule( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	if ($client == 'admin') {
 		$where = "client_id = 1";
 	} else {
@@ -627,7 +629,7 @@ function accessMenu( $uid, $access, $option, $client ) {
 	}
 
 	$row = new mosModule( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -646,13 +648,14 @@ function saveOrder( &$cid, $client ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$order 		= josGetArrayInts( 'order' );
+	
 	$row 		= new mosModule( $database );
 	$conditions = array();
 
 	// update ordering values
 	for( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {

@@ -1,5 +1,5 @@
 /**
-* @version $Id: install.css 47 2005-09-15 02:55:27Z rhuk $
+* @version $Id: install.css 4698 2006-08-24 01:57:11Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -197,7 +197,7 @@ body {
 }
 
 table.content {
-	width: 80%;
+	width: 95%;
 }
 
 table.content td {

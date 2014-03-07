@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.php 4060 2006-06-19 22:31:10Z stingrey $
+* @version $Id: weblinks.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -172,7 +172,7 @@ function showItem ( $id ) {
 	global $database, $my;
 
 	$link = new mosWeblink($database);
-	$link->load($id);
+	$link->load((int)$id);
 	
 	/*
 	* Check if link is published
@@ -183,7 +183,7 @@ function showItem ( $id ) {
 	}
 	
 	$cat = new mosCategory($database);
-	$cat->load($link->catid);
+	$cat->load((int)$link->catid);
 	
 	/*
 	* Check if category is published
@@ -241,7 +241,7 @@ function editWebLink( $id, $option ) {
 	
 	$row = new mosWeblink( $database );
 	// load the row from the db table
-	$row->load( $id );
+	$row->load( (int)$id );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
@@ -313,13 +313,16 @@ function saveWeblink( $option ) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+
+	// sanitise id field
+	// $row->id = (int) $row->id;
+	// until full edit capabilities are given for weblinks - limit saving to new weblinks only
+	$row->id = 0;	
+
 	$isNew = $row->id < 1;
 
 	$row->date = date( 'Y-m-d H:i:s' );
-	
-	// until full edit capabilities are given for weblinks - limit saving to new weblinks only
-	$row->id = 0;	
-	
+
 	if (!$row->check()) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.weblinks.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.weblinks.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,7 +24,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'new':
@@ -114,9 +114,8 @@ function showWeblinks( $option ) {
 	. "\n LEFT JOIN #__users AS u ON u.id = a.checked_out"
 	. ( count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : "")
 	. "\n ORDER BY a.catid, a.ordering"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
@@ -142,7 +141,7 @@ function editWeblink( $option, $id ) {
 
 	$row = new mosWeblink( $database );
 	// load the row from the db table
-	$row->load( $id );
+	$row->load( (int)$id );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $my->id )) {
@@ -162,7 +161,7 @@ function editWeblink( $option, $id ) {
 	// build the html select list for ordering
 	$query = "SELECT ordering AS value, title AS text"
 	. "\n FROM #__weblinks"
-	. "\n WHERE catid = $row->catid"
+	. "\n WHERE catid = " . (int) $row->catid
 	. "\n ORDER BY ordering"
 	;
 	$lists['ordering'] 			= mosAdminMenus::SpecificOrdering( $row, $id, $query, 1 );
@@ -210,7 +209,7 @@ function saveWeblink( $option ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "catid = $row->catid" );
+	$row->updateOrder( "catid = " . (int) $row->catid );
 
 	mosRedirect( "index2.php?option=$option" );
 }
@@ -250,8 +249,6 @@ function removeWeblinks( $cid, $option ) {
 function publishWeblinks( $cid=null, $publish=1,  $option ) {
 	global $database, $my;
 
-	$catid = mosGetParam( $_POST, 'catid', array(0) );
-
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
 		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
@@ -284,7 +281,7 @@ function publishWeblinks( $cid=null, $publish=1,  $option ) {
 function orderWeblinks( $uid, $inc, $option ) {
 	global $database;
 	$row = new mosWeblink( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->updateOrder();
 	$row->move( $inc, "published >= 0" );
 	$row->updateOrder();

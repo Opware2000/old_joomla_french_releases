@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content_blog_section.class.php 652 2005-10-25 22:23:27Z Jinx $
+* @version $Id: content_blog_section.class.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -29,7 +29,7 @@ class content_blog_section {
 		global $database, $my, $mainframe;
 
 		$menu = new mosMenu( $database );
-		$menu->load( $uid );
+		$menu->load( (int)$uid );
 
 		// fail if checked out not by 'me'
 		if ($menu->checked_out && $menu->checked_out != $my->id) {
@@ -95,7 +95,8 @@ class content_blog_section {
 		global $database;
 
 		$params = mosGetParam( $_POST, 'params', '' );
-		$secids	= mosGetParam( $_POST, 'secid', array() );
+		
+		$secids	= josGetArrayInts( 'secid' );
 		$secid	= implode( ',', $secids );
 
 		$params['sectionid']	= $secid;

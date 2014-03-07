@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: rss.php 3718 2006-05-29 06:48:03Z stingrey $
+* @version $Id: rss.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Syndicate
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -50,7 +50,7 @@ function feedFrontpage( $showFeed ) {
 
 	// load syndication parameters
 	$component = new mosComponent( $database );
-	$component->load( $id );
+	$component->load( (int)$id );
 	$params = new mosParameters( $component->params );
 
 	// test if security check is enbled

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.statistics.php 2762 2006-03-12 19:09:43Z stingrey $
+* @version $Id: admin.statistics.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @subpackage Statistics
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -152,9 +152,8 @@ function showPageImpressions( $option, $task ) {
 	$query = "SELECT id, title, created, hits"
 	. "\n FROM #__content"
 	. "\n ORDER BY hits DESC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery($query);
+	$database->setQuery($query, $pageNav->limitstart, $pageNav->limit);
 
 	$rows = $database->loadObjectList();
 
@@ -181,9 +180,8 @@ function showSearches( $option, $task, $showResults=null ) {
 	$query = "SELECT *"
 	. "\n FROM #__core_log_searches"
 	. "\n ORDER BY hits DESC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {

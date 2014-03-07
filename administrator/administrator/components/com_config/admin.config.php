@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.php 3754 2006-05-31 12:08:37Z stingrey $
+* @version $Id: admin.config.php 4802 2006-08-28 16:18:33Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -137,7 +137,6 @@ function showconfig( $option) {
 
 
 // SERVER SETTINGS
-
 	$lists['gzip'] = mosHTML::yesnoRadioList( 'config_gzip', 'class="inputbox"', $row->config_gzip );
 	
 	$session = array(
@@ -156,7 +155,7 @@ function showconfig( $option) {
 	);
 
 	$lists['error_reporting'] = mosHTML::selectList( $errors, 'config_error_reporting', 'class="inputbox" size="1"', 'value', 'text', $row->config_error_reporting );
-
+	
 	$lists['admin_expired'] = mosHTML::yesnoRadioList( 'config_admin_expired', 'class="inputbox"', $row->config_admin_expired );
 
 // LOCALE SETTINGS
@@ -233,7 +232,7 @@ function showconfig( $option) {
 	$lists['uniquemail'] 			= mosHTML::yesnoRadioList( 'config_uniquemail', 'class="inputbox"',	$row->config_uniquemail );
 
 	$lists['shownoauth'] 			= mosHTML::yesnoRadioList( 'config_shownoauth', 'class="inputbox"', $row->config_shownoauth );
-
+	
 	$lists['frontend_userparams']	= mosHTML::yesnoRadioList( 'config_frontend_userparams', 'class="inputbox"', $row->config_frontend_userparams );
 
 // META SETTINGS
@@ -293,7 +292,7 @@ function showconfig( $option) {
 
 	$lists['item_navigation'] 		= mosHTML::RadioList( $show_hide_r, 'config_item_navigation', 'class="inputbox"', $row->config_item_navigation, 'value', 'text' );
 
-	$lists['ml_support'] 			= mosHTML::yesnoRadioList( 'config_ml_support', 'class="inputbox" onclick="javascript: if (document.adminForm.config_ml_support[1].checked) { alert(\'Remember to install the MambelFish component.\') }"', $row->config_ml_support );
+	$lists['ml_support'] 			= mosHTML::yesnoRadioList( 'config_ml_support', 'class="inputbox" onclick="javascript: if (document.adminForm.config_ml_support[1].checked) { alert(\'Vous devez installer le composant Joomfish.\') }"', $row->config_ml_support );
 
 	$lists['multipage_toc'] 		= mosHTML::RadioList( $show_hide_r, 'config_multipage_toc', 'class="inputbox"', $row->config_multipage_toc, 'value', 'text' );
 
@@ -422,7 +421,7 @@ function saveconfig( $task ) {
 		if ($enable_write) {
 			@chmod( $fname, $oldperms );
 		}
-		mosRedirect( 'index2.php', 'An Error Has Occurred! Unable to open config file to write!' );
+		mosRedirect( 'index2.php', 'Une erreur s\'est produite! Impossible d\'ouvrir le fichier de configuration!' );
 	}
 }
 ?>

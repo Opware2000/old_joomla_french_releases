@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Id: globals.php 1145 2005-11-20 22:57:55Z Jinx $
+ * @version $Id: globals.php 4675 2006-08-23 16:55:24Z stingrey $
  * @package Joomla
  * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -9,12 +9,19 @@
  * See COPYRIGHT.php for copyright notices and details.
  */
 
+// no direct access
+defined( '_VALID_MOS' ) or die( 'Restricted access' );
+
 /**
  * Use 1 to emulate register_globals = on
+ * WARNING: SETTING TO 1 MAY BE REQUIRED FOR BACKWARD COMPATIBILITY
+ * OF SOME THIRD-PARTY COMPONENTS BUT IS NOT RECOMMENDED
  * 
  * Use 0 to emulate regsiter_globals = off
+ * NOTE: THIS IS THE RECOMMENDED SETTING FOR YOUR SITE BUT YOU MAY
+ * EXPERIENCE PROBLEMS WITH SOME THIRD-PARTY COMPONENTS
  */
-define( 'RG_EMULATION', 1 );
+define( 'RG_EMULATION', 0 );
 
 /**
  * Adds an array to the GLOBALS array and checks that the GLOBALS variable is
@@ -26,7 +33,12 @@ function checkInputArray( &$array, $globalise=false ) {
 	static $banned = array( '_files', '_env', '_get', '_post', '_cookie', '_server', '_session', 'globals' );
 
 	foreach ($array as $key => $value) {
-		if (in_array( strtolower( $key ), $banned ) ) {
+		$intval = intval( $key );
+		// PHP GLOBALS injection bug 
+		$failed = in_array( strtolower( $key ), $banned );
+		// PHP Zend_Hash_Del_Key_Or_Index bug
+		$failed |= is_numeric( $key );
+		if ($failed) {
 			die( 'Illegal variable <b>' . implode( '</b> or <b>', $banned ) . '</b> passed to script.' );
 		}
 		if ($globalise) {

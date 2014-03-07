@@ -225,7 +225,7 @@ return <<<EOD
 	<script type="text/javascript">
 	tinyMCE.init({
 		theme : "$theme",
-		language : "en",
+		language : "fr",
 		mode : "specific_textareas",
 		document_base_url : "$mosConfig_live_site/",
 		relative_urls : $relative_urls,

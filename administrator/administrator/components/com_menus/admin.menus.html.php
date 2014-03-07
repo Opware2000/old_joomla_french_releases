@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menus.html.php 3457 2006-05-11 22:49:12Z stingrey $
+* @version $Id: admin.menus.html.php 4356 2006-07-28 09:18:23Z rmuilwijk $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -42,7 +42,7 @@ class HTML_menusections {
 			Filtre:
 			</td>
 			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" />
+			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
 			</td>
 		</tr>
 		<?php

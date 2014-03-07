@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 3836 2006-06-03 20:44:28Z stingrey $
+* @version $Id: index.php 4750 2006-08-25 01:08:30Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,6 +19,7 @@ if (!file_exists( '../configuration.php' )) {
 	exit();
 }
 
+require( '../globals.php' );
 require_once( '../configuration.php' );
 require_once( '../includes/joomla.php' );
 include_once ( $mosConfig_absolute_path . '/language/'. $mosConfig_lang .'.php' );
@@ -97,7 +98,7 @@ if (isset( $_POST['submit'] )) {
 		$database->setQuery( $query );
 		if (!$database->query()) {
 			echo $database->stderr();
-		}
+		}		
 
 		// check if site designated as a production site 
 		// for a demo site allow multiple logins with same user account
@@ -118,14 +119,14 @@ if (isset( $_POST['submit'] )) {
 			}	
 		}
 		
-		$_SESSION['session_id'] 		= $session_id;
-		$_SESSION['session_user_id'] 	= $my->id;
-		$_SESSION['session_username'] 	= $my->username;
-		$_SESSION['session_usertype'] 	= $my->usertype;
-		$_SESSION['session_gid'] 		= $my->gid;
-		$_SESSION['session_logintime'] 	= $logintime;
-		$_SESSION['session_user_params']= $my->params;
-		$_SESSION['session_userstate'] 	= array();
+		$_SESSION['session_id'] 			= $session_id;
+		$_SESSION['session_user_id'] 		= $my->id;
+		$_SESSION['session_username'] 		= $my->username;
+		$_SESSION['session_usertype'] 		= $my->usertype;
+		$_SESSION['session_gid'] 			= $my->gid;
+		$_SESSION['session_logintime'] 		= $logintime;
+		$_SESSION['session_user_params']	= $my->params;
+		$_SESSION['session_userstate'] 		= array();
 
 		session_write_close();
 		

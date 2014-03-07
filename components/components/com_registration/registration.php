@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.php 4054 2006-06-19 19:47:14Z stingrey $
+* @version $Id: registration.php 4572 2006-08-19 16:39:43Z friesengeist $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -269,14 +269,5 @@ function activate( $option ) {
 	} else {
 		echo _REG_ACTIVATE_NOT_FOUND;
 	}
-}
-
-function is_email($email){
-	$rBool=false;
-
-	if(preg_match("/[\w\.\-]+@\w+[\w\.\-]*?\.\w{1,4}/", $email)){
-		$rBool=true;
-	}
-	return $rBool;
 }
 ?>

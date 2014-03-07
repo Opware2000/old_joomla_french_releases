@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: registration.html.php 4061 2006-06-19 22:32:49Z stingrey $
+* @version $Id: registration.html.php 4343 2006-07-27 19:28:05Z rmuilwijk $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -122,6 +122,7 @@ class HTML_registration {
 			<td>
 				<input type="text" name="username" size="40" value="" class="inputbox" maxlength="25" />
 			</td>
+		</tr>
 		<tr>
 			<td>
 				<?php echo _REGISTER_EMAIL; ?> *

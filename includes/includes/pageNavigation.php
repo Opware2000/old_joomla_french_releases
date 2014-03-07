@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 3243 2006-04-24 09:15:09Z stingrey $
+* @version $Id: pageNavigation.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -27,9 +27,9 @@ class mosPageNav {
 	var $total = null;
 
 	function mosPageNav( $total, $limitstart, $limit ) {
-		$this->total = intval( $total );
-		$this->limitstart = max( $limitstart, 0 );
-		$this->limit = max( $limit, 0 );
+		$this->total		= (int) $total;
+		$this->limitstart	= (int) max( $limitstart, 0 );
+		$this->limit		= (int) max( $limit, 0 );
 	}
 	/**
 	* Returns the html limit # input box

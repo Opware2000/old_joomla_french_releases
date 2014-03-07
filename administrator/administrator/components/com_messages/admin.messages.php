@@ -18,10 +18,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid	= mosGetParam( $_REQUEST, 'cid', array( 0 ) );
-if (!is_array( $cid )) {
-	$cid = array ( 0 );
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'view':
@@ -78,7 +75,7 @@ function editConfig( $option ) {
 		$data['auto_purge']->cfg_value 	= 7;
 	}
 	
-	$vars 				= array();
+	$vars 					= array();
 	$vars['lock'] 			= mosHTML::yesnoSelectList( "vars[lock]", 'class="inputbox" size="1"', $data['lock']->cfg_value );
 	$vars['mail_on_new'] 	= mosHTML::yesnoSelectList( "vars[mail_on_new]", 'class="inputbox" size="1"', $data['mail_on_new']->cfg_value );
 	$vars['auto_purge'] 	= $data['auto_purge']->cfg_value;
@@ -114,7 +111,7 @@ function newMessage( $option ) {
 	
 	$user 		= intval( mosGetParam( $_REQUEST, 'userid', 0 ) );
 	$subject 	= strval( mosGetParam( $_REQUEST, 'subject', '' ) );
-
+	
 	// get available backend user groups
 	$gid 	= $acl->get_group_id( 'Public Backend', 'ARO' );
 	$gids 	= $acl->get_group_children( $gid, 'ARO', 'RECURSE' );
@@ -186,9 +183,8 @@ function showMessages( $option ) {
 	. "\n INNER JOIN #__users AS u ON u.id = a.user_id_from"
 	. ($wheres ? "\n WHERE " . implode( " AND ", $wheres ) : "" )
 	. "\n ORDER BY date_time DESC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
@@ -226,7 +222,7 @@ function removeMessage( $cid, $option ) {
 	global $database;
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
-		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
+		echo "<script> alert('Selectionnez un element a supprimer'); window.history.go(-1);</script>\n";
 		exit;
 	}
 	if (count( $cid )) {

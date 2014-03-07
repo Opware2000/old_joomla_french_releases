@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_quickicon.php 1004 2005-11-13 17:18:18Z stingrey $
+* @version $Id: mod_quickicon.php 4806 2006-08-28 17:17:08Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -30,6 +30,9 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 		</div>
 		<?php
 	}
+	
+	$securitycheck 	= intval( $params->get( 'securitycheck', 1 ) );
+	$versioncheck 	= intval( $params->get( 'versioncheck', 1 ) );
 	
 	?>
 	<div id="cpanel">
@@ -64,12 +67,12 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 			$link = 'index2.php?option=com_menumanager';
 			quickiconButton( $link, 'menu.png', 'Menus' );
 		}
-	
+		
 		if ( $my->gid > 24 ) {
 			$link = 'index2.php?option=com_languages';
 			quickiconButton( $link, 'langmanager.png', 'Langues' );
 		}
-	
+		
 		if ( $my->gid > 23 ) {
 			$link = 'index2.php?option=com_users';
 			quickiconButton( $link, 'user.png', 'Utilisateurs' );
@@ -79,8 +82,23 @@ if (!defined( '_JOS_QUICKICON_MODULE' )) {
 			$link = 'index2.php?option=com_config&hidemainmenu=1';
 			quickiconButton( $link, 'config.png', 'Configuration globale' );
 		}
+		/*
+		$link = 'index2.php?option=com_admin&task=versioncheck';
+		quickiconButton( $link, 'version_check.png', 'V&eacute;rification de version' );
+		*/
+		
+		if ($versioncheck) {
+		// show version check
+			josVersionCheck('88%',0);
+		}
+		
+		if ($securitycheck) {
+		// show security setting check
+			josSecurityCheck('88%');
+		}
 		?>
-	</div>
+	</div>	
+	<div style="clear:both;"> </div>	
 	<?php
 }
 ?>

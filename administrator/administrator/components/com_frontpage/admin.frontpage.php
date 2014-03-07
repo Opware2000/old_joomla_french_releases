@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.frontpage.php 3674 2006-05-26 16:13:50Z stingrey $
+* @version $Id: admin.frontpage.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -24,10 +24,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'publish':
@@ -134,9 +131,8 @@ function viewFrontPage( $option ) {
 	. "\n LEFT JOIN #__users AS v ON v.id = c.created_by"
 	. (count( $where ) ? "\nWHERE " . implode( ' AND ', $where ) : "")
 	. "\n ORDER BY f.ordering"
-	. "\n LIMIT $pageNav->limitstart,$pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart,$pageNav->limit );
 
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
@@ -224,12 +220,12 @@ function removeFrontPage( &$cid, $option ) {
 	}
 	$fp = new mosFrontPage( $database );
 	foreach ($cid as $id) {
-		if (!$fp->delete( $id )) {
+		if (!$fp->delete( (int)$id )) {
 			echo "<script> alert('".$fp->getError()."'); </script>\n";
 			exit();
 		}
 		$obj = new mosContent( $database );
-		$obj->load( $id );
+		$obj->load( (int)$id );
 		$obj->mask = 0;
 		if (!$obj->store()) {
 			echo "<script> alert('".$fp->getError()."'); </script>\n";
@@ -252,7 +248,7 @@ function orderFrontPage( $uid, $inc, $option ) {
 	global $database;
 
 	$fp = new mosFrontPage( $database );
-	$fp->load( $uid );
+	$fp->load( (int)$uid );
 	$fp->move( $inc );
 	
 	// clean any existing cache files
@@ -270,7 +266,7 @@ function accessMenu( $uid, $access ) {
 	global $database;
 
 	$row = new mosContent( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -290,12 +286,12 @@ function saveOrder( &$cid ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
-
+	$order 		= josGetArrayInts( 'order' );
+	
 	for( $i=0; $i < $total; $i++ ) {
 		$query = "UPDATE #__content_frontpage"
-		. "\n SET ordering = $order[$i]"
-		. "\n WHERE content_id = $cid[$i]";
+		. "\n SET ordering = " . (int) $order[$i]
+		. "\n WHERE content_id = " . (int) $cid[$i];
 		$database->setQuery( $query );
 		if (!$database->query()) {
 			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
@@ -304,7 +300,7 @@ function saveOrder( &$cid ) {
 
 		// update ordering
 		$row = new mosFrontPage( $database );
-		$row->load( $cid[$i] );
+		$row->load( (int)$cid[$i] );
 		$row->updateOrder();
 	}
 	

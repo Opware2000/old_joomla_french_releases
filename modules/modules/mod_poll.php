@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_poll.php 4110 2006-06-23 21:19:29Z stingrey $
+* @version $Id: mod_poll.php 4584 2006-08-19 21:43:44Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -89,6 +89,9 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 
 		$cookiename 		= "voted$poll->id";
 		$voted 				= mosGetParam( $_COOKIE, $cookiename, 'z' );
+		
+		// used for spoof hardening
+		$validate = josSpoofValue('poll');
 		?>
 		<script language="javascript" type="text/javascript">
 		<!--
@@ -163,6 +166,7 @@ if (!defined( '_JOS_POLL_MODULE' )) {
 
 		<input type="hidden" name="id" value="<?php echo $poll->id;?>" />
 		<input type="hidden" name="task" value="vote" />
+		<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 		</form>
 		<?php
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_logged.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_logged.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -51,9 +51,8 @@ $query = "SELECT *"
 . "\n WHERE userid != 0"
 . $and
 . "\n ORDER BY usertype, username"
-. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 ;
-$database->setQuery( $query );
+$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 $rows = $database->loadObjectList();
 ?>
 <table class="adminlist">

@@ -295,7 +295,7 @@ function check() {
 <div class="clr"></div>
 </div>
 <div class="ctr">
-	<a href="http://www.joomla.org" target="_blank">Joomla!</a> is Free Software released under the GNU/GPL License.
+	<a href="http://www.joomla.org" target="_blank">Joomla!</a> est un logiciel libre distribué sous licence GNU/GPL.
 </div>
 </body>
 </html>

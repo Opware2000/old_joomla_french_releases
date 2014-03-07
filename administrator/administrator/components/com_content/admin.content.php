@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.content.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.content.php 4672 2006-08-23 15:14:19Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -18,10 +18,8 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'admin_html' ) );
 
 $sectionid 	= intval( mosGetParam( $_REQUEST, 'sectionid', 0 ) );
-$cid 		= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+
+$cid 		= josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'new':
@@ -168,7 +166,7 @@ function viewContent( $sectionid, $option ) {
 		$all 		= NULL;
 		$filter 	= "\n WHERE cc.section = '$sectionid'";
 		$section 	= new mosSection( $database );
-		$section->load( $sectionid );
+		$section->load( (int)$sectionid );
 	}
 
 	// used by filter
@@ -206,7 +204,7 @@ function viewContent( $sectionid, $option ) {
 	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
 	. "\n LEFT JOIN #__users AS v ON v.id = c.created_by"
 	. "\n LEFT JOIN #__content_frontpage AS f ON f.content_id = c.id"
-	. ( count( $where ) ? "\nWHERE " . implode( ' AND ', $where ) : '' )
+	. ( count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : '' )
 	. $order
 	;
 	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
@@ -320,9 +318,8 @@ function viewArchive( $sectionid, $option ) {
 	. "\n LEFT JOIN #__users AS v ON v.id = c.created_by"
 	. ( count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : '' )
 	. "\n ORDER BY c.catid, c.ordering"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 	if ($database->getErrorNum()) {
 		echo $database->stderr();
@@ -342,7 +339,7 @@ function viewArchive( $sectionid, $option ) {
 	$lists['sectionid']		= mosAdminMenus::SelectSection( 'filter_sectionid', $filter_sectionid, $javascript );
 
 	$section = new mosSection( $database );
-	$section->load( $sectionid );
+	$section->load( (int)$sectionid );
 
 	// get list of Authors for dropdown filter
 	$query = "SELECT c.created_by, u.name"
@@ -380,7 +377,7 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 
 	// load the row from the db table
 	$row = new mosContent( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	if ($uid) {
 		$sectionid = $row->sectionid;
@@ -447,9 +444,9 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 			$sectionid = $_POST['filter_sectionid'];
 		}
 		if ( @$_POST['catid'] ) {
-			$row->catid 	= $_POST['catid'];
+			$row->catid 	= (int)$_POST['catid'];
 			$category = new mosCategory( $database );
-			$category->load( $_POST['catid'] );
+			$category->load( (int)$_POST['catid'] );
 			$sectionid = $category->section;
 		} else {
 			$row->catid 	= 0;
@@ -550,7 +547,7 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 	// build the html select list for ordering
 	$query = "SELECT ordering AS value, title AS text"
 	. "\n FROM #__content"
-	. "\n WHERE catid = $row->catid"
+	. "\n WHERE catid = " . (int) $row->catid
 	. "\n AND state >= 0"
 	. "\n ORDER BY ordering"
 	;
@@ -559,7 +556,7 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 	// pull param column from category info
 	$query = "SELECT params"
 	. "\n FROM #__categories"
-	. "\n WHERE id = $row->catid"
+	. "\n WHERE id = " . (int) $row->catid
 	;
 	$database->setQuery( $query );
 	$categoryParam = $database->loadResult();	
@@ -577,7 +574,7 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 		// load param column from section info
 		$query = "SELECT params"
 		. "\n FROM #__sections"
-		. "\n WHERE id = $row->sectionid"
+		. "\n WHERE id = " . (int) $row->sectionid
 		;
 		$database->setQuery( $query );		
 		$sectionParam = $database->loadResult();			
@@ -602,9 +599,9 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 	$images 	= array();
 	
 	if ( $folders[0]->value == '*1*' ) {
-	$folders 	= array();
-	$folders[] 	= mosHTML::makeOption( '/' );
-	mosAdminMenus::ReadImages( $pathA, '/', $folders, $images );
+		$folders 	= array();
+		$folders[] 	= mosHTML::makeOption( '/' );
+		mosAdminMenus::ReadImages( $pathA, '/', $folders, $images );
 	} else {
 		mosAdminMenus::ReadImagesX( $folders, $images );
 	}
@@ -656,18 +653,21 @@ function saveContent( $sectionid, $task ) {
 		exit();
 	}
 
+	// sanitise id field
+	$row->id = (int) $row->id;
+
 	if ($row->id) {
 		$row->modified 		= date( 'Y-m-d H:i:s' );
 		$row->modified_by 	= $my->id;
 	}
 
-		$row->created_by 	= $row->created_by ? $row->created_by : $my->id;
+	$row->created_by 	= $row->created_by ? $row->created_by : $my->id;
 	
 	if ($row->created && strlen(trim( $row->created )) <= 10) {
 		$row->created 	.= ' 00:00:00';
 	}
-		$row->created 		= $row->created ? mosFormatDate( $row->created, '%Y-%m-%d %H:%M:%S', -$mosConfig_offset ) : date( 'Y-m-d H:i:s' );
-
+	$row->created 		= $row->created ? mosFormatDate( $row->created, '%Y-%m-%d %H:%M:%S', -$mosConfig_offset ) : date( 'Y-m-d H:i:s' );
+	
 	if (strlen(trim( $row->publish_up )) <= 10) {
 		$row->publish_up .= ' 00:00:00';
  	}
@@ -724,7 +724,7 @@ function saveContent( $sectionid, $task ) {
 	if (intval( mosGetParam( $_REQUEST, 'frontpage', 0 ) )) {
 
 		// toggles go to first place
-		if (!$fp->load( $row->id )) {
+		if (!$fp->load( (int)$row->id )) {
 			// new entry
 			$query = "INSERT INTO #__content_frontpage"
 			. "\n VALUES ( $row->id, 1 )"
@@ -738,7 +738,7 @@ function saveContent( $sectionid, $task ) {
 		}
 	} else {
 		// no frontpage mask
-		if (!$fp->delete( $row->id )) {
+		if (!$fp->delete( (int)$row->id )) {
 			$msg .= $fp->stderr();
 		}
 		$fp->ordering = 0;
@@ -746,7 +746,7 @@ function saveContent( $sectionid, $task ) {
 	$fp->updateOrder();
 
 	$row->checkin();
-	$row->updateOrder( "catid = $row->catid AND state >= 0" );
+	$row->updateOrder( "catid = " . (int) $row->catid . " AND state >= 0" );
 
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
@@ -793,7 +793,7 @@ function saveContent( $sectionid, $task ) {
 */
 function changeContent( $cid=null, $state=0, $option ) {
 	global $database, $my, $task;
-
+	
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
 		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
@@ -892,7 +892,7 @@ function toggleFrontPage( $cid, $section, $option ) {
 		}
 		$fp->updateOrder();
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -952,11 +952,11 @@ function orderContent( $uid, $inc, $option ) {
 	global $database;
 
 	$row = new mosContent( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->move( $inc, "catid = $row->catid AND state >= 0" );
 
 	$redirect = mosGetParam( $_POST, 'redirect', $row->sectionid );
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -1005,8 +1005,11 @@ function moveSection( $cid, $sectionid, $option ) {
 function moveSectionSave( &$cid, $sectionid, $option ) {
 	global $database, $my;
 
-	$sectcat = mosGetParam( $_POST, 'sectcat', '' );
+	$sectcat 	= mosGetParam( $_POST, 'sectcat', '' );
 	list( $newsect, $newcat ) = explode( ',', $sectcat );
+	// ensure values are integers
+	$newsect 	= intval( $newsect );
+	$newcat 	= intval( $newcat );
 
 	if (!$newsect && !$newcat ) {
 		mosRedirect( "index.php?option=com_content&sectionid=$sectionid&mosmsg=An error has occurred" );
@@ -1037,7 +1040,7 @@ function moveSectionSave( &$cid, $sectionid, $option ) {
 		$row->load( intval( $id ) );
 		$row->ordering = 0;
 		$row->store();
-		$row->updateOrder( "catid = $row->catid AND state >= 0" );
+		$row->updateOrder( "catid = " . (int) $row->catid . " AND state >= 0" );
 	}
 
 	$query = "UPDATE #__content SET sectionid = $newsect, catid = $newcat"
@@ -1055,9 +1058,9 @@ function moveSectionSave( &$cid, $sectionid, $option ) {
 		$row->load( intval( $id ) );
 		$row->ordering = 0;
 		$row->store();
-		$row->updateOrder( "catid = $row->catid AND state >= 0" );
+		$row->updateOrder( "catid = " . (int) $row->catid . " AND state >= 0" );
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -1110,9 +1113,9 @@ function copyItem( $cid, $sectionid, $option ) {
 function copyItemSave( $cid, $sectionid, $option ) {
 	global $database;
 
-	$sectcat = mosGetParam( $_POST, 'sectcat', '' );
+	$sectcat 	= mosGetParam( $_POST, 'sectcat', '' );
 	//seperate sections and categories from selection
-	$sectcat = explode( ',', $sectcat );
+	$sectcat 	= explode( ',', $sectcat );
 	list( $newsect, $newcat ) = $sectcat;
 
 	if ( !$newsect && !$newcat ) {
@@ -1184,9 +1187,9 @@ function copyItemSave( $cid, $sectionid, $option ) {
 			echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 			exit();
 		}
-		$row->updateOrder( "catid='". $row->catid ."' AND state >= 0" );
+		$row->updateOrder( "catid='". (int) $row->catid ."' AND state >= 0" );
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -1202,7 +1205,7 @@ function resethits( $redirect, $id ) {
 	global $database;
 
 	$row = new mosContent($database);
-	$row->Load($id);
+	$row->Load((int)$id);
 	$row->hits = 0;
 	$row->store();
 	$row->checkin();
@@ -1220,7 +1223,7 @@ function accessMenu( $uid, $access, $option ) {
 	global $database;
 
 	$row = new mosContent( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -1257,7 +1260,7 @@ function menuLink( $redirect, $id ) {
 	$link = strval( mosGetParam( $_POST, 'link_name', '' ) );
 
 	$link	= stripslashes( ampReplace($link) );
-
+	
 	$row = new mosMenu( $database );
 	$row->menutype 		= $menu;
 	$row->name 			= $link;
@@ -1276,12 +1279,12 @@ function menuLink( $redirect, $id ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "menutype = '$row->menutype' AND parent = $row->parent" );
-
+	$row->updateOrder( "menutype = " . $database->Quote( $row->menutype ) . " AND parent = " . (int) $row->parent );
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
-	$msg = $link .' (Link - Content Item) in menu: '. $menu .' successfully created';
+	$msg = $link .' (Lien - Article) dans le menu: '. $menu .' créé avec succès';
 	mosRedirect( 'index2.php?option=com_content&sectionid='. $redirect .'&task=edit&hidemainmenu=1&id='. $id, $msg );
 }
 
@@ -1302,15 +1305,17 @@ function saveOrder( &$cid ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
 	$redirect 	= mosGetParam( $_POST, 'redirect', 0 );
 	$rettask	= strval( mosGetParam( $_POST, 'returntask', '' ) );
+	
+	$order 		= josGetArrayInts( 'order' );
+	
 	$row 		= new mosContent( $database );
 	$conditions = array();
 
 	// update ordering values
 	for( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.typedcontent.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -17,10 +17,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ( $task ) {
 	case 'cancel':
@@ -131,9 +128,8 @@ function view( $option ) {
 	. $search_query
 	. $filter
 	. "\n ORDER BY ". $order
-	. "\n LIMIT $pageNav->limitstart,$pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 
 	if ($database->getErrorNum()) {
@@ -197,9 +193,9 @@ function edit( $uid, $option ) {
 	global $mosConfig_absolute_path, $mosConfig_live_site, $mosConfig_offset;
 
 	$row = new mosContent( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
-	$lists = array();
+	$lists 		= array();
 	$nullDate 	= $database->getNullDate();
 
 	if ($uid) {
@@ -305,7 +301,7 @@ function edit( $uid, $option ) {
 function save( $option, $task ) {
 	global $database, $my, $mosConfig_offset;
 
-	$nullDate = $database->getNullDate();
+	$nullDate 	= $database->getNullDate();
 	$menu 		= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
 	$menuid		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
 
@@ -320,7 +316,7 @@ function save( $option, $task ) {
 		$row->modified_by 	= $my->id;
 	}
 	
-		$row->created_by 	= $row->created_by ? $row->created_by : $my->id;
+	$row->created_by 	= $row->created_by ? $row->created_by : $my->id;
 	
 	if ($row->created && strlen(trim( $row->created )) <= 10) {
 		$row->created 	.= ' 00:00:00';
@@ -367,7 +363,7 @@ function save( $option, $task ) {
 		exit();
 	}
 	$row->checkin();
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -426,7 +422,7 @@ function trash( &$cid, $option ) {
 		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -469,7 +465,7 @@ function changeState( $cid=null, $state=0, $option ) {
 		$row = new mosContent( $database );
 		$row->checkin( $cid[0] );
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -489,7 +485,7 @@ function changeAccess( $id, $access, $option  ) {
 	global $database;
 
 	$row = new mosContent( $database );
-	$row->load( $id );
+	$row->load( (int)$id );
 	$row->access = $access;
 
 	if ( !$row->check() ) {
@@ -498,7 +494,7 @@ function changeAccess( $id, $access, $option  ) {
 	if ( !$row->store() ) {
 		return $row->getError();
 	}
-
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -513,7 +509,7 @@ function resethits( $option, $id ) {
 	global $database;
 
 	$row = new mosContent($database);
-	$row->Load( $id );
+	$row->Load( (int)$id );
 	$row->hits = "0";
 	$row->store();
 	$row->checkin();
@@ -542,7 +538,7 @@ function menuLink( $option, $id ) {
 	$link 	= strval( mosGetParam( $_POST, 'link_name', '' ) );
 
 	$link	= stripslashes( ampReplace($link) );
-
+	
 	$row 				= new mosMenu( $database );
 	$row->menutype 		= $menu;
 	$row->name 			= $link;
@@ -561,8 +557,8 @@ function menuLink( $option, $id ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "menutype='$row->menutype' AND parent='$row->parent'" );
-
+	$row->updateOrder( "menutype=" . $database->Quote( $row->menutype ) . " AND parent=" . (int) $row->parent );
+	
 	// clean any existing cache files
 	mosCache::cleanCache( 'com_content' );
 
@@ -601,13 +597,14 @@ function saveOrder( &$cid ) {
 	global $database;
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$order 		= josGetArrayInts( 'order' );
+	
 	$row 		= new mosContent( $database );
 	$conditions = array();
 
 	// update ordering values
 	for ( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {

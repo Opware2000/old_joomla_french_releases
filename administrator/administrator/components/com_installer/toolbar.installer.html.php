@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.installer.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: toolbar.installer.html.php 4675 2006-08-23 16:55:24Z stingrey $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -11,6 +11,9 @@
 * other free or open source software licenses.
 * See COPYRIGHT.php for copyright notices and details.
 */
+
+// no direct access
+defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 /**
 * @package Joomla

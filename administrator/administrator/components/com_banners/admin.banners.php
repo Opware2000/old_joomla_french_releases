@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.banners.php 4556 2006-08-18 18:29:18Z stingrey $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -23,10 +23,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid = mosGetParam( $_REQUEST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'newclient':
@@ -116,13 +113,8 @@ function viewBanners( $option ) {
 	$query = "SELECT b.*, u.name AS editor"
 	. "\n FROM #__banner AS b "
 	. "\n LEFT JOIN #__users AS u ON u.id = b.checked_out"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit";
-	$database->setQuery( $query );
-
-	if(!$result = $database->query()) {
-		echo $database->stderr();
-		return;
-	}
+	;
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 
 	HTML_banners::showBanners( $rows, $pageNav, $option );
@@ -133,7 +125,7 @@ function editBanner( $bannerid, $option ) {
 	$lists = array();
 
 	$row = new mosBanner($database);
-	$row->load( $bannerid );
+	$row->load( (int)$bannerid );
 
   if ( $bannerid ){
 	$row->checkout( $my->id );
@@ -281,14 +273,8 @@ function viewBannerClients( $option ) {
 	. "\n FROM #__bannerclient AS a"
 	. "\n LEFT JOIN #__banner AS b ON a.cid = b.cid"
 	. "\n LEFT JOIN #__users AS u ON u.id = a.checked_out"
-	. "\n GROUP BY a.cid"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit";
-	$database->setQuery($sql);
-
-	if(!$result = $database->query()) {
-		echo $database->stderr();
-		return;
-	}
+	. "\n GROUP BY a.cid";
+	$database->setQuery($sql, $pageNav->limitstart, $pageNav->limit);
 	$rows = $database->loadObjectList();
 
 	HTML_bannerClient::showClients( $rows, $pageNav, $option );
@@ -298,7 +284,7 @@ function editBannerClient( $clientid, $option ) {
 	global $database, $my;
 
 	$row = new mosBannerClient($database);
-	$row->load($clientid);
+	$row->load( (int)$clientid);
 
 	// fail if checked out not by 'me'
 	if ($row->checked_out && $row->checked_out != $my->id) {

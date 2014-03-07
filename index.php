@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 3750 2006-05-31 10:39:39Z stingrey $
+* @version $Id: index.php 4750 2006-08-25 01:08:30Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,7 +21,7 @@ if (!file_exists( 'configuration.php' ) || filesize( 'configuration.php' ) < 10)
 	exit();
 }
 
-include_once( 'globals.php' );
+require( 'globals.php' );
 require_once( 'configuration.php' );
 require_once( 'includes/joomla.php' );
 
@@ -68,9 +68,9 @@ if ($option == '') {
 		. "\n FROM #__menu"
 		. "\n WHERE menutype = 'mainmenu'"
 		. "\n AND published = 1"
-		. "\n ORDER BY parent, ordering LIMIT 1"
+		. "\n ORDER BY parent, ordering"
 		;
-		$database->setQuery( $query );
+		$database->setQuery( $query, 0, 1 );
 	}
 	$menu = new mosMenu( $database );
 	if ($database->loadObject( $menu )) {
@@ -116,9 +116,8 @@ if ( $Itemid === 0 ) {
 	. "\n WHERE menutype = 'mainmenu'"
 	. "\n AND published = 1"
 	. "\n ORDER BY parent, ordering"
-	. "\n LIMIT 1"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, 0, 1 );
 	$Itemid = $database->loadResult();
 }
 

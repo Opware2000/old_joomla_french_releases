@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.php 3830 2006-06-03 15:53:37Z stingrey $
+* @version $Id: admin.php 4805 2006-08-28 17:15:48Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -149,6 +149,8 @@ function mosLoadCustomModule( &$module, &$params ) {
 			$LitePath = $mosConfig_absolute_path .'/includes/Cache/Lite.php';
 			require_once( $mosConfig_absolute_path .'/includes/domit/xml_domit_rss_lite.php');
 			$rssDoc = new xml_domit_rss_document_lite();
+			$rssDoc->setRSSTimeout(5);
+			$rssDoc->useHTTPClient(true);
 			$rssDoc->useCacheLite(true, $LitePath, $cachePath, $rsscache);
 			$success = $rssDoc->loadRSS( $rssurl );
 			
@@ -303,5 +305,96 @@ function mosMakePath($base, $path='', $mode = NULL) {
 
 function mosMainBody_Admin() {
 	echo $GLOBALS['_MOS_OPTION']['buffer'];
+}
+
+/*
+ * Added 1.0.11
+ */
+function josSecurityCheck($width='95%') {		
+	$wrongSettingsTexts = array();
+	
+	if ( ini_get('magic_quotes_gpc') != '1' ) {
+		$wrongSettingsTexts[] = 'PHP magic_quotes_gpc setting is `OFF` instead of `ON`';
+	}
+	if ( ini_get('register_globals') == '1' ) {
+		$wrongSettingsTexts[] = 'Paramètre PHP register_globals est sur `ON` au lieu de `OFF`';
+	}
+	if ( RG_EMULATION != 0 ) {
+		$wrongSettingsTexts[] = 'Paramètre Joomla! RG_EMULATION est sur `ON` au lieu de `OFF` dans le fichier globals.php <br /><span style=\"font-weight: normal; font-style: italic; color: black;\">`ON` est défini par défaut pour des raisons de compatibilité</span>';
+	}
+	
+	if ( count($wrongSettingsTexts) ) {
+		?>
+		<div style="clear: both; margin: 3px; margin-top: 10px; padding: 5px 15px; display: block; float: left; border: 1px solid #cc0000; background: #ffffcc; text-align: left; width: <?php echo $width;?>;">
+			<p style="color: #CC0000;">
+				Les paramètres PHP Serveur suivants ne sont pas optimum pour la <strong>Sécurité</strong> de votre site, il vous est recommandé de les modifier:
+			</p>
+			<ul style="margin: 0px; padding: 0px; padding-left: 15px; list-style: none;" >
+				<?php
+				foreach ($wrongSettingsTexts as $txt) {
+					?>	
+					<li style="min-height: 25px; padding-bottom: 5px; padding-left: 25px; color: red; font-weight: bold; background-image: url(../includes/js/ThemeOffice/warning.png); background-repeat: no-repeat; background-position: 0px 2px;" >
+						<?php
+						echo $txt;
+						?>
+					</li>
+					<?php
+				}
+				?>
+			</ul>
+			<p style="color: #666;">
+				Vous pouvez consulter cette discussion sur le <a href="http://forum.joomla.org/index.php/topic,81058.0.html" target="_blank">site officiel Joomla! </a> pour plus d'informations.
+			</p>
+		</div>
+		<?php
+	}
+}
+
+/*
+ * Added 1.0.11
+ */
+ function josVersionCheck($width='95%',$always=1) {
+	$_VERSION 			= new joomlaVersion();				 	
+	$versioninfo 		= $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS;
+	
+	$link 			= 'http://www.joomla.org/content/blogcategory/32/66/';
+	$status 		= 'status=yes,toolbar=yes,scrollbars=yes,titlebar=yes,menubar=yes,resizable=yes,directories=yes,location=yes';
+	
+	$release 		= strtotime($_VERSION->RELDATE);
+	$now	 		= strtotime('now');
+	$age			= ($now - $release) / 86400;	
+	$age			= round($age);	
+	
+	if ($always) {
+		if ($age > 1) {
+			$check = 1;
+	            } else {
+			$check = 0;			
+	            }
+	    	} else {
+		if ($age > 27) {
+			$check = 1;
+		} else {
+			$check = 0;			
+	    	}
+	    }
+	
+ 	if ($check) {
+		?>
+		<div style="clear: both; margin: 3px; margin-top: 15px; padding: 0px 15px; display: block; float: left; border: 1px solid silver; background: white; text-align: center; width: <?php echo $width;?>;">
+			<h3 style="margin-top: 10px; font-size: 12px;" color="#008080">
+				<div style="font-weight: normal; color: #666;">
+						Votre version de Joomla! [ <?php echo $versioninfo; ?> ] est
+				</div>	 
+				<div style="font-size: 13px; color: #CC0000;">
+					âgée de <?php echo $age; ?> jours
+				</div>
+				<div>
+					<input class="button" name="Button3" type="submit" value="Chercher une nouvelle version" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>'); return false;" />							
+					</div>
+				</h3>
+	</div>
+	<?php
+}		
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: toolbar.menus.html.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: toolbar.menus.html.php 4555 2006-08-18 18:11:33Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -66,8 +66,8 @@ class TOOLBAR_menus {
 		global $id;
 
 		if ( !$id ) {
-			$cid = mosGetParam( $_POST, 'cid', array(0) );
-			$id = $cid[0];
+			$cid 	= josGetArrayInts( 'cid' );
+			$id 	= $cid[0];
 		}
 		$menutype 	= strval( mosGetParam( $_REQUEST, 'menutype', 'mainmenu' ) );
 

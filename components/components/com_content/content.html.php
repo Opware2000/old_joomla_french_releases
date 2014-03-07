@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.html.php 4113 2006-06-23 22:48:11Z stingrey $
+* @version $Id: content.html.php 4561 2006-08-18 22:07:24Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -384,11 +384,11 @@ class HTML_content {
 				<?php echo _MORE; ?>
 				</strong>
 			</div>
-			
-			<ul>
 			<?php
-		}
-		
+		}		
+		?>
+		<ul>
+		<?php
 		for ( $z = 0; $z < $links; $z++ ) {
 			if ( $i >= $total ) {
 				// stops loop if total number of items is less than the number set to display as intro + leading

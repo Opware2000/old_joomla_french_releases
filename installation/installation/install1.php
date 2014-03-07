@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install1.php 2796 2006-03-15 14:58:05Z stingrey $
+* @version $Id: install1.php 4675 2006-08-23 16:55:24Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -10,6 +10,9 @@
 * other free or open source software licenses.
 * See COPYRIGHT.php for copyright notices and details.
 */
+
+// Set flag that this is a parent file
+define( "_VALID_MOS", 1 );
 
 /** Include common.php */
 require_once( 'common.php' );
@@ -77,18 +80,32 @@ function check() {
 	<form action="install2.php" method="post" name="form" id="form" onsubmit="return check();">
 	<div class="install">
 		<div id="stepbar">
-			<div class="step-off">Pré-installation</div>
-			<div class="step-off">Licence</div>
-			<div class="step-on">Etape 1</div>
-			<div class="step-off">Etape 2</div>
-			<div class="step-off">Etape 3</div>
-			<div class="step-off">Etape 4</div>
+			<div class="step-off">
+				Pré-installation
+			</div>
+			<div class="step-off">
+				Licence
+			</div>
+			<div class="step-on">
+				Etape 1
+			</div>
+			<div class="step-off">
+				Etape 2
+			</div>
+			<div class="step-off">
+				Etape 3
+			</div>
+			<div class="step-off">
+				Etape 4
+			</div>
 		</div>
 		<div id="right">
 			<div class="far-right">
 				<input class="button" type="submit" name="next" value="Suivant >>"/>
   			</div>
-	  		<div id="step">Etape 1</div>
+	  		<div id="step">
+	  			Etape 1
+	  		</div>
   			<div class="clr"></div>
   			<h1>Configuration de la base de données MySQL:</h1>
 	  		<div class="install-text">
@@ -200,7 +217,7 @@ function check() {
 </div>
 <div class="clr"></div>
 <div class="ctr">
-	<a href="http://www.joomla.org" target="_blank">Joomla!</a> is Free Software released under the GNU/GPL License.
+	<a href="http://www.joomla.org" target="_blank">Joomla!</a> est un logiciel libre distribué sous licence GNU/GPL.
 </div>
 </body>
 </html>

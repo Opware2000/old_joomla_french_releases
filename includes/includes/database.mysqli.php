@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: database.mysqli.php 3749 2006-05-31 10:27:15Z stingrey $
+* @version $Id: database.mysqli.php 4546 2006-08-16 23:41:44Z facedancer $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -252,12 +252,12 @@ class database {
 	*/
 	function query() {
 		global $mosConfig_debug;
+		if ($this->_limit > 0 || $this->_offset > 0) {
+			$this->_sql .= "\nLIMIT $this->_offset, $this->_limit";
+		}		
 		if ($this->_debug) {
 			$this->_ticker++;
 	  		$this->_log[] = $this->_sql;
-		}
-		if ($this->_limit > 0 || $this->_offset > 0) {
-			$this->_sql .= "\nLIMIT $this->_offset, $this->_limit";
 		}
 		$this->_errorNum = 0;
 		$this->_errorMsg = '';

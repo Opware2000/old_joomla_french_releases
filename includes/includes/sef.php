@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sef.php 4126 2006-06-25 19:26:39Z stingrey $
+* @version $Id: sef.php 4734 2006-08-24 22:26:59Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -425,7 +425,7 @@ function sefRelToAbs( $string ) {
 			$sefstring = '';
 
 			// Component com_content urls
-			if ( ( $parts['option'] == 'com_content' || $parts['option'] == 'content' ) && ( $parts['task'] != 'new' ) && ( $parts['task'] != 'edit' ) ) {
+			if ( ( ( isset($parts['option']) && ( $parts['option'] == 'com_content' || $parts['option'] == 'content' ) ) ) && ( $parts['task'] != 'new' ) && ( $parts['task'] != 'edit' ) ) {
 			// index.php?option=com_content [&task=$task] [&sectionid=$sectionid] [&id=$id] [&Itemid=$Itemid] [&limit=$limit] [&limitstart=$limitstart] [&year=$year] [&month=$month] [&module=$module]
 				$sefstring .= 'content/';
 				
@@ -484,25 +484,29 @@ function sefRelToAbs( $string ) {
 				$string = $sefstring;
 				
 			// all other components
-			} else if ( ( strpos( $parts['option'], 'com_' ) !== false ) && ( @$parts['task'] != 'new' ) && ( @$parts['task'] != 'edit' ) ) {
 			// index.php?option=com_xxxx &...
-				$sefstring 	= 'component/';
-				
-				foreach($parts as $key => $value) {
-					// remove slashes automatically added by parse_str
-					$value		= stripslashes($value);
-					$sefstring .= $key .','. $value.'/';
+			} else if ( isset($parts['option']) && ( strpos($parts['option'], 'com_' ) !== false ) ) {
+				// do not SEF where com_content - `edit` or `new` task link				
+				if ( !( ( $parts['option'] == 'com_content' ) && ( ( isset($parts['task']) == 'new' ) || ( isset($parts['task']) == 'edit' ) ) ) ) {
+					$sefstring 	= 'component/';
+					
+					foreach($parts as $key => $value) {
+						// remove slashes automatically added by parse_str
+						$value		= stripslashes($value);
+						$sefstring .= $key .','. $value.'/';
+					}
+					
+					$string = str_replace( '=', ',', $sefstring );
 				}
-				
-				$string = str_replace( '=', ',', $sefstring );
 			}
 		}
 
+		// allows SEF without mod_rewrite
 		// comment line below if you dont have mod_rewrite
 		return $mosConfig_live_site .'/'. $string . $fragment;
 
 		// allows SEF without mod_rewrite
-		// uncomment Line 508 and comment out Line 510	
+		// uncomment Line 512 and comment out Line 514	
 	
 		// uncomment line below if you dont have mod_rewrite
 		// return $mosConfig_live_site .'/index.php/'. $string . $fragment;

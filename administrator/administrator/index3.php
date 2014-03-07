@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index3.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: index3.php 4750 2006-08-25 01:08:30Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@ if (!file_exists( '../configuration.php' )) {
 	exit();
 }
 
-require_once( '../globals.php' );
+require( '../globals.php' );
 require_once( '../configuration.php' );
 require_once( $mosConfig_absolute_path . '/includes/joomla.php' );
 include_once( $mosConfig_absolute_path . '/language/'. $mosConfig_lang. '.php' );

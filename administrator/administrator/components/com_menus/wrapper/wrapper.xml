@@ -25,8 +25,8 @@
 		<param name="header" type="text" size="30" default="" label="Titre de la page" description="Texte à afficher en haut de la page. Si le champ est vierge, c'est le nom du lien qui sera utilisé" />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
 		<param name="scrolling" type="radio" default="auto" label="Barres de défilement" description="Afficher/Masquer les barres de défillement horizontale & verticale.">
-			<option value="Non">Non</option>
-			<option value="Oui">Oui</option>
+			<option value="no">Non</option>
+			<option value="yes">Oui</option>
 			<option value="auto">Auto</option>
 		</param>
 		<param name="width" type="text" size="5" default="100%" label="Largeur" description="Largeur de l'Iframe, vous pouvez entre une valeur en pixels ou un pourcentage en utilisant le symbole %" />

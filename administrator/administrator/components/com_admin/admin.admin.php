@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.admin.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.admin.php 4801 2006-08-28 16:10:28Z stingrey $
 * @package Joomla
 * @subpackage Admin
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -17,7 +17,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'admin_html' ) );
 
 switch ($task) {
-
 	case 'clean_cache':
 		mosCache::cleanCache( 'com_content' );
 		mosRedirect( 'index2.php', 'Cache de contenu vidé' );

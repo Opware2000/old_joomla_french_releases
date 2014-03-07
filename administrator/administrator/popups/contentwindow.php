@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contentwindow.php 298 2005-10-02 02:28:03Z rhuk $
+* @version $Id: contentwindow.php 4674 2006-08-23 16:06:56Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,7 +17,32 @@ define( "_VALID_MOS", 1 );
 require_once( '../includes/auth.php' );
 include_once ( $mosConfig_absolute_path . '/language/' . $mosConfig_lang . '.php' );
 
+// limit access to functionality
+$option = strval( mosGetParam( $_SESSION, 'option', '' ) );
+$task 	= strval( mosGetParam( $_SESSION, 'task', '' ) );
+switch ($option) {
+	case 'com_content':
+		if ( $task != 'edit' && $task != 'editA'  && $task != 'new' ) {
+			echo _NOT_AUTH;
+			return;
+		}
+		break;		
+		
+	default:
+		echo _NOT_AUTH;
+		return;
+		break;		
+}
+
 $css = mosGetParam( $_REQUEST, 't', '' );
+
+// css file handling
+// check to see if template exists
+if ( $css != '' && !is_dir($mosConfig_absolute_path .'/administrator/templates/'. $css .'/css/template_css.css' )) {
+	$css 	= 'rhuk_solarflare_ii';
+} else if ( $css == '' ) {
+	$css 	= 'rhuk_solarflare_ii';
+}
 
 $iso = split( '=', _ISO );
 // xml prolog

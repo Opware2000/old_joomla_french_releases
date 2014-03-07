@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: components.class.php 3494 2006-05-14 23:51:02Z stingrey $
+* @version $Id: components.class.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -28,11 +28,11 @@ class components_menu {
 		global $database, $my, $mainframe;
 
 		$menu = new mosMenu( $database );
-		$menu->load( $uid );
+		$menu->load( (int)$uid );
 
 		$row = new mosComponent( $database );
 		// load the row from the db table
-		$row->load( $menu->componentid );
+		$row->load( (int)$menu->componentid );
 
 		// fail if checked out not by 'me'
 		if ( $menu->checked_out && $menu->checked_out != $my->id ) {

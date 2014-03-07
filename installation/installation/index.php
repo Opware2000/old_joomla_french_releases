@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 3478 2006-05-13 20:31:22Z stingrey $
+* @version $Id: index.php 4807 2006-08-28 17:30:12Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -11,30 +11,30 @@
 * See COPYRIGHT.php for copyright notices and details.
 */
 
+// Set flag that this is a parent file
+define( '_VALID_MOS', 1 );
+
 if (file_exists( '../configuration.php' ) && filesize( '../configuration.php' ) > 10) {
 	header( "Location: ../index.php" );
 	exit();
 }
+require( '../globals.php' );
 require_once( '../includes/version.php' );
 
 /** Include common.php */
 include_once( 'common.php' );
+		view();
 
-function get_php_setting($val) {
-	$r =  (ini_get($val) == '1' ? 1 : 0);
-	return $r ? 'ON' : 'OFF';
-}
-
-function writableCell( $folder ) {
-	echo '<tr>';
-	echo '<td class="item">' . $folder . '/</td>';
-	echo '<td align="left">';
-	echo is_writable( "../$folder" ) ? '<b><font color="green">Modifiable</font></b>' : '<b><font color="red">Non modifiable</font></b>' . '</td>';
-	echo '</tr>';
-}
-
+/*
+ * Added 1.0.11
+ */
+function view() {	
 $sp = ini_get( 'session.save_path' );
 
+	$_VERSION 		= new joomlaVersion();				 	
+	$versioninfo 	= $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS;
+	$version 		= $_VERSION->PRODUCT .' '. $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS.' [ '.$_VERSION->CODENAME .' ] '. $_VERSION->RELDATE .' '. $_VERSION->RELTIME .' '. $_VERSION->RELTZ;
+	
 echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -49,7 +49,9 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 
 <div id="wrapper">
 <div id="header">
-<div id="joomla"><img src="header_install.png" alt="Installation Joomla" /></div>
+			<div id="joomla">
+				<img src="header_install.png" alt="Installation Joomla" />
+			</div>
 </div>
 </div>
 
@@ -65,7 +67,6 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 </div>
 
 <div id="right">
-
 <div id="step">Pré-installation</div>
 
 <div class="far-right">
@@ -76,15 +77,26 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 </div>
 <div class="clr"></div>
 
-<h1>Vérification de pré-installation pour:<br/><?php echo $version; ?></h1>
+				<h1 style="text-align: center; border-bottom: 0px;">
+					<?php echo $version; ?>
+				</h1>
+	
+				<h1>
+					Vérification des paramètres nécessaires:
+				</h1>
+				
 <div class="install-text">
-Si certains éléments sont écrits en rouge, alors veuillez prendre les mesures nécessaires pour les corriger. Sinon l'installation de Joomla peut ne pas fonctionner correctement.
-<div class="ctr"></div>
-</div>
-
-<div class="install-form">
-<div class="form-block">
-
+					<p>
+						Si certains éléments sont écrits en rouge, alors veuillez prendre les mesures nécessaires pour les corriger. 
+					</p>
+					<p>
+						Sinon l'installation de Joomla peut ne pas fonctionner correctement.
+					</p>
+					<div class="ctr"></div>
+				</div>
+	
+				<div class="install-form">
+					<div class="form-block">
 <table class="content">
 <tr>
 	<td class="item">
@@ -138,24 +150,151 @@ Si certains éléments sont écrits en rouge, alors veuillez prendre les mesures né
 	Session save path
 	</td>
 	<td align="left" valign="top">
-	<?php echo is_writable( $sp ) ? '<b><font color="green">Writeable</font></b>' : '<b><font color="red">Unwriteable</font></b>';?>
+	<?php echo is_writable( $sp ) ? '<b><font color="green">Modifiable</font></b>' : '<b><font color="red">Non modifiable</font></b>';?>
 	</td>
 </tr>
 <tr>
 	<td class="item" colspan="2">
-	<b><?php echo $sp ? $sp : 'Not set'; ?></b>
+								<b>
+									<?php echo $sp ? $sp : 'Not set'; ?>
+								</b>
+							</td>
+						</tr>
+						</table>
+					</div>
+				</div>
+				<div class="clr"></div>
+				
+				<h1>
+					Vérification de version:
+				</h1>
+
+				<div class="install-text">
+					<p>
+						Il vous est recommandé de toujours installer la dernière version stable de Joomla!
+					</p>
+					<p>
+						Vous trouverez plus d'informations sur <a href="http://www.joomla.org" target="_blank">www.joomla.org</a>
+					</p>
+					<div class="ctr"></div>
+				</div>
+						
+				<div class="install-form">
+					<div class="form-block" style="text-align: center;">
+						<table class="content">
+						<tr>
+							<td class="item">
+								<?php
+								$link 			= 'http://www.joomla.org/content/blogcategory/32/66/';
+								$status 		= 'status=yes,toolbar=yes,scrollbars=yes,titlebar=yes,menubar=yes,resizable=yes,directories=yes,location=yes';
+								
+								$release 		= strtotime($_VERSION->RELDATE);
+								$now	 		= strtotime('now');
+								$age			= ($now - $release) / 86400;	
+								$age			= round($age);		
+								?>
+								<div style="clear: both; margin: 3px; padding: 0px 0px; display: block; float: left;">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%" class="adminheading">
+									<tr>
+										<td colspan="2" style="text-align: center;">
+											<h3 style="font-size: 12px;">
+												<?php
+												if ($age > 1) {							
+													?>
+													<p style="font-weight: normal; padding: 0px; margin: 0px; font-size: 11px;">
+														This version of Joomla! [ <?php echo $versioninfo; ?> ] is  
+													</p>
+													<div style="font-size: 13px; color: #cc0000;">
+														<?php echo $age; ?> days old
+													</div>
+													<?php
+												}
+												?>
+												<div style="margin-top: 10px;">
+													<input name="Button3" type="submit" value="Identifier la dernière version stable" onclick="window.open('<?php echo $link; ?>','win2','<?php echo $status; ?>'); return false;" />
+												</div>
+											</h3>
+										</td>
+									</tr>
+								    </table>
+								</div>
+							</td>
+						</tr>
+						</table>
+					</div>
+				</div>	
+				<div class="clr"></div>		
+				
+				<?php
+				$wrongSettingsTexts = array();
+				
+				if ( ini_get('magic_quotes_gpc') != '1' ) {
+					$wrongSettingsTexts[] = 'Paramètre PHP magic_quotes_gpc est sur `OFF` au lieu de `ON`';
+				}
+				if ( ini_get('register_globals') == '1' ) {
+					$wrongSettingsTexts[] = 'Paramètre PHP register_globals est sur `ON` au lieu de `OFF`';
+				}
+				if ( RG_EMULATION != 0 ) {
+					$wrongSettingsTexts[] = 'Paramètre Joomla! RG_EMULATION est sur `ON` au lieu de `OFF` dans le fichier globals.php <br /><span style="font-weight: normal; font-style: italic; color: #666;">`ON` est défini par défaut pour des raisons de compatibilité</span>';
+				}	
+	
+				if ( count($wrongSettingsTexts) ) {
+					?>							
+					<h1>
+						Vérification de la sécurité:
+					</h1>
+
+					<div class="install-text">
+						<p>
+							Les paramètres PHP Serveur suivants ne sont pas optimum pour la <strong>Sécurité</strong> de votre site, il vous est recommandé de les modifier:
+						</p>
+						<p>
+							Vous pouvez consulter cette discussion sur le <a href="http://forum.joomla.org/index.php/topic,81058.0.html" target="_blank">site officiel Joomla! </a> pour plus d'informations.
+						</p>
+						<div class="ctr"></div>
+					</div>
+							
+					<div class="install-form">
+						<div class="form-block" style=" border: 1px solid #cc0000; background: #ffffcc;">
+							<table class="content">
+							<tr>
+								<td class="item">
+									<ul style="margin: 0px; padding: 0px; padding-left: 5px; text-align: left; padding-bottom: 0px; list-style: none;">
+										<?php
+										foreach ($wrongSettingsTexts as $txt) {
+											?>	
+											<li style="min-height: 25px; padding-bottom: 5px; padding-left: 25px; color: red; font-weight: bold; background-image: url(../includes/js/ThemeOffice/warning.png); background-repeat: no-repeat; background-position: 0px 2px;" >
+												<?php
+												echo $txt;
+												?>
+											</li>
+											<?php
+										}
+										?>
+									</ul>
 	</td>
 </tr>
 </table>
 </div>
 </div>
 <div class="clr"></div>
+					<?php
+				}
+				?>
+												
+				<h1>
+					Configuration recommandée:
+				</h1>
 
-<h1> Configuration recommandée:</h1>
 <div class="install-text">
-Ces paramètres PHP sont recommandés afin d'assurer une pleine compatibilité avec Joomla.
-<br />
-Toutefois, Joomla devrait quand même fonctionner correctement s'ils ne sont pas activés.<div class="ctr"></div>
+                                <p>
+					Ces paramètres PHP sont recommandés afin d'assurer 
+					une pleine compatibilité avec Joomla.
+                                </p>
+                                <p>
+					Toutefois, Joomla devrait quand même fonctionner correctement s'ils ne sont pas activés.
+                                 </p>
+					<div class="ctr"></div>
 </div>
 
 <div class="install-form">
@@ -163,7 +302,7 @@ Toutefois, Joomla devrait quand même fonctionner correctement s'ils ne sont pas 
 
 <table class="content">
 <tr>
-	<td class="toggle">
+							<td class="toggle" width="500px">
 	Directive
 	</td>
 	<td class="toggle">
@@ -187,42 +326,79 @@ array ('Session auto start','session.auto_start','OFF'),
 foreach ($php_recommended_settings as $phprec) {
 ?>
 <tr>
-	<td class="item"><?php echo $phprec[0]; ?>:</td>
-	<td class="toggle"><?php echo $phprec[2]; ?>:</td>
+								<td class="item">
+									<?php echo $phprec[0]; ?>:
+								</td>
+								<td class="toggle">
+									<?php echo $phprec[2]; ?>:
+								</td>
 	<td>
+									<b>
 	<?php
 	if ( get_php_setting($phprec[1]) == $phprec[2] ) {
 	?>
-		<font color="green"><b>
+											<font color="green">
 	<?php
 	} else {
 	?>
-		<font color="red"><b>
+											<font color="red">
 	<?php
 	}
 	echo get_php_setting($phprec[1]);
 	?>
-	</b></font>
+										</font>
+									</b>
 	<td>
 </tr>
 <?php
 }
 ?>
+						<tr>
+							<td class="item">
+								Emulation de Register Globals :
+							</td>
+							<td class="toggle">
+								OFF:
+							</td>
+							<td>
+								<?php
+								if ( RG_EMULATION ) {
+									?>
+									<font color="red"><b>
+									<?php
+								} else {
+									?>
+									<font color="green"><b>
+									<?php
+								}
+								echo ((RG_EMULATION) ? 'ON' : 'OFF');
+								?>
+								</b>
+								</font>
+							<td>
+						</tr>
 </table>
 </div>
 </div>
 <div class="clr"></div>
 
-<h1> Permissions des répertoires:</h1>
+				<h1>
+					Permissions des répertoires:
+				</h1>
+				
 <div class="install-text">
-Pour que Joomla fonctionne correctement, certains répertoires doivent être accessibles en lecture et écriture. Si certains des répertoires listés co-contre sont dans l'état "Non modifiable", alors vous devrez changer les CHMODer pour les rendre "Modifiables".
+					<p>
+						Pour que Joomla fonctionne correctement, certains répertoires doivent être accessibles en lecture et écriture. 
+					</p>
+					<p>
+						Si certains des répertoires listés co-contre sont dans l'état "Non modifiable", alors vous devrez changer les CHMODer pour les rendre "Modifiables".
+					</p>
 <div class="clr">&nbsp;&nbsp;</div>
 <div class="ctr"></div>
 </div>
 
 <div class="install-form">
 <div class="form-block">
-
 <table class="content">
 <?php
 writableCell( 'administrator/backups' );
@@ -249,6 +425,8 @@ writableCell( 'templates' );
 </div>
 <div class="clr"></div>
 </div>
+	
+				
 <div class="clr"></div>
 </div>
 <div class="clr"></div>
@@ -256,8 +434,31 @@ writableCell( 'templates' );
 </div>
 
 <div class="ctr">
-	<a href="http://www.joomla.org" target="_blank">Joomla</a> is Free Software released under the GNU/GPL License.
-</div>
+		<a href="http://www.joomla.org" target="_blank">Joomla!</a> est un logiciel libre distribué sous licence GNU/GPL..
+	</div>
+	
+	</body>
+	</html>
+	<?php
+}
 
-</body>
-</html>
+function get_php_setting($val) {
+	$r =  (ini_get($val) == '1' ? 1 : 0);
+	return $r ? 'ON' : 'OFF';
+}
+
+function writableCell( $folder, $relative=1, $text='' ) {
+	$writeable 		= '<b><font color="green">Modifiable</font></b>';
+	$unwriteable 	= '<b><font color="red">Non-modifiable</font></b>';
+	
+	echo '<tr>';
+	echo '<td class="item">' . $folder . '/</td>';
+	echo '<td align="right">';
+	if ( $relative ) {
+		echo is_writable( "../$folder" ) 	? $writeable : $unwriteable;
+	} else {
+		echo is_writable( "$folder" ) 		? $writeable : $unwriteable;
+	}
+	echo '</tr>';
+}
+?>

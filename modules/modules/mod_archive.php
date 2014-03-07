@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_archive.php 2711 2006-03-08 15:07:22Z stingrey $
+* @version $Id: mod_archive.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,9 +21,8 @@ $query = "SELECT MONTH( created ) AS created_month, created, id, sectionid, titl
 . "\n FROM #__content"
 . "\n WHERE ( state = -1 AND checked_out = 0 AND sectionid > 0 )"
 . "\n GROUP BY created_year DESC, created_month DESC"
-. "\n LIMIT $count"
 ;
-$database->setQuery( $query );
+$database->setQuery( $query, 0, $count );
 $rows = $database->loadObjectList();
 ?>
 <ul>

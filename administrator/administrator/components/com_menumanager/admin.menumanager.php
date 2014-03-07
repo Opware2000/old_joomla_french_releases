@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menumanager.php 3876 2006-06-05 14:08:05Z stingrey $
+* @version $Id: admin.menumanager.php 4619 2006-08-21 16:26:02Z stingrey $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -250,11 +250,11 @@ function saveMenu() {
 			}
 
 			$row->checkin();
-			$row->updateOrder( "position='". $row->position ."'" );
+			$row->updateOrder( "position=". $database->Quote( $row->position ) );
 
 			// module assigned to show on All pages by default
 			// ToDO: Changed to become a Joomla! db-object
-			$query = "INSERT INTO #__modules_menu VALUES ( $row->id, 0 )";
+			$query = "INSERT INTO #__modules_menu VALUES ( ".(int)$row->id.", 0 )";
 			$database->setQuery( $query );
 			if ( !$database->query() ) {
 				echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
@@ -385,9 +385,9 @@ function deleteMenu( $option, $cid, $type ) {
 		exit();
 	}
 
-
 	$mids = mosGetParam( $_POST, 'mids', 0 );
 	if ( is_array( $mids ) ) {
+		mosArrayToInts( $mids );
 		$mids = implode( ',', $mids );
 	}
 	// delete menu items
@@ -401,6 +401,7 @@ function deleteMenu( $option, $cid, $type ) {
 	}
 
 	if ( is_array( $cid ) ) {
+		mosArrayToInts( $cids );
 		$cids = implode( ',', $cid );
 	} else {
 		$cids = $cid;
@@ -486,7 +487,7 @@ function copyMenu( $option, $cid, $type ) {
 	}
 
 	// copy the menu items
-	$mids 		= mosGetParam( $_POST, 'mids', '' );
+	$mids 		= josGetArrayInts( 'mids' );
 	$total 		= count( $mids );
 	$copy 		= new mosMenu( $database );
 	$original 	= new mosMenu( $database );
@@ -530,7 +531,7 @@ function copyMenu( $option, $cid, $type ) {
 		exit();
 	}
 	$row->checkin();
-	$row->updateOrder( "position='$row->position'" );
+	$row->updateOrder( 'position=' . $database->Quote( $row->position ) );
 	// module assigned to show on All pages by default
 	// ToDO: Changed to become a Joomla! db-object
 	$query = "INSERT INTO #__modules_menu VALUES ( $row->id, 0 )";

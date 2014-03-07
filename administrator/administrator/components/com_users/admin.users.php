@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.users.php 3513 2006-05-15 20:52:25Z stingrey $
+* @version $Id: admin.users.php 4797 2006-08-28 05:08:06Z eddiea $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -22,10 +22,7 @@ if (!$acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'compo
 require_once( $mainframe->getPath( 'admin_html' ) );
 require_once( $mainframe->getPath( 'class' ) );
 
-$cid 	= mosGetParam( $_REQUEST, 'cid', array( 0 ) );
-if (!is_array( $cid )) {
-	$cid = array ( 0 );
-}
+$cid = josGetArrayInts( 'cid' );
 
 switch ($task) {
 	case 'new':
@@ -59,7 +56,7 @@ switch ($task) {
 		if ( $_VERSION->RESTRICT == 1 ) {
 			mosRedirect( 'index2.php?mosmsg=Functionality Restricted' );
 		} else {
-		changeUserBlock( $cid, 1, $option );
+			changeUserBlock( $cid, 1, $option );
 		}
 		break;
 
@@ -119,7 +116,6 @@ function showUsers( $option ) {
 	}
 
 	// exclude any child group id's for this user
-	//$acl->_debug = true;
 	$pgids = $acl->get_group_children( $my->gid, 'ARO', 'RECURSE' );
 
 	if (is_array( $pgids ) && count( $pgids ) > 0) {
@@ -153,9 +149,8 @@ function showUsers( $option ) {
 
 	$query .= (count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : "")
 	. "\n GROUP BY a.id"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;
-	$database->setQuery( $query );
+	$database->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
 	$rows = $database->loadObjectList();
 
 	if ($database->getErrorNum()) {
@@ -199,9 +194,15 @@ function showUsers( $option ) {
 function editUser( $uid='0', $option='users' ) {
 	global $database, $my, $acl, $mainframe;
 
+	$msg = checkUserPermissions( array($uid), "edit", true );
+	if ($msg) {
+		echo "<script type=\"text/javascript\"> alert('".$msg."'); window.history.go(-1);</script>\n";
+		exit;
+	}	
+	
 	$row = new mosUser( $database );
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( (int)$uid );
 
 	if ( $uid ) {
 		$query = "SELECT *"
@@ -261,15 +262,28 @@ function editUser( $uid='0', $option='users' ) {
 }
 
 function saveUser( $task ) {
-	global $database, $my;
+	global $database, $my, $acl;
 	global $mosConfig_live_site, $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_sitename;
-
-	$row = new mosUser( $database );
 	
+	$userIdPosted = mosGetParam($_POST, 'id');
+	if ($userIdPosted) {
+		$msg = checkUserPermissions( array($userIdPosted), 'save', in_array($my->gid, array(24, 25)) );
+		if ($msg) {
+			echo "<script type=\"text/javascript\"> alert('".$msg."'); window.history.go(-1);</script>\n";
+			exit;
+		}
+	}
+
+	$row = new mosUser( $database );	
 	if (!$row->bind( $_POST )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
+
+	// sanitise fields
+	$row->id 	= (int) $row->id;
+	// sanitise gid field
+	$row->gid 	= (int) $row->gid;
 
 	$isNew 	= !$row->id;
 	$pwd 	= '';
@@ -278,16 +292,16 @@ function saveUser( $task ) {
 	if ($isNew) {
 		// new user stuff
 		if ($row->password == '') {
-			$pwd = mosMakePassword();
-			$row->password = md5( $pwd );
+			$pwd 			= mosMakePassword();
+			$row->password 	= md5( $pwd );
 		} else {
-			$pwd = $row->password;
-			$row->password = md5( $row->password );
+			$pwd 			= $row->password;
+			$row->password 	= md5( $row->password );
 		}
-		$row->registerDate = date( 'Y-m-d H:i:s' );
+		$row->registerDate 	= date( 'Y-m-d H:i:s' );
 	} else {
 		$original = new mosUser( $database );
-		$original->load( $row->id );
+		$original->load( (int)$row->id );
 		
 		// existing user stuff
 		if ($row->password == '') {
@@ -298,35 +312,55 @@ function saveUser( $task ) {
 		}
 		
 		// if group has been changed and where original group was a Super Admin
-		if ( $row->gid != $original->gid && $original->gid == 25 ) {						
-			// count number of active super admins
-			$query = "SELECT COUNT( id )"
-			. "\n FROM #__users"
-			. "\n WHERE gid = 25"
-			. "\n AND block = 0"
-			;
-			$database->setQuery( $query );
-			$count = $database->loadResult();
-			
-			if ( $count <= 1 ) {
-				// disallow change if only one Super Admin exists
-				echo "<script> alert('You cannot change this users Group as it is the only active Super Administrator for your site'); window.history.go(-1); </script>\n";
-				exit();
+		if ( $row->gid != $original->gid ) {		
+			if ( $original->gid == 25 ) {					
+				// count number of active super admins
+				$query = "SELECT COUNT( id )"
+				. "\n FROM #__users"
+				. "\n WHERE gid = 25"
+				. "\n AND block = 0"
+				;
+				$database->setQuery( $query );
+				$count = $database->loadResult();
+				
+				if ( $count <= 1 ) {
+					// disallow change if only one Super Admin exists
+					echo "<script> alert('You cannot change this users Group as it is the only active Super Administrator for your site'); window.history.go(-1); </script>\n";
+					exit();
+				}
 			}
+			
+			$user_group = strtolower( $acl->get_group_name( $original->gid, 'ARO' ) );
+			if (( $user_group == 'super administrator' && $my->gid != 25) ) {
+				// disallow change of super-Admin by non-super admin
+				echo "<script> alert('Vous ne pouvez pas modifier ce groupe car vous n\'êtes pas Super Administrateur'); window.history.go(-1); </script>\n";
+				exit();
+			} else if ( $my->gid == 24 && $original->gid == 24 ) {
+				// disallow change of super-Admin by non-super admin
+				echo "<script> alert('vous ne pouvez pas modifier le groupe d\'un autre Administrateur car vous n\'êtes pas Super Administrateur'); window.history.go(-1); </script>\n";
+				exit();
+			}	// ensure user can't add group higher than themselves done below
 		}
 	}
-
+	/*
 	// if user is made a Super Admin group and user is NOT a Super Admin		
 	if ( $row->gid == 25 && $my->gid != 25 ) {
 		// disallow creation of Super Admin by non Super Admin users
-		echo "<script> alert('You cannot create a user with this user Group level, only Super Administrators have this ability'); window.history.go(-1); </script>\n";
+		echo "<script> alert('Vous ne pouvez pas créer un utilisateur dans ce groupe, seuls les Super Administrateurs peuvent le faire'); window.history.go(-1); </script>\n";
 		exit();
 	}
-
+	*/
+	// Security check to avoid creating/editing user to higher level than himself: response to artf4529.
+	if (!in_array($row->gid,getGIDSChildren($my->gid))) {
+		// disallow creation of Super Admin by non Super Admin users
+		echo "<script> alert('Vous ne pouvez pas créer un utilisateur dans ce groupe, seuls les Super Administrateurs peuvent le faire'); window.history.go(-1); </script>\n";
+		exit();
+	}
+		
 	// save usertype to usetype column
 	$query = "SELECT name"
 	. "\n FROM #__core_acl_aro_groups"
-	. "\n WHERE group_id = $row->gid"
+	. "\n WHERE group_id = " . (int) $row->gid
 	;
 	$database->setQuery( $query );
 	$usertype = $database->loadResult();
@@ -444,6 +478,49 @@ function removeUsers( $cid, $option ) {
 		echo "<script> alert('Sélectionner un utilisateur à supprimer'); window.history.go(-1);</script>\n";
 		exit;
 	}
+	
+	$msg = checkUserPermissions( $cid, 'delete' );
+	
+	if ( !$msg && count( $cid ) ) {
+		$obj = new mosUser( $database );
+		foreach ($cid as $id) {
+			$obj->load( $id );
+			$count = 2;
+			if ( $obj->gid == 25 ) {
+				// count number of active super admins
+				$query = "SELECT COUNT( id )"
+				. "\n FROM #__users"
+				. "\n WHERE gid = 25"
+				. "\n AND block = 0"
+				;
+				$database->setQuery( $query );
+				$count = $database->loadResult();
+			}
+			
+			if ( $count <= 1 && $obj->gid == 25 ) {
+			// cannot delete Super Admin where it is the only one that exists
+				$msg = "Vous ne pouvez pas supprimer ce Super Administrateur as it is the only active Super Administrator for your site";
+			} else {
+				// delete user
+				$obj->delete( $id );
+				$msg = $obj->getError();
+				
+				// delete user acounts active sessions
+				logoutUser( $id, 'com_users', 'remove' );
+			}
+		}
+	}
+
+	mosRedirect( 'index2.php?option='. $option, $msg );
+}
+/*
+function removeUsers( $cid, $option ) {
+	global $database, $acl, $my;
+
+	if (!is_array( $cid ) || count( $cid ) < 1) {
+		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
+		exit;
+	}
 
 	if ( count( $cid ) ) {
 		$obj = new mosUser( $database );
@@ -476,8 +553,8 @@ function removeUsers( $cid, $option ) {
 					$msg = "You cannot delete this Super Administrator as it is the only active Super Administrator for your site";
 				} else {
 					// delete user
-				$obj->delete( $id );
-				$msg = $obj->getError();
+					$obj->delete( $id );
+					$msg = $obj->getError();
 					
 					// delete user acounts active sessions
 					logoutUser( $id, 'com_users', 'remove' );
@@ -488,6 +565,7 @@ function removeUsers( $cid, $option ) {
 
 	mosRedirect( 'index2.php?option='. $option, $msg );
 }
+*/
 
 /**
 * Blocks or Unblocks one or more user records
@@ -495,6 +573,45 @@ function removeUsers( $cid, $option ) {
 * @param integer 0 if unblock, 1 if blocking
 * @param string The current url option
 */
+function changeUserBlock( $cid=null, $block=1, $option ) {
+	global $database;
+
+	$action = $block ? 'block' : 'unblock';
+
+	if (count( $cid ) < 1) {
+		echo "<script type=\"text/javascript\"> alert('Sélectionner un élément à $action'); window.history.go(-1);</script>\n";
+		exit;
+	}
+
+	$msg = checkUserPermissions( $cid, $action );
+	if ($msg) {
+		echo "<script type=\"text/javascript\"> alert('".$msg."'); window.history.go(-1);</script>\n";
+		exit;
+	}
+
+	$cids = implode( ',', $cid );
+
+	$query = "UPDATE #__users"
+	. "\n SET block = $block"
+	. "\n WHERE id IN ( $cids )"
+	;
+	$database->setQuery( $query );
+	if (!$database->query()) {
+		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+		exit();
+	}
+	
+	// if action is to block a user
+	if ( $block == 1 ) {
+		foreach( $cid as $id ) {
+		// delete user acounts active sessions
+			logoutUser( $id, 'com_users', 'block' );
+		}
+	}
+
+	mosRedirect( 'index2.php?option='. $option );
+}
+/*
 function changeUserBlock( $cid=null, $block=1, $option ) {
 	global $database;
 
@@ -515,7 +632,7 @@ function changeUserBlock( $cid=null, $block=1, $option ) {
 		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
-
+	
 	// if action is to block a user
 	if ( $block == 1 ) {
 		foreach( $cid as $id ) {
@@ -526,6 +643,7 @@ function changeUserBlock( $cid=null, $block=1, $option ) {
 
 	mosRedirect( 'index2.php?option='. $option );
 }
+*/
 
 /**
 * @param array An array of unique user id numbers
@@ -584,13 +702,81 @@ function logoutUser( $cid=null, $option, $task ) {
 	}
 }
 
-function is_email($email){
-	$rBool=false;
-
-	if(preg_match("/[\w\.\-]+@\w+[\w\.\-]*?\.\w{1,4}/", $email)){
-		$rBool=true;
+/**
+ * Check if users are of lower permissions than current user (if not super-admin) and if the user himself is not included
+ *
+ * @param array of userId $cid
+ * @param string $actionName to insert in message.
+ * @return string of error if error, otherwise null
+ * Added 1.0.11
+ */
+function checkUserPermissions( $cid, $actionName, $allowActionToMyself = false ) {
+	global $database, $acl, $my;
+	
+	$msg = null;
+	if (is_array( $cid ) && count( $cid )) {
+		$obj = new mosUser( $database );
+		foreach ($cid as $id) {
+			if ( $id != 0 ) {
+				$obj->load( $id );
+				$groups 	= $acl->get_object_groups( 'users', $id, 'ARO' );
+				$this_group = strtolower( $acl->get_group_name( $groups[0], 'ARO' ) );
+			} else {
+				$this_group = 'Registered';		// minimal user group
+				$obj->gid 	= $acl->get_group_id( $this_group, 'ARO' );
+			}
+			
+			if ( !$allowActionToMyself && $id == $my->id ){
+ 				$msg .= 'You cannot '. $actionName .' Yourself!';
+ 			} else if (($obj->gid == $my->gid && !in_array($my->gid, array(24, 25))) || ($obj->gid && !in_array($obj->gid,getGIDSChildren($my->gid)))) {
+				$msg .= 'You cannot '. $actionName .' a `'. $this_group .'`. Only higher-level users have this power. ';
+			}
+		}
 	}
 	
-	return $rBool;
+	return $msg;
+}
+
+/**
+ * Added 1.0.11
+ */
+function getGIDSChildren($gid) {
+	global $database;
+	
+	$standardlist = array(-2,);
+	
+	$query = "SELECT g1.group_id, g1.name"
+	."\n FROM #__core_acl_aro_groups g1"
+	."\n LEFT JOIN #__core_acl_aro_groups g2 ON g2.lft >= g1.lft"
+	."\n WHERE g2.group_id = ". $gid
+	."\n ORDER BY g1.name"
+	;
+	$database->setQuery( $query );
+	$array = $database->loadResultArray();
+	
+	if( $gid > 0 ) {
+		$standardlist[]=-1;
+	}
+	$array = array_merge($array,$standardlist);
+	
+	return $array;
+}
+
+/**
+ * Added 1.0.11
+ */
+function getGIDSParents($gid) {
+	global $database;
+	
+  	$query = "SELECT g1.group_id, g1.name"
+	."\n FROM #__core_acl_aro_groups g1"
+	."\n LEFT JOIN #__core_acl_aro_groups g2 ON g2.lft <= g1.lft"
+	."\n WHERE g2.group_id = ".$gid
+	."\n ORDER BY g1.name"
+	;
+   	$database->setQuery( $query );
+	$array = $database->loadResultArray();
+	
+	return $array;
 }
 ?>

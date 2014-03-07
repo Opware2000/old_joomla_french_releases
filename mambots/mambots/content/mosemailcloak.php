@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosemailcloak.php 3100 2006-04-12 13:35:56Z stingrey $
+* @version $Id: mosemailcloak.php 4562 2006-08-18 23:26:32Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -29,6 +29,13 @@ function botMosEmailCloak( $published, &$row, &$params, $page=0 ) {
 	
 	// simple performance check to determine whether bot should process further
 	if ( strpos( $row->text, '@' ) === false ) {
+		return true;
+	}
+		
+	// simple check to allow disabling of bot
+	$regex = '{emailcloak=off}';
+	if ( strpos( $row->text, $regex ) !== false ) {
+		$row->text = str_replace( $regex, '', $row->text );
 		return true;
 	}
 	

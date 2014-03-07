@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.php 4054 2006-06-19 19:47:14Z stingrey $
+* @version $Id: user.php 4542 2006-08-15 13:49:12Z predator $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -133,7 +133,7 @@ function userEdit( $option, $uid, $submitvalue) {
 		return;
 	}
 	$row = new mosUser( $database );
-	$row->load( $uid );
+	$row->load( (int)$uid );
 	$row->orig_password = $row->password;
 
 	$file 	= $mainframe->getPath( 'com_xml', 'com_users' );
@@ -157,7 +157,7 @@ function userSave( $option, $uid) {
 	josSpoofCheck();	
 	
 	$row = new mosUser( $database );
-	$row->load( $user_id );	
+	$row->load( (int)$user_id );	
 	
 	$orig_password = $row->password;
 	$orig_username = $row->username;

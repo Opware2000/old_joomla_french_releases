@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_mostread.php 2711 2006-03-08 15:07:22Z stingrey $
+* @version $Id: mod_mostread.php 4500 2006-08-13 22:45:33Z eddiea $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -36,9 +36,8 @@ switch ( $type ) {
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		. ( $access ? "\n AND a.access <= $my->gid" : '' )
 		. "\n ORDER BY a.hits DESC"
-		. "\n LIMIT $count"
 		;
-		$database->setQuery( $query );
+		$database->setQuery( $query, 0, $count );
 		$rows = $database->loadObjectList();
 		break;
 
@@ -53,9 +52,8 @@ switch ( $type ) {
 		. "\n AND ( a.publish_down = '$nullDate' OR a.publish_down >= '$now' )"
 		. ( $access ? "\n AND a.access <= $my->gid" : '' )
 		. "\n ORDER BY a.hits DESC"
-		. "\n LIMIT $count"
 		;
-		$database->setQuery( $query );
+		$database->setQuery( $query, 0, $count );
 		$temp = $database->loadObjectList();
 		
 		$rows = array();
@@ -87,9 +85,8 @@ switch ( $type ) {
 		. "\n AND s.published = 1"
 		. "\n AND cc.published = 1"
 		. "\n ORDER BY a.hits DESC"
-		. "\n LIMIT $count"
 		;
-		$database->setQuery( $query );
+		$database->setQuery( $query, 0, $count );
 		$rows = $database->loadObjectList();
 
 		break;

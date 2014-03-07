@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.templates.php 3495 2006-05-15 01:44:00Z stingrey $
+* @version $Id: admin.templates.php 4816 2006-08-28 23:00:38Z eddiea $
 * @package Joomla
 * @subpackage Templates
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -26,6 +26,7 @@ require_once( $mosConfig_absolute_path .'/administrator/components/com_templates
 require_once( $mosConfig_absolute_path .'/includes/domit/xml_domit_lite_include.php' );
 
 $client = strval( mosGetParam( $_REQUEST, 'client', '' ) );
+
 $cid 	= mosGetParam( $_REQUEST, 'cid', array(0) );
 if (!is_array( $cid )) {
 	$cid = array(0);
@@ -323,8 +324,8 @@ function saveTemplateSource( $option, $client ) {
 		$file = $mosConfig_absolute_path .'/templates/'. $template .'/index.php';
 	}
 
-	$enable_write = mosGetParam($_POST,'enable_write',0);
-	$oldperms = fileperms($file);
+	$enable_write 	= mosGetParam($_POST,'enable_write',0);
+	$oldperms 		= fileperms($file);
 	
 	if ($enable_write) @chmod($file, $oldperms | 0222);
 
@@ -374,7 +375,7 @@ function saveTemplateCSS( $option, $client ) {
 	global $mosConfig_absolute_path;
 	
 	$template 		= strval( mosGetParam( $_POST, 'template', '' ) );
-	$filecontent = mosGetParam( $_POST, 'filecontent', '', _MOS_ALLOWHTML );
+	$filecontent 	= mosGetParam( $_POST, 'filecontent', '', _MOS_ALLOWHTML );
 
 	if ( !$template ) {
 		mosRedirect( 'index2.php?option='. $option .'&client='. $client, 'Operation failed: No template specified.' );
@@ -390,8 +391,8 @@ function saveTemplateCSS( $option, $client ) {
 		$file = $mosConfig_absolute_path .'/templates/'. $template .'/css/template_css.css';
 	}
 
-	$enable_write = mosGetParam($_POST,'enable_write',0);
-	$oldperms = fileperms($file);
+	$enable_write 	= mosGetParam($_POST,'enable_write',0);
+	$oldperms 		= fileperms($file);
 	
 	if ($enable_write) {
 		@chmod($file, $oldperms | 0222);
@@ -445,7 +446,8 @@ function assignTemplate( $p_tname, $option, $client ) {
 function saveTemplateAssign( $option, $client ) {
 	global $database;
 
-	$menus 		= mosGetParam( $_POST, 'selections', array() );
+	$menus 		= josGetArrayInts( 'selections' );
+	
 	$template 	= strval( mosGetParam( $_POST, 'template', '' ) );
 
 	$query = "DELETE FROM #__templates_menu"
@@ -458,6 +460,8 @@ function saveTemplateAssign( $option, $client ) {
 
 	if ( !in_array( '', $menus ) ) {
 		foreach ( $menus as $menuid ){
+			$menuid = (int) $menuid;
+
 			// If 'None' is not in array
 			if ( $menuid != -999 ) {
 				// check if there is already a template assigned to this menu item
@@ -508,7 +512,7 @@ function savePositions( $option ) {
 	$database->query();
 
 	foreach ($positions as $id=>$position) {
-		$position = trim( $database->getEscaped( $position ) );
+		$position 		= trim( $database->getEscaped( $position ) );
 		$description 	= strval( mosGetParam( $descriptions, $id, '' ) );
 		if ($position != '') {
 			$id = intval( $id );

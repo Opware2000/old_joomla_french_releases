@@ -1,6 +1,6 @@
 <?php
 /**
-* version $Id: newsfeeds.html.php 3484 2006-05-14 18:39:34Z stingrey $
+* version $Id: newsfeeds.html.php 4697 2006-08-24 00:01:32Z stingrey $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -239,6 +239,7 @@ class HTML_newsfeed {
 
 		// full RSS parser used to access image information
 		$rssDoc = new xml_domit_rss_document();
+		$rssDoc->setRSSTimeout(5);
 		$rssDoc->useCacheLite( true, $LitePath, $cacheDir, $newsfeed->cache_time );
 		$success = $rssDoc->loadRSS( $newsfeed->link );
 		
