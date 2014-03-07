@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.statistics.html.php 2760 2006-03-12 18:42:18Z stingrey $
+* @version $Id: admin.statistics.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Statistics
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -175,6 +175,7 @@ class HTML_statistics {
 		?>
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="tab" value="<?php echo $tab;?>" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
 		</form>
 		<?php
 	}
@@ -218,6 +219,7 @@ class HTML_statistics {
 		<?php echo $pageNav->getListFooter(); ?>
 	  	<input type="hidden" name="option" value="<?php echo $option;?>" />
 	  	<input type="hidden" name="task" value="<?php echo $task;?>" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
 		</form>
 		<?php
 	}
@@ -310,13 +312,14 @@ class HTML_statistics {
 			$k = 1 - $k;
 		}
 		?>
-	</table>
-	<?php echo $pageNav->getListFooter(); ?>
+		</table>
+		<?php echo $pageNav->getListFooter(); ?>
 		
-  	<input type="hidden" name="option" value="<?php echo $option;?>" />
-  	<input type="hidden" name="task" value="<?php echo $task;?>" />
-	</form>
-	<?php
+	  	<input type="hidden" name="option" value="<?php echo $option;?>" />
+	  	<input type="hidden" name="task" value="<?php echo $task;?>" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
+		<?php
 	}
 }
 ?>

@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.config.php 7424 2007-05-17 15:56:10Z robs $
+* @version $Id: admin.config.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -310,6 +310,8 @@ function showconfig( $option) {
  */
 function saveconfig( $task ) {
 	global $database, $mosConfig_absolute_path, $mosConfig_password, $mosConfig_session_type;
+
+	josSpoofCheck();
 
 	$row = new mosConfig();
 	if (!$row->bind( $_POST )) {

@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.sections.php 5874 2006-11-29 00:21:35Z facedancer $
+* @version $Id: admin.sections.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -300,6 +300,8 @@ function editSection( $uid=0, $scope='', $option ) {
 */
 function saveSection( $option, $scope, $task ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$menu 		= stripslashes( strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) ) );
 	$menuid		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
@@ -385,6 +387,8 @@ function saveSection( $option, $scope, $task ) {
 */
 function removeSections( $cid, $scope, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		echo "<script> alert('Selectionner une section à supprimer'); window.history.go(-1);</script>\n";
@@ -453,6 +457,8 @@ function removeSections( $cid, $scope, $option ) {
 */
 function publishSections( $scope, $cid=null, $publish=1, $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if ( !is_array( $cid ) || count( $cid ) < 1 ) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -525,6 +531,9 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 */
 function cancelSection( $option, $scope ) {
 	global $database;
+	
+	josSpoofCheck();
+	
 	$row = new mosSection( $database );
 	$row->bind( $_POST );
 	$row->checkin();
@@ -538,6 +547,8 @@ function cancelSection( $option, $scope ) {
 */
 function orderSection( $uid, $inc, $option, $scope ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosSection( $database );
 	$row->load( (int)$uid );
@@ -591,6 +602,8 @@ function copySectionSelect( $option, $cid, $section ) {
 */
 function copySectionSave( $sectionid ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$title 		= stripslashes( strval( mosGetParam( $_REQUEST, 'title', '' ) ) );
 	$categories = josGetArrayInts( 'category', $_REQUEST, array(0) );
@@ -669,6 +682,8 @@ function copySectionSave( $sectionid ) {
 */
 function accessMenu( $uid, $access, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosSection( $database );
 	$row->load( (int)$uid );
@@ -689,6 +704,8 @@ function accessMenu( $uid, $access, $option ) {
 
 function menuLink( $id ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$section = new mosSection( $database );
 	$section->bind( $_POST );
@@ -750,6 +767,8 @@ function menuLink( $id ) {
 
 function saveOrder( &$cid ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

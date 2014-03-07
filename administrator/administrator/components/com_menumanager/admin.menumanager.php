@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.menumanager.php 5026 2006-09-13 18:45:52Z friesengeist $
+* @version $Id: admin.menumanager.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -83,6 +83,7 @@ function showMenu( $option ) {
 	$menuTypes 	= mosAdminMenus::menutypes();
 	$total		= count( $menuTypes );
 	$i			= 0;
+	$menus  = array();
 	foreach ( $menuTypes as $a ) {
 		$menus[$i]->type 		= $a;
 
@@ -201,6 +202,8 @@ function editMenu( $option, $menu ) {
 function saveMenu() {
 	global $database;
 
+	josSpoofCheck();
+
 	$menutype 		= stripslashes( strval( mosGetParam( $_POST, 'menutype', '' ) ) );
 	$old_menutype 	= stripslashes( strval( mosGetParam( $_POST, 'old_menutype', '' ) ) );
 	$new			= intval( mosGetParam( $_POST, 'new', 1 ) );
@@ -264,7 +267,7 @@ function saveMenu() {
 				exit();
 			}
 
-			$msg = 'New Menu created [ '. $menutype .' ]';
+			$msg = 'Nouveau menu créé [ '. $menutype .' ]';
 			break;
 
 		default:
@@ -388,6 +391,8 @@ function deleteConfirm( $option, $type ) {
 function deleteMenu( $option, $cid, $type ) {
 	global $database;
 
+	josSpoofCheck();
+
 	if ( $type == 'mainmenu' ) {
 		echo "<script> alert('You cannot delete the \'mainmenu\' menu as it is core menu'); window.history.go(-1); </script>\n";
 		exit();
@@ -471,6 +476,8 @@ function copyConfirm( $option, $type ) {
 */
 function copyMenu( $option, $cid, $type ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$menu_name 		= stripslashes( strval( mosGetParam( $_POST, 'menu_name', 'New Menu' ) ) );
 	$module_name 	= stripslashes( strval( mosGetParam( $_POST, 'module_name', 'New Module' ) ) );

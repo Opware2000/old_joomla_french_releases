@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: gacl_api.class.php 5316 2006-10-04 01:40:31Z pasamio $
+* @version $Id: gacl_api.class.php 9849 2008-01-04 04:49:28Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -1467,8 +1467,9 @@ class gacl_api extends gacl {
 		$value = $object[1];
 
 		// Get ids of acl referencing the Object (if any)
-		$this->db->setQuery( "SELECT acl_id FROM $object_map_table WHERE value=" . $this->db->Quote( $value ) . " AND section_value=" . $this->db->Quote( $section_value ) );
-		$acl_ids = $this->db->loadResultArray();
+		//$this->db->setQuery( "SELECT acl_id FROM $object_map_table WHERE value=" . $this->db->Quote( $value ) . " AND section_value=" . $this->db->Quote( $section_value ) );
+		//$acl_ids = $this->db->loadResultArray();
+		$acl_ids = array();
 
 		if ($erase) {
 			// We were asked to erase all acl referencing it

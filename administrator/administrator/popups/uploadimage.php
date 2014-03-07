@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: uploadimage.php 5930 2006-12-06 06:27:58Z rmdstudio $
+* @version $Id: uploadimage.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -61,6 +61,9 @@ switch ($option) {
 		return;
 		break;
 }
+
+// mainframe is an API workhorse, lots of 'core' interaction routines
+$mainframe = new mosMainFrame( $database, $option, $mosConfig_absolute_path, true );
 
 $directory	= mosGetParam( $_REQUEST, 'directory', '');
 $css 		= mosGetParam( $_REQUEST, 't','');
@@ -168,7 +171,8 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 </table>
 
 <input type="hidden" name="directory" value="<?php echo $directory;?>" />
-</form>
+<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
 
 </body>
 </html>

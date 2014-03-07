@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: template.class.php 329 2005-10-02 15:48:09Z stingrey $
+* @version $Id: template.class.php 10003 2008-02-08 11:16:37Z willebil $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @subpackage Installer
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -31,6 +31,9 @@ class mosInstallerTemplate extends mosInstaller {
 	* @param boolean True if installing from directory
 	*/
 	function install( $p_fromdir = null ) {
+		
+		josSpoofCheck();
+	
 		global $mosConfig_absolute_path,$database;
 
 		if (!$this->preInstallCheck( $p_fromdir, 'template' )) {
@@ -89,6 +92,8 @@ class mosInstallerTemplate extends mosInstaller {
 	*/
 	function uninstall( $id, $option, $client=0 ) {
 		global $database, $mosConfig_absolute_path;
+
+		josSpoofCheck(null, null, 'request');
 
 		// Delete directories
 		$path = $mosConfig_absolute_path

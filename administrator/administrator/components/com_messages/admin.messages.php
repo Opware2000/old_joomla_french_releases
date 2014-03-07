@@ -4,7 +4,7 @@
 * @package Joomla
 * @subpackage Messages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -86,6 +86,8 @@ function editConfig( $option ) {
 
 function saveConfig( $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	$query = "DELETE FROM #__messages_cfg"
 	. "\n WHERE user_id = " . (int) $my->id
@@ -139,6 +141,8 @@ function newMessage( $option ) {
 
 function saveMessage( $option ) {
 	global $database, $mainframe, $my;
+	
+	josSpoofCheck();
 
 	$row = new mosMessage( $database );
 	if (!$row->bind( $_POST )) {
@@ -228,6 +232,8 @@ function viewMessage( $uid='0', $option ) {
 
 function removeMessage( $cid, $option ) {
 	global $database;
+
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		echo "<script> alert('Selectionnez un element a supprimer'); window.history.go(-1);</script>\n";

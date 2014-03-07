@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.poll.php 5012 2006-09-11 19:35:26Z friesengeist $
+* @version $Id: admin.poll.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -148,6 +148,8 @@ function editPoll( $uid=0, $option='com_poll' ) {
 
 function savePoll( $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	// save the poll parent information
 	$row = new mosPoll( $database );
@@ -216,6 +218,9 @@ function savePoll( $option ) {
 
 function removePoll( $cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
+	
 	$msg = '';
 	for ($i=0, $n=count($cid); $i < $n; $i++) {
 		$poll = new mosPoll( $database );
@@ -234,6 +239,8 @@ function removePoll( $cid, $option ) {
 */
 function publishPolls( $cid=null, $publish=1, $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -263,6 +270,9 @@ function publishPolls( $cid=null, $publish=1, $option ) {
 }
 
 function cancelPoll( $option ) {
+	
+	josSpoofCheck();
+
 	global $database;
 	$row = new mosPoll( $database );
 	$row->bind( $_POST );

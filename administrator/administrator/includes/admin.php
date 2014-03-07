@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.php 7832 2007-07-03 01:30:02Z robs $
+* @version $Id: admin.php 9994 2008-02-07 10:41:09Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -261,6 +261,9 @@ function mosMakePath($base, $path='', $mode = NULL) {
 	// convert windows paths
 	$path = str_replace( '\\', '/', $path );
 	$path = str_replace( '//', '/', $path );
+	// ensure a clean join with a single slash
+	$path = ltrim( $path, '/' );
+	$base = rtrim( $base, '/' ).'/';
 
 	// check if dir exists
 	if (file_exists( $base . $path )) return true;
@@ -290,7 +293,10 @@ function mosMakePath($base, $path='', $mode = NULL) {
 	} else {
 		$path = $base;
 		for ($i = 0; $i < $n; $i++) {
-			$path .= $parts[$i] . '/';
+			// don't add if part is empty
+			if ($parts[$i]) {
+				$path .= $parts[$i] . '/';
+			}
 			if (!file_exists( $path )) {
 				if (!@mkdir(substr($path,0,-1),$mode)) {
 					$ret = false;

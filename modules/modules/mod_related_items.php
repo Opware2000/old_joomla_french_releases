@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_related_items.php 5069 2006-09-15 16:16:55Z friesengeist $
+* @version $Id: mod_related_items.php 9995 2008-02-07 11:00:39Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -37,7 +37,7 @@ if ($option == 'com_content' && $task == 'view' && $id) {
 		foreach ($keys as $key) {
 			$key = trim( $key );
 			if ($key) {
-				$likes[] = $database->getEscaped( $key );
+				$likes[] = $database->getEscaped( $key, true );
 			}
 		}
 
@@ -57,7 +57,7 @@ if ($option == 'com_content' && $task == 'view' && $id) {
 			;
 			$database->setQuery( $query );
 			$temp = $database->loadObjectList();
-			
+
 			$related = array();
 			if (count($temp)) {
 				foreach ($temp as $row ) {
@@ -67,13 +67,13 @@ if ($option == 'com_content' && $task == 'view' && $id) {
 				}
 			}
 			unset($temp);
-			
+
 			if ( count( $related ) ) {
 				?>
 				<ul>
 					<?php
 					foreach ($related as $item) {
-						if ($option="com_content" && $task="view") {
+						if ($option == 'com_content' && $task == 'view') {
 							$Itemid = $mainframe->getItemid($item->id);
 						}
 						$href = sefRelToAbs( "index.php?option=com_content&amp;task=view&amp;id=$item->id&amp;Itemid=$Itemid" );

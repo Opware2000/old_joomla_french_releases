@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.weblinks.php 5023 2006-09-13 12:36:21Z friesengeist $
+* @version $Id: admin.weblinks.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -185,6 +185,8 @@ function editWeblink( $option, $id ) {
 */
 function saveWeblink( $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	$row = new mosWeblink( $database );
 	if (!$row->bind( $_POST )) {
@@ -223,6 +225,8 @@ function saveWeblink( $option ) {
 */
 function removeWeblinks( $cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
@@ -251,6 +255,8 @@ function removeWeblinks( $cid, $option ) {
 */
 function publishWeblinks( $cid=null, $publish=1,  $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -283,6 +289,9 @@ function publishWeblinks( $cid=null, $publish=1,  $option ) {
 * @param integer The increment to reorder by
 */
 function orderWeblinks( $uid, $inc, $option ) {
+	
+	josSpoofCheck();
+	
 	global $database;
 	$row = new mosWeblink( $database );
 	$row->load( (int)$uid );
@@ -298,6 +307,9 @@ function orderWeblinks( $uid, $inc, $option ) {
 * @param string The current url option
 */
 function cancelWeblink( $option ) {
+	
+	josSpoofCheck();
+	
 	global $database;
 	$row = new mosWeblink( $database );
 	$row->bind( $_POST );

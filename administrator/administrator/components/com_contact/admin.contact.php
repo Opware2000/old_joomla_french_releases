@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.contact.php 5074 2006-09-16 11:44:41Z friesengeist $
+* @version $Id: admin.contact.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -189,6 +189,8 @@ function editContact( $id, $option ) {
 */
 function saveContact( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContact( $database );
 	if (!$row->bind( $_POST )) {
@@ -239,6 +241,8 @@ function saveContact( $option ) {
 */
 function removeContacts( &$cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if (count( $cid )) {
 		mosArrayToInts( $cid );
@@ -263,11 +267,12 @@ function removeContacts( &$cid, $option ) {
 */
 function changeContact( $cid=null, $state=0, $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
-		$action = $publish ? 'publish' : 'unpublish';
-		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
-		exit();
+		$action = $state ? 'publish' : 'unpublish';
+		mosErrorAlert( "Choisir un article à $action" );
 	}
 
 	mosArrayToInts( $cid );
@@ -313,6 +318,8 @@ function orderContacts( $uid, $inc, $option ) {
 */
 function cancelContact() {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContact( $database );
 	$row->bind( $_POST );

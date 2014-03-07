@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.messages.html.php 5981 2006-12-12 02:01:34Z friesengeist $
+* @version $Id: admin.messages.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Messages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -97,11 +97,12 @@ class HTML_messages {
 	</table>
 	<?php echo $pageNav->getListFooter(); ?>
 		
-  <input type="hidden" name="option" value="<?php echo $option;?>" />
-  <input type="hidden" name="task" value="" />
-  <input type="hidden" name="boxchecked" value="0" />
-  <input type="hidden" name="hidemainmenu" value="0" />
-</form>
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="hidemainmenu" value="0" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
 		<?php 
 	}
 	
@@ -158,8 +159,9 @@ class HTML_messages {
 	</table>
 
 		<input type="hidden" name="option" value="<?php echo $option; ?>">
-  <input type="hidden" name="task" value="">
-</form>
+		<input type="hidden" name="task" value="">
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
 		<?php 
 	}
 
@@ -217,6 +219,7 @@ function viewMessage( &$row, $option ) {
 		<input type="hidden" name="userid" value="<?php echo $row->user_id_from; ?>" />
 		<input type="hidden" name="subject" value="<?php echo ( substr( $row->subject, 0, 4 ) != 'Re: ' ? 'Re: ' : '' ) . htmlspecialchars( $row->subject, ENT_QUOTES ); ?>" />
 		<input type="hidden" name="hidemainmenu" value="0" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
 		</form>
 		<?php 
 	}
@@ -281,10 +284,11 @@ function newMessage($option, $recipientslist, $subject ) {
 		</tr>
 	</table>
 		
-	<input type="hidden" name="user_id_from" value="<?php echo $my->id; ?>">
-	<input type="hidden" name="option" value="<?php echo $option; ?>">
-	<input type="hidden" name="task" value="">
-	</form>
+		<input type="hidden" name="user_id_from" value="<?php echo $my->id; ?>">
+		<input type="hidden" name="option" value="<?php echo $option; ?>">
+		<input type="hidden" name="task" value="">
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
 		<?php 
 	}
 }

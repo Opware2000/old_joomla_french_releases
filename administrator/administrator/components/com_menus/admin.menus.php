@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.menus.php 5045 2006-09-14 13:49:01Z friesengeist $
+* @version $Id: admin.menus.php 10004 2008-02-08 16:09:12Z hackwar $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -262,6 +262,8 @@ function viewMenuItems( $menutype, $option ) {
 function addMenuItem( &$cid, $menutype, $option, $task ) {
 	global $mosConfig_absolute_path;
 
+	josSpoofCheck(null, null, 'request');
+
 	$types 	= array();
 
 	// list of directories
@@ -349,6 +351,8 @@ function addMenuItem( &$cid, $menutype, $option, $task ) {
 */
 function saveMenu( $option, $task='save' ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$params = mosGetParam( $_POST, 'params', '' );
 	if (is_array( $params )) {
@@ -490,6 +494,8 @@ function TrashMenuSection( $cid=NULL, $menutype='mainmenu' ) {
 */
 function cancelMenu( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$menu = new mosMenu( $database );
 	$menu->bind( $_POST );
@@ -706,7 +712,7 @@ function copyMenuSave( $option, $cid, $menu, $menutype ) {
 		$curr->load( $id );
 		$curr->id = NULL;
 		if ( !$curr->store() ) {
-			echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+			mosErrorAlert( $curr->getError() );
 			exit();
 		}
 		$cidref[] = array($id, $curr->id);
@@ -727,7 +733,7 @@ function copyMenuSave( $option, $cid, $menu, $menutype ) {
 		$curr->menutype = $menu;
 		$curr->ordering = '9999';
 		if ( !$curr->store() ) {
-			echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+			mosErrorAlert( $curr->getError() );
 			exit();
 		}
 		$curr->updateOrder( 'menutype = ' . $database->Quote( $curr->menutype ) . ' AND parent = ' . (int) $curr->parent );
@@ -779,6 +785,8 @@ function ReadMenuXML( $type, $component=-1 ) {
 
 function saveOrder( &$cid, $menutype ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

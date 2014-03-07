@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_logged.php 4500 2006-08-13 22:45:33Z eddiea $
+* @version $Id: mod_logged.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -85,7 +85,7 @@ foreach ( $rows as $row ) {
 		if ( $acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_users' ) ) {
 			?>
 			<td>
-			<a href="index2.php?option=com_users&task=flogout&id=<?php echo $row->userid; ?>">
+			<a href="index2.php?option=com_users&task=flogout&id=<?php echo $row->userid; ?>&<?php echo josSpoofValue(); ?>=1">
 			<img src="images/publish_x.png" width="12" height="12" border="0" alt="Logout" Title="Force Logout User" />
 			</a>
 			</td>

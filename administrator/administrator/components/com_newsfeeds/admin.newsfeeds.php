@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.newsfeeds.php 5012 2006-09-11 19:35:26Z friesengeist $
+* @version $Id: admin.newsfeeds.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -164,6 +164,8 @@ function editNewsFeed( $id, $option ) {
 */
 function saveNewsFeed( $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	$row = new mosNewsFeed( $database );
 	if (!$row->bind( $_POST )) {
@@ -196,6 +198,8 @@ function saveNewsFeed( $option ) {
 */
 function publishNewsFeeds( $cid, $publish, $option ) {
 	global $database, $my;
+
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -232,6 +236,8 @@ function publishNewsFeeds( $cid, $publish, $option ) {
 */
 function removeNewsFeeds( &$cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
@@ -259,6 +265,8 @@ function removeNewsFeeds( &$cid, $option ) {
 */
 function cancelNewsFeed( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosNewsFeed( $database );
 	$row->bind( $_POST );
@@ -274,6 +282,8 @@ function cancelNewsFeed( $option ) {
 */
 function orderNewsFeed( $id, $inc, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$limit 		= intval( mosGetParam( $_REQUEST, 'limit', 0 ) );
 	$limitstart = intval( mosGetParam( $_REQUEST, 'limitstart', 0 ) );

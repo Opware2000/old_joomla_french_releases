@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pageNavigation.php 5511 2006-10-19 12:17:15Z friesengeist $
+* @version $Id: pageNavigation.php 9847 2008-01-04 04:10:37Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -83,7 +83,7 @@ class mosPageNav {
 			$txt .= _PN_PAGE." $page "._PN_OF." $total_pages";
 		}
 		return $txt;
-	}	
+	}
 
 	/**
 	* Writes the html links for pages, eg, previous, next, 1 2 3 ... x
@@ -133,8 +133,8 @@ class mosPageNav {
 		if ($this_page < $total_pages) {
 			$page = $this_page * $this->limit;
 			$end_page = ($total_pages-1) * $this->limit;
-			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $page ) .' " class="pagenav" title="'. _PN_NEXT .'">'. _PN_NEXT . $pnSpace . _PN_RT .'</a> ';
-			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $end_page ) .' " class="pagenav" title="'. _PN_END .'">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</a>';
+			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $page ) .'" class="pagenav" title="'. _PN_NEXT .'">'. _PN_NEXT . $pnSpace . _PN_RT .'</a> ';
+			$txt .= '<a href="'. sefRelToAbs( $link .'&amp;limitstart='. $end_page ) .'" class="pagenav" title="'. _PN_END .'">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</a>';
 		} else {
 			$txt .= '<span class="pagenav">'. _PN_NEXT . $pnSpace . _PN_RT .'</span> ';
 			$txt .= '<span class="pagenav">'. _PN_END . $pnSpace . _PN_RT . _PN_RT .'</span>';

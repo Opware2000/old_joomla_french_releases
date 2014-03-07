@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.content.php 6019 2006-12-18 19:50:34Z friesengeist $
+* @version $Id: admin.content.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -649,6 +649,8 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 function saveContent( $sectionid, $task ) {
 	global $database, $my, $mainframe, $mosConfig_offset;
 
+	josSpoofCheck();
+
 	$menu 		= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
 	$menuid		= intval( mosGetParam( $_POST, 'menuid', 0 ) );
 	$nullDate 	= $database->getNullDate();
@@ -802,7 +804,9 @@ function saveContent( $sectionid, $task ) {
 */
 function changeContent( $cid=null, $state=0, $option ) {
 	global $database, $my, $task;
-	
+
+	josSpoofCheck();
+
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
 		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
@@ -872,6 +876,8 @@ function changeContent( $cid=null, $state=0, $option ) {
 function toggleFrontPage( $cid, $section, $option ) {
 	global $database, $mainframe;
 
+	josSpoofCheck();
+
 	if (count( $cid ) < 1) {
 		echo "<script> alert('Select an item to toggle'); window.history.go(-1);</script>\n";
 		exit;
@@ -912,6 +918,8 @@ function toggleFrontPage( $cid, $section, $option ) {
 function removeContent( &$cid, $sectionid, $option ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$total = count( $cid );
 	if ( $total < 1) {
 		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
@@ -947,6 +955,8 @@ function removeContent( &$cid, $sectionid, $option ) {
 function cancelContent( ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$row = new mosContent( $database );
 	$row->bind( $_POST );
 	$row->checkin();
@@ -961,6 +971,8 @@ function cancelContent( ) {
 */
 function orderContent( $uid, $inc, $option ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$row = new mosContent( $database );
 	$row->load( (int)$uid );
@@ -986,7 +998,7 @@ function moveSection( $cid, $sectionid, $option ) {
 	}
 
 	//seperate contentids
-	mosArrayToInts( $cids );
+	mosArrayToInts( $cid );
 	$cids = 'a.id=' . implode( ' OR a.id=', $cid );
 	// Content Items query
 	$query = 	"SELECT a.title"
@@ -1016,6 +1028,8 @@ function moveSection( $cid, $sectionid, $option ) {
 */
 function moveSectionSave( &$cid, $sectionid, $option ) {
 	global $database, $my;
+
+	josSpoofCheck();
 
 	$sectcat 	= mosGetParam( $_POST, 'sectcat', '' );
 	list( $newsect, $newcat ) = explode( ',', $sectcat );
@@ -1054,7 +1068,7 @@ function moveSectionSave( &$cid, $sectionid, $option ) {
 		$row->updateOrder( "catid = " . (int) $row->catid . " AND state >= 0" );
 	}
 
-	mosArrayToInts( $cids );
+	mosArrayToInts( $cid );
 	$cids = 'id=' . implode( ' OR id=', $cid );
 	$query = "UPDATE #__content SET sectionid = " . (int) $newsect . ", catid = " . (int) $newcat
 	. "\n WHERE ( $cids )"
@@ -1094,7 +1108,7 @@ function copyItem( $cid, $sectionid, $option ) {
 	}
 
 	//seperate contentids
-	mosArrayToInts( $cids );
+	mosArrayToInts( $cid );
 	$cids = 'a.id=' . implode( ' OR a.id=', $cid );
 	## Content Items query
 	$query = "SELECT a.title"
@@ -1126,6 +1140,8 @@ function copyItem( $cid, $sectionid, $option ) {
 **/
 function copyItemSave( $cid, $sectionid, $option ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$sectcat 	= mosGetParam( $_POST, 'sectcat', '' );
 	//seperate sections and categories from selection
@@ -1218,6 +1234,8 @@ function copyItemSave( $cid, $sectionid, $option ) {
 function resethits( $redirect, $id ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$row = new mosContent($database);
 	$row->Load((int)$id);
 	$row->hits = 0;
@@ -1235,6 +1253,8 @@ function resethits( $redirect, $id ) {
 */
 function accessMenu( $uid, $access, $option ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$row = new mosContent( $database );
 	$row->load( (int)$uid );
@@ -1269,6 +1289,8 @@ function filterCategory( $query, $active=NULL ) {
 
 function menuLink( $redirect, $id ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$menu = strval( mosGetParam( $_POST, 'menuselect', '' ) );
 	$link = strval( mosGetParam( $_POST, 'link_name', '' ) );
@@ -1317,6 +1339,8 @@ function go2menuitem() {
 
 function saveOrder( &$cid ) {
 	global $database;
+
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$redirect 	= mosGetParam( $_POST, 'redirect', 0 );

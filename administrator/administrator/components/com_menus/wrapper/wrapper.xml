@@ -5,7 +5,7 @@
 	<author>Joomla! Project</author>
 	<creationDate>July 2004</creationDate>
 	<copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
-	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
@@ -24,7 +24,7 @@
 		</param>
 		<param name="header" type="text" size="30" default="" label="Titre de la page" description="Texte à afficher en haut de la page. Si le champ est vierge, c'est le nom du lien qui sera utilisé" />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
-		<param name="scrolling" type="radio" default="auto" label="Barres de défilement" description="Afficher/Masquer les barres de défillement horizontale & verticale.">
+		<param name="scrolling" type="radio" default="auto" label="Barres de défilement" description="Afficher/Masquer les barres de défillement horizontale et verticale.">
 			<option value="no">Non</option>
 			<option value="yes">Oui</option>
 			<option value="auto">Auto</option>

@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.menus.html.php 4555 2006-08-18 18:11:33Z stingrey $
+* @version $Id: toolbar.menus.html.php 10004 2008-02-08 16:09:12Z hackwar $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -73,8 +73,7 @@ class TOOLBAR_menus {
 
 		mosMenuBar::startTable();
 		if ( !$id ) {
-			$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=new&hidemainmenu=1';
-			mosMenuBar::back( 'Retour', $link );
+			$link = 'index2.php?option=com_menus&menutype='. $menutype .'&task=new&hidemainmenu=1&' . josSpoofValue() . '=1';							mosMenuBar::back( 'Retour', $link );
 			mosMenuBar::spacer();
 		}
 		mosMenuBar::save();

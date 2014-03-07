@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.trash.php 5410 2006-10-10 22:08:59Z Saka $
+* @version $Id: admin.trash.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Trash
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -174,6 +174,8 @@ function viewdeleteTrash( $cid, $mid, $option ) {
 function deleteTrash( $cid, $option ) {
 	global $database;
 	
+	josSpoofCheck();
+
 	$type 	= mosGetParam( $_POST, 'type', array(0) );
 
 	$total 	= count( $cid );
@@ -243,6 +245,8 @@ function viewrestoreTrash( $cid, $mid, $option ) {
 function restoreTrash( $cid, $option ) {
 	global $database;
 	
+	josSpoofCheck();
+
 	$type = mosGetParam( $_POST, 'type', array(0) );
 
 	$total = count( $cid );

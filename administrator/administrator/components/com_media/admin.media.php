@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.media.php 5874 2006-11-29 00:21:35Z facedancer $
+* @version $Id: admin.media.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -89,6 +89,9 @@ switch ($task) {
  * @param string The relative folder path to the file
  */
 function delete_file( $listdir ) {
+
+	josSpoofCheck(null, null, 'get');
+
 	$delFile = makeSafe( mosGetParam( $_REQUEST, 'delFile', '' ) );
 	$fullPath = COM_MEDIA_BASE . $listdir . DIRECTORY_SEPARATOR . stripslashes( $delFile );
 
@@ -98,6 +101,9 @@ function delete_file( $listdir ) {
 }
 
 function create_folder($dirPath) {
+
+	josSpoofCheck();
+
 	$folder_name = mosGetParam( $_POST, 'foldername', '' );
 
 	if(strlen($folder_name) >0) {
@@ -117,6 +123,9 @@ function create_folder($dirPath) {
 }
 
 function delete_folder($listdir) {
+
+	josSpoofCheck(null, null, 'get');
+
 	$delFolder = mosGetParam( $_REQUEST, 'delFolder', '' );
 
 	$del_html 	= COM_MEDIA_BASE . $listdir . $delFolder . DIRECTORY_SEPARATOR . 'index.html';
@@ -139,6 +148,9 @@ function delete_folder($listdir) {
 }
 
 function upload() {
+
+	josSpoofCheck();
+
 	if (isset($_FILES['upload']) && is_array($_FILES['upload']) && isset($_POST['dirPath'])) {
 		$dirPathPost 	= $_POST['dirPath'];
 		$file 			= $_FILES['upload'];
@@ -161,6 +173,8 @@ function upload() {
 
 function do_upload($file, $dest_dir) {
 	global $clearUploads;
+
+	josSpoofCheck();
 
 	if (empty($file['name'])) {
 		mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "Aucun fichier sélectionné" );

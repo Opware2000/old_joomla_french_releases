@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.media.html.php 6070 2006-12-20 02:09:09Z robs $
+* @version $Id: admin.media.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software and parts of it may contain or be derived from works
 * licensed under the GNU General Public License or other free or open source
 * software licenses. See COPYRIGHT.php for copyright notices and details.
@@ -123,6 +123,7 @@ class HTML_Media {
 		<input type="hidden" name="option" value="com_media" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="cb1" id="cb1" value="0" />
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
 		</form>
 		<?php
 	}
@@ -246,8 +247,8 @@ class HTML_Media {
 					<?php echo htmlspecialchars( substr( $file, 0, 10 ) . ( strlen( $file ) > 10 ? '...' : ''), ENT_QUOTES ); ?>
 				</small>
 				<div class="buttonOut">
-					<a href="index2.php?option=com_media&amp;task=delete&amp;delFile=<?php echo $file; ?>&amp;listdir=<?php echo $listdir; ?>" target="_top" onclick="return deleteImage('<?php echo $file; ?>');" title="Supprimer Element">
-						<img src="components/com_media/images/edit_trash.gif" width="15" height="15" border="0" alt="Supprimer" /></a>
+					<a href="index2.php?option=com_media&amp;task=delete&amp;delFile=<?php echo $file; ?>&amp;listdir=<?php echo $listdir; ?>&amp;<?php echo josSpoofValue(); ?>=1" target="_top" onclick="return deleteImage('<?php echo $file; ?>');" title="Supprimer Element">
+						<img src="components/com_media/images/edit_trash.gif" width="15" height="15" border="0" alt="Delete" /></a>
 					<a href="#" onclick="javascript:window.top.document.forms[0].imagecode.value = '<img src=&quot;<?php echo $img_url_link;?>&quot; align=&quot;left&quot; hspace=&quot;6&quot; alt=&quot;Image&quot; />';" title="Image Code">
 						<img src="components/com_media/images/edit_pencil.gif" width="15" height="15" border="0" alt="Code" /></a>
 				</div>					
@@ -300,7 +301,7 @@ class HTML_Media {
 					<?php echo substr( $dir, 0, 10 ) . ( strlen( $dir ) > 10 ? '...' : ''); ?>
 				</small>
 				<div class="buttonOut">
-					<a href="index2.php?option=com_media&amp;task=deletefolder&amp;delFolder=<?php echo $path; ?>&amp;listdir=<?php echo $listdir; ?>" target="_top" onclick="return deleteFolder('<?php echo $dir; ?>', <?php echo $num_files; ?>);">
+					<a href="index2.php?option=com_media&amp;task=deletefolder&amp;delFolder=<?php echo $path; ?>&amp;listdir=<?php echo $listdir; ?>&amp;<?php echo josSpoofValue(); ?>=1" target="_top" onclick="return deleteFolder('<?php echo $dir; ?>', <?php echo $num_files; ?>);">
 						<img src="components/com_media/images/edit_trash.gif" width="15" height="15" border="0" alt="Supprimer" /></a>
 				</div>
 			</div>
@@ -327,7 +328,7 @@ class HTML_Media {
 					<?php echo $doc; ?>
 				</small>
 				<div class="buttonOut">
-					<a href="index2.php?option=com_media&amp;task=delete&amp;delFile=<?php echo $doc; ?>&amp;listdir=<?php echo $listdir; ?>" target="_top" onclick="return deleteImage('<?php echo $doc; ?>');">
+					<a href="index2.php?option=com_media&amp;task=delete&amp;delFile=<?php echo $doc; ?>&amp;listdir=<?php echo $listdir; ?>&amp;<?php echo josSpoofValue(); ?>=1" target="_top" onclick="return deleteImage('<?php echo $doc; ?>');">
 						<img src="components/com_media/images/edit_trash.gif" width="15" height="15" border="0" alt="Supprimer" /></a>
 				</div>
 			</div>

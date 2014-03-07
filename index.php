@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 6022 2006-12-18 22:30:07Z friesengeist $
+* @version $Id: index.php 9937 2008-01-13 23:22:26Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -142,6 +142,10 @@ include_once( $mosConfig_absolute_path .'/language/' . $mosConfig_lang . '.php' 
 // frontend login & logout controls
 $return 	= strval( mosGetParam( $_REQUEST, 'return', NULL ) );
 $message 	= intval( mosGetParam( $_POST, 'message', 0 ) );
+
+// Get the information about the current user from the sessions table
+$my = $mainframe->getUser();
+
 if ($option == 'login') {
 	$mainframe->login();
 
@@ -203,9 +207,6 @@ if ($option == 'login') {
 		mosErrorAlert( _ALERT_ENABLED );
 	}
 }
-
-/** get the information about the current user from the sessions table */
-$my = $mainframe->getUser();
 
 // detect first visit
 $mainframe->detect();

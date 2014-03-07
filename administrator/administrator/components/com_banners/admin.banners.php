@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.banners.php 4980 2006-09-09 16:10:24Z friesengeist $
+* @version $Id: admin.banners.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -163,6 +163,8 @@ function editBanner( $bannerid, $option ) {
 function saveBanner( $task ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$row = new mosBanner($database);
 
 	$msg = 'Information bannière sauvegardée';
@@ -199,6 +201,8 @@ function saveBanner( $task ) {
 function cancelEditBanner() {
 	global $database;
 
+	josSpoofCheck();
+	
 	$row = new mosBanner($database);
 	$row->bind( $_POST );
 	$row->checkin();
@@ -208,6 +212,8 @@ function cancelEditBanner() {
 
 function publishBanner( $cid, $publish=1 ) {
 	global $database, $my;
+
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -239,6 +245,9 @@ function publishBanner( $cid, $publish=1 ) {
 
 function removeBanner( $cid ) {
 	global $database;
+
+	josSpoofCheck();
+
 	if (count( $cid )) {
 		mosArrayToInts( $cid );
 		$cids = 'bid=' . implode( ' OR bid=', $cid );
@@ -309,6 +318,8 @@ function editBannerClient( $clientid, $option ) {
 function saveBannerClient( $option ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$row = new mosBannerClient( $database );
 	if (!$row->bind( $_POST )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
@@ -329,6 +340,9 @@ function saveBannerClient( $option ) {
 
 function cancelEditClient( $option ) {
 	global $database;
+
+	josSpoofCheck();
+
 	$row = new mosBannerClient( $database );
 	$row->bind( $_POST );
 	$row->checkin();
@@ -337,6 +351,8 @@ function cancelEditClient( $option ) {
 
 function removeBannerClients( $cid, $option ) {
 	global $database;
+
+	josSpoofCheck();
 
 	for ($i = 0; $i < count($cid); $i++) {
 		$query = "SELECT COUNT( bid )"

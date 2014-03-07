@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.php 5097 2006-09-19 22:31:33Z Saka $
+* @version $Id: admin.typedcontent.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -309,6 +309,8 @@ function edit( $uid, $option ) {
 */
 function save( $option, $task ) {
 	global $database, $my, $mosConfig_offset;
+	
+	josSpoofCheck();
 
 	$nullDate 	= $database->getNullDate();
 	$menu 		= strval( mosGetParam( $_POST, 'menu', 'mainmenu' ) );
@@ -411,6 +413,8 @@ function save( $option, $task ) {
 */
 function trash( &$cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total = count( $cid );
 	if ( $total < 1) {
@@ -450,6 +454,8 @@ function trash( &$cid, $option ) {
 */
 function changeState( $cid=null, $state=0, $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
@@ -494,6 +500,8 @@ function changeState( $cid=null, $state=0, $option ) {
 */
 function changeAccess( $id, $access, $option  ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContent( $database );
 	$row->load( (int)$id );
@@ -518,6 +526,8 @@ function changeAccess( $id, $access, $option  ) {
 */
 function resethits( $option, $id ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContent($database);
 	$row->Load( (int)$id );
@@ -535,6 +545,8 @@ function resethits( $option, $id ) {
 */
 function cancel( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContent( $database );
 	$row->bind( $_POST );
@@ -544,6 +556,8 @@ function cancel( $option ) {
 
 function menuLink( $option, $id ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$menu 	= strval( mosGetParam( $_POST, 'menuselect', '' ) );
 	$link 	= strval( mosGetParam( $_POST, 'link_name', '' ) );
@@ -579,6 +593,8 @@ function menuLink( $option, $id ) {
 
 function go2menu() {
 	global $database;
+	
+	josSpoofCheck();
 
 	// checkin content
 	$row = new mosContent( $database );
@@ -592,6 +608,8 @@ function go2menu() {
 
 function go2menuitem() {
 	global $database;
+	
+	josSpoofCheck();
 
 	// checkin content
 	$row = new mosContent( $database );
@@ -606,6 +624,8 @@ function go2menuitem() {
 
 function saveOrder( &$cid ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: CHANGELOG.php 8142 2007-07-21 09:20:01Z rmuilwijk $
+* @version $Id: CHANGELOG.php 10003 2008-02-08 11:16:37Z willebil $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -37,9 +37,64 @@ code fixes.
 - -> Removed
 ! -> Note
 
+09-Feb-2008 Wilco Jansen
+ # Fixed [9249] Unable to delete mambots
+ # Fixed [6072] GPL url points to version "latest" (v3) instead of V2 in all files
+ # Fixed [9013] Missing $mainframe in popups
+ # Fixed [9413] Not authorized error in forced logout
+ # Fixed [9321] Menu Name at menu manager is missing
+ # Fixed [9250]  Unable to uninstall Template and languages
+ ! Thanks Jens-Christian Skibakk for providing patches
+
+07-Feb-2008 Andrew Eddie
+ # Fixed [#7276] mosMakePath sometimes leaves trailing / in the end of the path given to mkdir()
+ # Fixed [#8844] Unescaped special characters with database::getEscaped()
+ # Fixed [#7608] XSS attack with case sensitive flaw in input filter
+ # Fixed [#6122] mosGetParam numeric check bug
+ # Fixed [#6021] Backend full menu ACL corrections
+ # Fixed [#9197] Wrong variable name in admin.menus.php
+ # Fixed [#9198] Wrong variable name in admin.contact.php
+
+--------------- 1.0.14 RC1 Released -- [13-January-2008 23:00 UTC] ---------------------
+
+13-Jan-2008 Andrew Eddie
+ # Moved instantiation of frontend $my above login block
+
+11-Jan-2008 Ian MacLennan
+ # Fixed bug in search where small words were not being filtered out properly
+ # Fixed problem in search with regex using too many resources (related to above)
+ # Fixed 1.0 version of [#8404] Incorrect highlighting of search terms (as a byproduct)
+
+07-Jan-2008 Andrew Eddie
+ # Fixed where spoof values where same for anonymous and logged in users
+ + Added "preview" link in admin template (similar to what is in version 1.5)
+
+04-Jan-2008 Andrew Eddie
+ * SECURITY [LOW level]: Fixed multiple typos in backend com_content making array integer check ineffective
+ * SECURITY: Fix XSS attack in search results pages
+ # Fixed bad &amp;'s in wrapper.xml, mosimage.xml, mod_wrapper.xml and mospaging.xml
+ # Fixed minor bug in com_weblinks where link empty
+ # Fixed [#7650] Problem with if statement (?) in mod_related_items
+ # Fixed [#8381] too many argument in com_search page header parameter
+ # Fixed [#5318] mosPageNav::writePagesLinks adds trailing space to _PN_NEXT href
+ # Fixed [#8599] Invalid Redirect URL of content_item_link menu item
+ # Fixed [#7242] ACL: SQL errror when deleting user in joomla in backend (actually in mosUser::delete( $id ); )
+
+02-Jan-2008 Anthony Ferrara
+ # Fixed delete issue with com_media in backend spoof check
+ ^ added method param to josSpoofCheck to change checked variable
+
+10-Aug-2007 Rob Schley
+ * SECURITY A4 [LOW Level]: XSS issue in com_search
+ # Fixed [topic,193707] Joomla! 1.0.13 Admin session dies for certain $task values
+
+----------------------------------------------------------------------------------------
+--------------- 1.0.13 Stable Released -- [21-July-2007 16:00 UTC] ---------------------
+
 21-Jul-2007 Robin Muilwijk
  ^ (version.php) preparation for release
- 
+
+
 18-Jul-2007 Rob Schley
  # Fixed admin session problems with immediate logout after login.
  # Fixed a few misc. bugs.

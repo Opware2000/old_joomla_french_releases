@@ -1,10 +1,10 @@
 <?php
 /**
-* version $Id: newsfeeds.html.php 4697 2006-08-24 00:01:32Z stingrey $
+* version $Id: newsfeeds.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Newsfeeds
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 *
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or

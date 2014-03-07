@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: mambot.class.php 4994 2006-09-10 16:33:55Z friesengeist $
+* @version $Id: mambot.class.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -26,6 +26,9 @@ class mosInstallerMambot extends mosInstaller {
 	* @param boolean True if installing from directory
 	*/
 	function install( $p_fromdir = null ) {
+		
+		josSpoofCheck();
+	
 		global $mosConfig_absolute_path, $database;
 
 		if (!$this->preInstallCheck( $p_fromdir, 'mambot' )) {
@@ -100,6 +103,8 @@ class mosInstallerMambot extends mosInstaller {
 	*/
 	function uninstall( $id, $option, $client=0 ) {
 		global $database, $mosConfig_absolute_path;
+
+		josSpoofCheck(null, null, 'request');
 
 		$id = intval( $id );
 		$query = "SELECT name, folder, element, iscore"

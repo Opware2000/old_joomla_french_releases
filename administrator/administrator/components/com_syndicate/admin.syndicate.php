@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.syndicate.php 3712 2006-05-29 03:55:59Z stingrey $
+* @version $Id: admin.syndicate.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Syndicate
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -27,7 +27,7 @@ switch ($task) {
 		saveSyndicate( $option );
 		break;
 
-  case 'cancel':
+  	case 'cancel':
 		cancelSyndicate( );
 		break;
 
@@ -67,6 +67,8 @@ function showSyndicate( $option ) {
 */
 function saveSyndicate( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$params = mosGetParam( $_POST, 'params', '' );
 	if (is_array( $params )) {

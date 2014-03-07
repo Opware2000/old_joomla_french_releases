@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 6022 2006-12-18 22:30:07Z friesengeist $
+* @version $Id: index2.php 9801 2008-01-02 18:25:27Z ircmaxell $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -100,10 +100,11 @@ if ($mosConfig_debug) {
 	}
 }
 
-doGzip();
-
 // if task action is 'save' or 'apply' redo session check
 if ( $task == 'save' || $task == 'apply' ) {
 	$mainframe->initSessionAdmin( $option, '' );
 }
+
+doGzip();
+
 ?>

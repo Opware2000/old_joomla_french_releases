@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: mambot.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: mambot.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -31,7 +31,7 @@ writableCell( 'language' );
 writableCell( 'mambots' );
 writableCell( 'mambots/content' );
 writableCell( 'mambots/search' );
-?>
+writableCell( 'mambots/system' );?>
 </table>
 <?php
 showInstalledMambots( $option );

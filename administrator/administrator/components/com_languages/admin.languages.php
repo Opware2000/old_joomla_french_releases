@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.languages.php 4669 2006-08-23 13:29:47Z stingrey $
+* @version $Id: admin.languages.php 10003 2008-02-08 11:16:37Z willebil $
 * @package Joomla
 * @subpackage Languages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -153,6 +153,8 @@ function viewLanguages( $option ) {
 */
 function publishLanguage( $p_lname, $option ) {
 	global $mosConfig_lang;
+	
+	josSpoofCheck();
 
 	$config = '';
 
@@ -182,6 +184,8 @@ function publishLanguage( $p_lname, $option ) {
 */
 function removeLanguage( $cid, $option, $client = 'admin' ) {
 	global $mosConfig_lang;
+	
+	josSpoofCheck();
 
 	$client_id = $client=='admin' ? 1 : 0;
 
@@ -200,7 +204,7 @@ function removeLanguage( $cid, $option, $client = 'admin' ) {
 	unlink($xml_path);
 	*/
 
-	mosRedirect( 'index2.php?option=com_installer&element=language&client='. $client .'&task=remove&cid[]='. $cid );
+	mosRedirect( 'index2.php?option=com_installer&element=language&client='. $client .'&task=remove&cid[]='. $cid . '&' . josSpoofValue() . '=1' );
 
 }
 
@@ -218,6 +222,9 @@ function editLanguageSource( $p_lname, $option) {
 }
 
 function saveLanguageSource( $option ) {
+	
+	josSpoofCheck();
+	
 	$language 		= mosGetParam( $_POST, 'language', '' );
 	$filecontent 	= mosGetParam( $_POST, 'filecontent', '', _MOS_ALLOWHTML );
 

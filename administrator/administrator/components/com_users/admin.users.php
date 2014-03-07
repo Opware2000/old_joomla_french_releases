@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.users.php 7813 2007-06-29 06:04:09Z louis $
+* @version $Id: admin.users.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -275,6 +275,8 @@ function editUser( $uid='0', $option='users' ) {
 function saveUser( $task ) {
 	global $database, $my, $acl;
 	global $mosConfig_live_site, $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_sitename;
+	
+	josSpoofCheck();
 
 	$userIdPosted = mosGetParam($_POST, 'id');
 	if ($userIdPosted) {
@@ -497,6 +499,8 @@ function cancelUser( $option ) {
 
 function removeUsers( $cid, $option ) {
 	global $database, $acl, $my;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		echo "<script> alert('Sélectionner un utilisateur à supprimer'); window.history.go(-1);</script>\n";
@@ -599,6 +603,8 @@ function removeUsers( $cid, $option ) {
 */
 function changeUserBlock( $cid=null, $block=1, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$action = $block ? 'block' : 'unblock';
 
@@ -676,6 +682,8 @@ function changeUserBlock( $cid=null, $block=1, $option ) {
 */
 function logoutUser( $cid=null, $option, $task ) {
 	global $database, $my;
+	
+	josSpoofCheck(null, null, 'request');
 
 	if ( is_array( $cid ) ) {
 		if (count( $cid ) < 1) {

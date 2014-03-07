@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: search.html.php 4953 2006-09-06 13:07:03Z predator $
+* @version $Id: search.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -104,7 +104,8 @@ class search_html {
 		$c 			= count ($rows);
 		$image 		= mosAdminMenus::ImageCheck( 'google.png', '/images/M_images/', NULL, NULL, 'Google', 'Google', 1 );
 		$searchword = urldecode( $searchword );
-		
+		$searchword	= htmlspecialchars($searchword, ENT_QUOTES);
+
 				// number of matches found
 				echo '<br/>';
 				eval ('echo "'._CONCLUSION.'";');
@@ -115,19 +116,20 @@ class search_html {
 			</td>
 		</tr>
 		</table>
-		
+
 		<br />
-		
+
 		<div align="center">
 			<?php
 			echo $pageNav->writePagesCounter();
 
 			$ordering 		= strtolower( strval( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
 			$searchphrase 	= strtolower( strval( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
-			
-			$searchphrase	= htmlspecialchars($searchphrase);
 
-			$link = $mosConfig_live_site ."/index.php?option=$option&amp;Itemid=$Itemid&amp;searchword=$searchword&amp;searchphrase=$searchphrase&amp;ordering=$ordering";
+			$searchphrase	= htmlspecialchars($searchphrase);
+			$cleanWord		= htmlspecialchars($searchword);
+
+			$link = $mosConfig_live_site ."/index.php?option=$option&amp;Itemid=$Itemid&amp;searchword=$cleanWord&amp;searchphrase=$searchphrase&amp;ordering=$ordering";
 			echo $pageNav->getLimitBox( $link );
 			?>
 		</div>
@@ -204,18 +206,18 @@ class search_html {
 				}
 				?>
 			</td>
-		</tr>	
+		</tr>
 		<?php
 	}
 
 	function conclusion( $searchword, $pageNav ) {
 		global $mosConfig_live_site, $option, $Itemid;
-		
+
 		$ordering 		= strtolower( strval( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
-		$searchphrase 	= strtolower( strval( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );	
-		
+		$searchphrase 	= strtolower( strval( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
+
 		$searchphrase	= htmlspecialchars($searchphrase);
-		
+
 		$link 			= $mosConfig_live_site ."/index.php?option=$option&Itemid=$Itemid&searchword=$searchword&searchphrase=$searchphrase&ordering=$ordering";
 		?>
 		<tr>

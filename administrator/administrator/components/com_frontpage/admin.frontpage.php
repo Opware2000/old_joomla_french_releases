@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.frontpage.php 4994 2006-09-10 16:33:55Z friesengeist $
+* @version $Id: admin.frontpage.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -182,6 +182,8 @@ function viewFrontPage( $option ) {
 */
 function changeFrontPage( $cid=null, $state=0, $option ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
@@ -216,6 +218,8 @@ function changeFrontPage( $cid=null, $state=0, $option ) {
 
 function removeFrontPage( &$cid, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
@@ -249,6 +253,8 @@ function removeFrontPage( &$cid, $option ) {
 */
 function orderFrontPage( $uid, $inc, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$fp = new mosFrontPage( $database );
 	$fp->load( (int)$uid );
@@ -267,6 +273,8 @@ function orderFrontPage( $uid, $inc, $option ) {
 */
 function accessMenu( $uid, $access ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosContent( $database );
 	$row->load( (int)$uid );
@@ -287,6 +295,8 @@ function accessMenu( $uid, $access ) {
 
 function saveOrder( &$cid ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

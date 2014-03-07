@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.modules.php 5012 2006-09-11 19:35:26Z friesengeist $
+* @version $Id: admin.modules.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Modules
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -185,6 +185,8 @@ function viewModules( $option, $client ) {
 */
 function copyModule( $option, $uid, $client ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	$row = new mosModule( $database );
 	// load the row from the db table
@@ -236,6 +238,8 @@ function copyModule( $option, $uid, $client ) {
 */
 function saveModule( $option, $client, $task ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$params = mosGetParam( $_POST, 'params', '' );
 	if (is_array( $params )) {
@@ -462,6 +466,8 @@ function editModule( $option, $uid, $client ) {
 */
 function removeModule( &$cid, $option, $client ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		echo "<script> alert('Select a module to delete'); window.history.go(-1);</script>\n";
@@ -541,6 +547,8 @@ function removeModule( &$cid, $option, $client ) {
 */
 function publishModule( $cid=null, $publish=1, $option, $client ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -577,6 +585,8 @@ function publishModule( $cid=null, $publish=1, $option, $client ) {
 */
 function cancelModule( $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosModule( $database );
 	// ignore array elements
@@ -593,6 +603,8 @@ function cancelModule( $option, $client ) {
 */
 function orderModule( $uid, $inc, $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$client = strval( mosGetParam( $_POST, 'client', '' ) );
 
@@ -622,6 +634,8 @@ function orderModule( $uid, $inc, $option ) {
 */
 function accessMenu( $uid, $access, $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	switch ( $access ) {
 		case 'accesspublic':
@@ -655,6 +669,8 @@ function accessMenu( $uid, $access, $option, $client ) {
 
 function saveOrder( &$cid, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

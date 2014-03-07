@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.mambots.php 5074 2006-09-16 11:44:41Z friesengeist $
+* @version $Id: admin.mambots.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Mambots
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -153,6 +153,8 @@ function viewMambots( $option, $client ) {
 */
 function saveMambot( $option, $client, $task ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$params = mosGetParam( $_POST, 'params', '' );
 	if (is_array( $params )) {
@@ -305,13 +307,15 @@ function editMambot( $option, $uid, $client ) {
 */
 function removeMambot( &$cid, $option, $client ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		echo "<script> alert('Select a module to delete'); window.history.go(-1);</script>\n";
 		exit;
 	}
 
-	mosRedirect( 'index2.php?option=com_installer&element=mambot&client='. $client .'&task=remove&cid[]='. $cid[0] );
+	mosRedirect( 'index2.php?option=com_installer&element=mambot&client='. $client .'&task=remove&cid[]='. $cid[0] . '&' . josSpoofValue() . '=1');
 }
 
 /**
@@ -321,6 +325,8 @@ function removeMambot( &$cid, $option, $client ) {
 */
 function publishMambot( $cid=null, $publish=1, $option, $client ) {
 	global $database, $my;
+	
+	josSpoofCheck();
 
 	if (count( $cid ) < 1) {
 		$action = $publish ? 'publish' : 'unpublish';
@@ -354,6 +360,8 @@ function publishMambot( $cid=null, $publish=1, $option, $client ) {
 */
 function cancelMambot( $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$row = new mosMambot( $database );
 	$row->bind( $_POST );
@@ -369,6 +377,8 @@ function cancelMambot( $option, $client ) {
 */
 function orderMambot( $uid, $inc, $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	// Currently Unsupported
 	if ($client == 'admin') {
@@ -389,6 +399,8 @@ function orderMambot( $uid, $inc, $option, $client ) {
 */
 function accessMenu( $uid, $access, $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	switch ( $access ) {
 		case 'accesspublic':
@@ -420,6 +432,8 @@ function accessMenu( $uid, $access, $option, $client ) {
 
 function saveOrder( &$cid ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$total		= count( $cid );
 	$order 		= josGetArrayInts( 'order' );

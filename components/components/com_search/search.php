@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: search.php 7211 2007-04-29 02:26:51Z robs $
+* @version $Id: search.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -58,7 +58,7 @@ function viewSearch() {
 		$params = new mosParameters( $menu->params );
 		$params->def( 'page_title', 1 );
 		$params->def( 'pageclass_sfx', '' );
-		$params->def( 'header', $menu->name, _SEARCH_TITLE );
+		$params->def( 'header', $menu->name );
 		$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
 	} else {
 		$params = new mosParameters('');
@@ -70,6 +70,9 @@ function viewSearch() {
 
 	// html output
 	search_html::openhtml( $params );
+
+	$searchphrase = mosGetParam( $_REQUEST, 'searchphrase', 'any' );
+	$searchphrase = preg_replace( '/[^a-z]/', '', strtolower( $searchphrase ) );
 
 	$searchword = strval( mosGetParam( $_REQUEST, 'searchword', '' ) );
 	$searchword = trim( stripslashes( $searchword ) );
@@ -86,7 +89,25 @@ function viewSearch() {
 		$restriction 	= 1;
 	}
 
-	$search_ignore = array();
+	if ($searchphrase != 'exact') {
+		$aterms = explode( ' ', strtolower( $searchword ) );
+
+		$search_ignore = array();
+
+		// filter out search terms that are too small
+		foreach( $aterms AS $aterm ) {
+			if (strlen( $aterm ) < 3) {
+				$search_ignore[] = $aterm;
+			}
+		}
+		$pruned = array_diff( $aterms, $search_ignore );
+		$pruned = array_unique( $pruned );
+		$searchword = implode( ' ', $pruned );
+		if (trim( $searchword ) == '') {
+			$restriction = 1;
+		}
+	}
+
 	@include "$mosConfig_absolute_path/language/$mosConfig_lang.ignore.php";
 
 	$orders = array();
@@ -100,8 +121,6 @@ function viewSearch() {
 	$lists = array();
 	$lists['ordering'] = mosHTML::selectList( $orders, 'ordering', 'id="search_ordering" class="inputbox"', 'value', 'text', $ordering );
 
-	$searchphrase = mosGetParam( $_REQUEST, 'searchphrase', 'any' );
-	$searchphrase = preg_replace( '/[^a-z]/', '', strtolower( $searchphrase ) );
 	$searchphrases = array();
 
 	$phrase = new stdClass();
@@ -151,7 +170,7 @@ function viewSearch() {
 		mosLogSearch( $searchword );
 
 		$_MAMBOTS->loadBotGroup( 'search' );
-		$results 	= $_MAMBOTS->trigger( 'onSearch', array( $database->getEscaped( $searchword ), $searchphrase, $ordering ) );
+		$results 	= $_MAMBOTS->trigger( 'onSearch', array( $database->getEscaped( $searchword, true ), $searchphrase, $ordering ) );
 		$totalRows 	= 0;
 
 		$rows = array();
@@ -174,9 +193,13 @@ function viewSearch() {
 
 			$text = mosPrepareSearchContent( $text, 200, $needle );
 
-		  	foreach ($searchwords as $hlword) {
-				$text = preg_replace( '/' . preg_quote( $hlword, '/' ) . '/i', '<span class="highlight">\0</span>', $text );
+		  	foreach ($searchwords as $k=>$hlword) {
+		  		$searchwords[$k] = htmlspecialchars( stripslashes( $hlword ) );
 			}
+
+			$searchRegex = implode( '|', $searchwords );
+
+			$text = eregi_replace( '('.$searchRegex.')', '<span class="highlight">\0</span>', $text );
 
 			if ( strpos( $rows[$i]->href, 'http' ) == false ) {
 				$url = parse_url( $rows[$i]->href );

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pollwindow.php 5862 2006-11-27 22:54:44Z Saka $
+* @version $Id: pollwindow.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -73,6 +73,6 @@ echo '<?xml version="1.0" encoding="'. $iso[1] .'"?' .'>';
 		<td align="center" colspan="2"><a href="#" onClick="window.close()">Fermer</a></td>
 	</tr>
 </table>
-</form>
+		</form>
 </body>
 </html>

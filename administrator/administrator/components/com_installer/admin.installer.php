@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.installer.php 4621 2006-08-21 16:40:39Z stingrey $
+* @version $Id: admin.installer.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -75,6 +75,9 @@ if (array_key_exists ( $element, $classMap )) {
 * @param string The element name
 */
 function uploadPackage( $installerClass, $option, $element, $client ) {
+
+	josSpoofCheck();
+
 	$installer = new $installerClass();
 
 	// Check if file uploads are enabled
@@ -125,6 +128,9 @@ function uploadPackage( $installerClass, $option, $element, $client ) {
 * @param string The URL option
 */
 function installFromDirectory( $installerClass, $option, $element, $client ) {
+
+	josSpoofCheck();
+
 	$userfile = mosGetParam( $_REQUEST, 'userfile', '' );
 
 	if (!$userfile) {
@@ -146,6 +152,9 @@ function installFromDirectory( $installerClass, $option, $element, $client ) {
 * @param
 */
 function removeElement( $installerClass, $option, $element, $client ) {
+
+	josSpoofCheck(null, null, 'request');
+
 	$cid = mosGetParam( $_REQUEST, 'cid', array(0) );
 	if (!is_array( $cid )) {
 		$cid = array(0);
@@ -167,6 +176,9 @@ function removeElement( $installerClass, $option, $element, $client ) {
 * @param string The message to return
 */
 function uploadFile( $filename, $userfile_name, &$msg ) {
+
+	josSpoofCheck();
+
 	global $mosConfig_absolute_path;
 	$baseDir = mosPathName( $mosConfig_absolute_path . '/media' );
 

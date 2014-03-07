@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 7424 2007-05-17 15:56:10Z robs $
+* @version $Id: admin.config.html.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -843,6 +843,7 @@ class HTML_config {
 		<input type="hidden" name="config_live_site" value="<?php echo $row->config_live_site; ?>"/>
 		<input type="hidden" name="config_secret" value="<?php echo $row->config_secret; ?>"/>
 	  	<input type="hidden" name="task" value=""/>
+		<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
 		</form>
 		<script  type="text/javascript" src="<?php echo $mosConfig_live_site;?>/includes/js/overlib_mini.js"></script>
 		<?php

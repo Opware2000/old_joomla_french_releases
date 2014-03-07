@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: cpanel.php 2704 2006-03-08 10:26:56Z stingrey $
+* @version $Id: cpanel.php 9799 2008-01-02 16:30:01Z hackwar $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,7 +24,8 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 		<div style="width: 100%;">
 			<form action="index2.php" method="post" name="adminForm">
 			<?php mosLoadAdminModules( 'cpanel', 1 ); ?>
-			</form>
+			<input type="hidden" name="<?php echo josSpoofValue(); ?>" value="1" />
+		</form>
 		</div>
 	</td>
 </tr>

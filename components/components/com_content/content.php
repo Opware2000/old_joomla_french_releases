@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: content.php 7443 2007-05-20 18:02:52Z robs $
+* @version $Id: content.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -139,7 +139,7 @@ function findKeyItem( $gid, $access, $pop, $option, $now ) {
 
 	$query = "SELECT id"
 	. "\n FROM #__content"
-	. "\n WHERE attribs LIKE '%keyref=" . $database->getEscaped( $keyref ) . "\n%'"
+	. "\n WHERE attribs LIKE '%keyref=" . $database->getEscaped( $keyref, true ) . "\n%'"
 	;
 	$database->setQuery( $query );
 	$id = $database->loadResult();
@@ -524,15 +524,15 @@ function showCategory( $id, $gid, &$access, $sectionid, $limit, $selected, $limi
 
 			switch ( $params->get( 'filter_type' ) ) {
 				case 'title':
-					$and = "\n AND LOWER( a.title ) LIKE '%" . $database->getEscaped( $filter ) . "%'";
+					$and = "\n AND LOWER( a.title ) LIKE '%" . $database->getEscaped( $filter, true ) . "%'";
 					break;
 
 				case 'author':
-					$and = "\n AND ( ( LOWER( u.name ) LIKE '%" . $database->getEscaped( $filter ) . "%' ) OR ( LOWER( a.created_by_alias ) LIKE '%" . $database->getEscaped( $filter ) . "%' ) )";
+					$and = "\n AND ( ( LOWER( u.name ) LIKE '%" . $database->getEscaped( $filter, true ) . "%' ) OR ( LOWER( a.created_by_alias ) LIKE '%" . $database->getEscaped( $filter, true ) . "%' ) )";
 					break;
 
 				case 'hits':
-					$and = "\n AND a.hits LIKE '%" . $database->getEscaped( $filter ) . "%'";
+					$and = "\n AND a.hits LIKE '%" . $database->getEscaped( $filter, true ) . "%'";
 					break;
 			}
 		}

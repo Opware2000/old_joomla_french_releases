@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.templates.php 5013 2006-09-11 23:59:27Z friesengeist $
+* @version $Id: admin.templates.php 10003 2008-02-08 11:16:37Z willebil $
 * @package Joomla
 * @subpackage Templates
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -222,6 +222,8 @@ function viewTemplates( $option, $client ) {
 */
 function defaultTemplate( $p_tname, $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	if ($client=='admin') {
 		$query = "DELETE FROM #__templates_menu"
@@ -262,6 +264,8 @@ function defaultTemplate( $p_tname, $option, $client ) {
 function removeTemplate( $cid, $option, $client ) {
 	global $database;
 
+	josSpoofCheck();
+
 	$client_id = $client=='admin' ? 1 : 0;
 
 	$query = "SELECT template"
@@ -285,7 +289,7 @@ function removeTemplate( $cid, $option, $client ) {
 	$database->setQuery( $query );
 	$database->query();
 
-	mosRedirect( 'index2.php?option=com_installer&element=template&client='. $client .'&task=remove&cid[]='. $cid );
+	mosRedirect( 'index2.php?option=com_installer&element=template&client='. $client .'&task=remove&cid[]='. $cid . '&' . josSpoofValue() . '=1');
 }
 
 function editTemplateSource( $p_tname, $option, $client ) {
@@ -310,6 +314,8 @@ function editTemplateSource( $p_tname, $option, $client ) {
 
 function saveTemplateSource( $option, $client ) {
 	global $mosConfig_absolute_path;
+	
+	josSpoofCheck();
 
 	$template 		= strval( mosGetParam( $_POST, 'template', '' ) );
 	$filecontent 	= mosGetParam( $_POST, 'filecontent', '', _MOS_ALLOWHTML );
@@ -377,6 +383,8 @@ function editTemplateCSS( $p_tname, $option, $client ) {
 function saveTemplateCSS( $option, $client ) {
 	global $mosConfig_absolute_path;
 	
+	josSpoofCheck();
+	
 	$template 		= strval( mosGetParam( $_POST, 'template', '' ) );
 	$filecontent 	= mosGetParam( $_POST, 'filecontent', '', _MOS_ALLOWHTML );
 
@@ -426,6 +434,8 @@ function saveTemplateCSS( $option, $client ) {
 
 function assignTemplate( $p_tname, $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	// get selected pages for $menulist
 	if ( $p_tname ) {
@@ -448,6 +458,8 @@ function assignTemplate( $p_tname, $option, $client ) {
 
 function saveTemplateAssign( $option, $client ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$menus 		= josGetArrayInts( 'selections' );
 	
@@ -506,6 +518,8 @@ function editPositions( $option ) {
 */
 function savePositions( $option ) {
 	global $database;
+	
+	josSpoofCheck();
 
 	$positions 		= mosGetParam( $_POST, 'position', array() );
 	$descriptions 	= mosGetParam( $_POST, 'description', array() );

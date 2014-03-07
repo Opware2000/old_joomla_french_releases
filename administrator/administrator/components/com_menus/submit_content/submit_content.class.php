@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: submit_content.class.php 4542 2006-08-15 13:49:12Z predator $
+* @version $Id: submit_content.class.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see docs/LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see docs/LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or

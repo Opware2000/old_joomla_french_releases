@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.php 8078 2007-07-19 06:45:54Z robs $
+* @version $Id: joomla.php 9997 2008-02-07 11:27:04Z eddieajau $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -3043,7 +3043,7 @@ function mosGetParam( &$arr, $name, $def=null, $mask=0 ) {
 				}
 				$return = $noHtmlFilter->process( $return );
 
-				if (empty($return) && is_numeric($def)) {
+				if (!empty($return) && is_numeric($def)) {
 				// if value is defined and default value is numeric set variable type to integer
 					$return = intval($return);
 				}
@@ -3711,10 +3711,10 @@ function mosMenuCheck( $Itemid, $menu_option, $task, $gid ) {
 		. "\n WHERE id = " . (int) $Itemid
 		;
 	} else {
-		$dblink = "index.php?option=" . $database->getEscaped( $menu_option );
+		$dblink = "index.php?option=" . $database->getEscaped( $menu_option, true );
 
 		if ($task != '') {
-			$dblink	.= "&task=" . $database->getEscaped( $task );
+			$dblink	.= "&task=" . $database->getEscaped( $task, true );
 		}
 
 		$query = "SELECT *"
@@ -6025,8 +6025,20 @@ function mosBackTrace() {
 	}
 }
 
-function josSpoofCheck( $header=NULL, $alt=NULL ) {
-	$validate 	= mosGetParam( $_POST, josSpoofValue($alt), 0 );
+function josSpoofCheck( $header=NULL, $alt=NULL , $method = 'post')
+{
+	switch(strtolower($method)) {
+		case "get":
+			$validate 	= mosGetParam( $_GET, josSpoofValue($alt), 0 );
+			break;
+		case "request":
+			$validate 	= mosGetParam( $_REQUEST, josSpoofValue($alt), 0 );
+			break;
+		case "post":
+		default:
+			$validate 	= mosGetParam( $_POST, josSpoofValue($alt), 0 );
+			break;
+	}
 
 	// probably a spoofing attack
 	if (!$validate) {
@@ -6068,7 +6080,8 @@ function josSpoofCheck( $header=NULL, $alt=NULL ) {
 	}
 }
 
-function _josSpoofCheck( $array, $badStrings ) {
+function _josSpoofCheck( $array, $badStrings )
+{
 	// Loop through each $array value and test if it contains
 	// one of the $badStrings
 	foreach( $array as $v ) {
@@ -6092,8 +6105,9 @@ function _josSpoofCheck( $array, $badStrings ) {
  * @return	string	Hashed var name
  * @static
  */
-function josSpoofValue($alt=NULL) {
-	global $mainframe;
+function josSpoofValue($alt=NULL)
+{
+	global $mainframe, $my;
 
 	if ($alt) {
 		if ( $alt == 1 ) {
@@ -6106,7 +6120,7 @@ function josSpoofValue($alt=NULL) {
 	}
 	// the prefix ensures that the hash is non-numeric
 	// otherwise it will be intercepted by globals.php
-	$validate 	= 'j' . mosHash( $mainframe->getCfg( 'db' ) . $random );
+	$validate 	= 'j' . mosHash( $mainframe->getCfg( 'db' ) . $random . $my->id );
 
 	return $validate;
 }

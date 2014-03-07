@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: database.php 5903 2006-12-01 02:01:55Z friesengeist $
+* @version $Id: database.php 10002 2008-02-08 10:56:57Z willebil $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -122,28 +122,38 @@ class database {
 		return str_replace( array( "\n", "'" ), array( '\n', "\'" ), $this->_errorMsg );
 	}
 	/**
-	* Get a database escaped string
-	* @return string
-	*/
-	function getEscaped( $text ) {
-		/*
-		* Use the appropriate escape string depending upon which version of php
-		* you are running
-		*/
+	 * Get a database escaped string
+	 *
+	 * @param	string	The string to be escaped
+	 * @param	boolean	Optional parameter to provide extra escaping
+	 * @return	string
+	 * @access	public
+	 * @abstract
+	 */
+	function getEscaped( $text, $extra = false ) {
+		// Use the appropriate escape string depending upon which version of php
+		// you are running
 		if (version_compare(phpversion(), '4.3.0', '<')) {
 			$string = mysql_escape_string($text);
 		} else 	{
 			$string = mysql_real_escape_string($text, $this->_resource);
 		}
-
+		if ($extra) {
+			$string = addcslashes( $string, '%_' );
+		}
 		return $string;
 	}
 	/**
-	* Get a quoted database escaped string
-	* @return string
-	*/
-	function Quote( $text ) {
-		return '\'' . $this->getEscaped( $text ) . '\'';
+	 * Get a quoted database escaped string
+	 *
+	 * @param	string	A string
+	 * @param	boolean	Default true to escape string, false to leave the string unchanged
+	 * @return	string
+	 * @access public
+	 */
+	function Quote( $text, $escaped = true )
+	{
+		return '\''.($escaped ? $this->getEscaped( $text ) : $text).'\'';
 	}
 	/**
 	 * Quote an identifier name (field, table, etc)
