@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.frontpage.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.frontpage.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -166,8 +166,8 @@ function viewFrontPage( $option ) {
 	. "\n FROM #__content AS c"
 	. "\n INNER JOIN #__sections AS s ON s.id = c.sectionid"
 	. "\n LEFT JOIN #__users AS u ON u.id = c.created_by"
-	. "\n WHERE c.state <> -1"
-	. "\n AND c.state <> -2"
+	. "\n WHERE c.state != -1"
+	. "\n AND c.state != -2"
 	. "\n GROUP BY u.name"
 	. "\n ORDER BY u.name"
 	;

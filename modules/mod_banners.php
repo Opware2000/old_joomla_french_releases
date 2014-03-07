@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_banners.php 289 2005-10-01 21:11:28Z Levis $
+* @version $Id: mod_banners.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@ $clientids = $params->get( 'banner_cids', '' );
 $where 	= '';
 $banner = null;
 
-if( $clientids <> '' ) {
+if( $clientids != '' ) {
 	$where = "\n AND cid IN ('". $clientids ."')";
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pdf.php 268 2005-09-30 13:49:04Z stingrey $
+* @version $Id: pdf.php 466 2005-10-12 17:13:42Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -59,7 +59,7 @@ function dofreePDF ( $database ) {
 	$txt1 = $row->title;
 	$pdf->ezText( $txt1, 14 );
 
-	$txt2 = AuthorDateLine( &$row, &$params );
+	$txt2 = AuthorDateLine( $row, $params );
 
 	$pdf->ezText( $txt2, 8 );
 	

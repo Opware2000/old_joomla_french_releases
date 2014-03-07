@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_search.php 275 2005-09-30 17:01:24Z stingrey $
+* @version $Id: mod_search.php 463 2005-10-12 16:29:37Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -20,7 +20,7 @@ $button_text	= $params->get( 'button_text', _SEARCH_TITLE );
 $width 			= intval( $params->get( 'width', 20 ) );
 $text 			= $params->get( 'text', _SEARCH_BOX );
 
-$output = '<input name="searchword" id="mod_search_searchword" alt="search" class="inputbox'. $moduleclass_sfx .'" type="text" size="'. $width .'" value="'. $text .'"  onblur="if(this.value==\'\') this.value=\''. $text .'\';" onfocus="if(this.value==\''. $text .'\') this.value=\'\';" />';
+$output = '<input name="searchword" id="mod_search_searchword" maxlength="20" alt="search" class="inputbox'. $moduleclass_sfx .'" type="text" size="'. $width .'" value="'. $text .'"  onblur="if(this.value==\'\') this.value=\''. $text .'\';" onfocus="if(this.value==\''. $text .'\') this.value=\'\';" />';
 
 if ( $button ) {
 	$button = '<input type="submit" value="'. $button_text .'" class="button'. $moduleclass_sfx .'"/>';
@@ -56,7 +56,7 @@ $rows = $database->loadObjectList();
 
 if ( count( $rows ) ) {
 	$_Itemid	= $rows[0]->id;
-	$link 		= 'index.php?option=com_search&Itemid='. $_Itemid;
+	$link 		= 'index.php?option=com_search&amp;Itemid='. $_Itemid;
 } else {
 	$_Itemid 	= '';
 	$link 		= 'index.php?option=com_search';	

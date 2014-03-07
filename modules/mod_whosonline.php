@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_whosonline.php 241 2005-09-28 10:53:15Z jick $
+* @version $Id: mod_whosonline.php 445 2005-10-11 03:37:23Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,21 +19,21 @@ $showmode 	= $params->get( 'showmode' );
 $content 	= '';
 
 if ($showmode==0 || $showmode==2) {
-	$query1 = "SELECT COUNT( session_id ) AS guest_online"
+	$query = "SELECT COUNT( session_id ) AS guest_online"
 	. "\n FROM #__session"
 	. "\n WHERE guest = 1"
 	. "\n AND ( usertype is NULL OR usertype = '' )";
-	$database->setQuery($query1);
+	$database->setQuery( $query );
 	$guest_array = $database->loadResult();
 
-	$query2 = "SELECT DISTINCT COUNT( username ) AS user_online"
+	$query = "SELECT COUNT( DISTINCT( username ) ) AS user_online"
 	. "\n FROM #__session"
 	. "\n WHERE guest = 0"
 	;
-	$database->setQuery($query2);
+	$database->setQuery( $query );
 	$user_array = $database->loadResult();
 
-	if ($guest_array<>0 && $user_array==0) {
+	if ($guest_array != 0 && $user_array==0) {
 		if ($guest_array==1) {
 			$content.=_WE_HAVE;
 			$content.=_GUEST_COUNT;
@@ -47,7 +47,7 @@ if ($showmode==0 || $showmode==2) {
 		}
 	}
 
-	if ($guest_array==0 && $user_array<>0) {
+	if ($guest_array==0 && $user_array != 0) {
 		if ($user_array==1) {
 			$content.=_WE_HAVE;
 			$content.=_MEMBER_COUNT;
@@ -61,7 +61,7 @@ if ($showmode==0 || $showmode==2) {
 		}
 	}
 
-	if ($guest_array<>0 && $user_array<>0) {
+	if ($guest_array != 0 && $user_array != 0) {
 		if ($guest_array==1) {
 			$content.=_WE_HAVE;
 			$content.=_GUEST_COUNT;

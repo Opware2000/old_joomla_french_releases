@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.content.html.php 199 2005-09-20 13:29:10Z stingrey $
+* @version $Id: admin.content.html.php 478 2005-10-12 19:36:02Z predator $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -194,7 +194,7 @@ class HTML_content {
 				</td>
 				<td>
 				<?php
-				if ( $row->checked_out && ( $row->checked_out != $my->id ) ) {
+				if ( $row->checked_out ) {
 					echo $row->title;
 				} else {
 					?>
@@ -453,11 +453,11 @@ class HTML_content {
 		mosMakeHtmlSafe( $row );
 
 		$create_date = null;
-		if (intval( $row->created ) <> 0) {
+		if (intval( $row->created ) != 0) {
 			$create_date 	= mosFormatDate( $row->created, '%A, %d %B %Y %H:%M', '0' );
 		}
 		$mod_date = null;
-		if (intval( $row->modified ) <> 0) {
+		if (intval( $row->modified ) != 0) {
 			$mod_date 		= mosFormatDate( $row->modified, '%A, %d %B %Y %H:%M', '0' );
 		}
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: database.php 268 2005-09-30 13:49:04Z stingrey $
+* @version $Id: database.php 530 2005-10-14 09:12:16Z stingrey $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -286,7 +286,7 @@ class database {
 		$this->_errorNum = 0;
 		$this->_errorMsg = '';
 		if ($p_transaction_safe) {
-			$si = mysql_get_server_info();
+			$si = mysql_get_server_info( $this->_resource );
 			preg_match_all( "/(\d+)\.(\d+)\.(\d+)/i", $si, $m );
 			if ($m[1] >= 4) {
 				$this->_sql = 'START TRANSACTION;' . $this->_sql . '; COMMIT;';
@@ -557,7 +557,10 @@ class database {
 				continue;
 			}
 			if( $v == '' ) {
-				$val = "''";
+				//$val = "''";
+				if ($k != 'guest') {
+					$val = "''";
+				}
 			} else {
 				$val = $this->Quote( $v );
 			}
@@ -1128,7 +1131,7 @@ class mosDBTable {
 	 */
 	function isCheckedOut( $user_id=0 ) {
 		if ($user_id) {
-			return ($this->checked_out && $this->checked_out <> $user_id);
+			return ($this->checked_out && $this->checked_out != $user_id);
 		} else {
 			return $this->checked_out;
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.contact.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.contact.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Contact
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -225,7 +225,7 @@ function saveContact( $option ) {
 	if ($row->default_con) {
 		$query = "UPDATE #__contact_details"
 		. "\n SET default_con = 0"
-		. "\n WHERE id <> $row->id"
+		. "\n WHERE id != $row->id"
 		. "\n AND default_con = 1"
 		;
 		$database->setQuery( $query );

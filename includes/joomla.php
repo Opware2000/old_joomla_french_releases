@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: joomla.php 321 2005-10-02 14:26:25Z Jinx $
+* @version $Id: joomla.php 469 2005-10-12 17:23:21Z Jinx $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -1682,10 +1682,10 @@ class mosHTML {
 			$replacement 	.= "document.write( addy". $rand ." ); \n";
 		}
 		$replacement 	.= "//--> \n";
-		$replacement 	.= "</script> \n";
+		$replacement 	.= "</script>";
 		$replacement 	.= "<noscript> \n";
 		$replacement 	.= _CLOAKING;
-		$replacement 	.= "\n</noscript> \n";
+		$replacement 	.= "\n</noscript>";
 
 		return $replacement;
 	}
@@ -2366,7 +2366,7 @@ function mosReadDirectory( $path, $filter='.', $recurse=false, $fullpath=false  
 	while ($file = readdir($handle)) {
 		$dir = mosPathName( $path.'/'.$file, false );
 		$isDir = is_dir( $dir );
-		if (($file <> ".") && ($file <> "..")) {
+		if (($file != ".") && ($file != "..")) {
 			if (preg_match( "/$filter/", $file )) {
 				if ($fullpath) {
 					$arr[] = trim( mosPathName( $path.'/'.$file, false ) );
@@ -2817,7 +2817,7 @@ function mosMakeHtmlSafe( &$mixed, $quote_style=ENT_QUOTES, $exclude_keys='' ) {
 function mosMenuCheck( $Itemid, $menu_option, $task, $gid ) {
 	global $database;
 	$dblink="index.php?option=$menu_option";
-	if ($Itemid!="" && $Itemid!=0) {
+	if ($Itemid!="" && $Itemid!=0 && $Itemid!=99999999) {
 		$query = "SELECT access"
 		. "\n FROM #__menu"
 		. "\n WHERE id = $Itemid"
@@ -3060,7 +3060,9 @@ function initGzip() {
 				)
 			) {
 			if ( extension_loaded('zlib') ) {
-				ob_start( 'ob_gzhandler' );
+				// You cannot specify additional output handlers if 
+				// zlib.output_compression is activated here
+				ob_start();
 				return;
 			}
 		} else if ( $phpver > '4.0' ) {
@@ -3438,7 +3440,7 @@ class mosAdminMenus {
 		$query = "SELECT m.*"
 		. "\n FROM #__menu m"
 		. "\n WHERE menutype = '$row->menutype'"
-		. "\n AND published <> -2"
+		. "\n AND published != -2"
 		. "\n ORDER BY ordering"
 		;
 		$database->setQuery( $query );
@@ -3550,7 +3552,7 @@ class mosAdminMenus {
 			foreach ($mitems_temp as $mitems_a) {
 				if ($mitems_a->id == $list_a->id) {
 					// Code that inserts the blank line that seperates different menus
-					if ($mitems_a->menutype <> $mitems_spacer) {
+					if ($mitems_a->menutype != $mitems_spacer) {
 						$list_temp[] = mosHTML::makeOption( -999, '----' );
 						$mitems_spacer = $mitems_a->menutype;
 					}
@@ -3664,7 +3666,7 @@ class mosAdminMenus {
 
 		$query = "SELECT c.id AS value, c.name AS text, c.link"
 		. "\n FROM #__components AS c"
-		. "\n WHERE c.link <> ''"
+		. "\n WHERE c.link != ''"
 		. "\n ORDER BY c.name"
 		;
 		$database->setQuery( $query );
@@ -3692,7 +3694,7 @@ class mosAdminMenus {
 
 		$query = "SELECT c.id AS value, c.name AS text, c.link"
 		. "\n FROM #__components AS c"
-		. "\n WHERE c.link <> ''"
+		. "\n WHERE c.link != ''"
 		. "\n ORDER BY c.name"
 		;
 		$database->setQuery( $query );
@@ -3915,7 +3917,7 @@ class mosAdminMenus {
 			$ff 	= $folderPath . $file;
 			$i_f 	= $imagePath .'/'. $file;
 
-			if ( is_dir( $i_f ) && $file <> 'CVS' && $file <> '.svn') {
+			if ( is_dir( $i_f ) && $file != 'CVS' && $file != '.svn') {
 				$folders[] = mosHTML::makeOption( $ff_ );
 				mosAdminMenus::ReadImages( $i_f, $ff_, $folders, $images );
 			} else if ( eregi( "bmp|gif|jpg|png", $file ) && is_file( $i_f ) ) {

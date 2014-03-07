@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: database.mysqli.php 192 2005-09-19 19:16:58Z stingrey $
+* @version $Id: database.mysqli.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Database
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -1115,7 +1115,7 @@ class mosDBTable {
 	 */
 	function isCheckedOut( $user_id=0 ) {
 		if ($user_id) {
-			return ($this->checked_out && $this->checked_out <> $user_id);
+			return ($this->checked_out && $this->checked_out != $user_id);
 		} else {
 			return $this->checked_out;
 		}

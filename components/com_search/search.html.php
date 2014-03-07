@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: search.html.php 131 2005-09-16 22:56:17Z Saka $
+* @version $Id: search.html.php 496 2005-10-13 04:48:32Z stingrey $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -45,7 +45,7 @@ class search_html {
 					</label>
 				</td>
 				<td nowrap="nowrap">
-					<input type="text" name="searchword" id="search_searchword" size="15" value="<?php echo stripslashes($searchword);?>" class="inputbox" />
+					<input type="text" name="searchword" id="search_searchword" size="30" maxlength="20" value="<?php echo stripslashes($searchword);?>" class="inputbox" />
 				</td>
 				<td width="100%" nowrap="nowrap">
 					<input type="submit" name="submit" value="<?php echo _SEARCH_TITLE;?>" class="button" />
@@ -107,9 +107,11 @@ class search_html {
 				// number of matches found
 				echo '<br/>';
 				eval ('echo "'._CONCLUSION.'";');
+				
+				$image = mosAdminMenus::ImageCheck( 'google.png', '/images/M_images/', NULL, NULL, 'Google', 'Google', 1 );
 				?>
 				<a href="http://www.google.com/search?q=<?php echo stripslashes($searchword);?>" target="_blank">
-				<img src="<?php echo $mosConfig_live_site;?>/images/M_images/google.png" border="0" align="texttop" />
+				<?php echo $image; ?>
 				</a>
 			</td>
 		</tr>
@@ -122,7 +124,7 @@ class search_html {
 			$searchphrase = trim( strtolower( mosGetParam( $_REQUEST, 'searchphrase', 'any' ) ) );
 			$ordering = trim( strtolower( mosGetParam( $_REQUEST, 'ordering', 'newest' ) ) );
 
-			$link = $mosConfig_live_site ."/index.php?option=$option&Itemid=$Itemid&searchword=$searchword&searchphrase=$searchphrase&ordering=$ordering";
+			$link = $mosConfig_live_site ."/index.php?option=$option&amp;Itemid=$Itemid&amp;searchword=$searchword&amp;searchphrase=$searchphrase&amp;ordering=$ordering";
 			echo $pageNav->getLimitBox( $link );
 			?>
 		</div>
@@ -150,6 +152,7 @@ class search_html {
 							</span>
 							<?php
 							if ( $row->href ) {
+								$row->href = ampReplace( $row->href );
 								if ($row->browsernav == 1 ) {
 									?>
 									<a href="<?php echo sefRelToAbs($row->href); ?>" target="_blank">
@@ -180,7 +183,7 @@ class search_html {
 						</div>
 
 						<div>
-							<?php echo $row->text;?>
+							<?php echo ampReplace( $row->text );?>
 						</div>
 
 						<?php

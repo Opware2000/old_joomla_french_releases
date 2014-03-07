@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mospaging.php 318 2005-10-02 14:05:30Z stingrey $
+* @version $Id: mospaging.php 427 2005-10-09 18:59:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -36,7 +36,8 @@ function botMosPaging( $published, &$row, &$params, $page=0 ) {
  	// expression to search for
  	$regex = '/{(mospagebreak)\s*(.*?)}/i';
 
- 	if (!$published || $params->get( 'intro_only' )|| $params->get( 'popup' )) {
+ 	// check whether mambot has been unpublished
+	if (!$published || $params->get( 'intro_only' )|| $params->get( 'popup' )) {
 		$row->text = preg_replace( $regex, '', $row->text );
 		return;
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosimage.php 291 2005-10-02 00:14:27Z troozers $
+* @version $Id: mosimage.php 427 2005-10-09 18:59:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,16 +21,16 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosImage' );
 function botMosImage( $published, &$row, &$params, $page=0 ) {
 	global $database;
 	
+ 	// expression to search for
+	$regex = '/{mosimage\s*.*?}/i';	
+
 	// check whether mosimage has been disabled for page
+	// check whether mambot has been unpublished
 	if (!$published || !$params->get( 'image' )) {
-	$row->text = str_replace( '{mosimage}', '', $row->text );
+		$row->text = preg_replace( $regex, '', $row->text );
 		return true;
 	}
 	
- 	// expression to search for
-	$regex = '/{mosimage\s*.*?}/i';
-	
-
 	//count how many {mosimage} are in introtext if it is set to hidden.
 	$introCount=0;
 	if ( ! $params->get( 'introtext' ) & ! $params->get( 'intro_only') ) 

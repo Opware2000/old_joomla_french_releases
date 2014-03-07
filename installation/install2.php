@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install2.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: install2.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -61,7 +61,7 @@ if (!$DBcreated){
 	$database->query();
 	$test = $database->getErrorNum();
 
-	if ($test <> 0 && $test <> 1007) {
+	if ($test != 0 && $test != 1007) {
 		db_err( 'stepBack', 'A database error occurred: ' . $database->getErrorMsg() );
 	}
 

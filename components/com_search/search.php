@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: search.php 214 2005-09-21 14:06:56Z stingrey $
+* @version $Id: search.php 449 2005-10-11 04:58:12Z stingrey $
 * @package Joomla
 * @subpackage Search
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -28,6 +28,8 @@ function viewSearch() {
 	global $Itemid, $database, $_MAMBOTS;
 	global $mosConfig_list_limit;
 
+	$restriction = 0;
+	
 	// try to find search component's Itemid
 	$query = "SELECT id"
 		. "\n FROM #__menu"
@@ -66,6 +68,18 @@ function viewSearch() {
 
 	$searchword = mosGetParam( $_REQUEST, 'searchword', '' );
 	$searchword = $database->getEscaped( trim( $searchword ) );
+	
+	// limit searchword to 20 characters
+	if ( strlen( $searchword ) > 20 ) {
+		$searchword 	= substr( $searchword, 0, 19 );
+		$restriction 	= 1;
+	}
+	
+	// searchword must contain a minimum of 3 characters
+	if ( $searchword && strlen( $searchword ) < 3 ) {
+		$searchword 	= '';
+		$restriction 	= 1;
+	}
 
 	$search_ignore = array();
 	@include "$mosConfig_absolute_path/language/$mosConfig_lang.ignore.php";
@@ -108,12 +122,20 @@ function viewSearch() {
 			// html output
 			// no matches found
 			search_html::message( _NOKEYWORD, $params );
+		} else if ( $restriction ) {
+			// html output
+			search_html::message( 'Search term must be a minimum of 3 characters and a maximum of 20 characters', $params );
 		}
 	} else if ( in_array( $searchword, $search_ignore ) ) {
 		// html output
 		search_html::message( _IGNOREKEYWORD, $params );
 	} else {
-		// html output
+		// html output		
+		
+		if ( $restriction ) {
+			// html output
+			search_html::message( 'Search term must be a minimum of 3 characters and a maximum of 20 characters', $params );
+		}
 		
 		$searchword_clean = htmlspecialchars( stripslashes( $searchword ) );
 		

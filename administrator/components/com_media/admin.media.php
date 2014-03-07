@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.media.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.media.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Massmail
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -33,7 +33,7 @@ if (!(isset($listdir))){
 	$listdir='';
 }
 
-if (is_int(strpos ($listdir, "..")) && $listdir<>'') {
+if (is_int(strpos ($listdir, "..")) && $listdir != '') {
 	mosRedirect( "index2.php?option=com_media&listdir=".$_POST['dirPath'], "NO HACKING PLEASE" );
 }
 

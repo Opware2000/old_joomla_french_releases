@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_login.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_login.php 471 2005-10-12 17:35:51Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php

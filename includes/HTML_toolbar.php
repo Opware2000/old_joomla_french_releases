@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: HTML_toolbar.php 239 2005-09-27 19:37:55Z jick $
+* @version $Id: HTML_toolbar.php 413 2005-10-09 16:37:45Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -184,7 +184,7 @@ class mosToolBar {
 	* @param string An override for the alt text
 	*/
 	function editList( $task='edit', $alt=_E_EDIT ) {
-		$image = mosAdminMenus::ImageCheck( 'html_f2.png', '/images/', NULL, NULL, $alt, $task, 1 );
+		$image = mosAdminMenus::ImageCheck( 'edit_f2.png', '/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
 			<a class="toolbar" href="javascript:if (document.adminForm.boxchecked.value == 0){ alert('Please select an item from the list to edit'); } else {submitbutton('<?php echo $task;?>', '');}" >
@@ -199,7 +199,7 @@ class mosToolBar {
 	* @param string An override for the alt text
 	*/
 	function editHtml( $task='edit_source', $alt=_CMN_EDIT_HTML ) {
-		$image = mosAdminMenus::ImageCheck( 'html_f2.png', '/images/', NULL, NULL, $alt, $task, 1 );
+		$image = mosAdminMenus::ImageCheck( 'edit_f2.png', '/images/', NULL, NULL, $alt, $task, 1 );
 		?>
 		<td>
 			<a class="toolbar" href="javascript:if (document.adminForm.boxchecked.value == 0){ alert('Please select an item from the list to edit'); } else {submitbutton('<?php echo $task;?>', '');}" >

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index.php 322 2005-10-02 14:32:15Z stingrey $
+* @version $Id: index.php 532 2005-10-14 09:28:31Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -16,7 +16,8 @@ define( '_VALID_MOS', 1 );
 
 // checks for configuration file, if none found loads installation page
 if (!file_exists( 'configuration.php' ) || filesize( 'configuration.php' ) < 10) {
-    header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/installation/index.php" );
+	$self = str_replace( '/index.php','', $_SERVER['PHP_SELF'] ). '/';
+	header("Location: http://" . $_SERVER['HTTP_HOST'] . $self . "installation/index.php" );
 	exit();
 }
 
@@ -24,7 +25,7 @@ include_once( 'globals.php' );
 require_once( 'configuration.php' );
 require_once( 'includes/joomla.php' );
 
-//Installation sub folder check, removed for work with CVS
+//Installation sub folder check, removed for work with SVN
 if (file_exists( 'installation/index.php' )) {	
 	define( '_INSTALL_CHECK', 1 );
 	include ('offline.php');
@@ -90,8 +91,8 @@ if ($option == '') {
 	}
 }
 if ( !$Itemid ) {
-// when no Itemid give a default value	$Itemid = 99999999;
-	$Itemid = 99999999;	
+// when no Itemid give a default value
+	$Itemid = 99999999;
 } 
 	
 // mainframe is an API workhorse, lots of 'core' interaction routines

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: offlinebar.php 86 2005-09-16 01:14:16Z eddieajau $
+* @version $Id: offlinebar.php 449 2005-10-11 04:58:12Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -21,12 +21,7 @@ global $option, $database;
 global $mosConfig_live_site;
 
 // gets template for page
-$query = "SELECT template"
-. "\n FROM #__templates_menu"
-. "\n WHERE client_id = '0'"
-;
-@$database->setQuery( $query );
-$cur_template =  @$database->loadResult();
+$cur_template = @$mainframe->getTemplate();
 if ( !$cur_template ) {
 	$cur_template = 'rhuk_solarflare_ii';
 }
@@ -62,28 +57,31 @@ table.moswarning h2 {
 <link rel="stylesheet" href="<?php echo $mosConfig_live_site; ?>/templates/<?php echo $cur_template;?>/css/template_css.css" type="text/css" />
 </head>
 <body style="margin: 0px; padding: 0px;">
+
 <table width="100%" align="center" class="moswarning">
-	<?php if ( $mosConfig_offline == 1 ) { ?>
-	<tr>
-		<td>
-		<h2>
-	<?php
-		echo $mosConfig_sitename;
-		echo ' - ';
-		echo $mosConfig_offline_message;
-	?>
-		</h2>
-	</td></tr>
-	<?php
-	}
-	else if (@$mosSystemError){
+<?php 
+if ( $mosConfig_offline == 1 ) { 
 	?>
 	<tr>
 		<td>
-		<h2>
-		<?php echo $mosConfig_error_message; ?>
-		</h2>
-		<?php echo $mosSystemError; ?>
+			<h2>
+			<?php
+			echo $mosConfig_sitename;
+			echo ' - ';
+			echo $mosConfig_offline_message;
+			?>
+			</h2>
+		</td>
+	</tr>
+	<?php
+} else if ( @$mosSystemError ){
+	?>
+	<tr>
+		<td>
+			<h2>
+			<?php echo $mosConfig_error_message; ?>
+			</h2>
+			<?php echo $mosSystemError; ?>
 		</td>
 	</tr>
 	<?php
@@ -91,9 +89,9 @@ table.moswarning h2 {
 	?>
 	<tr>
 		<td>
-		<h2>
-		<?php echo 'INSTALL_WARN'; ?>
-		</h2>
+			<h2>
+			<?php echo 'INSTALL_WARN'; ?>
+			</h2>
 		</td>
 	</tr>
 	<?php

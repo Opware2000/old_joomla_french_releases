@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_related_items.php 216 2005-09-21 14:28:41Z stingrey $
+* @version $Id: mod_related_items.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -42,7 +42,7 @@ if ($option == 'com_content' && $task == 'view' && $id) {
 			// select other items based on the metakey field 'like' the keys found
 			$query = "SELECT id, title"
 			. "\n FROM #__content"
-			. "\n WHERE id <> $id"
+			. "\n WHERE id != $id"
 			. "\n AND state = 1"
 			. "\n AND access <= $my->gid"
 			. "\n AND ( metakey LIKE '%" . implode( "%' OR metakey LIKE '%", $likes ) ."%' )"

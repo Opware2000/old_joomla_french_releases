@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: admin.categories.html.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -79,7 +79,7 @@ class categories_html {
 			Published
 			</th>
 			<?php
-			if ( $section <> 'content') {
+			if ( $section != 'content') {
 				?>
 				<th colspan="2" width="5%">
 				Reorder
@@ -163,7 +163,7 @@ class categories_html {
 				<?php echo $published;?>
 				</td>
 				<?php
-				if ( $section <> 'content' ) {
+				if ( $section != 'content' ) {
 					?>
 					<td>
 					<?php echo $pageNav->orderUpIcon( $i ); ?>

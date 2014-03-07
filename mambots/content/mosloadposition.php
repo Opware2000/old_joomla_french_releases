@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mosloadposition.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mosloadposition.php 427 2005-10-09 18:59:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -25,7 +25,13 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
  	// expression to search for
  	$regex = '/{mosloadposition\s*.*?}/i';
 
- 	// find all instances of mambot and put in $matches
+ 	// check whether mambot has been unpublished
+	if ( !$published ) {
+		$row->text = preg_replace( $regex, '', $row->text );
+		return true;
+	}
+	
+	// find all instances of mambot and put in $matches
 	preg_match_all( $regex, $row->text, $matches );
 
 	// Number of mambots
@@ -36,7 +42,7 @@ function botMosLoadPosition( $published, &$row, &$params, $page=0 ) {
 		// load mambot params info
 		$query = "SELECT id"
 		. "\n FROM #__mambots"
-		. "\n WHERE element = 'mosloadmodule'"
+		. "\n WHERE element = 'mosloadposition'"
 		. "\n AND folder = 'content'"
 		;
 		$database->setQuery( $query );

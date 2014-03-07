@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mambot.class.php 186 2005-09-19 09:09:25Z stingrey $
+* @version $Id: mambot.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -147,7 +147,7 @@ class mosInstallerMambot extends mosInstaller {
 						if (file_exists( $basepath . $filename )) {
 							$parts = pathinfo( $filename );
 							$subpath = $parts['dirname'];
-							if ($subpath <> '' && $subpath <> '.' && $subpath <> '..') {
+							if ($subpath != '' && $subpath != '.' && $subpath != '..') {
 								echo '<br />Deleting: '. $basepath . $subpath;
 								$result = deldir(mosPathName( $basepath . $subpath . '/' ));
 							} else {

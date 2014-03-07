@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: config.class.php 228 2005-09-22 05:51:01Z stingrey $
+* @version $Id: config.class.php 475 2005-10-12 18:57:19Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -79,6 +79,8 @@ class mosConfig {
 	var $config_lang			= null;
 	/** @var int */
 	var $config_offset			= null;
+	/** @var int */
+	var $config_offset_user		= null;
 
 // Mail Settings
 	/** @var string */

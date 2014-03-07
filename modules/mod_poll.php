@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_poll.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_poll.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -43,7 +43,7 @@ if (!defined( '_MOS_POLL_MODULE' )) {
 				$query = "SELECT id, text"
 				. "\n FROM #__poll_data"
 				. "\n WHERE pollid = $poll->id"
-				. "\n AND text <> ''"
+				. "\n AND text != ''"
 				. "\n ORDER BY id";
 				$database->setQuery($query);
 				if(!($options = $database->loadObjectList())) {

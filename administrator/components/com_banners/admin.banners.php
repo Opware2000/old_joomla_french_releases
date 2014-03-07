@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.banners.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.banners.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Banners
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -292,7 +292,7 @@ function editBannerClient( $clientid, $option ) {
 	$row->load($clientid);
 
 	// fail if checked out not by 'me'
-	if ($row->checked_out && $row->checked_out <> $my->id) {
+	if ($row->checked_out && $row->checked_out != $my->id) {
 		$msg = 'The client [ '. $row->name. ' ] is currently being edited by another person.';
 		mosRedirect( 'index2.php?option='. $option .'&task=listclients', $msg );
 	}

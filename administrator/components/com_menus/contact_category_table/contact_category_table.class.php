@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: contact_category_table.class.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: contact_category_table.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -32,7 +32,7 @@ class contact_category_table_menu {
 		$menu->load( $uid );
 
 		// fail if checked out not by 'me'
-		if ($menu->checked_out && $menu->checked_out <> $my->id) {
+		if ($menu->checked_out && $menu->checked_out != $my->id) {
 			echo "<script>alert('The module $menu->title is currently being edited by another administrator'); document.location.href='index2.php?option=$option'</script>\n";
 			exit(0);
 		}

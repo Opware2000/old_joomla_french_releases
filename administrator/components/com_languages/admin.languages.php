@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.languages.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.languages.php 490 2005-10-13 03:21:14Z Jinx $
 * @package Joomla
 * @subpackage Languages
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -179,7 +179,7 @@ function publishLanguage( $p_lname, $option ) {
 /**
 * Remove the selected language
 */
-function removeLanguage( $cid, $option, $client ) {
+function removeLanguage( $cid, $option, $client = 'admin' ) {
 	global $mosConfig_lang;
 
 	$client_id = $client=='admin' ? 1 : 0;

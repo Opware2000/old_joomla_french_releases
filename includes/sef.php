@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: sef.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: sef.php 513 2005-10-13 15:17:42Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -242,7 +242,7 @@ function sefRelToAbs( $string ) {
 				$sefstring .= "lang,".$temp[0]."/";
 			}
 			$string = $sefstring;
-		} else if (eregi("option=com_",$string) && !eregi("option=com_registration",$string) && !eregi("task=new",$string) && !eregi("task=edit",$string)) {
+		} else if (eregi("option=com_",$string) && !eregi("task=new",$string) && !eregi("task=edit",$string)) {
 			/*
 			Components
 			index.php?option=com_xxxx&...

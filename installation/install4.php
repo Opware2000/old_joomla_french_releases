@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install4.php 215 2005-09-21 14:16:38Z stingrey $
+* @version $Id: install4.php 475 2005-10-12 18:57:19Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -165,6 +165,7 @@ if ($siteUrl) {
 	$config .= "\$mosConfig_MetaAuthor = '1';\n";
 	$config .= "\$mosConfig_locale = 'en_GB';\n";
 	$config .= "\$mosConfig_offset = '0';\n";
+	$config .= "\$mosConfig_offset_user = '0';\n";
 	$config .= "\$mosConfig_hideAuthor = '0';\n";
 	$config .= "\$mosConfig_hideCreateDate = '0';\n";
 	$config .= "\$mosConfig_hideModifyDate = '0';\n";

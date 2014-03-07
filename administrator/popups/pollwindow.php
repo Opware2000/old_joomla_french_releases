@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: pollwindow.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: pollwindow.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -52,7 +52,7 @@ $options = $database->loadResultArray();
 	</tr>
 	<?php foreach ($options as $text)
 	{
-		if ($text <> "")
+		if ($text != "")
 		{?>
 		<tr>
 			<td valign="top" height="30"><input type="radio" name="poll" value="<?php echo $text; ?>"></td>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: CHANGELOG.php 325 2005-10-02 15:04:52Z troozers $
+* @version $Id: CHANGELOG.php 532 2005-10-14 09:28:31Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,14 +24,98 @@ code fixes.
 
 Legend:
 
+* -> Security Fix
 # -> Bug Fix
 + -> Addition
 ^ -> Change
 - -> Removed
 ! -> Note
 
+---------------- 1.0.3 Released -- [14-Oct-2005 10:00 UTC] ------------------
 
--------------------- 1.0.2 Released ----------------------
+Contains following Security Fixes
+Medium Level Threat
+ * Fixed SQL injection bug in content submission (thanks Dead Krolik)
+
+Low Level Threat
+ * Fixed securitybug in admin.content.html.php when 2 logged in and try to edit the same content
+ * Fixed Search Component flooding, by limiting searching to between 3 and 20 characters
+ * Fixed artf1405 : Joomla shows Items to unauthorized users
+
+-------
+
+14-Oct-2005 Rey Gigataras
+ # Fixed edit icon not showing on frontpage
+ # Fixed artf1553 : database.php fails to pass resource id into mysql_get_server_info() call
+ # Fixed artf1560 : Install1.php doesn't enforce rule against old_ table prefix
+
+13-Oct-2005 Andy Miller
+ # Fixed artf1504 : rhuk_solarflare_ii Template | Menus with " not displaying correctly
+
+13-Oct-2005 Rey Gigataras
+ # Fixed duplicated module creation in install
+ # Fixed XHTML issue in rss feed module
+ # Fixed XHTML issue in com_search
+ # Fixed artf1550 : Properly SEFify com_registration links 
+ # Fixed artf1533 : rhuk_solarflare_ii 2.2 active_menu
+ # Fixed artf1354 : Can't create new user
+ # Fixed artf1433 : Images in Templates
+ # Fixed artf1531 : RSS Feed showing wrong livesite URL
+
+12-Oct-2005 Marko Schmuck
+ * Fixed securitybug in admin.content.html.php when 2 logged in and try to edit the same content [ Low Level Security Bug ]
+
+12-Oct-2005 Johan Janssens
+ # Fixed artf1266 : gzip compression conflict
+ # Fixed artf1453 : Weblink item missing approved parameter
+ # Fixed artf1452 : Error deleting Language file
+ # Fixed artf1373 : Pagination error
+
+12-Oct-2005 Rey Gigataras
+ ^ Core now automatically calculates the offset between yourself and the server
+ # Fixed bug in Global Config param `Time Offset`
+ # Fixed artf1414 : Missing images in HTML_toolbar
+ # Fixed artf1513 : PDF format does not work at version 1.0.2
+
+11-Oct-2005 Rey Gigataras
+ * Fixed Search Component flooding, by limiting searching to between 3 and 20 characters [ Low Level Security Bug in 1.0.x ]
+ ^ Blog - Content Category Archive will no longer show dropdown selector when coming from Archive Module
+ # Fixed artf1470 : Archives not working in the front end
+ # Fixed artf1495 : Frontend Archive blog display
+ # Fixed artf1364 : TinyMCE loads wrong template styles
+ # Fixed artf1494 : Template fault in offline preview
+ # Fixed artf1497 : mosemailcloak adds trailing space
+ # Fixed artf1493 : mod_whosonline.php
+
+09-Oct-2005 Rey Gigataras
+ * Fixed SQL injection bug in content submission [ Medium Level Security Bug in 1.0.x ]
+ * Fixed artf1405 : Joomla shows Items to unauthorized users [ Low Level Security Bug in 1.0.2 ]
+ # Fixed artf1454 : After update email_cloacking bot is always on
+ # Fixed artf1447 : Bug in mosloadposition mambot
+ # Fixed artf1483 : SEF default .htaccess file settings are too lax
+ # Fixed artf1480 : Administrator type user can loggof Super Adminstrator
+ # Fixed artf1422 : PDF Icon is set to on when it should be off
+ # Fixed artf1476 : Error at "number of Trashed Items" in sections
+ # Fixed artf1415 : Wrong image in editList() function of mosToolBar class
+
+08-Oct-2005 Johan Janssens
+ # Fixed artf1384 : tinyMCE doesnt save converted entities
+
+07-Oct-2005 Andy Miller
+ # Fixed tabpane css font issue
+
+07-Oct-2005 Johan Janssens
+ # Fixed artf1421 : unneeded file includes\domit\testing_domit.php
+
+07-Oct-2005 Andy Stewart
+ # Fixed artf1382 : Added installation check to ensure "//" is not generated via PHP_SELF
+ # Fixed artf1439 : Used correct ErrorMsg function and updated javascript redirect to remove POSTDATA message
+ # Fixed artf1400 : Added a check of $other within com_categories to skip section exists check if set to "other"
+
+05-Oct-2005 Robin Muilwijk
+ # Fixed artf1366 : Typo in admin, Adding a new menu item - Blog Content Category
+
+---------------- 1.0.2 Released -- [02-Oct-2005 16:00 UTC] ------------------
 
 02-Oct-2005 Rey Gigataras
  ^ Added check to mosCommonHTML::loadOverlib(); function that will stop it from being loaded twice on a page
@@ -48,7 +132,7 @@ Legend:
 01-Oct-2005 Andy Miller
  # Fixed base href in Content Preview for broken images
 
-01-Oct-2005 Johan Janssens 
+01-Oct-2005 Johan Janssens
  ^ Updated TinyMCE editor to version RC 3
  # Fixed artf1221 : Unable to Submit Content (still not working post-patch)
  # Fixed artf1108 : Tooltips on mouseover causes parameter panel to widen
@@ -57,14 +141,14 @@ Legend:
 01-Oct-2005 Andy Stewart
  # Fixed artf1305 - Added a check within mosimage mambot for introtext being hidden
  # Fixes artf1343 - Removed xml declaration at top of gpl.html
- 
+
 01-Oct-2005 Arno Zijlstra
  ^ Changed OSM banner 2 a little to show banner changing
- 
+
 01-Oct-2005 Levis Bisson
  # Fixed artf1311 : Banners not showing / returning PHP error
  # Fixed artf1319 : Banners not showing in frontend / admin
- 
+
 30-Sep-2005 Andy Miller
  # Fixed poor rendering of fieldset with solarflare2
  ^ Updated solarflare2 template with new colors and logos
@@ -74,8 +158,8 @@ Legend:
 
 30-Sep-2005 Andy Stewart
  + Updated installation routine to recognise port numbers other than 80
- # Fixed artf1293 : added $op=mosGetParam so sendmail is called when running globals.php-off 
- 
+ # Fixed artf1293 : added $op=mosGetParam so sendmail is called when running globals.php-off
+
 30-Sep-2005 Rey Gigataras
  ^ Module Manager `position` dropdown ordering alphabetically
  ^ Ability to Hide feed title for `New` modules used to display feeds
@@ -99,7 +183,7 @@ Legend:
  # Fixed artf1281 : Bad name of XML file
  # Fixed artf1180 : Call-by-reference warning when editing menu
  # Fixed artf1188 : includes/vcard.class.php uses short open tags
- 
+
 29-Sep-2005 Levis Bisson
 # Fixed artf1274 : Module display bug when using register/forgot password links
 # Fixed artf1238 : header("Location: $url")- some servers require an absolute URI
@@ -108,13 +192,13 @@ Legend:
  # Fixed artf1250 : Order is no use when many pages
  # Fixed artf1254 : Unable to delete when count > 1
  # Fixed artf1248 : Invalid argument supplied for 3P modules
- 
+
 27-Sep-2005 Arno Zijlstra
  # Fixed artf1253 : Apply button image path
  # Fixed artf1240 : WITH FIX: banners component - undefined var task
  # Fixed artf1242 : Problem with "Who's online"
  # Fixed artf1218 : 'Search' does not include weblinks?
- 
+
 25-Sep-2005 Emir Sakic
  # Fixed artf1185 : globals.php-off breaks pathway
  # Fixed artf1196 : undefined constant categoryid
@@ -128,7 +212,7 @@ Legend:
  # Fixed artf1175 : Create catagory with selection of Section
  # Fixed artf1179 : Custom RSS Newsfeed Module has nested <TR>
 
--------------------- 1.0.1 Released ----------------------
+---------------- 1.0.1 Released -- [21-Sep-2005 16:30 UTC] ------------------
 
 21-Sep-2005 Rey Gigataras
  # Fixed artf1157 : Section module: Content not displayed, wrong header
@@ -209,7 +293,16 @@ Legend:
  # Fixed artf1043: Template Chooser doesn't work
  # Fixed artf1042: Template Chooser shows rogue entry
 
--------------------- 1.0.0 Released ----------------------
+---------------- 1.0.0 Released -- [17-Sep-2005 00:30 UTC] ------------------
+
+Contains following Security Fixes
+Medium Level Threat
+ * Fixed SQL injection bugs in user activation (thanks Enno Klasing)
+
+Low Level Threat
+ * Fixed [#6775] Display of static content without Itemid
+
+-------
 
 16-Sep-2005 Andrew Eddie
  # Fixed: 1014 : & amp ; in pathway
@@ -224,7 +317,7 @@ Legend:
 16-Sep-2005 Emir Sakic
  # Fixed sorting by author on frontend category listing
  + Added time offset to copyright year in footer
- # Fixed spelling in sam        
+ # Fixed spelling in sam
  # Reflected some file name changes in installer CHMOD
  # Fixed bugs in paged search component
 
@@ -406,18 +499,18 @@ Legend:
  ^ Convert 4xSpace to tab
 
 08-Aug-2005 Andrew Eddie
+ * Fixed SQL injection bugs in user activation (thanks Enno Klasing) [ Medium Level Security Bug ]
  ^ Encased text files in PHP wrapper to help obsfucate version info
  # Changed admin session name to hash of live_site to allow you to log into more than one Joomla! on the same host
  # Fixed hardcoded (c) character in web installer files
  # Fixed slow query in admin User Manager list screen
  # Fixed bug in poll stats calculation
- # Fixed SQL injection bugs in user activation (thanks Enno Klasing)
  # Updated bug fixes in phpMailer class
  # Fixed login bug for nested Joomla! sites on the same domain
 
 02-Aug-2005 Alex Kempkens
- # [#6775] Display of static content without Itemid
- # [#6330] Corrected default value of field
+ * Fixed [#6775] Display of static content without Itemid [ Low Level Security Bug ]
+ # Fixed [#6330] Corrected default value of field
 
 ----- Derived from Mambo 4.5.2.3 circa. 17 Aug 12005 -----
 

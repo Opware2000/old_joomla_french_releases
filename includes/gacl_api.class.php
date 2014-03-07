@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: gacl_api.class.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: gacl_api.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -1718,7 +1718,7 @@ class gacl_api extends gacl {
 		}
 
 		$where = '';
-		if ($root->lft+$root->rgt <> 0) {
+		if ($root->lft+$root->rgt != 0) {
 			if ($inclusive) {
 				$where = "WHERE g1.lft BETWEEN $root->lft AND $root->rgt";
 			} else {

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.config.php 475 2005-10-12 18:57:19Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -59,7 +59,7 @@ function showconfig( $option) {
 	if ($handle = opendir( $mosConfig_absolute_path . '/language/' )) {
 		$i=0;
 		while (false !== ($file = readdir( $handle ))) {
-			if (!strcasecmp(substr($file,-4),".php") && $file <> "." && $file <> ".." && strcasecmp(substr($file,-11),".ignore.php")) {
+			if (!strcasecmp(substr($file,-4),".php") && $file != "." && $file != ".." && strcasecmp(substr($file,-11),".ignore.php")) {
 				$langs[] = mosHTML::makeOption( substr($file,0,-4) );
 			}
 		}
@@ -194,7 +194,7 @@ function showconfig( $option) {
 		mosHTML::makeOption( 14, '(UTC +14:00) Kiribati'),
 	);
 	
-	$lists['offset'] = mosHTML::selectList( $timeoffset, 'config_offset', 'class="inputbox" size="1"', 'value', 'text', $row->config_offset );
+	$lists['offset'] = mosHTML::selectList( $timeoffset, 'config_offset_user', 'class="inputbox" size="1"', 'value', 'text', $row->config_offset_user );
 
 // MAIL SETTINGS
 
@@ -268,7 +268,7 @@ function showconfig( $option) {
 	if (is_writable( "$mosConfig_absolute_path/media/" )) {
 		$lists['hidePdf'] 			= mosHTML::RadioList( $show_hide, 'config_hidePdf', 'class="inputbox"', $row->config_hidePdf, 'value', 'text' );
 	} else {
-		$lists['hidePdf'] 			= '<input type="hidden" name="config_hidepdf" value="1" /><strong>Yes</strong>';
+		$lists['hidePdf'] 			= '<input type="hidden" name="config_hidePdf" value="1" /><strong>Hide</strong>';
 	}
 
 	$lists['hidePrint'] 			= mosHTML::RadioList( $show_hide, 'config_hidePrint', 'class="inputbox"', $row->config_hidePrint, 'value', 'text' );
@@ -300,6 +300,10 @@ function saveconfig( $task ) {
 	if (!$row->bind( $_POST )) {
 		mosRedirect( 'index2.php', $row->getError() );
 	}
+	
+	$server_time 		= date( 'O' ) / 100;
+	$offset 			= $_POST['config_offset_user'] - $server_time;
+	$row->config_offset = $offset;	
 	
 	$config = "<?php \n";
 	$config .= $row->getVarText();

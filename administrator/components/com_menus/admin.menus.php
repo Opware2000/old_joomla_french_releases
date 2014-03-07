@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.menus.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.menus.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -741,7 +741,7 @@ function ReadMenuXML( $type, $component=-1 ) {
 		}
 	}
 
-	if ( ( $component <> -1 ) && ( $name == 'Component') ) {
+	if ( ( $component != -1 ) && ( $name == 'Component') ) {
 			$name .= ' - '. $component;
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.mambots.php 329 2005-10-02 15:48:09Z stingrey $
+* @version $Id: admin.mambots.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Mambots
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -279,7 +279,7 @@ function editMambot( $option, $uid, $client ) {
 		$folders = mosReadDirectory( $mosConfig_absolute_path . '/mambots/' );
 		$folders2 = array();
 		foreach ($folders as $folder) {
-			if (is_dir( $mosConfig_absolute_path . '/mambots/' . $folder ) && ( $folder <> 'CVS' ) ) {
+			if (is_dir( $mosConfig_absolute_path . '/mambots/' . $folder ) && ( $folder != 'CVS' ) ) {
 				$folders2[] = mosHTML::makeOption( $folder );
 			}
 		}

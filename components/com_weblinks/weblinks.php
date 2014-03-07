@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: weblinks.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: weblinks.php 484 2005-10-13 01:24:50Z Jinx $
 * @package Joomla
 * @subpackage Weblinks
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -59,7 +59,7 @@ function listWeblinks( $catid ) {
 	$query = "SELECT *, COUNT(a.id) AS numlinks FROM #__categories AS cc"
 	. "\n LEFT JOIN #__weblinks AS a ON a.catid = cc.id"
 	. "\n WHERE a.published = 1"
-	. "\n AND a.approved = 1"
+	//. "\n AND a.approved = 1"
 	. "\n AND section = 'com_weblinks'"
 	. "\n AND cc.published = 1"
 	. "\n AND cc.access <= $my->gid"
@@ -77,7 +77,7 @@ function listWeblinks( $catid ) {
 		. "\n FROM #__weblinks"
 		. "\n WHERE catid = $catid"
 		. "\n AND published = 1"
-		. "\n AND approved = 1"
+		//. "\n AND approved = 1"
 		. "\n AND archived = 0"
 		. "\n ORDER BY ordering"
 		;
@@ -121,7 +121,7 @@ function listWeblinks( $catid ) {
 
 	// page description
 	$currentcat->descrip = '';
-	if( ( @$currentcat->description ) <> '' ) {
+	if( ( @$currentcat->description ) != '' ) {
 		$currentcat->descrip = $currentcat->description;
 	} else if ( !$catid ) {
 		// show description
@@ -133,11 +133,11 @@ function listWeblinks( $catid ) {
 	// page image
 	$currentcat->img = '';
 	$path = $mosConfig_live_site .'/images/stories/';
-	if ( ( @$currentcat->image ) <> '' ) {
+	if ( ( @$currentcat->image ) != '' ) {
 		$currentcat->img = $path . $currentcat->image;
 		$currentcat->align = $currentcat->image_position;
 	} else if ( !$catid ) {
-		if ( $params->get( 'image' ) <> -1 ) {
+		if ( $params->get( 'image' ) != -1 ) {
 			$currentcat->img = $path . $params->get( 'image' );
 			$currentcat->align = $params->get( 'image_align' );
 		}
@@ -145,7 +145,7 @@ function listWeblinks( $catid ) {
 
 	// page header
 	$currentcat->header = '';
-	if ( @$currentcat->name <> '' ) {
+	if ( @$currentcat->name != '' ) {
 		$currentcat->header = $currentcat->name;
 	} else {
 		$currentcat->header = $params->get( 'header' );
@@ -204,7 +204,7 @@ function editWebLink( $id, $option ) {
 	} else {
 		// initialise new record
 		$row->published 		= 0;
-		$row->approved 		= 0;
+		$row->approved 		= 1;
 		$row->ordering 		= 0;
 	}
 /*
@@ -258,7 +258,7 @@ function saveWeblink( $option ) {
 	}
 
 	$row = new mosWeblink( $database );
-	if (!$row->bind( $_POST, "approved published" )) {
+	if (!$row->bind( $_POST, "published" )) {
 		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
 		exit();
 	}
@@ -293,6 +293,6 @@ function saveWeblink( $option ) {
 	}
 
 	$msg 	= $isNew ? _THANK_SUB : '';
-	mosRedirect( 'index.php', $msg );
+	mosRedirect( 'index.php', $msg ); 
 }
 ?>

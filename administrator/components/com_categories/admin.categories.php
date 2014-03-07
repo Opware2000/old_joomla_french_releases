@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.categories.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.categories.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Categories
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -219,7 +219,7 @@ function showCategories( $section, $option ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__content AS a"
 		. "\n WHERE a.catid = ". $rows[$i]->id
-		. "\n AND a.state <> -2"
+		. "\n AND a.state != -2"
 		;
 		$database->setQuery( $query );
 		$active = $database->loadResult();
@@ -263,7 +263,7 @@ function editCategory( $uid=0, $section='' ) {
 	;
 	$database->setQuery( $query );
 	$sections = $database->loadResult();
-	if (!$sections) {
+	if (!$sections && $type!="other") {
 		echo "<script> alert('You need to have at least one Section before you can create a Category'); window.history.go(-1); </script>\n";
 		exit();
 	}	
@@ -273,7 +273,7 @@ function editCategory( $uid=0, $section='' ) {
 	$row->load( $uid );
 
 	// fail if checked out not by 'me'
-	if ($row->checked_out && $row->checked_out <> $my->id) {
+	if ($row->checked_out && $row->checked_out != $my->id) {
 		mosRedirect( 'index2.php?option=categories&section='. $row->section, 'The category '. $row->title .' is currently being edited by another administrator' );
 	}
 

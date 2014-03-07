@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: poll.php 204 2005-09-20 18:55:08Z stingrey $
+* @version $Id: poll.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -144,7 +144,7 @@ function pollresult( $uid ) {
 	. "\n FROM #__poll_data AS a"
 	. "\n LEFT JOIN #__poll_date AS b ON b.vote_id = a.id"
 	. "\n WHERE a.pollid = $poll->id"
-	. "\n AND a.text <> ''"
+	. "\n AND a.text != ''"
 	. "\n GROUP BY a.id"
 	. "\n ORDER BY a.id"
 	;

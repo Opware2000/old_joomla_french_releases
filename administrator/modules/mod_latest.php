@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_latest.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_latest.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -17,7 +17,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 $query = "SELECT a.id, a.sectionid, a.title, a.created, u.name, a.created_by_alias, a.created_by"
 . "\n FROM #__content AS a"
 . "\n LEFT JOIN #__users AS u ON u.id = a.created_by"
-. "\n WHERE a.state <> -2"
+. "\n WHERE a.state != -2"
 . "\n ORDER BY created DESC"
 . "\n LIMIT 10"
 ;

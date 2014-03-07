@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.config.html.php 194 2005-09-20 09:36:48Z stingrey $
+* @version $Id: admin.config.html.php 475 2005-10-12 18:57:19Z stingrey $
 * @package Joomla
 * @subpackage Config
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -234,6 +234,12 @@ class HTML_config {
 				$tip = "Current date/time configured to display: " . mosCurrentDate(_DATE_FORMAT_LC2);
 				echo mosToolTip($tip);
 				?>			
+				</td>
+			</tr>
+			<tr>
+				<td width="185">Server Offset:</td>
+				<td>
+				<input class="text_area" type="text" name="config_offset" size="15" value="<?php echo $row->config_offset; ?>" disabled="true"/>
 				</td>
 			</tr>
 			<tr>

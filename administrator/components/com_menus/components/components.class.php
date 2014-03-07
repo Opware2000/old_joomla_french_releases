@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: components.class.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: components.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -35,7 +35,7 @@ class components_menu {
 		$row->load( $menu->componentid );
 
 		// fail if checked out not by 'me'
-		if ( $menu->checked_out && $menu->checked_out <> $my->id ) {
+		if ( $menu->checked_out && $menu->checked_out != $my->id ) {
 			echo "<script>alert('The module $menu->title is currently being edited by another administrator'); document.location.href='index2.php?option=$option'</script>\n";
 			exit(0);
 		}
@@ -55,7 +55,7 @@ class components_menu {
 
 		$query = "SELECT c.id AS value, c.name AS text, c.link"
 		. "\n FROM #__components AS c"
-		. "\n WHERE c.link <> ''"
+		. "\n WHERE c.link != ''"
 		. "\n ORDER BY c.name"
 		;
 		$database->setQuery( $query );

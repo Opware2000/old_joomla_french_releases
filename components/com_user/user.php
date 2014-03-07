@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: user.php 104 2005-09-16 10:29:04Z eddieajau $
+* @version $Id: user.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -124,7 +124,7 @@ function userSave( $option, $uid) {
 	$user_id = intval( mosGetParam( $_POST, 'id', 0 ));
 
 	// do some security checks
-	if ($uid == 0 || $user_id == 0 || $user_id <> $uid) {
+	if ($uid == 0 || $user_id == 0 || $user_id != $uid) {
 		mosNotAuth();
 		return;
 	}

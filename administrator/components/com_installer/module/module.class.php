@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: module.class.php 284 2005-10-01 16:24:35Z Levis $
+* @version $Id: module.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Installer
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -178,7 +178,7 @@ class mosInstallerModule extends mosInstaller {
     						if (file_exists( $basepath . $filename )) {
     							$parts = pathinfo( $filename );
     							$subpath = $parts['dirname'];
-    							if ($subpath <> '' && $subpath <> '.' && $subpath <> '..') {
+    							if ($subpath != '' && $subpath != '.' && $subpath != '..') {
     								echo '<br />Deleting: '. $basepath . $subpath;
     								$result = deldir(mosPathName( $basepath . $subpath . '/' ));
     							} else {

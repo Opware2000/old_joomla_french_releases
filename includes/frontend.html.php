@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: frontend.html.php 272 2005-09-30 15:12:47Z stingrey $
+* @version $Id: frontend.html.php 508 2005-10-13 06:07:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -145,7 +145,7 @@ class modules_html {
 				<tr>
 					<td>
 						<strong>
-						<a href="<?php echo $currChannel->getLink(); ?>" target="_blank">
+						<a href="<?php echo ampReplace( $currChannel->getLink() ); ?>" target="_blank">
 							<?php echo $currChannel->getTitle(); ?></a>
 						</strong>
 					</td>
@@ -195,7 +195,7 @@ class modules_html {
 						?>
 						<li class="newsfeed<?php echo $moduleclass_sfx; ?>">
 							<strong>
-							<a href="<?php echo $currItem->getLink(); ?>" target="_blank">
+							<a href="<?php echo ampReplace( $currItem->getLink() ); ?>" target="_blank">
                                 <?php echo str_replace('&apos;', "'", html_entity_decode( $currItem->getTitle() ) ); ?></a>
 							</strong>
 							<?php

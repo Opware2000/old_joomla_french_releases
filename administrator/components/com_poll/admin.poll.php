@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.poll.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.poll.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Polls
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -86,7 +86,7 @@ function showPolls( $option ) {
 	. "\n COUNT(d.id) AS numoptions"
 	. "\n FROM #__polls AS m"
 	. "\n LEFT JOIN #__users AS u ON u.id = m.checked_out"
-	. "\n LEFT JOIN #__poll_data AS d ON d.pollid = m.id AND d.text <> ''"
+	. "\n LEFT JOIN #__poll_data AS d ON d.pollid = m.id AND d.text != ''"
 	. "\n GROUP BY m.id"
 	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
 	;

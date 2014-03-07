@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mod_online.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mod_online.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@ $session_id = mosGetParam( $_SESSION, 'session_id', '' );
 // Get no. of users online not including current session
 $query = "SELECT COUNT( session_id )"
 . "\n FROM #__session"
-. "\n WHERE session_id <> '$session_id'"
+. "\n WHERE session_id != '$session_id'"
 ;
 $database->setQuery($query);
 $online_num = intval( $database->loadResult() );

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: mossef.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: mossef.php 427 2005-10-09 18:59:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -24,6 +24,11 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botMosSef' );
 */
 function botMosSef( $published, &$row, &$params, $page=0 ) {
 
+	// check whether mambot has been unpublished
+	if ( !$published ) {
+		return true;
+	}
+	
 	// define the regular expression for the bot
 	$regex = "#href=\"(.*?)\"#s";
 

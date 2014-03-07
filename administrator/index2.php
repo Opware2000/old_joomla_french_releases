@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: index2.php 311 2005-10-02 12:26:08Z stingrey $
+* @version $Id: index2.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -70,7 +70,7 @@ if ( $session_id == md5( $my->id . $my->username . $my->usertype . $logintime ) 
 	if (!$result = $database->query()) {
 		echo $database->stderr();
 	}
-	if ($database->getNumRows( $result ) <> 1) {
+	if ($database->getNumRows( $result ) != 1) {
 		echo "<script>document.location.href='index.php'</script>\n";
 		exit();
 	}

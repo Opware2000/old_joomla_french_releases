@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: moscode.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: moscode.php 427 2005-10-09 18:59:01Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -26,12 +26,12 @@ function botMosCode( $published, &$row, &$params, $page=0 ) {
 	// define the regular expression for the bot
 	$regex = "#{moscode}(.*?){/moscode}#s";
 
-	if (!$published) {
+	// check whether mambot has been unpublished
+	if ( !$published ) {
 		$row->text = preg_replace( $regex, '', $row->text );
-		return;
+		return true;
 	}
-
-
+	
 	// perform the replacement
 	$row->text = preg_replace_callback( $regex, 'botMosCode_replacer', $row->text );
 

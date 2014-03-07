@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: tinymce.php 259 2005-09-29 19:32:39Z stingrey $
+* @version $Id: tinymce.php 454 2005-10-11 06:12:09Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -78,11 +78,17 @@ function botTinymceEditorInit() {
 	$fullscreen			=  $params->def( 'fullscreen', 1 );
 
 	if ( $content_css ) {
-		$template 		= $mainframe->getTemplate();
+		$query = "SELECT template"
+		. "\n FROM #__templates_menu"
+		. "\n WHERE client_id = 0"
+		. "\n AND menuid = 0"
+		;
+		$database->setQuery( $query );
+		$template = $database->loadResult();
 		
 		$file			= $mosConfig_absolute_path .'/templates/'. $template .'/css/editor_content.css';
 		if ( file_exists( $file ) ) {
-			$content_css	= 'content_css : "'. $file .'", ';
+			$content_css	= 'content_css : "'. $mosConfig_live_site .'/templates/'. $template .'/css/editor_content.css", ';
 		} else {
 			$content_css	= 'content_css : "'. $mosConfig_live_site .'/templates/'. $template .'/css/template_css.css", ';
 		}
@@ -179,7 +185,7 @@ return <<<EOD
 		document_base_url : "$mosConfig_live_site/",
 		relative_urls : false,
 		remove_script_host : false,
-		save_callback : "MamboSave",
+		save_callback : "TinyMCE_Save",
 		invalid_elements : "$invalid_elements",
 		theme_advanced_toolbar_location : "$toolbar",
 		theme_advanced_source_editor_height : "$html_height",
@@ -202,10 +208,10 @@ return <<<EOD
 			theme_advanced_path_location : "top"
 		}
 	});
-	function MamboSave(editor_id, content, node)
+	function TinyMCE_Save(editor_id, content, node)
 	{
 		base_url = tinyMCE.settings['document_base_url'];
-		var vHTML = node.innerHTML;
+		var vHTML = content;
 		if (true == true){
 			vHTML = tinyMCE.regexpReplace(vHTML, 'href\s*=\s*"?'+base_url+'', 'href="', 'gi');
 			vHTML = tinyMCE.regexpReplace(vHTML, 'src\s*=\s*"?'+base_url+'', 'src="', 'gi');

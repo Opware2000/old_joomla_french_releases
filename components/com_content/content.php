@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content.php 319 2005-10-02 14:07:10Z Jinx $
+* @version $Id: content.php 528 2005-10-14 08:44:53Z stingrey $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -18,7 +18,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'front_html', 'com_content' ) );
 
 $id			= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
-$sectionid 	= mosGetParam( $_REQUEST, 'sectionid', 0 );
+$sectionid 	= intval( mosGetParam( $_REQUEST, 'sectionid', 0 ) );
 $pop 		= intval( mosGetParam( $_REQUEST, 'pop', 0 ) );
 $id 		= intval( mosGetParam( $_REQUEST, 'id', 0 ) );
 $limit 		= intval( mosGetParam( $_REQUEST, 'limit', '' ) );
@@ -38,7 +38,7 @@ $cache =& mosCache::getCache( 'com_content' );
 
 // loads function for frontpage component
 if ( $option == 'com_frontpage' ) {
-	//frontpage( $option, $gid, $pop, $now );
+	//frontpage( $gid, $access, $pop, $now );
 	$cache->call( 'frontpage', $gid, $access, $pop, $now );
 	return;
 }
@@ -105,7 +105,7 @@ switch ( strtolower( $task ) ) {
 		break;
 
 	case 'vote':
-		recordVote ( $url , $user_rating , $cid , $database);
+		recordVote ();
 		break;
 
 	default:
@@ -141,7 +141,6 @@ function findKeyItem( $gid, $access, $pop, $option, $now ) {
 
 function frontpage( $gid, &$access, $pop, $now ) {
 	global $database, $mainframe, $my, $Itemid;
-	global $mosConfig_offset;
 
 	$nullDate = $database->getNullDate();
 	$noauth = !$mainframe->getCfg( 'shownoauth' );
@@ -620,7 +619,7 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 	if ( $id == 0 ) {
 		$check = '';
 	} else {
-		$check = "AND a.sectionid = $id";
+		$check = "\n AND a.sectionid = $id";
 	}
 	// query to determine if there are any archived entries for the section
 	$query = 	"SELECT a.id"
@@ -650,7 +649,8 @@ function showArchiveSection( $id=NULL, $gid, &$access, $pop, $option ) {
 	$rows = $database->loadObjectList();
 
 	// initiate form
- 	echo '<form action="'.sefRelToAbs( 'index.php').'" method="post">';
+	$link = 'index.php?option=com_content&task=archivesection&id='. $id .'&Itemid='. $Itemid;
+ 	echo '<form action="'.sefRelToAbs( $link ).'" method="post">';
 
 	// Dynamic Page Title
 	$mainframe->SetPageTitle( $menu->name );
@@ -684,7 +684,7 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	if ( $module ) {
 		$check = '';
 	} else {
-		$check = 'AND a.catid = '. $id;
+		$check = "\n AND a.catid = $id";
 	}
 
 	if ( $Itemid ) {
@@ -733,7 +733,8 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 	$rows = $database->loadObjectList();
 
 	// initiate form
- 	echo '<form action="'.sefRelToAbs( 'index.php').'" method="post">';
+	$link = 'index.php?option=com_content&task=archivecategory&id='. $id .'&Itemid='. $Itemid;
+ 	echo '<form action="'.sefRelToAbs( $link ).'" method="post">';
 
 	// Page Title
 	$mainframe->SetPageTitle( $menu->name );
@@ -742,7 +743,12 @@ function showArchiveCategory( $id=0, $gid, &$access, $pop, $option, $now ) {
 		// if no archives for category, hides search and outputs empty message
 		echo '<br /><div align="center">'. _CATEGORY_ARCHIVE_EMPTY .'</div>';
 	} else {
-		BlogOutput( $rows, $params, $gid, $access, $pop, $menu, 1 );
+		// if coming from the Archive Module, the Archive Dropdown selector is not shown
+		if ( $id ) {
+			BlogOutput( $rows, $params, $gid, $access, $pop, $menu, 1 );
+		} else {
+			BlogOutput( $rows, $params, $gid, $access, $pop, $menu, 0 );
+		}
 	}
 
  	echo '<input type="hidden" name="id" value="'. $id .'" />';
@@ -1603,7 +1609,7 @@ function recordVote() {
 			$database->setQuery( $query );
 			$database->query() or die( $database->stderr() );;
 		} else {
-			if ($currip <> ($votesdb->lastip)) {
+			if ($currip != ($votesdb->lastip)) {
 				$query = "UPDATE #__content_rating"
 				. "\n SET rating_count = rating_count + 1, rating_sum = rating_sum + $user_rating, lastip = '$currip'"
 				. "\n WHERE content_id = $cid"

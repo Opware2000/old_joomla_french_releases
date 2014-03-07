@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.typedcontent.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.typedcontent.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -114,7 +114,7 @@ function view( $option ) {
 	. "\n FROM #__content AS c"
 	. "\n WHERE c.sectionid = '0'"
 	. "\n AND c.catid = '0'"
-	. "\n AND c.state <> '-2'"
+	. "\n AND c.state != '-2'"
 	. $filter
 	;
 	$database->setQuery( $query );
@@ -129,7 +129,7 @@ function view( $option ) {
 	. "\n LEFT JOIN #__users AS z ON z.id = c.created_by"
 	. "\n WHERE c.sectionid = 0"
 	. "\n AND c.catid = 0"
-	. "\n AND c.state <> -2"
+	. "\n AND c.state != -2"
 	. $search_query
 	. $filter
 	. "\n ORDER BY ". $order
@@ -149,7 +149,7 @@ function view( $option ) {
 		. "\n FROM #__menu"
 		. "\n WHERE componentid = ". $rows[$i]->id
 		. "\n AND type = 'content_typed'"
-		. "\n AND published <> -2"
+		. "\n AND published != -2"
 		;
 		$database->setQuery( $query );
 		$rows[$i]->links = $database->loadResult();

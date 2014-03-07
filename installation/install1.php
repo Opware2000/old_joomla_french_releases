@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: install1.php 188 2005-09-19 12:06:19Z stingrey $
+* @version $Id: install1.php 521 2005-10-14 06:39:07Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -34,8 +34,7 @@ echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?".">";
 <link rel="stylesheet" href="install.css" type="text/css" />
 <script  type="text/javascript">
 <!--
-function check()
-{
+function check() {
 	// form validation check
 	var formValid=false;
 	var f = document.form;
@@ -50,6 +49,10 @@ function check()
 	} else if ( f.DBname.value == '' ) {
 		alert('Please enter a Name for your new Database');
 		f.DBname.focus();
+		formValid=false;
+	} else if ( f.DBPrefix.value == 'old_' ) {
+		alert('You cannot use "old_" as the MySQL Table Prefix because Joomla uses this prefix for backup tables.');
+		f.DBPrefix.focus();
 		formValid=false;
 	} else if ( confirm('Are you sure these settings are correct? \nJoomla will now attempt to populate a Database with the settings you have supplied')) {
 		formValid=true;
@@ -161,7 +164,9 @@ function check()
   							<input class="inputbox" type="text" name="DBPrefix" value="<?php echo "$DBPrefix"; ?>" />
   						</td>
 			  			<td>
+			  			<!--
 			  			<em>Don't use 'old_' since this is used for backup tables</em>
+			  			-->
 			  			</td>
   					</tr>
   		  			<tr>

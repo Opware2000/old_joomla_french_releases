@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.sections.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: admin.sections.php 415 2005-10-09 16:52:44Z stingrey $
 * @package Joomla
 * @subpackage Sections
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -145,7 +145,7 @@ function showSections( $scope, $option ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__categories AS a"
 		. "\n WHERE a.section = '". $rows[$i]->id ."'"
-		. "\n AND a.published <> -2"
+		. "\n AND a.published != -2"
 		;
 		$database->setQuery( $query );
 		$active = $database->loadResult();
@@ -156,7 +156,7 @@ function showSections( $scope, $option ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__content AS a"
 		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
-		. "\n AND a.state <> -2"
+		. "\n AND a.state != -2"
 		;
 		$database->setQuery( $query );
 		$active = $database->loadResult();
@@ -167,7 +167,7 @@ function showSections( $scope, $option ) {
 		$query = "SELECT COUNT( a.id )"
 		. "\n FROM #__content AS a"
 		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
-		. "\n AND a.state <> -2"
+		. "\n AND a.state = -2"
 		;
 		$database->setQuery( $query );
 		$trash = $database->loadResult();
@@ -275,15 +275,15 @@ function saveSection( $option, $scope, $task ) {
 
 	$row = new mosSection( $database );
 	if (!$row->bind( $_POST )) {
-		echo "<script> alert('".$row->getErrorMsg()."'); window.history.go(-1); </script>\n";
+		echo "<script> alert('".$row->getError()."'); document.location.href='index2.php?option=$option&scope=$scope&task=new'; </script>\n";
 		exit();
 	}
 	if (!$row->check()) {
-		echo "<script> alert('".$row->getErrorMsg()."'); window.history.go(-1); </script>\n";
+		echo "<script> alert('".$row->getError()."'); document.location.href='index2.php?option=$option&scope=$scope&task=new'; </script>\n";
 		exit();
 	}
 	if ( $oldtitle ) {
-		if ( $oldtitle <> $row->title ) {
+		if ( $oldtitle != $row->title ) {
 			$query = "UPDATE #__menu"
 			. "\n SET name = '$row->title'"
 			. "\n WHERE name = '$oldtitle'"

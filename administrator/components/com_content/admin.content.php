@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: admin.content.php 322 2005-10-02 14:32:15Z stingrey $
+* @version $Id: admin.content.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Content
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -234,8 +234,8 @@ function viewContent( $sectionid, $option ) {
 	. "\n FROM #__content AS c"
 	. "\n INNER JOIN #__sections AS s ON s.id = c.sectionid"
 	. "\n LEFT JOIN #__users AS u ON u.id = c.created_by"
-	. "\n WHERE c.state <> -1"
-	. "\n AND c.state <> -2"
+	. "\n WHERE c.state != -1"
+	. "\n AND c.state != -2"
 	. "\n GROUP BY u.name"
 	. "\n ORDER BY u.name"
 	;
@@ -408,7 +408,7 @@ function editContent( $uid=0, $sectionid=0, $option ) {
 	}
 
 	// fail if checked out not by 'me'
-	if ($row->checked_out && $row->checked_out <> $my->id) {
+	if ($row->checked_out && $row->checked_out != $my->id) {
 		mosRedirect( 'index2.php?option=com_content', 'The module '. $row->title .' is currently being edited by another administrator' );
 	}
 

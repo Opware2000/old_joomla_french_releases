@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: content_typed.class.php 328 2005-10-02 15:39:51Z Jinx $
+* @version $Id: content_typed.class.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Menus
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -29,7 +29,7 @@ class content_typed_menu {
 		$menu->load( $uid );
 
 		// fail if checked out not by 'me'
-		if ($menu->checked_out && $menu->checked_out <> $my->id) {
+		if ($menu->checked_out && $menu->checked_out != $my->id) {
 			echo "<script>alert('The module $menu->title is currently being edited by another administrator'); document.location.href='index2.php?option=$option'</script>\n";
 			exit(0);
 		}

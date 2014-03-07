@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: login.php 85 2005-09-15 23:12:03Z eddieajau $
+* @version $Id: login.php 393 2005-10-08 13:37:52Z akede $
 * @package Joomla
 * @subpackage Users
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
@@ -49,11 +49,11 @@ $params->def( 'registration', $mainframe->getCfg( 'allowUserRegistration' ) );
 
 $image_login = '';
 $image_logout = '';
-if ( $params->get( 'image_login' ) <> -1 ) {
+if ( $params->get( 'image_login' ) != -1 ) {
 	$image = $mosConfig_live_site .'/images/stories/'. $params->get( 'image_login' );
 	$image_login = '<img src="'. $image  .'" align="'. $params->get( 'image_login_align' ) .'" hspace="10" alt="" />';
 }
-if ( $params->get( 'image_logout' ) <> -1 ) {
+if ( $params->get( 'image_logout' ) != -1 ) {
 	$image = $mosConfig_live_site .'/images/stories/'. $params->get( 'image_logout' );
 	$image_logout = '<img src="'. $image .'" align="'. $params->get( 'image_logout_align' ) .'" hspace="10" alt="" />';
 }

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: configuration.php-dist 217 2005-09-21 15:15:58Z stingrey $
+* @version $Id: configuration.php-dist 506 2005-10-13 05:49:24Z stingrey $
 * @package Joomla
 * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -47,7 +47,8 @@ $mosConfig_MetaTitle = '1';
 $mosConfig_MetaAuthor = '1';
 $mosConfig_debug = '0';
 $mosConfig_locale = 'en_GB';
-$mosConfig_offset = '0';				// Local time offset
+$mosConfig_offset = '0';				// Server Local Time
+$mosConfig_offset_user = '0';			// User Local Time
 $mosConfig_hideAuthor = '0';
 $mosConfig_hideCreateDate = '0';
 $mosConfig_hideModifyDate = '0';
