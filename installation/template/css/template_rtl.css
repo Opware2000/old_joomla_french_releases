@@ -1,10 +1,7 @@
 /**
- * Joomla! 1.5 Installation template main RTL css file
- *
- * @author		Mati Kochen
- * @package		Joomla
- * @since		1.5
- * @version     1.0
+ * @version		$Id: template_rtl.css 19876 2010-12-14 10:57:06Z infograf768 $
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 body{
@@ -17,6 +14,15 @@ body{
 
 #header3 {
 	background-image: url(../images/j_header_left_rtl.png);
+}
+
+#header3 span.logo {
+	float: left;
+	padding-left:15px;
+}
+
+#header3 span {
+	padding-right: 15px;
 }
 
 #version {
@@ -68,5 +74,9 @@ h3.moofx-toggler-down {
 }
 
 #srcEncoding{
+	text-align: right;
+}
+
+td.item + td {
 	text-align: right;
 }

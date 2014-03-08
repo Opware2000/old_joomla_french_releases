@@ -1,244 +1,279 @@
 <?php
 /**
- * @version		$Id: category.php 19343 2010-11-03 18:12:02Z ian $
- * @package		Joomla
- * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant to the
- * GNU General Public License, and as distributed it includes or is derivative
- * of works licensed under the GNU General Public License or other free or open
- * source software licenses. See COPYRIGHT.php for copyright notices and
- * details.
+ * @version		$Id: category.php 19575 2010-11-19 08:30:21Z infograf768 $
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die( 'Restricted access' );
+// No direct access
+defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modellist');
 
 /**
  * Weblinks Component Weblink Model
  *
- * @package		Joomla
- * @subpackage	Content
- * @since 1.5
+ * @package		Joomla.Site
+ * @subpackage	com_weblinks
+ * @since		1.5
  */
-class WeblinksModelCategory extends JModel
+class WeblinksModelCategory extends JModelList
 {
 	/**
-	 * Category id
-	 *
-	 * @var int
-	 */
-	var $_id = null;
-
-	/**
-	 * Category ata array
+	 * Category items data
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_item = null;
+
+	protected $_articles = null;
+
+	protected $_siblings = null;
+
+	protected $_children = null;
+
+	protected $_parent = null;
 
 	/**
-	 * Category total
+	 * The category that applies.
 	 *
-	 * @var integer
+	 * @access	protected
+	 * @var		object
 	 */
-	var $_total = null;
+	protected $_category = null;
 
 	/**
-	 * Category data
+	 * The list of other weblink categories.
 	 *
-	 * @var object
+	 * @access	protected
+	 * @var		array
 	 */
-	var $_category = null;
+	protected $_categories = null;
 
 	/**
-	 * Pagination object
+	 * Method to get a list of items.
 	 *
-	 * @var object
+	 * @return	mixed	An array of objects on success, false on failure.
 	 */
-	var $_pagination = null;
-
-	/**
-	 * Constructor
-	 *
-	 * @since 1.5
-	 */
-	function __construct()
+	public function &getItems()
 	{
-		parent::__construct();
+		// Invoke the parent getItems method to get the main list
+		$items = &parent::getItems();
 
-		global $mainframe;
-
-		$config = JFactory::getConfig();
-
-		// Get the pagination request variables
-		$this->setState('limit', $mainframe->getUserStateFromRequest('com_weblinks.limit', 'limit', $config->getValue('config.list_limit'), 'int'));
-		$this->setState('limitstart', JRequest::getVar('limitstart', 0, '', 'int'));
-
-		// In case limit has been changed, adjust limitstart accordingly
-		$this->setState('limitstart', ($this->getState('limit') != 0 ? (floor($this->getState('limitstart') / $this->getState('limit')) * $this->getState('limit')) : 0));
-
-		$filter_order = JRequest::getCmd('filter_order', 'ordering');
-		$filter_order_Dir = JRequest::getCmd('filter_order_Dir', 'ASC');
-
-		if (!in_array($filter_order, array('title', 'hits', 'ordering'))) {
-			$filter_order = 'ordering';
-		}
-
-		if (!in_array(strtoupper($filter_order_Dir), array('ASC', 'DESC', ''))) {
-			$filter_order_Dir = 'ASC';
-		}
-
-		// Get the filter request variables
-		$this->setState('filter_order', $filter_order);
-		$this->setState('filter_order_dir', $filter_order_Dir);
-
-		$id = JRequest::getVar('id', 0, '', 'int');
-		$this->setId((int)$id);
-	}
-
-	/**
-	 * Method to set the category id
-	 *
-	 * @access	public
-	 * @param	int	Category ID number
-	 */
-	function setId($id)
-	{
-		// Set category ID and wipe data
-		$this->_id			= $id;
-		$this->_category	= null;
-	}
-
-	/**
-	 * Method to get weblink item data for the category
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function getData()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
-
-			$total = count($this->_data);
-			for($i = 0; $i < $total; $i++)
-			{
-				$item =& $this->_data[$i];
-				$item->slug = $item->id.':'.$item->alias;
+		// Convert the params field into an object, saving original in _params
+		for ($i = 0, $n = count($items); $i < $n; $i++) {
+			$item = &$items[$i];
+			if (!isset($this->_params)) {
+				$params = new JRegistry();
+				$params->loadJSON($item->params);
+				$item->params = $params;
 			}
 		}
 
-		return $this->_data;
+		return $items;
 	}
 
 	/**
-	 * Method to get the total number of weblink items for the category
+	 * Method to build an SQL query to load the list data.
 	 *
-	 * @access public
-	 * @return integer
+	 * @return	string	An SQL query
+	 * @since	1.6
 	 */
-	function getTotal()
+	protected function getListQuery()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
+		$user	= JFactory::getUser();
+		$groups	= implode(',', $user->getAuthorisedViewLevels());
+
+		// Create a new query object.
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+
+		// Select required fields from the categories.
+		$query->select($this->getState('list.select', 'a.*'));
+		$query->from('`#__weblinks` AS a');
+		$query->where('a.access IN ('.$groups.')');
+
+		// Filter by category.
+		if ($categoryId = $this->getState('category.id')) {
+			$query->where('a.catid = '.(int) $categoryId);
+			$query->join('LEFT', '#__categories AS c ON c.id = a.catid');
+			$query->where('c.access IN ('.$groups.')');
+
+			//Filter by published category
+			$cpublished = $this->getState('filter.c.published');
+			if (is_numeric($cpublished)) {
+				$query->where('c.published = '.(int) $cpublished);
+			}
+		}
+		// Join over the users for the author and modified_by names.
+		$query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author");
+ 
+		$query->join('LEFT', '#__users AS ua ON ua.id = a.created_by');
+		$query->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
+
+		// Filter by state
+
+		$state = $this->getState('filter.state');		
+		if (is_numeric($state)) {
+			$query->where('a.state = '.(int) $state);	
 		}
 
-		return $this->_total;
+		// Filter by start and end dates.
+		$nullDate = $db->Quote($db->getNullDate());
+		$nowDate = $db->Quote(JFactory::getDate()->toMySQL());
+
+		if ($this->getState('filter.publish_date')){
+			$query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')');
+			$query->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
+		}
+		
+		// Filter by language
+		if ($this->getState('filter.language')) {
+			$query->where('a.language in (' . $db->Quote(JFactory::getLanguage()->getTag()) . ',' . $db->Quote('*') . ')');
+		}
+
+		// Add the list ordering clause.
+		$query->order($db->getEscaped($this->getState('list.ordering', 'a.ordering')).' '.$db->getEscaped($this->getState('list.direction', 'ASC')));
+		return $query;
 	}
 
+
 	/**
-	 * Method to get a pagination object of the weblink items for the category
+	 * Method to auto-populate the model state.
 	 *
-	 * @access public
-	 * @return integer
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since	1.6
 	 */
-	function getPagination()
+	protected function populateState()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+		// Initialise variables.
+		$app	= JFactory::getApplication();
+		$params	= JComponentHelper::getParams('com_weblinks');
+
+		// List state information
+		$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'));
+		$this->setState('list.limit', $limit);
+
+		$limitstart = JRequest::getVar('limitstart', 0, '', 'int');
+		$this->setState('list.start', $limitstart);
+
+		$orderCol	= JRequest::getCmd('filter_order', 'ordering');
+		$this->setState('list.ordering', $orderCol);
+
+		$listOrder	=  JRequest::getCmd('filter_order_Dir', 'ASC');
+		$this->setState('list.direction', $listOrder);
+
+		$id = JRequest::getVar('id', 0, '', 'int');
+		$this->setState('category.id', $id);
+
+		$user = JFactory::getUser();	
+		if ((!$user->authorise('core.edit.state', 'com_weblinks')) &&  (!$user->authorise('core.edit', 'com_weblinks'))){
+			// limit to published for people who can't edit or edit.state.
+			$this->setState('filter.state',	1);
+			
+			// Filter by start and end dates.
+			$this->setState('filter.publish_date', true);
 		}
 
-		return $this->_pagination;
+		$this->setState('filter.language',$app->getLanguageFilter());
+
+		// Load the parameters.
+		$this->setState('params', $params);
 	}
 
 	/**
 	 * Method to get category data for the current category
 	 *
-	 * @since 1.5
+	 * @param	int		An optional ID
+	 *
+	 * @return	object
+	 * @since	1.5
 	 */
-	function getCategory()
+	public function getCategory()
 	{
-		// Load the Category data
-		if ($this->_loadCategory())
+		if(!is_object($this->_item))
 		{
-			// Initialize some variables
-			$user = &JFactory::getUser();
-
-			// Make sure the category is published
-			if (!$this->_category->published) {
-				JError::raiseError(404, JText::_("Resource Not Found"));
-				return false;
-			}
-			// check whether category access level allows access
-			if ($this->_category->access > $user->get('aid', 0)) {
-				JError::raiseError(403, JText::_("ALERTNOTAUTH"));
-				return false;
+			$app = JFactory::getApplication();
+			$menu = $app->getMenu();
+			$active = $menu->getActive();
+			$params = new JRegistry();
+			$params->loadJSON($active->params);
+			$options = array();
+			$options['countItems'] = $params->get('show_cat_num_links_cat', 1) || $params->get('show_empty_categories', 0);
+			$categories = JCategories::getInstance('Weblinks', $options);
+			$this->_item = $categories->get($this->getState('category.id', 'root'));
+			if(is_object($this->_item))
+			{
+				$this->_children = $this->_item->getChildren();
+				$this->_parent = false;
+				if($this->_item->getParent())
+				{
+					$this->_parent = $this->_item->getParent();
+				}
+				$this->_rightsibling = $this->_item->getSibling();
+				$this->_leftsibling = $this->_item->getSibling(false);
+			} else {
+				$this->_children = false;
+				$this->_parent = false;
 			}
 		}
-		return $this->_category;
+
+		return $this->_item;
 	}
 
 	/**
-	 * Method to load category data if it doesn't exist.
+	 * Get the parent categorie.
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
+	 * @param	int		An optional category id. If not supplied, the model state 'category.id' will be used.
+	 *
+	 * @return	mixed	An array of categories or false if an error occurs.
 	 */
-	function _loadCategory()
+	public function getParent()
 	{
-		if (empty($this->_category))
+		if(!is_object($this->_item))
 		{
-			// current category info
-			$query = 'SELECT c.*, ' .
-				' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug '.
-				' FROM #__categories AS c' .
-				' WHERE c.id = '. (int) $this->_id .
-				' AND c.section = "com_weblinks"';
-			$this->_db->setQuery($query, 0, 1);
-			$this->_category = $this->_db->loadObject();
+			$this->getCategory();
 		}
-		return true;
+		return $this->_parent;
 	}
 
-	function _buildQuery()
+	/**
+	 * Get the sibling (adjacent) categories.
+	 *
+	 * @return	mixed	An array of categories or false if an error occurs.
+	 */
+	function &getLeftSibling()
 	{
-		$filter_order		= $this->getState('filter_order');
-		$filter_order_dir	= $this->getState('filter_order_dir');
+		if(!is_object($this->_item))
+		{
+			$this->getCategory();
+		}
+		return $this->_leftsibling;
+	}
 
-		$filter_order		= JFilterInput::clean($filter_order, 'cmd');
-		$filter_order_dir	= JFilterInput::clean($filter_order_dir, 'word');
+	function &getRightSibling()
+	{
+		if(!is_object($this->_item))
+		{
+			$this->getCategory();
+		}
+		return $this->_rightsibling;
+	}
 
-		// We need to get a list of all weblinks in the given category
-		$query = 'SELECT *' .
-			' FROM #__weblinks' .
-			' WHERE catid = '. (int) $this->_id.
-			' AND published = 1' .
-			' AND archived = 0'.
-			' ORDER BY '. $filter_order .' '. $filter_order_dir .', ordering';
-
-		return $query;
+	/**
+	 * Get the child categories.
+	 *
+	 * @param	int		An optional category id. If not supplied, the model state 'category.id' will be used.
+	 *
+	 * @return	mixed	An array of categories or false if an error occurs.
+	 */
+	function &getChildren()
+	{
+		if(!is_object($this->_item))
+		{
+			$this->getCategory();
+		}
+		return $this->_children;
 	}
 }

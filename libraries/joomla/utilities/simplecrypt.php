@@ -1,25 +1,20 @@
 <?php
 /**
- * @version		$Id: simplecrypt.php 14401 2010-01-26 14:10:00Z louis $
+ * @version		$Id: simplecrypt.php 18766 2010-09-03 02:14:59Z ian $
  * @package		Joomla.Framework
  * @subpackage	Utilities
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant to the
- * GNU General Public License, and as distributed it includes or is derivative
- * of works licensed under the GNU General Public License or other free or open
- * source software licenses. See COPYRIGHT.php for copyright notices and
- * details.
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Check to ensure this file is within the rest of the framework
-defined('JPATH_BASE') or die();
+// No direct access
+defined('JPATH_BASE') or die;
 
 /**
  * JSimpleCrypt is a very simple encryption algorithm for encyrpting/decrypting strings
  *
  * @static
- * @package 	Joomla.Framework
+ * @package		Joomla.Framework
  * @subpackage	Utilities
  * @since		1.5
  */
@@ -47,7 +42,7 @@ class JSimpleCrypt extends JObject
 			$this->_key = (string) $key;
 		} else {
 			$conf = &JFactory::getConfig();
-			$this->_key = md5($conf->getValue('config.secret'));
+			$this->_key = md5($conf->get('secret'));
 		}
 	}
 

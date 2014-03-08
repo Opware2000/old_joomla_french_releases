@@ -1,32 +1,24 @@
 <?php
 /**
- * @version		$Id: rss.php 14401 2010-01-26 14:10:00Z louis $
+ * @version		$Id: rss.php 18963 2010-09-20 16:34:10Z dextercowley $
  * @package		Joomla.Framework
  * @subpackage	Document
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Check to ensure this file is within the rest of the framework
-defined('JPATH_BASE') or die();
+// No direct access
+defined('JPATH_BASE') or die;
 
 
- /**
+/**
  * JDocumentRenderer_RSS is a feed that implements RSS 2.0 Specification
  *
- * @author	Johan Janssens <johan.janssens@joomla.org>
- *
- * @package 	Joomla.Framework
- * @subpackage		Document
- * @see http://www.rssboard.org/rss-specification
- * @since	1.5
+ * @package		Joomla.Framework
+ * @subpackage	Document
+ * @see			http://www.rssboard.org/rss-specification
+ * @since		1.5
  */
-
 class JDocumentRendererRSS extends JDocumentRenderer
 {
 	/**
@@ -45,21 +37,29 @@ class JDocumentRendererRSS extends JDocumentRenderer
 	 */
 	function render()
 	{
-		$now	=& JFactory::getDate();
-		$data	=& $this->_doc;
+		$app	= JFactory::getApplication();
+		$now	= JFactory::getDate();
+		$data	= &$this->_doc;
 
-		$uri =& JFactory::getURI();
+		$uri = JFactory::getURI();
 		$url = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
-		$syndicationURL =& JRoute::_('&format=feed&type=rss');
+		$syndicationURL = JRoute::_('&format=feed&type=rss');
 		
+		$feed_title = htmlspecialchars(
+			$app->getCfg('sitename_pagetitles',0)?
+			JText::sprintf('JPAGETITLE', htmlspecialchars_decode($app->getCfg('sitename')), $data->title):
+			$data->title
+		, ENT_COMPAT, 'UTF-8');
+
 		$feed = "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 		$feed.= "	<channel>\n";
-		$feed.= "		<title>".$data->title."</title>\n";
-		$feed.= "		<description>".htmlspecialchars($data->description)."</description>\n";
+		$feed.= "		<title>".$feed_title."</title>\n";
+		$feed.= "		<description>".$data->description."</description>\n";
 		$feed.= "		<link>".str_replace(' ','%20',$url.$data->link)."</link>\n";
 		$feed.= "		<lastBuildDate>".htmlspecialchars($now->toRFC822(), ENT_COMPAT, 'UTF-8')."</lastBuildDate>\n";
 		$feed.= "		<generator>".$data->getGenerator()."</generator>\n";
-	
+		$feed.= '		<atom:link rel="self" type="application/rss+xml" href="'.str_replace(' ','%20',$url.$syndicationURL)."\"/>\n";
+
 		if ($data->image!=null)
 		{
 			$feed.= "		<image>\n";
@@ -91,10 +91,10 @@ class JDocumentRendererRSS extends JDocumentRenderer
 			$feed.= "		<webMaster>".htmlspecialchars($data->webmaster, ENT_COMPAT, 'UTF-8')."</webMaster>\n";
 		}
 		if ($data->pubDate!="") {
-			$pubDate =& JFactory::getDate($data->pubDate);
+			$pubDate = JFactory::getDate($data->pubDate);
 			$feed.= "		<pubDate>".htmlspecialchars($pubDate->toRFC822(),ENT_COMPAT, 'UTF-8')."</pubDate>\n";
 		}
-		if ($data->category!="") {
+		if (empty($data->category) === false) {
 			$feed.= "		<category>".htmlspecialchars($data->category, ENT_COMPAT, 'UTF-8')."</category>\n";
 		}
 		if ($data->docs!="") {
@@ -125,7 +125,7 @@ class JDocumentRendererRSS extends JDocumentRenderer
 			$feed.= "			<description><![CDATA[".$this->_relToAbs($data->items[$i]->description)."]]></description>\n";
 
 			if ($data->items[$i]->authorEmail!="") {
-				$feed.= "			<author>".htmlspecialchars($data->items[$i]->authorEmail . ' (' . 
+				$feed.= "			<author>".htmlspecialchars($data->items[$i]->authorEmail . ' (' .
 										$data->items[$i]->author . ')', ENT_COMPAT, 'UTF-8')."</author>\n";
 			}
 			/*
@@ -134,14 +134,21 @@ class JDocumentRendererRSS extends JDocumentRenderer
 					$data.= "			<source>".htmlspecialchars($data->items[$i]->source, ENT_COMPAT, 'UTF-8')."</source>\n";
 			}
 			*/
-			if ($data->items[$i]->category!="") {
-				$feed.= "			<category>".htmlspecialchars($data->items[$i]->category, ENT_COMPAT, 'UTF-8')."</category>\n";
+			if (empty($data->items[$i]->category) === false) {
+				if (is_array($data->items[$i]->category)) {
+					foreach ($data->items[$i]->category as $cat) {
+						$feed.= "			<category>".htmlspecialchars($cat, ENT_COMPAT, 'UTF-8')."</category>\n";
+					}
+				}
+				else {
+					$feed.= "			<category>".htmlspecialchars($data->items[$i]->category, ENT_COMPAT, 'UTF-8')."</category>\n";
+				}
 			}
 			if ($data->items[$i]->comments!="") {
 				$feed.= "			<comments>".htmlspecialchars($data->items[$i]->comments, ENT_COMPAT, 'UTF-8')."</comments>\n";
 			}
 			if ($data->items[$i]->date!="") {
-			$itemDate =& JFactory::getDate($data->items[$i]->date);
+			$itemDate = JFactory::getDate($data->items[$i]->date);
 				$feed.= "			<pubDate>".htmlspecialchars($itemDate->toRFC822(), ENT_COMPAT, 'UTF-8')."</pubDate>\n";
 			}
 			if ($data->items[$i]->guid!="") {
@@ -174,7 +181,7 @@ class JDocumentRendererRSS extends JDocumentRenderer
 	function _relToAbs($text)
 	{
 		$base = JURI::base();
-  		$text = preg_replace("/(href|src)=\"(?!http|ftp|https|mailto)([^\"]*)\"/", "$1=\"$base\$2\"", $text);
+		$text = preg_replace("/(href|src)=\"(?!http|ftp|https|mailto)([^\"]*)\"/", "$1=\"$base\$2\"", $text);
 
 		return $text;
 	}

@@ -1,25 +1,19 @@
 <?php
 /**
- * @version		$Id: search.php 14401 2010-01-26 14:10:00Z louis $
- * @package		Joomla
+ * @version		$Id: search.php 15649 2010-03-27 18:08:22Z hackwar $
+ * @package		Joomla.Site
  * @subpackage	Search
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
-// Require the com_content helper library
-require_once (JPATH_COMPONENT.DS.'controller.php');
+jimport('joomla.application.component.controller');
 
 // Create the controller
-$controller = new SearchController( );
+$controller = JController::getInstance('Search');
 
 // Perform the Request task
 $controller->execute(JRequest::getCmd('task'));
