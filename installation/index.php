@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: index.php 21652 2011-06-23 05:33:52Z chdemko $
+ * @version		$Id: index.php 21906 2011-07-20 09:19:04Z infograf768 $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -8,7 +8,7 @@
 
 // PHP 5 check
 if (version_compare(PHP_VERSION, '5.2.4', '<')) {
-	die('Your host needs to use PHP 5.2.4 or higher to run Joomla 1.6.');
+	die('Your host needs to use PHP 5.2.4 or higher to run Joomla 1.7.');
 }
 
 /**

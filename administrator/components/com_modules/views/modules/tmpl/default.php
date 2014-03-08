@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21595 2011-06-21 02:51:29Z dextercowley $
+ * @version		$Id: default.php 22095 2011-09-17 16:07:07Z infograf768 $
  * @package		Joomla.Administrator
  * @subpackage	com_modules
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -138,13 +138,17 @@ $saveOrder	= $listOrder == 'ordering';
 						<?php echo JText::sprintf('JGLOBAL_LIST_NOTE', $this->escape($item->note));?></p>
 					<?php endif; ?>
 				</td>
-                <td class="center">
+				<td class="center">
 					<?php echo JHtml::_('jgrid.published', $item->published, $i, 'modules.', $canChange, 'cb', $item->publish_up, $item->publish_down); ?>
 				</td>
 				<td class="left">
-					<?php echo $item->position; ?>
+					<?php if ($item->position) : ?>
+						<?php echo $item->position; ?>
+					<?php else : ?>
+						<?php echo ':: '.JText::_('JNONE').' ::'; ?>
+					<?php endif; ?>
 				</td>
-                <td class="order">
+				<td class="order">
 					<?php if ($canChange) : ?>
 						<?php if ($saveOrder) :?>
 							<?php if ($listDirn == 'asc') : ?>

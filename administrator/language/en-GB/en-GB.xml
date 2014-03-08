@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: en-GB.xml 21875 2011-07-17 07:35:28Z infograf768 $ -->
+<!-- $Id: en-GB.xml 22075 2011-09-14 07:59:52Z infograf768 $ -->
 <metafile version="1.7" client="administrator">
 	<name>English (United Kingdom)</name>
-	<version>1.7.0</version>
+	<version>1.7.1</version>
 	<creationDate>2008-03-15</creationDate>
 	<author>Joomla! Project</author>
 	<authorEmail>admin@joomla.org</authorEmail>
@@ -75,6 +75,8 @@
 		<filename>en-GB.mod_login.sys.ini</filename>
 		<filename>en-GB.mod_menu.ini</filename>
 		<filename>en-GB.mod_menu.sys.ini</filename>
+		<filename>en-GB.mod_multilangstatus.ini</filename>
+		<filename>en-GB.mod_multilangstatus.sys.ini</filename>
 		<filename>en-GB.mod_popular.ini</filename>
 		<filename>en-GB.mod_popular.sys.ini</filename>
 		<filename>en-GB.mod_quickicon.ini</filename>

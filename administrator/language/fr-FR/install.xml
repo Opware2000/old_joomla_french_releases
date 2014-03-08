@@ -3,7 +3,7 @@
 <extension version="1.7" client="administrator" type="language" method="upgrade">
 	<name>French (FR)</name>
     <tag>fr-FR</tag>
-	<version>1.7.0</version>
+	<version>1.7.1</version>
 	<creationDate>2011-02-23</creationDate>
 	<author>French translation team : joomla.fr</author>
 	<authorEmail>traduction@joomla.fr</authorEmail>
@@ -77,6 +77,8 @@
 		<filename>fr-FR.mod_login.sys.ini</filename>
 		<filename>fr-FR.mod_menu.ini</filename>
 		<filename>fr-FR.mod_menu.sys.ini</filename>
+		<filename>fr-FR.mod_multilangstatus.ini</filename>
+		<filename>fr-FR.mod_multilangstatus.sys.ini</filename>
 		<filename>fr-FR.mod_popular.ini</filename>
 		<filename>fr-FR.mod_popular.sys.ini</filename>
 		<filename>fr-FR.mod_quickicon.ini</filename>

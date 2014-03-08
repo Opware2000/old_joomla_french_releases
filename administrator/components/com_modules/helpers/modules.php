@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: modules.php 22095 2011-09-17 16:07:07Z infograf768 $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -100,8 +100,17 @@ abstract class ModulesHelper
 
 		// Build the list
 		$options = array();
-		foreach ($positions as $position) {
-			$options[]	= JHtml::_('select.option', $position, $position);
+		foreach ($positions as $position)
+		{
+			if (!$position)
+			{
+				$options[]	= JHtml::_('select.option', 'none', ':: '.JText::_('JNONE').' ::');
+				
+			}
+			else
+			{
+				$options[]	= JHtml::_('select.option', $position, $position);
+			}
 		}
 		return $options;
 	}

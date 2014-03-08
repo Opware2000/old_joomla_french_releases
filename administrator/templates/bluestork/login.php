@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: login.php 21710 2011-06-28 21:53:59Z chdemko $
+ * @version		$Id: login.php 22010 2011-08-28 14:52:17Z infograf768 $
  * @package		Joomla.Administrator
  * @subpackage	Templates.bluestork
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -49,7 +49,7 @@ JHtml::_('behavior.noframes');
 </head>
 <body>
 	<div id="border-top" class="h_blue">
-		<span class="title"><a href="index.php"><?php echo $this->params->get('showSiteName') ? $app->getCfg('sitename') : JText::_('TPL_BLUESTORK_HEADER'); ?></a></span>
+		<span class="title"><a href="index.php"><?php echo $this->params->get('showSiteName') ? $app->getCfg('sitename'). " " . JText::_('JADMINISTRATION') : JText::_('JADMINISTRATION') ; ?></a></span>
 	</div>
 	<div id="content-box">
 			<div id="element-box" class="login">

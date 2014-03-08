@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: framework.php 21879 2011-07-17 22:33:34Z dextercowley $
+ * @version		$Id: framework.php 22155 2011-09-25 21:04:08Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -38,7 +38,9 @@ if (!class_exists('JVersion')) {
 require_once JPATH_LIBRARIES.'/import.php';
 
 // Pre-Load configuration.
+ob_start();
 require_once JPATH_CONFIGURATION.'/configuration.php';
+ob_end_clean();
 
 // System configuration.
 $CONFIG = new JConfig();

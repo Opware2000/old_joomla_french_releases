@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: discover.php 21320 2011-05-11 01:01:37Z dextercowley $
+ * @version		$Id: discover.php 21909 2011-07-20 16:33:40Z infograf768 $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -17,7 +17,7 @@ jimport('joomla.installer.installer');
 /**
  * Installer Manage Model
  *
- * @package		Joomla.Administator
+ * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @since		1.6
  */

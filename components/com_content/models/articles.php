@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 21700 2011-06-28 04:32:41Z dextercowley $
+ * @version		$Id: articles.php 22110 2011-09-20 20:09:57Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -455,6 +455,7 @@ class ContentModelArticles extends JModelList
 
 		// Add the list ordering clause.
 		$query->order($this->getState('list.ordering', 'a.ordering').' '.$this->getState('list.direction', 'ASC'));
+		$query->group('a.id');		
 
 		return $query;
 	}
@@ -527,7 +528,7 @@ class ContentModelArticles extends JModelList
 			}
 
 			// get display date
-			switch ($item->params->get('show_date'))
+			switch ($item->params->get('list_show_date'))
 			{
 				case 'modified':
 					$item->displayDate = $item->modified;

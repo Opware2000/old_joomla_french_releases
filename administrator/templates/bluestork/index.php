@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: index.php 21721 2011-07-01 08:48:47Z chdemko $
+ * @version		$Id: index.php 22010 2011-08-28 14:52:17Z infograf768 $
  * @package		Joomla.Administrator
  * @subpackage	Templates.bluestork
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -52,7 +52,7 @@ if ($this->params->get('highContrast')) {
 <body id="minwidth-body">
 	<div id="border-top" class="h_blue">
 		<span class="logo"><a href="http://www.joomla.org" target="_blank"><img src="templates/<?php echo  $this->template ?>/images/logo.png" alt="Joomla!" /></a></span>
-		<span class="title"><a href="index.php"><?php echo $this->params->get('showSiteName') ? $app->getCfg('sitename') : JText::_('TPL_BLUESTORK_HEADER'); ?></a></span>
+		<span class="title"><a href="index.php"><?php echo $this->params->get('showSiteName') ? $app->getCfg('sitename'). " " . JText::_('JADMINISTRATION') : JText::_('JADMINISTRATION') ; ?></a></span>
 	</div>
 	<div id="header-box">
 		<div id="module-menu">

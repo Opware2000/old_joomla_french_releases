@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: index.php 21743 2011-07-06 08:24:29Z chdemko $
+ * @version		$Id: index.php 22008 2011-08-28 07:34:06Z infograf768 $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -39,13 +39,20 @@ JHtml::_('script', 'installation/template/js/installation.js', true, false, fals
 			<link href="template/css/ie7.css" rel="stylesheet" type="text/css" />
 		<![endif]-->
 		<script type="text/javascript">
-			var baseUrl = '<?php echo JURI::current(); ?>';
+			window.addEvent('domready', function() {
+				window.Install = new Installation('rightpad', '<?php echo JURI::current(); ?>');
+
+				Locale.define('<?php echo JFactory::getLanguage()->getTag(); ?>', 'installation', {
+					sampleDataLoaded: '<?php echo JText::_('INSTL_SITE_SAMPLE_LOADED', true); ?>'
+				});
+				Locale.use('<?php echo JFactory::getLanguage()->getTag(); ?>');
+			});
  		</script>
 	</head>
 	<body>
 		<div id="header">
 			<span class="logo"><a href="http://www.joomla.org" target="_blank"><img src="template/images/logo.png" alt="Joomla!" /></a></span>
-			<span>Joomla! <?php echo JVERSION; ?> <?php echo JText::_('INSTL_INSTALLATION') ?></span>
+			<h1>Joomla! <?php echo JVERSION; ?> <?php echo JText::_('INSTL_INSTALLATION') ?></h1>
 		</div>
 		<jdoc:include type="message" />
 		<div id="content-box">

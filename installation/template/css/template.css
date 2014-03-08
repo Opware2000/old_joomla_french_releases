@@ -1,5 +1,5 @@
 /**
- * @version		$Id: template.css 21743 2011-07-06 08:24:29Z chdemko $
+ * @version		$Id: template.css 22080 2011-09-14 22:38:22Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -32,7 +32,6 @@ h1, h2, h3, h4, h5,
 #header3 span,
 .step-grey,
 .step,
-.steptitle,
 .button1-left a,
 .button1-right a {
 	font-family: Arial, Helvetica, sans-serif;
@@ -68,10 +67,6 @@ td:first-child {
 	width: auto;
 }
 
-.sample-data td:first-child {
-	/*width: auto;*/
-}
-
 td.item + td {
 	text-align: left;
 }
@@ -88,7 +83,7 @@ td.item + td {
 	border-top-left-radius: 8px;
 }
 
-#header span {
+#header h1 {
 	font-size: 22px;
 	color: #fff;
 	font-weight: bold;
@@ -126,11 +121,14 @@ td.item + td {
 
 #content-pad {
 	padding: 10px 10px 0 10px;
+	min-height: 435px;
 }
 
 #stepbar {
 	float: left;
 	width: 170px;
+	position: absolute;
+	-webkit-transition: left .2s linear;
 }
 
 #stepbar div.box {
@@ -138,7 +136,7 @@ td.item + td {
 	height: 140px;
 }
 
-#stepbar h1 {
+#stepbar h2 {
 	margin: 0;
 	padding-bottom: 8px;
 	font-size: 20px;
@@ -167,11 +165,13 @@ td.item + td {
 }
 
 .step-grey {
-  color: #a7a7a7
+	color: #a7a7a7;
 }
 
 #right, #warning {
 	margin-left: 180px;
+	-webkit-transition: margin-left .2s linear;
+	-moz-transition: margin-left .2s linear;
 }
 
 #rightpad {
@@ -183,12 +183,13 @@ td.item + td {
 	margin-bottom: 10px;
 }
 
-.steptitle {
+#step h2 {
 	font-size: 20px;
 	line-height: 30px;
 	color: #025A8D;
 	font-weight: bold;
 	padding-left: 6px;
+	margin: 0;
 }
 
 .far-right {
@@ -264,7 +265,7 @@ td.item + td {
 	background: #fff;
 }
 
-#installer h2 {
+#installer h3 {
 	font-size: 14px;
 	line-height: 20px;
 	height: 20px;
@@ -287,11 +288,11 @@ td.item + td {
 }
 
 .extra-padding {
-	padding: 0px;
+	padding: 0;
 }
 
 .install-body fieldset {
-  padding: 5px;
+	padding: 5px;
 	margin: 0;
 	border: 0;
 }
@@ -311,14 +312,17 @@ td.item + td {
 	color: #c00;
 }
 
-.content       { width: 100%; }
-.content .item { width: 50%; }
-.content2 .item { /*width: 30%; */}
+.content {
+	width: 100%;
+}
+.content .item {
+	width: 50%;
+}
 
 .license {
-  padding: 0px;
-  width: 100%;
-  height: 500px;
+	padding: 0;
+	width: 100%;
+	height: 500px;
 }
 
 .error {
@@ -343,7 +347,7 @@ dl#system-message dt.error {
 
 dl#system-message dd.error {
 	display: block;
-	padding-left: 0em;
+	padding-left: 0;
 }
 
 dl#system-message dd.error ul {
@@ -354,7 +358,7 @@ dl#system-message dd.error ul li {
 	display: block;
 }
 
-h3.title-smenu, h3.moofx-toggler {
+h4.title-smenu, h4.moofx-toggler {
 	margin: 0;
 	border: 1px solid #ccc;
 	padding: 4px;
@@ -365,8 +369,14 @@ h3.title-smenu, h3.moofx-toggler {
 	cursor: pointer;
 }
 
-h3.moofx-toggler      { background: #EBEBEB url(../images/j_arrow.png) 5px 50% no-repeat; text-indent: 15px; }
-h3.moofx-toggler-down { background-image: url(../images/j_arrow_down.png); }
+h4.moofx-toggler {
+	background: #EBEBEB url(../images/j_arrow.png) 5px 50% no-repeat;
+	text-indent: 15px;
+}
+
+h4.moofx-toggler-down {
+	background-image: url(../images/j_arrow_down.png);
+}
 
 /* hack to stop ugly aliasing in IE */
 div.moofx-slider {
@@ -400,51 +410,51 @@ input.hidden {
 /* corners */
 
 #stepbar {
-  background: #f7f7f7;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+	background: #f7f7f7;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding-top: 6px;
+	padding-bottom: 6px;
 }
 
 #step {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding-top: 6px;
+	padding-bottom: 6px;
 }
 
 div#installer {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding-top: 6px;
+	padding-bottom: 6px;
 }
 
 div.install-body {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding-top: 6px;
+	padding-bottom: 6px;
 }
 
 div#installer div.install-body div.m {
-  background: #fbfbfb;
+	background: #fbfbfb;
 }
 
 div.m {
-  padding: 0 8px;
+	padding: 0 8px;
 }
 
 div#installer div.m {
-  padding-bottom: 1px !important;
-  padding-bottom: 0px;
+	padding-bottom: 1px !important;
+	padding-bottom: 0;
 }
 
 div#step,
 div#installer div.install-body {
-  background: #fbfbfb;
+	background: #fbfbfb;
 }
 
 .remove {
@@ -527,10 +537,6 @@ div.inlineError {
 	font-weight: bold;
 }
 
-#system-message dd.message {
-	border-bottom: medium solid red;
-}
-
 /* required field star color */
 .star {
 	color: #cc0000;
@@ -548,4 +554,23 @@ div.inlineError {
 	background: url('../images/spinner.gif') no-repeat;
 	width: 66px;
 	height: 66px;
+}
+
+/* Media Queries */
+@media all and (max-width: 980px) {
+	body {
+		min-width: 800px;
+	}
+	
+	#content-pad {
+		min-height: 0;
+	}
+	
+	#stepbar {
+		left: -180px;
+	}
+	
+	#right, #warning {
+		margin-left: 0;
+	}
 }

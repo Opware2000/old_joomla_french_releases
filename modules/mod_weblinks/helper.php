@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: helper.php 22152 2011-09-25 18:52:19Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_weblinks
  * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
@@ -39,8 +39,9 @@ class modWeblinksHelper
 		$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
 		$model->setState('filter.access', $access);
 
-		$model->setState('list.ordering', 'title');
-		$model->setState('list.direction', 'asc');
+		$ordering = $params->get('ordering', 'ordering');
+		$model->setState('list.ordering', $ordering == 'order' ? 'ordering' : $ordering);
+		$model->setState('list.direction', $params->get('direction', 'asc'));
 
 		$catid	= (int) $params->get('catid', 0);
 		$model->setState('category.id', $catid);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mod_languages.php 20988 2011-03-18 08:13:24Z infograf768 $
+ * @version		$Id: mod_languages.php 21994 2011-08-22 05:17:04Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_languages
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -16,16 +16,7 @@ require_once dirname(__FILE__).'/helper.php';
 $headerText	= JString::trim($params->get('header_text'));
 $footerText	= JString::trim($params->get('footer_text'));
 
-$cacheid = md5(JRequest::getVar('lang').$module->module);
-
-$cacheparams = new stdClass;
-$cacheparams->cachemode = 'id';
-$cacheparams->class = 'modLanguagesHelper';
-$cacheparams->method = 'getList';
-$cacheparams->methodparams = $params;
-$cacheparams->modeparams = $cacheid;
-
-$list = JModuleHelper::moduleCache ($module, $params, $cacheparams);
+$list = modLanguagesHelper::getList($params);
 
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
 

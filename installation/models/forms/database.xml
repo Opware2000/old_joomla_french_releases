@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: database.xml 21718 2011-07-01 07:52:13Z chdemko $ -->
+<!-- $Id: database.xml 22151 2011-09-25 18:50:51Z dextercowley $ -->
 <form>
 	<fieldset>
 		<fieldset name="basic">
@@ -22,6 +22,7 @@
 			/>
 			<field name="db_pass" type="password" id="db_pass" class="inputbox"
 				label="INSTL_DATABASE_PASSWORD_LABEL"
+				filter="raw"
 			/>
 			<field name="db_name" type="text" id="db_name" class="inputbox"
 				label="INSTL_DATABASE_NAME_LABEL"

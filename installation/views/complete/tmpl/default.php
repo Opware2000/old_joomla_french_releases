@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21463 2011-06-06 15:28:10Z dextercowley $
+ * @version		$Id: default.php 21960 2011-08-12 21:58:56Z dextercowley $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -18,13 +18,13 @@ defined('_JEXEC') or die;
 		<div class="button1-left"><div class="site"><a href="<?php echo JURI::root(); ?>" title="<?php echo JText::_('JSITE'); ?>"><?php echo JText::_('JSITE'); ?></a></div></div>
 <?php endif; ?>
 	</div>
-	<span class="steptitle"><?php echo JText::_('INSTL_COMPLETE'); ?></span>
+	<h2><?php echo JText::_('INSTL_COMPLETE'); ?></h2>
 </div>
 
 <form action="index.php" method="post" id="adminForm" class="form-validate">
 	<div id="installer">
 		<div class="m">
-			<h2><?php echo JText::_('INSTL_COMPLETE_TITLE'); ?></h2>
+			<h3><?php echo JText::_('INSTL_COMPLETE_TITLE'); ?></h3>
 			<div class="install-text">
 				<p><?php echo JText::_('INSTL_COMPLETE_DESC1'); ?></p>
 				<p><?php echo JText::_('INSTL_COMPLETE_DESC2'); ?></p>

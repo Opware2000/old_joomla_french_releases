@@ -1,4 +1,4 @@
-# $Id: joomla_update_17ga.sql 21751 2011-07-06 12:46:57Z chdemko $
+# $Id: joomla_update_17ga.sql 22040 2011-09-07 16:06:39Z dextercowley $
 
 #
 # Database updates for 1.6.5 to 1.7 GA

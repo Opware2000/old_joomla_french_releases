@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21322 2011-05-11 01:10:29Z dextercowley $
+ * @version		$Id: helper.php 21995 2011-08-22 05:21:50Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_articles_news
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -75,7 +75,7 @@ abstract class modArticlesNewsHelper
 				$item->linkText = JText::_('MOD_ARTICLES_NEWS_READMORE');
 			}
 			else {
-				$item->link = JRoute::_('index.php?option=com_user&view=login');
+				$item->link = JRoute::_('index.php?option=com_users&view=login');
 				$item->linkText = JText::_('MOD_ARTICLES_NEWS_READMORE_REGISTER');
 			}
 

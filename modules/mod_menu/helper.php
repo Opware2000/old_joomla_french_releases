@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21322 2011-05-11 01:10:29Z dextercowley $
+ * @version		$Id: helper.php 22112 2011-09-20 21:43:21Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -51,7 +51,7 @@ class modMenuHelper
 					|| ($end && $item->level > $end)
 					|| (!$showAll && $item->level > 1 && !in_array($item->parent_id, $path))
 					|| ($maxdepth && $item->level > $maxdepth)
-					|| ($start > 1 && !in_array($item->tree[0], $path))
+					|| ($start > 1 && !in_array($item->tree[$start-2], $path))
 				) {
 					unset($items[$i]);
 					continue;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21844 2011-07-13 05:44:36Z infograf768 $
+ * @version		$Id: view.html.php 22053 2011-09-08 16:33:27Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -64,12 +64,12 @@ class TemplatesViewStyles extends JView
 		if ($canDo->get('core.edit')) {
 			JToolBarHelper::editList('style.edit');
 		}
-		if ($canDo->get('core.create') && $isSite) {
+		if ($canDo->get('core.create')) {
 			JToolBarHelper::custom('styles.duplicate', 'copy.png', 'copy_f2.png', 'JTOOLBAR_DUPLICATE', true);
 			JToolBarHelper::divider();
 		}
 
-		if ($canDo->get('core.delete') && $isSite) {
+		if ($canDo->get('core.delete')) {
 			JToolBarHelper::deleteList('', 'styles.delete');
 			JToolBarHelper::divider();
 		}

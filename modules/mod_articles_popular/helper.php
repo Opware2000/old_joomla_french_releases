@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20541 2011-02-03 21:12:06Z dextercowley $
+ * @version		$Id: helper.php 21995 2011-08-22 05:21:50Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_articles_popular
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -58,7 +58,7 @@ abstract class modArticlesPopularHelper
 				// We know that user has the privilege to view the article
 				$item->link = JRoute::_(ContentHelperRoute::getArticleRoute($item->slug, $item->catslug));
 			} else {
-				$item->link = JRoute::_('index.php?option=com_user&view=login');
+				$item->link = JRoute::_('index.php?option=com_users&view=login');
 			}
 		}
 

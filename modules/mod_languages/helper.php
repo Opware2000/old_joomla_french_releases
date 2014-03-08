@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21744 2011-07-06 08:40:23Z chdemko $
+ * @version		$Id: helper.php 21999 2011-08-23 09:52:16Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_languages
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -57,7 +57,7 @@ abstract class modLanguagesHelper
 							$language->link = JRoute::_('index.php?lang='.$language->sef.'&Itemid='.$itemid);
 						}
 						else {
-							$language->link = 'index.php?lang='.$language->sef;
+							$language->link = 'index.php?lang='.$language->sef.'&Itemid='.$itemid;
 						}
 					}
 					else {

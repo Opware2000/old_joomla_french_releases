@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 21555 2011-06-17 14:39:03Z chdemko $
+ * @version		$Id: contact.php 21991 2011-08-18 15:43:40Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -145,7 +145,8 @@ class ContactControllerContact extends JControllerForm
 
 			$mail = JFactory::getMailer();
 			$mail->addRecipient($contact->email_to);
-			$mail->setSender(array($email, $name));
+			$mail->addReplyTo(array($email, $name));
+			$mail->setSender(array($mailfrom, $fromname));
 			$mail->setSubject($sitename.': '.$subject);
 			$mail->setBody($body);
 			$sent = $mail->Send();
@@ -160,7 +161,8 @@ class ContactControllerContact extends JControllerForm
 
 				$mail = JFactory::getMailer();
 				$mail->addRecipient($email);
-				$mail->setSender(array($email, $name));
+				$mail->addReplyTo(array($email, $name));
+				$mail->setSender(array($mailfrom, $fromname));
 				$mail->setSubject($copysubject);
 				$mail->setBody($copytext);
 				$sent = $mail->Send();

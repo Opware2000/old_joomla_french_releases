@@ -1,6 +1,6 @@
 <?php
 /**
- * version $Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * version $Id: view.html.php 21946 2011-08-03 16:15:35Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	com_newsfeeds
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -58,7 +58,7 @@ class NewsfeedsViewCategory extends JView
 		// Check whether category access level allows access.
 		$groups	= $user->getAuthorisedViewLevels();
 		if (!in_array($category->access, $groups)) {
-			return JError::raiseError(403, JText::_("JERROR_ALERTNOAUTHOR"));
+			return JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 		}
 
 		// Prepare the data.

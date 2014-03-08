@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_login.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: default_login.php 22060 2011-09-12 14:14:55Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -18,7 +18,7 @@ JHtml::_('behavior.keepalive');
 	</h1>
 	<?php endif; ?>
 
-	<?php if ($this->params->get('logindescription_show') == 1 || $this->params->get('login_image') != '') : ?>
+	<?php if (($this->params->get('logindescription_show') == 1 && str_replace(' ', '', $this->params->get('login_description')) != '') || $this->params->get('login_image') != '') : ?>
 	<div class="login-description">
 	<?php endif ; ?>
 
@@ -30,7 +30,7 @@ JHtml::_('behavior.keepalive');
 			<img src="<?php echo $this->escape($this->params->get('login_image')); ?>" class="login-image" alt="<?php echo JTEXT::_('COM_USER_LOGIN_IMAGE_ALT')?>"/>
 		<?php endif; ?>
 
-	<?php if ($this->params->get('logindescription_show') == 1 || $this->params->get('login_image') != '') : ?>
+	<?php if (($this->params->get('logindescription_show') == 1 && str_replace(' ', '', $this->params->get('login_description')) != '') || $this->params->get('login_image') != '') : ?>
 	</div>
 	<?php endif ; ?>
 
@@ -48,4 +48,24 @@ JHtml::_('behavior.keepalive');
 			<?php echo JHtml::_('form.token'); ?>
 		</fieldset>
 	</form>
+</div>
+<div>
+	<ul>
+		<li>
+			<a href="<?php echo JRoute::_('index.php?option=com_users&view=reset'); ?>">
+			<?php echo JText::_('COM_USERS_LOGIN_RESET'); ?></a>
+		</li>
+		<li>
+			<a href="<?php echo JRoute::_('index.php?option=com_users&view=remind'); ?>">
+			<?php echo JText::_('COM_USERS_LOGIN_REMIND'); ?></a>
+		</li>
+		<?php
+		$usersConfig = JComponentHelper::getParams('com_users');
+		if ($usersConfig->get('allowUserRegistration')) : ?>
+		<li>
+			<a href="<?php echo JRoute::_('index.php?option=com_users&view=registration'); ?>">
+				<?php echo JText::_('COM_USERS_LOGIN_REGISTER'); ?></a>
+		</li>
+		<?php endif; ?>
+	</ul>
 </div>

@@ -1,6 +1,6 @@
 0. Metadata
 -----------
-File version:	$Id: CHANGELOG 21885 2011-07-18 19:51:08Z dextercowley $
+File version:	$Id: CHANGELOG 22162 2011-09-26 16:08:16Z dextercowley $
 Copyright:		Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
 License:		GNU General Public License version 2 or later; see LICENSE.txt
 
@@ -27,11 +27,229 @@ $ -> Language fix or change
 - -> Removed
 ! -> Note
 
+-------------------- 1.7.1 Stable Release [26-Sep-2011] ------------------
+
+26-Sep-2011 Jean-Marie Simonet
+ # [#26872] Problem installing with another language than default
+
+25-Sep-2011 Mark Dexter
+ # [#24654] No change in 'Menu Manager: Menus', if module was assigned to other menu in shadowbox showed after click to link in 'Modules Linked to the Menu' column in 'Menu Manager: Menus'
+ # [#26390] Database password with '<' fails with Connector returned number: Unable to connect to the Database
+ # [#26574] Weblinks - several issues
+ # [#26695] Search word is required for com_search view
+ # [#26867] Updating README
+ # Small sample data fix
+
+23-Sep-2011 Christophe Demko
+ # [#26844] Improvements to batch processing
+
+22-Sep-2011 Mark Dexter
+ # [#26756] Prepare 1.7.1 upgrade process
+ # [#26522] Client does not properly display in Extension Manager Update view
+ # [#26824] Sync more changes form platform 11.2
+ # [#26822] Fix some minor code style differences between trunk and 11.2
+ # [#26715] Add stats toolbar icon
+
+22-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: sk-SK. Correcting a typo in com_languages.ini
+ + Added Macedonian flag to media/mod_languages/images/ . Thanks Ilija
+ $ [#26852] *mod_multilangstatus missing case
+
+21-Sep-2011 Mark Dexter
+ # Fix sample data to correct #__redirect_links table definition
+
+21-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: pt-PT, pt-BR
+ # [#26552] Languagefilter plugin - wrong default for menu_association
+ $ Adding installation Basque language: eu-ES
+
+20-Sep-2011 Mark Dexter
+ # Sample data fixes (Elin Waring)
+ # [#26451] Favicon disappears
+ # [#24275] Submenu items in deeper menu-levels appear although they have no active parent item
+
+20-Sep-2011 Christophe Demko
+ # [#26803] xx-XX.lib_joomla.ini file not installed into /language/xx-XX folder (Jean-Marie Simonet)
+ # [#26829] Sample data module pages new styling and style corrections. (Jennifer Marriott, Elin Waring)
+ # [#26793] Add joomlacms and cli folders (Elin Waring)
+ # [#26836] Update robots.txt due to the commit of 26793
+ # [#26837] *Wrong param in display date in category listing (Jean-Marie Simonet)
+ # [#26673] Front end article display duplication/omission when author linked to trashed contact or when two contacts linked to same user (Elin Waring)
+ # [#26823] Sync JParameter changes from platform 11.2 (Rouven Weßling)
+
+18-Sep-2011 Jean-Marie Simonet
+ # [#26827] Loadmodule plugin ignores its style setting. Thanks Elin
+ $ Updating installation ini files: pl-PL
+ # [#26818] File and package installations are not updateable via the Joomla! Updater. Thanks Michael.
+
+17-Sep-2011 Mark Dexter
+ # [#25471] JUpdate target platform test
+ # [#26781] Sync more changes form platform 11.2
+
+17-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: nl-NL
+ # [#26814] [#26423] com contact - rendered extra string via var_dump(). Thanks Peter.
+ # [#26792] Modules position filter looks odd and behaves wrongly in modules view. Thanks Elin and Dennis. Includes joomla.sql and 170to171.sql updates
+
+16-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: et-ET, he-IL, tr-TR
+ $ Updating installation ini files: gd-GB
+ $ Updating installation ini files: az-AZ
+
+15-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: ro-RO, fa-IR, fr-FR
+ $ Updating installation ini files: ca-ES, th-TH
+
+14-Sep-2011 Mark Dexter
+ # [#26423] com contact -- add finishing touches to sortname fields*
+ # [#26542] Modules manager showing error of undefined constant COM_MODULES_ERR_XML
+ # [#26498] Beez 5 default values
+ # [#26534] Make the installation more suitable for smaller screens
+ # Follow-up patch to [#26784] New Multilanguage Status module to fix database update
+
+14-Sep-2011 Jean-Marie Simonet
+ #$ Updating installation ini files: ckb-IQ, ja-JP, km-KH, pl-PL, ru-RU, ta-IN
+ # Updating admin en-GB.xml for new ini files
+ $ Improving mod_languages and languagefilter plugin xml ini files descriptions
+
+13-Sep-2011 Mark Dexter
+ # Fix inconsistent datatype in database update script
+ # Fix typo in sample data
+ # Reverted [#26423] because it broke two system tests
+ # [#26784] New Multilanguage Status module
+
+13-Sep-2011 Jean-Marie Simonet
+ $ Updating installation ini files: af-ZA, bs-BA, da-DK, de-DE, el-GR, fr-FR, hr-HR, lv-LV, mk-MK, nb-NO, nn-NO, sk-SK, sv-SE, sy-IQ, uk-UA
+ $ Updating installation ini files: be-BY, hu-HU, sr-RS, sr-YU
+ # [#26356] Users can lock everyone out of the administrator. Thanks Irfan and Elin.
+ # [#26423] com contact -- add finishing touches to sortname fields. Thanks Elin.
+ $ Updating installation ini files: es-ES, fi-FI, it-IT, zh-TW. Adding Bulgarian language.
+ 
+12-Sep-2011 Jean-Marie Simonet
+ # [#26753] Login description containing markup displayed regardless of presence of content
+ # [#26766] Modules should be able to be saved with no position. Thanks Elin.
+
+10-Sep-2011 Jean-Marie Simonet
+ # [#24310] Users Manager Log In Form Required Field Indicator. Thanks Bill
+ 
+08-Sep-2011 Christophe Demko
+ # [#26609] Template manager missing toolbar icons
+ # [#26502] untranslated string from *.xml
+ # [#26644] Trash option available while viewing trashed items
+
+07-Sep-2011 Mark Dexter
+ # [#25307] Improper datatypes in database
+ # [#26691] Sync more changes from platform 11.2
+ # [#26474] Remove unused view file in com_installer
+
+06-Sep-2011 Christophe Demko
+ # [#26694] Catchable fatal error: Object of class DateTimeZone could not be converted to string
+
+06-Sep-2011 Jean-Marie Simonet
+# [#25761] wasted space by images / javascript source files. Fixed images. Thanks Marius
+# [#26717] Multi-language site, setting new user language always to default
+
+05-Sep-2011 Jean-Marie Simonet
+ #Correcting wrong formatting of mod_articles_category.xml
+ 
+04-Sep-2011 Christophe Demko
+ # [#26701] com_content Form View $article object that does not exist in the _prepareDocument method on line 115. (Jean-Marie Simonet)
+ # [#26710] Clean up admin and installation CSS (Rouven Weßling)
+ # [#26518] Menus caching issue (Dennis Hermatski)
+ # [#26682] Typo in sample data (Marijke Stuivenberg, Kevin Griffiths)
+
+03-Sep-2011 Christophe Demko
+ # [#26706] No translation when adding extra quick icons (Rune Sjøen)
+
+02-Sep-2011 Christophe Demko
+ # [#26690] Test for native ZIP in system information + some minor stuff (Rouven Weßling, Jean-Marie Simonet)
+
+28-Aug-2011 Jean-Marie Simonet
+ # [#26696] *Register to read more redirects to login page, not registration. Thanks Elin.
+ # [#26026] Detect a BOM in configuration.php. Thanks René.
+ # [#26657] *Sample data button can be clicked twice. Thanks Rouven.
+ # [#26512] Moving an existing single menuitem to another menu. using the drop down in 1.7.0 Thanks Elin.
+ # [#26496] Inconsistency in Admin Template options - Show Site Name. Thanks Bill.
+ # Correcting 2 unwanted Returns in 2 language files.
+ 
+24-Aug-2011 Jean-Marie Simonet
+ #$ Added Scottish Gaelic gd-GB in installation language
+ $ Correcting some strings order in en-GB.lib_joomla.ini
+ $ Added 2 JLIB error strings in en-GB, en-AU, en-US ini files
+ # Updated Credits
+ 
+23-Aug-2011 Mark Dexter
+ # [#26631] Sync more changes from platform 11.2
+ # Revert [#26631] (use branch merge instead)
+
+23-Aug-2011 Jean-Marie Simonet
+ # [#26683] Language switcher module wrong link with menu associations when no SEF. Thanks Kelsang.
+ 
+22-Aug-2011 Jean-Marie Simonet
+ # [#26454] mod_languages: cache does not work properly with menu associations
+ # [#26654] Incorrect references to com_user. Thanks Michael.
+ # Deleted obsolete admin modules mod_online and mod_unread from joomla.sql
+ $ String missing in en-GB.plg_content_joomla.sys.ini
+ $ Sync beez2 ini files in beez language folder vs core language.
+ 
+19-Aug-2011 Jean-Marie Simonet
+ # [#26655] *Ordering column issue for _menu table in sample_data.sql
+
+18-Aug-2011 Jean-Marie Simonet
+ # [#26612] Contacts Component sets Reply-To incorrectly in 1.7. Thanks Piotr.
+ # [#26318] CSS for system message should be the same in installation screen and the rest?. Thanks Rouven.
+
+12-Aug-2011 Mark Dexter
+ # [#26448] global configuration broken in IE9
+ # [#26533] Sync more changes from platform 11.2
+ # [#26452] Warning in the search
+ # [#26445] Undefined index: CLIENT in updater\adapters\collection.php
+ # [#26501] [patch] fix for router notices *
+ # [#26594] Update TinyMCE to version 3.4.4
+ # [#26601] Powered By 1.6 image
+ # [#26350] Improve the headings in the installation
+ # [#26431] Typo in new installation using the sample data
+
+08-Aug-2011 Jean-Marie Simonet
+ #$ [#26535] Incorrectly labeled folder in the Media manager + Options tips
+ # [#26568] Missing return in modeladmin.php. Thanks Jacob. (lib change)
+ # [#26603] Flash uploader is broken. Thanks Rouven.
+ 
+03-Aug-2011 Jean-Marie Simonet
+ $ Updating installation language files: hr-HR, pt-PT
+ #$ [#26543] com_modules language has a typo. Thanks Daniel and Elin.
+
+01-Aug-2011 Mark Dexter
+ # [#26459] Alternative Menu Items / JCategoryNode Showing Errors
+
+28-Jul-2011 Jean-Marie Simonet
+ # [#26510] wrong file name. Thanks Bill
+ $ [#26499] Incorrect English not en-GB. Thanks Jacob 
+ $ [#26497] Incorrect English in template. Thanks Bill
+ $ [#26500] Improve English grammar. Thanks Bill.
+ $ [#26416] Incorrect terminology in Language Switcher module. Thanks Jacob.
+ 
+25-Jul-2011 Jean-Marie Simonet
+ # [#26490] Untranslated Strings DELETE="Delete" Media Manager > Details View in iframe
+ # [#26470] No translation in title column of module manager (lib change)
+ # [#26483] Syndication RSS Feeds (module) not working in Joomla! 1.7.0 Stable
+ # [#26446] Loadposition does not load more then one module. Thanks Elin.
+
+22-Jul-2011 Jean-Marie Simonet
+ $ Updating installation ini files: pl-PL, ta-IN, it-IT
+
+20-Jul-2011 Jean-Marie Simonet
+ # Removing install check
+ # [#26443] PHP version check at installation says Joomla 1.6
+ # [#26432] Banners Manager - trash icon visible when no trashed banners. Thanks Bill.
+ # [#26433] banner manager- clients - empty trash icon. Thanks Bill.
+ #  [#26396] Fix some mistyped and @package names in the CMS. Thanks Rune.
+
 -------------------- 1.7.0 Stable Release [19-Jul-2011] ------------------
 
 18-Jul-2011 Mark Dexter
  # Needed file was being deleted during update
- # New installation language file
+ # Updated installation language file: sk-SK
 
 17-Jul-2011 Mark Dexter
  # Fix banner issue in sample data (Elin Waring)

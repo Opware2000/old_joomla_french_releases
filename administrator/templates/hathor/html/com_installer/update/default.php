@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21595 2011-06-21 02:51:29Z dextercowley $
+ * @version		$Id: default.php 22137 2011-09-22 23:45:02Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -41,7 +41,9 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 		</thead>
 
 		<tbody>
-		<?php foreach($this->items as $i=>$item):?>
+		<?php foreach($this->items as $i=>$item):
+			$client	= $item->client_id ? JText::_('JADMINISTRATOR') : JText::_('JSITE');
+		?>
 			<tr class="row<?php echo $i%2; ?>">
 				<td><?php echo JHtml::_('grid.id', $i, $item->update_id); ?></td>
 				<td>
@@ -55,7 +57,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				<td><?php echo JText::_('COM_INSTALLER_TYPE_' . $item->type) ?></td>
 				<td class="center"><?php echo $item->version ?></td>
 				<td class="center"><?php echo @$item->folder != '' ? $item->folder : JText::_('COM_INSTALLER_TYPE_NONAPPLICABLE'); ?></td>
-				<td class="center"><?php echo @$item->client != '' ? JText::_('COM_INSTALLER_TYPE_' . $item->client) : JText::_('COM_INSTALLER_TYPE_NONAPPLICABLE'); ?></td>
+				<td class="center"><?php echo $client; ?></td>
 				<td><?php echo $item->detailsurl ?></td>
 			</tr>
 		<?php endforeach;?>

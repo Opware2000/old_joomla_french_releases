@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: loadmodule.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: loadmodule.php 22102 2011-09-19 05:09:56Z infograf768 $
  * @package		Joomla.Plugin
  * @subpackage	Content.loadmodule
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -35,23 +35,29 @@ class plgContentLoadmodule extends JPlugin
 		$regex		= '/{loadposition\s+(.*?)}/i';
 		$style		= $this->params->def('style', 'none');
 		// expression to search for(modules)
-		$regexmod		= '/{loadmodule\s+(.*?)}/i';
-		$title = null;
-		$stylemod		= $this->params->def('style', 'none');
+		$regexmod	= '/{loadmodule\s+(.*?)}/i';
+		$title		= null;
+		$stylemod	= $this->params->def('style', 'none');
 
 		// Find all instances of plugin and put in $matches for loadposition
 		// $matches[0] is full pattern match, $matches[1] is the position
 		preg_match_all($regex, $article->text, $matches, PREG_SET_ORDER);
 		// No matches, skip this
-		if ($matches){
-			$matcheslist =  explode(',',$matches[0][1]);
+		if ($matches) {
+			foreach ($matches as $match) {
 
-			if (!array_key_exists(1, $matcheslist)){
+			$matcheslist =  explode(',',$match[1]);
+			
+			if (!array_key_exists(1, $matcheslist)) {
 				$matcheslist[1] = null;
 			}
-			foreach ($matches as $match) {
-				$position = trim($matcheslist[0]);
-				$style    = trim($matcheslist[1]);
+			// We may not have a module style so fall back to the plugin default.
+			if (!array_key_exists(2, $matcheslist)) {
+				$matcheslist[2] = $style;
+			}
+
+			$position = trim($matcheslist[0]);
+			$style    = trim($matcheslist[1]);
 
 				$output = $this->_load($position,$style);
 				// We should replace only first occurrence in order to allow positions with the same name to regenerate their content:
@@ -62,27 +68,28 @@ class plgContentLoadmodule extends JPlugin
 
 		preg_match_all($regexmod, $article->text, $matchesmod, PREG_SET_ORDER);
 		// If no matches, skip this
-			if ($matchesmod){
-				$matchesmodlist = explode(',',$matchesmod[0][1]);
+		if ($matchesmod){
+			foreach ($matchesmod as $matchmod) {
+
+				$matchesmodlist = explode(',',$matchmod[1]);
 				//We may not have a specific module so set to null
-				if (!array_key_exists(1, $matchesmodlist)){
+				if (!array_key_exists(1, $matchesmodlist)) {
 					$matchesmodlist[1] = null;
 				}
-				// We may not have a module style so set to null.
-				if (!array_key_exists(2, $matchesmodlist)){
-					$matchesmodlist[2] = null;
+				// We may not have a module style so fall back to the plugin default.
+				if (!array_key_exists(2, $matchesmodlist)) {
+					$matchesmodlist[2] = $stylemod;
 				}
-				foreach ($matchesmod as $matchmod) {
-						$module = trim($matchesmodlist[0]);
-						$name   = trim($matchesmodlist[1]);
-						$style  = trim($matchesmodlist[2]);
-					// $match[0] is full pattern match, $match[1] is the module,$match[2] is the title
-					$output = $this->_loadmod($module, $name, $style);
-					// We should replace only first occurrence in order to allow positions with the same name to regenerate their content:
-					$article->text = preg_replace("|$matchmod[0]|", addcslashes($output, '\\'), $article->text, 1);
-				}
+	
+				$module = trim($matchesmodlist[0]);
+				$name   = trim($matchesmodlist[1]);
+				$style  = trim($matchesmodlist[2]);
+				// $match[0] is full pattern match, $match[1] is the module,$match[2] is the title
+				$output = $this->_loadmod($module, $name, $style);
+				// We should replace only first occurrence in order to allow positions with the same name to regenerate their content:
+				$article->text = preg_replace("|$matchmod[0]|", addcslashes($output, '\\'), $article->text, 1);
 			}
-
+		}
 	}
 
 	protected function _load($position, $style = 'none')
@@ -111,17 +118,17 @@ class plgContentLoadmodule extends JPlugin
 			self::$mods[$module] = '';
 			$document	= JFactory::getDocument();
 			$renderer	= $document->loadRenderer('module');
-			$mod	= JModuleHelper::getModule($module, $title);
+			$mod		= JModuleHelper::getModule($module, $title);
 			// If the module without the mod_ isn't found, try it with mod_.
 			// This allows people to enter it either way in the content
 			if (!isset($mod)){
 				$name = 'mod_'.$module;
 				$mod  = JModuleHelper::getModule($name, $title);
 			}
-			$params		= array('style' => $style);
+			$params = array('style' => $style);
 			ob_start();
 
-				echo $renderer->render($mod, $params);
+			echo $renderer->render($mod, $params);
 
 			self::$mods[$module] = ob_get_clean();
 		}

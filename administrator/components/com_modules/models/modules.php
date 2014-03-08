@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 21551 2011-06-17 14:07:31Z chdemko $
+ * @version		$Id: modules.php 22095 2011-09-17 16:07:07Z infograf768 $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -250,10 +250,14 @@ class ModulesModelModules extends JModelList
 
 		// Filter by position
 		$position = $this->getState('filter.position');
-		if ($position) {
+		if ($position && $position != 'none') {
 			$query->where('a.position = '.$db->Quote($position));
 		}
 
+		else if ($position == 'none') {
+			$query->where('a.position = '.$db->Quote(''));
+		}
+		
 		// Filter by module
 		$module = $this->getState('filter.module');
 		if ($module) {

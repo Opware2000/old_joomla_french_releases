@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21672 2011-06-24 22:04:46Z chdemko $
+ * @version		$Id: helper.php 22031 2011-09-03 08:59:11Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	mod_quickicon
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -69,6 +69,9 @@ abstract class modQuickIconHelper
 	public static function &getButtons()
 	{
 		if (empty(self::$buttons)) {
+			// Load mod_quickicon language file in case this method is called before rendering the module
+			JFactory::getLanguage()->load('mod_quickicon');
+
 			self::$buttons = array(
 				array(
 					'link' => JRoute::_('index.php?option=com_content&task=article.add'),

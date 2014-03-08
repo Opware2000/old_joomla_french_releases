@@ -1,5 +1,5 @@
 /**
- * @version		$Id: template_rtl.css 21743 2011-07-06 08:24:29Z chdemko $
+ * @version		$Id: template_rtl.css 22033 2011-09-04 09:22:19Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -18,9 +18,9 @@ body{
 }
 
 #version {
-	float:left;
-	padding-left:5px;
-	padding-right: 0px;
+	float: left;
+	padding-left: 5px;
+	padding-right: 0;
 }
 
 #stepbar {
@@ -28,32 +28,32 @@ body{
 }
 
 #right, #warning {
-	margin-right:180px;
-	margin-left: 0px;
+	margin-right: 180px;
+	margin-left: 0;
 }
 
 #rightpad {
-	float:right;
+	float: right;
 }
 
 .far-right {
-	float:left;
-	padding-right:0px;
-	padding-left:6px;
-	text-align:left;
+	float: left;
+	padding-right: 0;
+	padding-left: 6px;
+	text-align: left;
 }
 
 span.step {
-	padding-right:6px;
-	padding-left:0px;
+	padding-right: 6px;
+	padding-left: 0;
 }
 
 .install-text,
-.install-form{
+.install-form {
 	float:right;
 }
 
-.install-body{
+.install-body {
 	float: left;
 }
 
@@ -88,7 +88,7 @@ fieldset#jform_db_old input {
  /* System Messages */
 
  #system-message dd ul {
- background-position: 99.5% top;
+ 	background-position: 99.5% top;
  }
 
  /**

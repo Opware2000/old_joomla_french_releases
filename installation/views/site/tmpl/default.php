@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: default.php 22008 2011-08-28 07:34:06Z infograf768 $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -8,18 +8,6 @@
 
 defined('_JEXEC') or die;
 ?>
-<?php if ($this->sample_installed) : ?>
-<script type="text/javascript">
-	window.addEvent('domready', function() {
-		var select = document.getElementById('jform_sample_file');
-		var button = document.getElementById('theDefault').children[0];
-		button.setAttribute('disabled','disabled');
-		button.setAttribute('value','<?php echo JText::_('INSTL_SITE_SAMPLE_LOADED', true); ?>');
-		select.setAttribute('disabled','disabled');
-	});
-</script>
-<?php endif; ?>
-
 <div id="step">
 	<div class="far-right">
 <?php if ($this->document->direction == 'ltr') : ?>
@@ -30,21 +18,21 @@ defined('_JEXEC') or die;
 		<div class="button1-left"><div class="next"><a href="index.php?view=filesystem" onclick="return Install.goToPage('filesystem');" rel="prev" title="<?php echo JText::_('JPrevious'); ?>"><?php echo JText::_('JPrevious'); ?></a></div></div>
 <?php endif; ?>
 	</div>
-	<span class="steptitle"><?php echo JText::_('INSTL_SITE'); ?></span>
+	<h2><?php echo JText::_('INSTL_SITE'); ?></h2>
 </div>
 
 <div id="installer">
 	<div class="m">
 		<form action="index.php" method="post" id="adminForm" class="form-validate">
-			<h2><?php echo JText::_('INSTL_SITE_NAME_TITLE'); ?></h2>
+			<h3><?php echo JText::_('INSTL_SITE_NAME_TITLE'); ?></h3>
 			<div class="install-text">
 				<?php echo JText::_('INSTL_SITE_NAME_DESC'); ?>
 			</div>
 			<div class="install-body">
 				<div class="m">
-					<h3 class="title-smenu" title="<?php echo JText::_('INSTL_BASIC_SETTINGS'); ?>">
+					<h4 class="title-smenu" title="<?php echo JText::_('INSTL_BASIC_SETTINGS'); ?>">
 						<?php echo JText::_('INSTL_BASIC_SETTINGS'); ?>
-					</h3>
+					</h4>
 					<div class="section-smenu">
 						<table class="content2">
 							<tr>
@@ -58,9 +46,9 @@ defined('_JEXEC') or die;
 						</table>
 					</div>
 
-					<h3 class="title-smenu moofx-toggler" title="<?php echo JText::_('INSTL_SITE_META_ADVANCED_SETTINGS'); ?>">
+					<h4 class="title-smenu moofx-toggler" title="<?php echo JText::_('INSTL_SITE_META_ADVANCED_SETTINGS'); ?>">
 						<a href="#"><?php echo JText::_('INSTL_SITE_META_ADVANCED_SETTINGS'); ?></a>
-					</h3>
+					</h4>
 					<div class="section-smenu moofx-slider">
 							<table class="content2">
 								<tr>
@@ -86,7 +74,7 @@ defined('_JEXEC') or die;
 
 				<div class="newsection"></div>
 
-				<h2><?php echo JText::_('INSTL_SITE_CONF_TITLE'); ?></h2>
+				<h4><?php echo JText::_('INSTL_SITE_CONF_TITLE'); ?></h4>
 				<div class="install-text">
 					<?php echo JText::_('INSTL_SITE_CONF_DESC'); ?>
 				</div>
@@ -138,7 +126,7 @@ defined('_JEXEC') or die;
 			<div class="clr"></div>
 
 			<form enctype="multipart/form-data" action="index.php" method="post" id="filename">
-				<h2><?php echo JText::_('INSTL_SITE_LOAD_SAMPLE_TITLE'); ?></h2>
+				<h3><?php echo JText::_('INSTL_SITE_LOAD_SAMPLE_TITLE'); ?></h3>
 				<div class="install-text">
 					<p><?php echo JText::_('INSTL_SITE_LOAD_SAMPLE_DESC1'); ?></p>
 					<p><?php echo JText::_('INSTL_SITE_LOAD_SAMPLE_DESC2'); ?></p>

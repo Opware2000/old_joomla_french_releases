@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<!-- $Id: application.xml 21484 2011-06-08 00:57:51Z dextercowley $ -->
+	<!-- $Id: application.xml 22151 2011-09-25 18:50:51Z dextercowley $ -->
 <form>
 	<fieldset
 		name="cache"
@@ -213,7 +213,7 @@
 			type="password"
 			label="COM_CONFIG_FIELD_FTP_PASSWORD_LABEL"
 			description="COM_CONFIG_FIELD_FTP_PASSWORD_DESC"
-			filter="string"
+			filter="raw"
 			autocomplete="off"
 			size="25" />
 
@@ -336,7 +336,7 @@
 			type="password"
 			label="COM_CONFIG_FIELD_MAIL_SMTP_PASSWORD_LABEL"
 			description="COM_CONFIG_FIELD_MAIL_SMTP_PASSWORD_DESC"
-			filter="string"
+			filter="raw"
 			size="30" />
 
 		<field

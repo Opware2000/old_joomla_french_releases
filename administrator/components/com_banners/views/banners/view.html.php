@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21705 2011-06-28 21:19:50Z dextercowley $
+ * @version		$Id: view.html.php 21907 2011-07-20 16:23:13Z infograf768 $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -89,13 +89,14 @@ class BannersViewBanners extends JView
 		}
 
 
-		if ($canDo->get('core.edit.state')) {
-			JToolBarHelper::trash('banners.trash');
-		}
-		if ( $canDo->get('core.delete')) {
+		if ($this->state->get('filter.state') == -2 && $canDo->get('core.delete')) {
 			JToolBarHelper::deleteList('', 'banners.delete', 'JTOOLBAR_EMPTY_TRASH');
 			JToolBarHelper::divider();
-		}
+		} else if ($canDo->get('core.edit.state')) {
+			JToolBarHelper::trash('banners.trash');
+			JToolBarHelper::divider();
+		}	
+
 		if ($canDo->get('core.admin')) {
 			JToolBarHelper::preferences('com_banners');
 			JToolBarHelper::divider();

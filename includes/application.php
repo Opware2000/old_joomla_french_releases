@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21879 2011-07-17 22:33:34Z dextercowley $
+ * @version		$Id: application.php 22105 2011-09-20 07:21:50Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -122,9 +122,13 @@ final class JSite extends JApplication
 
 		// Load Library language
 		$lang = JFactory::getLanguage();
-		$lang->load('lib_joomla', JPATH_SITE)
-		|| $lang->load('lib_joomla', JPATH_ADMINISTRATOR);
 
+		// Try the lib_joomla file in the current language (without allowing the loading of the file in the default language)
+		$lang->load('lib_joomla', JPATH_SITE, null, false, false)
+		|| $lang->load('lib_joomla', JPATH_ADMINISTRATOR, null, false, false)
+		// Fallback to the lib_joomla file in the default language
+		|| $lang->load('lib_joomla', JPATH_SITE, null, true)
+		|| $lang->load('lib_joomla', JPATH_ADMINISTRATOR, null, true);
 	}
 
 	/**

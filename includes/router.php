@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: router.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: router.php 21957 2011-08-12 21:50:32Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -174,16 +174,17 @@ class JRouterSite extends JRouter
 			}
 
 			$item = $menu->getDefault(JFactory::getLanguage()->getTag());
+			// if user not allowed to see default menu item then avoid notices
+			if(is_object($item)) {
+				//Set the information in the request
+				$vars = $item->query;
 
-			//Set the information in the request
-			$vars = $item->query;
+				//Get the itemid
+				$vars['Itemid'] = $item->id;
 
-			//Get the itemid
-			$vars['Itemid'] = $item->id;
-
-			// Set the active menu item
-			$menu->setActive($vars['Itemid']);
-
+				// Set the active menu item
+				$menu->setActive($vars['Itemid']);
+			}
 			return $vars;
 		}
 

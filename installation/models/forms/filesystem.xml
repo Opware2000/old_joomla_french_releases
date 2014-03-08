@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: filesystem.xml 17300 2010-05-27 16:07:01Z infograf768 $ -->
+<!-- $Id: filesystem.xml 22151 2011-09-25 18:50:51Z dextercowley $ -->
 <form>
 	<fieldset>
 		<fieldset name="basic">
@@ -17,6 +17,7 @@
 			/>
 			<field name="ftp_pass" type="password" id="ftp_pass" class="inputbox"
 				label="INSTL_FTP_PASSWORD_LABEL"
+				filter="raw"
 			/>
 			<field name="ftp_root" type="text" id="ftp_root" class="inputbox"
 				label="INSTL_FTP_ROOT_LABEL"
