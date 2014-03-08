@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: uri.php 9991 2008-02-05 22:13:22Z ircmaxell $
+ * @version		$Id: uri.php 10214 2008-04-19 08:59:04Z eddieajau $
  * @package		Joomla.Framework
  * @subpackage	Environment
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -195,7 +195,7 @@ class JURI extends JObject
 	 *
 	 * @access	public
 	 * @static
-	 * @param	boolean $pathonly If true, prepend the scheme, host and port information. Default is false.
+	 * @param	boolean $pathonly If false, prepend the scheme, host and port information. Default is false.
 	 * @return	string	The base URI string
 	 * @since	1.5
 	 */
@@ -218,7 +218,7 @@ class JURI extends JObject
 			} else {
 				$uri	         =& JURI::getInstance();
 				$base['prefix'] = $uri->toString( array('scheme', 'host', 'port'));
-	
+
 				if (strpos(php_sapi_name(), 'cgi') !== false && !empty($_SERVER['REQUEST_URI'])) {
 					//Apache CGI
 					$base['path'] =  rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
@@ -237,7 +237,7 @@ class JURI extends JObject
 	 *
 	 * @access	public
 	 * @static
-	 * @param	boolean $pathonly If true, prepend the scheme, host and port information. Default is false.
+	 * @param	boolean $pathonly If false, prepend the scheme, host and port information. Default is false.
 	 * @return	string	The root URI string
 	 * @since	1.5
 	 */
@@ -307,10 +307,10 @@ class JURI extends JObject
 		}
 
 		//We need to replace &amp; with & for parse_str to work right...
-		if(isset ($_parts['query']) && strstr($_parts['query'], '&amp;')) {
+		if(isset ($_parts['query']) && strpos($_parts['query'], '&amp;')) {
 			$_parts['query'] = str_replace('&amp;', '&', $_parts['query']);
 		}
-			
+
 		$this->_scheme = isset ($_parts['scheme']) ? $_parts['scheme'] : null;
 		$this->_user = isset ($_parts['user']) ? $_parts['user'] : null;
 		$this->_pass = isset ($_parts['pass']) ? $_parts['pass'] : null;
@@ -417,6 +417,10 @@ class JURI extends JObject
 	function setQuery($query)
 	{
 		if(!is_array($query)) {
+			if(strpos($query, '&amp;') !== false)
+			{
+			   $query = str_replace('&amp;','&',$query);
+			}
 			parse_str($query, $this->_vars);
 		}
 
@@ -672,7 +676,7 @@ class JURI extends JObject
 	 */
 	function _cleanPath($path)
 	{
-		$path = explode('/', str_replace('//', '/', $path));
+		$path = explode('/', preg_replace('#(/+)#', '/', $path));
 
 		for ($i = 0; $i < count($path); $i ++) {
 			if ($path[$i] == '.') {

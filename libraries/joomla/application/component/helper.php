@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 9918 2008-01-10 01:41:37Z pasamio $
+* @version		$Id: helper.php 10190 2008-04-03 09:11:20Z tcp $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -16,14 +16,13 @@
 defined('JPATH_BASE') or die();
 
 /**
-* Component helper class
-*
-* @static
-* @author		Johan Janssens <johan.janssens@joomla.org>
-* @package		Joomla.Framework
-* @subpackage	Application
-* @since		1.5
-*/
+ * Component helper class
+ *
+ * @static
+ * @package		Joomla.Framework
+ * @subpackage	Application
+ * @since		1.5
+ */
 class JComponentHelper
 {
 	/**
@@ -96,11 +95,9 @@ class JComponentHelper
 			JError::raiseError(404, JText::_("Component Not Found"));
 			return;
 		}
-		
+
 		$scope = $mainframe->scope; //record the scope
 		$mainframe->scope = $name;  //set scope to component name
-
-		$task = JRequest::getString( 'task' );
 
 		// Build the component path
 		$name = preg_replace('/[^A-Z0-9_\.-]/i', '', $name);
@@ -148,7 +145,10 @@ class JComponentHelper
 				$varname = 'mosConfig_'.$k;
 				$$varname = $v;
 			}
+
 		}
+
+		$task = JRequest::getString( 'task' );
 
 		// Load common language files
 		$lang =& JFactory::getLanguage();
@@ -173,7 +173,7 @@ class JComponentHelper
 			// Make the toolbar
 			include_once( $path );
 		}
-		
+
 		$mainframe->scope = $scope; //revert the scope
 
 		return $contents;

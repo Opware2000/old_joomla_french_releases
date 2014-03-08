@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.php 9764 2007-12-30 07:48:11Z ircmaxell $
+* @version		$Id: toolbar.php 10201 2008-04-13 12:18:05Z pasamio $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -12,7 +12,7 @@
 */
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die();
+defined('_JEXEC') or die( 'Restricted access' );
 
 jimport('joomla.html.toolbar');
 
@@ -485,7 +485,7 @@ class JToolBarHelper
 		$path		= urlencode( $path );
 		$bar = & JToolBar::getInstance('toolbar');
 		// Add a configuration button
-		$bar->appendButton( 'Popup', 'config', $alt, 'index.php?option=com_config&controller=component&component='.$component.'&path='.$path, $width, $height );
+		$bar->appendButton( 'Popup', 'config', $alt, 'index.php?option=com_config&amp;controller=component&amp;component='.$component.'&amp;path='.$path, $width, $height );
 	}
 }
 

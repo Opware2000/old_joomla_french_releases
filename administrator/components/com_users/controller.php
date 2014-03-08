@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 9933 2008-01-13 22:38:11Z ircmaxell $
+ * @version		$Id: controller.php 10214 2008-04-19 08:59:04Z eddieajau $
  * @package		Joomla
  * @subpackage	Users
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -76,7 +76,7 @@ class UsersController extends JController
 		global $mainframe;
 
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$option = JRequest::getCmd( 'option');
 
@@ -105,7 +105,7 @@ class UsersController extends JController
 			//return false;
 			return $this->execute('edit');
 		}
-		
+
 		$objectID 	= $acl->get_object_id( 'users', $user->get('id'), 'ARO' );
 		$groups 	= $acl->get_object_groups( $objectID, 'ARO' );
 		$this_group = strtolower( $acl->get_group_name( $groups[0], 'ARO' ) );
@@ -236,7 +236,7 @@ class UsersController extends JController
 	function remove()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$db 			=& JFactory::getDBO();
 		$currentUser 	=& JFactory::getUser();
@@ -323,7 +323,7 @@ class UsersController extends JController
 	function block( )
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$db 			=& JFactory::getDBO();
 		$acl			=& JFactory::getACL();
@@ -406,7 +406,7 @@ class UsersController extends JController
 	function logout( )
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		global $mainframe;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: blogger.php 9988 2008-02-05 20:30:50Z ian $
+ * @version		$Id: blogger.php 10214 2008-04-19 08:59:04Z eddieajau $
  * @package		Joomla
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
@@ -97,7 +97,7 @@ class plgXMLRPCBloggerServices
 
 		$user =& JFactory::getUser($username);
 		plgXMLRPCBloggerHelper::getUserAid( $user );
-		
+
 		// Handle the access permissions part of the main database query
 		if ($user->authorize('com_content', 'edit', 'content', 'all')) {
 			$xwhere = '';
@@ -177,9 +177,9 @@ class plgXMLRPCBloggerServices
 		} else {
 			$publishedWhere = ' AND u.published = 1 AND b.published = 1';
 		}
-		
+
 		$nullDate 		= $db->getNullDate();
-		$date = new JDate();
+		$date =& JFactory::getDate();
 		$now = $date->toMySQL();
 
 		$query = 'SELECT a.title AS title,'
@@ -206,7 +206,7 @@ class plgXMLRPCBloggerServices
 		if ($item === null) {
 			return new xmlrpcresp(0, $xmlrpcerruser+2, JText::_("Access Denied"));
 		}
-		
+
 		$content	= '<title>'.$item->title.'</title>';
 		$content	.= $item->introtext.'<more_text>'.$item->ftext.'</more_text>';
 
@@ -268,8 +268,7 @@ class plgXMLRPCBloggerServices
 		$item->catid	 	= $blogid;
 		$item->sectionid 	= $cat->section;
 
-		jimport('joomla.utilities.date');
-		$date = new JDate();
+		$date =& JFactory::getDate();
 
 		$item->created		= $date->toMySQL();
 		$item->created_by	= $user->get('id');
@@ -302,7 +301,7 @@ class plgXMLRPCBloggerServices
 
 		$user =& JFactory::getUser($username);
 		plgXMLRPCBloggerHelper::getUserAid( $user );
-		
+
 		// Create a user access object for the user
 		$access					= new stdClass();
 		$access->canEdit		= $user->authorize('com_content', 'edit', 'content', 'all');
@@ -358,7 +357,7 @@ class plgXMLRPCBloggerServices
 
 		$user =& JFactory::getUser($username);
 		plgXMLRPCBloggerHelper::getUserAid( $user );
-		
+
 		if ($user->get('gid') < 23) {
 			return new xmlrpcresp(0, $xmlrpcerruser+1, JText::_('ALERTNOTAUTH'));
 		}
@@ -403,7 +402,7 @@ class plgXMLRPCBloggerServices
 
 		$user =& JFactory::getUser($username);
 		plgXMLRPCBloggerHelper::getUserAid( $user );
-		
+
 		// load plugin params info
 	 	$plugin =& JPluginHelper::getPlugin('xmlrpc','blogger');
 	 	$params = new JParameter( $plugin->params );
@@ -411,7 +410,7 @@ class plgXMLRPCBloggerServices
 		$db =& JFactory::getDBO();
 
 		$nullDate 		= $db->getNullDate();
-		$date = new JDate();
+		$date =& JFactory::getDate();
 		$now = $date->toMySQL();
 
 		$blogid = (int) $blogid;
@@ -425,7 +424,7 @@ class plgXMLRPCBloggerServices
 			$publishTimeWhere = ' AND ( a.publish_up = '.$db->Quote($nullDate).' OR a.publish_up <= '.$db->Quote($now).' )'
 			. ' AND ( a.publish_down = '.$db->Quote($nullDate).' OR a.publish_down >= '.$db->Quote($now).' )';
 		}
-		
+
 		$query = 'SELECT a.title AS title,'
 		. ' a.created AS created,'
 		. ' a.introtext AS introtext,'
@@ -442,7 +441,7 @@ class plgXMLRPCBloggerServices
 		. ' AND u.access <= '.(int) $user->get( 'aid' )
 		. $publishTimeWhere
 		;
-			
+
 		$db->setQuery($query, 0, $numposts);
 		$items = $db->loadObjectList();
 
@@ -475,7 +474,7 @@ class plgXMLRPCBloggerServices
 
 	function setTemplate($appkey, $blogid, $username, $password, $template, $templateType)
 	{
-		global $xmlrpcerruser;		
+		global $xmlrpcerruser;
 		return new xmlrpcresp(0, $xmlrpcerruser+1, JText::_('Method not implemented') );
 	}
 }
@@ -499,7 +498,7 @@ class plgXMLRPCBloggerHelper
  			$user->set('aid', 2);
  		}
 	}
-	
+
 	function authenticateUser($username, $password)
 	{
 		// Get the global JAuthentication object

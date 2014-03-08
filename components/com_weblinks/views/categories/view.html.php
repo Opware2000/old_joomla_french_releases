@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 9934 2008-01-13 22:40:54Z ircmaxell $
+* @version		$Id: view.html.php 10206 2008-04-17 02:52:39Z instance $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -13,7 +13,7 @@
 */
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die();
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.view');
 
@@ -47,7 +47,7 @@ class WeblinksViewCategories extends JView
 		if ($params->get('image') != -1)
 		{
 			if($params->get('image_align')!="")
-				$attribs['align'] = '"'. $params->get('image_align').'"';
+				$attribs['align'] = $params->get('image_align');
 			else
 				$attribs['align'] = '';
 			$attribs['hspace'] = 6;
@@ -60,6 +60,9 @@ class WeblinksViewCategories extends JView
 		{
 			$category =& $categories[$i];
 			$category->link = JRoute::_('index.php?option=com_weblinks&view=category&id='. $category->slug);
+
+			// Prepare category description
+			$category->description = JHTML::_('content.prepare', $category->description);
 		}
 
 		$this->assignRef('image',		$image);

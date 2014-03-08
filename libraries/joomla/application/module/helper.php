@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 9779 2007-12-31 01:44:42Z jinx $
+* @version		$Id: helper.php 10214 2008-04-19 08:59:04Z eddieajau $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -34,21 +34,28 @@ class JModuleHelper
 	 *
 	 * @access	public
 	 * @param	string 	$name	The name of the module
+	 * @param	string	$title	The title of the module, optional
 	 * @return	object	The Module object
 	 */
-	function &getModule($name)
+	function &getModule($name, $title = null )
 	{
 		$result		= null;
 		$modules	=& JModuleHelper::_load();
 		$total		= count($modules);
 		for ($i = 0; $i < $total; $i++)
 		{
+			// Match the name of the module
 			if ($modules[$i]->name == $name)
 			{
-				$result =& $modules[$i];
-				break;
+				// Match the title if we're looking for a specific instance of the module
+				if ( ! $title || $modules[$i]->title == $title )
+				{
+					$result =& $modules[$i];
+					break;	// Found it
+				}
 			}
 		}
+
 		// if we didn't find it, and the name is mod_something, create a dummy object
 		if (is_null( $result ) && substr( $name, 0, 4 ) == 'mod_')
 		{
@@ -87,6 +94,14 @@ class JModuleHelper
 				$result[] =& $modules[$i];
 			}
 		}
+		if(count($result) == 0) {
+			if(JRequest::getBool('tp')) {
+				$result[0] = JModuleHelper::getModule( 'mod_'.$position );
+				$result[0]->title = $position;
+				$result[0]->content = $position;
+				$result[0]->position = $position;
+			}
+		}
 
 		return $result;
 	}
@@ -108,10 +123,10 @@ class JModuleHelper
 	{
 		static $chrome;
 		global $mainframe, $option;
-		
+
 		$scope = $mainframe->scope; //record the scope
 		$mainframe->scope = $module->module;  //set scope to component name
-		
+
 		// Handle legacy globals if enabled
 		if ($mainframe->getCfg('legacy'))
 		{
@@ -201,9 +216,9 @@ class JModuleHelper
 				ob_end_clean();
 			}
 		}
-		
+
 		$mainframe->scope = $scope; //revert the scope
-		
+
 		return $module->content;
 	}
 
@@ -268,8 +283,8 @@ class JModuleHelper
 
 		$db->setQuery( $query );
 
-		if (!($modules = $db->loadObjectList())) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', "Error loading Modules: " . $db->getErrorMsg());
+		if (null === ($modules = $db->loadObjectList())) {
+			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'Error Loading Modules' ) . $db->getErrorMsg());
 			return false;
 		}
 

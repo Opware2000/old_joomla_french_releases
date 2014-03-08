@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
+* @version		$Id: helper.php 10186 2008-04-02 13:10:12Z pasamio $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -52,10 +52,6 @@ class modNewsFlashHelper
 			$item->text = preg_replace( '/<img[^>]*>/', '', $item->text );
 		}
 
-		if (!$params->get('image')) {
-			$item->text = preg_replace( '/<img[^>]*>/', '', $item->text );
-		}
-
 		$results = $mainframe->triggerEvent('onAfterDisplayTitle', array (&$item, &$params, 1));
 		$item->afterDisplayTitle = trim(implode("\n", $results));
 
@@ -79,8 +75,7 @@ class modNewsFlashHelper
 		$contentConfig	= &JComponentHelper::getParams( 'com_content' );
 		$noauth			= !$contentConfig->get('shownoauth');
 
-		jimport('joomla.utilities.date');
-		$date = new JDate();
+		$date =& JFactory::getDate();
 		$now = $date->toMySQL();
 
 		$nullDate = $db->getNullDate();
@@ -88,7 +83,7 @@ class modNewsFlashHelper
 		// query to determine article count
 		$query = 'SELECT a.*,' .
 			' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug,'.
-			' CASE WHEN CHAR_LENGTH(cc.name) THEN CONCAT_WS(":", cc.id, cc.name) ELSE cc.id END as catslug'.
+			' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug'.
 			' FROM #__content AS a' .
 			' INNER JOIN #__categories AS cc ON cc.id = a.catid' .
 			' INNER JOIN #__sections AS s ON s.id = a.sectionid' .

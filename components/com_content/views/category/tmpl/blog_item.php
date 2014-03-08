@@ -1,10 +1,6 @@
 <?php // no direct access
 defined('_JEXEC') or die('Restricted access'); ?>
-<?php if ($this->user->authorize('com_content', 'edit', 'content', 'all') || $this->user->authorize('com_content', 'edit', 'content', 'own')) : ?>
-	<div class="contentpaneopen_edit<?php echo $this->item->params->get( 'pageclass_sfx' ); ?>">
-		<?php echo JHTML::_('icon.edit', $this->item, $this->item->params, $this->access); ?>
-	</div>
-<?php endif; ?>
+<?php $canEdit   = ($this->user->authorize('com_content', 'edit', 'content', 'all') || $this->user->authorize('com_content', 'edit', 'content', 'own')); ?>
 <?php if ($this->item->state == 0) : ?>
 <div class="system-unpublished">
 <?php endif; ?>
@@ -40,6 +36,11 @@ defined('_JEXEC') or die('Restricted access'); ?>
 	<?php echo JHTML::_('icon.email', $this->item, $this->item->params, $this->access); ?>
 	</td>
 	<?php endif; ?>
+	   <?php if ($canEdit) : ?>
+	   <td align="right" width="100%" class="buttonheading">
+	   <?php echo JHTML::_('icon.edit', $this->item, $this->item->params, $this->access); ?>
+	   </td>
+   <?php endif; ?>
 </tr>
 </table>
 <?php endif; ?>
@@ -71,7 +72,7 @@ endif; ?>
 				<?php echo '<a href="'.JRoute::_(ContentHelperRoute::getCategoryRoute($this->item->catslug, $this->item->sectionid)).'">'; ?>
 			<?php endif; ?>
 			<?php echo $this->item->category; ?>
-			<?php if ($this->item->params->get('link_section')) : ?>
+			<?php if ($this->item->params->get('link_category')) : ?>
 				<?php echo '</a>'; ?>
 			<?php endif; ?>
 		</span>
@@ -128,12 +129,14 @@ endif; ?>
 <?php if ($this->item->params->get('show_readmore') && $this->item->readmore) : ?>
 <tr>
 	<td  colspan="2">
-		<a href="<?php echo $this->item->readmore_link; ?>" class="readon<?php echo $this->item->params->get( 'pageclass_sfx' ); ?>">
-			<?php if ($this->item->readmore_register) : ?>
-				<?php echo JText::_('Register to read more...'); ?>
-			<?php else : ?>
-				<?php echo JText::_('Read more...'); ?>
-			<?php endif; ?></a>
+		<a href="<?php echo $this->item->readmore_link; ?>" class="readon<?php echo $this->item->params->get('pageclass_sfx'); ?>">
+			<?php if ($this->item->readmore_register) :
+				echo JText::_('Register to read more...');
+			elseif ($readmore = $this->item->params->get('readmore')) :
+				echo $readmore;
+			else :
+				echo JText::sprintf('Read more...');
+			endif; ?></a>
 	</td>
 </tr>
 <?php endif; ?>

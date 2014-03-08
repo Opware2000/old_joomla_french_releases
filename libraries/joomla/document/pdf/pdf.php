@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pdf.php 9764 2007-12-30 07:48:11Z ircmaxell $
+* @version		$Id: pdf.php 10214 2008-04-19 08:59:04Z eddieajau $
 * @package		Joomla.Framework
 * @subpackage	Document
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -85,7 +85,6 @@ class JDocumentPDF extends JDocument
 
 		//set document type
 		$this->_type = 'pdf';
-
 		/*
 		 * Setup external configuration options
 		 */
@@ -102,7 +101,7 @@ class JDocumentPDF extends JDocument
 		define("K_PATH_URL", JPATH_BASE);
 
 		// Fonts path
-		define("FPDF_FONTPATH", JPATH_SITE.DS.'language'.DS."pdf_fonts".DS);
+		define("K_PATH_FONTS", JPATH_SITE.DS.'language'.DS."pdf_fonts".DS);
 
 		// Cache directory path
 		define("K_PATH_CACHE", K_PATH_MAIN.DS."cache");
@@ -207,7 +206,6 @@ class JDocumentPDF extends JDocument
 		// Set PDF Metadata
 		$pdf->SetCreator($this->getGenerator());
 		$pdf->SetTitle($this->getTitle());
-		$pdf->header_title = $this->getTitle();
 		$pdf->SetSubject($this->getDescription());
 		$pdf->SetKeywords($this->getMetaData('keywords'));
 
@@ -219,6 +217,8 @@ class JDocumentPDF extends JDocument
 		$font = $lang->getPdfFontName();
 		$font = ($font) ? $font : 'freesans';
 
+		$pdf->setRTL($lang->isRTL());
+
 		$pdf->setHeaderFont(array($font, '', 10));
 		$pdf->setFooterFont(array($font, '', 8));
 
@@ -227,6 +227,7 @@ class JDocumentPDF extends JDocument
 		$pdf->AddPage();
 
 		// Build the PDF Document string from the document buffer
+		$this->fixLinks();
 		$pdf->WriteHTML($this->getBuffer(), true);
 		$data = $pdf->Output('', 'S');
 
@@ -239,5 +240,10 @@ class JDocumentPDF extends JDocument
 
 		//Close and output PDF document
 		return $data;
+	}
+
+	function fixLinks()
+	{
+
 	}
 }

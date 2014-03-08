@@ -74,15 +74,15 @@ if( $feed != false )
 				if ($params->get('rssitemdesc', 1))
 				{
 					// item description
-					$text = html_entity_decode($currItem->get_description());
+					$text = $currItem->get_description();
 					$text = str_replace('&apos;', "'", $text);
 
 					// word limit check
-					if ($words) 
+					if ($words)
 					{
 						$texts = explode(' ', $text);
 						$count = count($texts);
-						if ($count > $words) 
+						if ($count > $words)
 						{
 							$text = '';
 							for ($i = 0; $i < $words; $i ++) {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version		$Id: helper.php 9783 2007-12-31 14:56:55Z pasamio $
+ * @version		$Id: helper.php 10214 2008-04-19 08:59:04Z eddieajau $
  * @package		Joomla
  * @subpackage	Installation
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -616,7 +616,7 @@ class JInstallationHelper
 	}
 
 	function findMigration( &$args ) {
-		print_r($args); die();
+		print_r($args); jexit();
 	}
 
 	/**
@@ -915,7 +915,7 @@ class JInstallationHelper
 		if(!is_file($scriptName)) return false; // not a file?
 		$newFile = dirname( $scriptName ).DS.'converted.sql';
 		$tfilesize = filesize($scriptName);
-		if($maxread > 0 && $tfilesize > 0 && $maxread < $tfilesize) 		
+		if($maxread > 0 && $tfilesize > 0 && $maxread < $tfilesize)
 		{
 			$parts = ceil($tfilesize / $maxread);
 			file_put_contents( $newFile, '' ); // cleanse the file first
@@ -1170,7 +1170,7 @@ class JInstallationHelper
 		$query = 'UPDATE `'.$newPrefix.'menu_migration` SET `link` = CONCAT(link, "&view=wrapper"), `type` = "component", `componentid` = '.$compId.' WHERE `type` = "wrapper"';
 		$db->setQuery( $query );
 		$db->query();
-		JInstallationHelper::getDBErrors($errors, $db ); 
+		JInstallationHelper::getDBErrors($errors, $db );
 
 		// set default to lowest ordering published on mainmenu
 		$query = 'SELECT MIN( `ordering` ) FROM `'.$newPrefix.'menu_migration` WHERE `published` = 1 AND `parent` = 0 AND `menutype` = "mainmenu"';
@@ -1295,12 +1295,10 @@ class JInstallationHelper
 			JInstallationHelper::getDBErrors($errors, $db );
 		}
 
-		// TODO: SAM: This doesn't work?
 		/*
 		 * Add core client modules from old site to modules table as unpublished
-		 * SAM: Of course this doesn't work since we dont use this table any more!
 		 */
-		$query = 'SELECT id FROM '.$newPrefix.'modules_migration WHERE client_id = 0 '; //AND module != "mod_mainmenu"';
+		$query = 'SELECT id FROM '.$newPrefix.'modules_migration WHERE client_id = 0 ';
 		$db->setQuery( $query );
 		$lookup = $db->loadResultArray();
 		JInstallationHelper::getDBErrors($errors, $db );

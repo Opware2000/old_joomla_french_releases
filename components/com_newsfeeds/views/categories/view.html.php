@@ -1,6 +1,6 @@
 <?php
 /**
-* version $Id: view.html.php 9934 2008-01-13 22:40:54Z ircmaxell $
+* version $Id: view.html.php 10206 2008-04-17 02:52:39Z instance $
 * @package		Joomla
 * @subpackage	Newsfeeds
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -14,7 +14,7 @@
 */
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die();
+defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.view');
 
@@ -41,12 +41,15 @@ class NewsfeedsViewCategories extends JView
 		{
 			$category =& $categories[$i];
 			$category->link = JRoute::_('index.php?view=category&id='. $category->slug );
+
+			// Prepare category description
+			$category->description = JHTML::_('content.prepare', $category->description);
 		}
 		// Define image tag attributes
 		if ($params->get('image') != -1)
 		{
-			$attribs['align'] = '"'. $params->get('image_align').'"';
-			$attribs['hspace'] = '"6"';
+			$attribs['align'] = $params->get('image_align');
+			$attribs['hspace'] = 6;
 
 			// Use the static HTML library to build the image tag
 
