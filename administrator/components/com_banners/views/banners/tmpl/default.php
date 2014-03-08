@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21837 2011-07-12 18:12:35Z dextercowley $
+ * @version		$Id: default.php 22249 2011-10-16 17:19:28Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -20,6 +20,7 @@ $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_banners.category');
 $saveOrder	= $listOrder=='ordering';
+$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_banners&view=banners'); ?>" method="post" name="adminForm" id="adminForm">
 	<fieldset id="filter-bar">
@@ -175,7 +176,7 @@ $saveOrder	= $listOrder=='ordering';
 				</td>
 				<td class="center">
 					<?php if ($item->purchase_type < 0):?>
-						<?php echo JText::sprintf('COM_BANNERS_DEFAULT',($item->client_purchase_type > 0) ? JText::_('COM_BANNERS_FIELD_VALUE_'.$item->client_purchase_type) : JText::_('COM_BANNERS_FIELD_VALUE_'.$this->state->params->get('purchase_type')));?>
+						<?php echo JText::sprintf('COM_BANNERS_DEFAULT',($item->client_purchase_type > 0) ? JText::_('COM_BANNERS_FIELD_VALUE_'.$item->client_purchase_type) : JText::_('COM_BANNERS_FIELD_VALUE_'.$params->get('purchase_type')));?>
 					<?php else:?>
 						<?php echo JText::_('COM_BANNERS_FIELD_VALUE_'.$item->purchase_type);?>
 					<?php endif;?>

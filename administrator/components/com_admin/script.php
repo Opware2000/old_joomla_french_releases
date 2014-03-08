@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version		$Id: script.php 22136 2011-09-22 23:43:02Z dextercowley $
+ * @version		$Id: script.php 22211 2011-10-08 16:43:45Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_admin
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -18,6 +18,33 @@ jimport('joomla.database.table');
  */
 class joomlaInstallerScript
 {
+	/**
+	 * method to preflight the update of Joomla!
+	 *
+	 * @param	string          $route      'update' or 'install'
+	 * @param	JInstallerFile  $installer  The class calling this method
+	 *
+	 * @return void
+	 */
+	public function preflight($route, $installer)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('version_id');
+		$query->from('#__schemas');
+		$query->where('extension_id=700');
+		$db->setQuery($query);
+		if (!$db->loadResult())
+		{
+			$query = $db->getQuery(true);
+			$query->insert('#__schemas');
+			$query->set('extension_id=700, version_id='.$db->quote('1.6.0-2011-01-10'));
+			$db->setQuery($query);
+			$db->query();
+		}
+		return true;
+	}
+
 	/**
 	 * method to update Joomla!
 	 *

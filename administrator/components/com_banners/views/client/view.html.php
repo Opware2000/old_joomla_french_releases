@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21655 2011-06-23 05:43:24Z chdemko $
+ * @version		$Id: view.html.php 22249 2011-10-16 17:19:28Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
+JLoader::register('BannersHelper', JPATH_COMPONENT.'/helpers/banners.php');
 
 /**
  * View to edit a client.

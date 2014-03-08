@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: view.html.php 22224 2011-10-10 17:39:28Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @since		1.5
@@ -18,6 +18,7 @@ include_once dirname(__FILE__).'/../default/view.php';
  * @subpackage	com_installer
  * @since		1.5
  */
+
 class InstallerViewInstall extends InstallerViewDefault
 {
 	/**
