@@ -1,7 +1,7 @@
 // FR lang variables - Sarki pour Joomla! FR 31-07-09
 tinyMCE.addI18n('fr.emotions_dlg',{
 title:"Ins\u00E9rez un \u00E9motic\u00F4ne",
-desc:"Emoticônes",
+desc:"Emotic\u00F4nes",
 cool:"Cool",
 cry:"Triste",
 embarassed:"Embarass\u00E9",

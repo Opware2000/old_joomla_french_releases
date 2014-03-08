@@ -65,7 +65,7 @@ advhr:{
 advhr_desc:"Ins\u00E9rer une ligne horizontale styl\u00E9e"
 },
 emotions:{
-emotions_desc:"Emotic\o00FBnes"
+emotions_desc:"Emotic\u00F4nes"
 },
 searchreplace:{
 search_desc:"Rechercher",
@@ -83,7 +83,7 @@ abbr_desc:"Ins\u00E9rer/Editer Abr\u00E9viation",
 acronym_desc:"Ins\u00E9rer/Editer Acronyme",
 del_desc:"Ins\u00E9rer/Editer Barr\u00E9",
 ins_desc:"Ins\u00E9rer/Editer Soulign\u00E9",
-attribs_desc:"Ins\u00E9rer/Editer Evènement"
+attribs_desc:"Ins\u00E9rer/Editer un attribut"
 },
 style:{
 desc:"Ins\u00E9rer/Editer Styles"
@@ -101,10 +101,10 @@ word_title:"Utilisez les touches CTRL+V pour coller le texte"
 table:{
 desc:"Ins\u00E9rer/Editer un tableau",
 row_before_desc:"Ins\u00E9rer une ligne avant",
-row_after_desc:"Ins\u00E9rer une ligne après",
+row_after_desc:"Ins\u00E9rer une ligne apr\u00E8s",
 delete_row_desc:"Supprimer la ligne",
 col_before_desc:"Ins\u00E9rer une colonne avant",
-col_after_desc:"Ins\u00E9rer une colonne après",
+col_after_desc:"Ins\u00E9rer une colonne apr\u00E8s",
 delete_col_desc:"Supprimer la colonne",
 split_cells_desc:"Diviser la cellule",
 merge_cells_desc:"Fusionner les cellules",

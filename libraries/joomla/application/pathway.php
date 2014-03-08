@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pathway.php 10707 2008-08-21 09:52:47Z eddieajau $
+* @version		$Id: pathway.php 13354 2009-10-28 02:05:38Z ian $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -203,12 +203,16 @@ class JPathway extends JObject
 	 * @return object Pathway item object
 	 * @since 1.5
 	 */
-	function _makeItem($name, $link)
-	{
-		$item = new stdClass();
-		$item->name = html_entity_decode($name);
-		$item->link = $link;
+    function _makeItem($name, $link)
+   {
+      $item = new stdClass();
+      if((version_compare( phpversion(), '5.0' ) < 0)) {
+      $item->name = html_entity_decode($name);
+      } else {
+      $item->name = html_entity_decode($name, ENT_COMPAT, 'UTF-8');
+      }
+      $item->link = $link;
 
-		return $item;
-	}
+      return $item;
+   }
 }
