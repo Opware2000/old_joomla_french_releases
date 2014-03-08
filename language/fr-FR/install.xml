@@ -2,14 +2,14 @@
 <install version="1.5" client="site" type="language">
     <name>French (Fr)</name>
     <tag>fr-FR</tag>
-    <version>1.5.3</version>
-    <creationDate>April 2008</creationDate>
-    <author>Joomla!fr</author>
-    <authoremail>admin@joomla.org</authoremail>
+    <version>1.5.4</version>
+    <creationDate>July 2008</creationDate>
+    <author>French translation team : Joomla!fr</author>
+    <authoremail>opware.joomla@gmail.com</authoremail>
     <authorurl>www.joomla.fr</authorurl>
-    <copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2005 - 2008 Joomla.fr et Open Source Matters. Tous droits réservés</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <description>French language file for Joomla 1.5.2</description>
+    <description>French language file for Joomla 1.5.4</description>
     <files>
 		<filename>fr-FR.com_banners.ini</filename>
 		<filename>fr-FR.com_contact.ini</filename>
@@ -55,6 +55,7 @@
 		<filename>fr-FR.plg_search_weblinks.ini</filename>
 		<filename>fr-FR.plg_system_debug.ini</filename>
 		<filename>fr-FR.tpl_beez.ini</filename>
+		<filename>fr-FR.tpl_ja_purity.ini</filename>
 		<filename>fr-FR.tpl_rhuk_milkyway.ini</filename>
 		<filename file="meta">fr-FR.xml</filename>
 	</files>

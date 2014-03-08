@@ -3,12 +3,12 @@
 	<tag>fr-FR</tag>
 	<name>French (Fr)</name>
 	<description>French language file for web installer</description>
-	<version>1.5.3</version>
-	<creationDate>April 2008</creationDate>
-	<author>Joomla! Project &amp; Joomla!fr</author>
+	<version>1.5.4</version>
+	<creationDate>July 2008</creationDate>
+	<author>French translation team : Joomla!fr</author>
 	<authorUrl>www.joomla.fr</authorUrl>
-	<authorEmail>admin@joomla.org</authorEmail>
-	<copyright>Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.</copyright>
+	<authorEmail>opware.joomla@gmail.com</authorEmail>
+	<copyright>Copyright (C) 2005 - 2008 Joomla.fr et Open Source Matters. Tous droits réservés</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<metadata>
 		<name>French (Fr)</name>
