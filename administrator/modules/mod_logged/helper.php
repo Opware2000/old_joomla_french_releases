@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: helper.php 19835 2010-12-11 14:42:02Z chdemko $
+ * @version		$Id: helper.php 20899 2011-03-07 20:56:09Z ian $
  * @package		Joomla.Administrator
  * @subpackage	mod_logged
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -44,10 +44,12 @@ abstract class modLoggedHelper
 
 		foreach($results as $k => $result)
 		{
+			$results[$k]->logoutLink = '';
+			
 			if($user->authorise('core.manage', 'com_users'))
 			{
 				$results[$k]->editLink = JRoute::_('index.php?option=com_users&task=user.edit&id='.$result->id);
-				$results[$k]->logoutLink = JRoute::_('index.php?option=com_login&task=logout&uid='.$result->id);
+				$results[$k]->logoutLink = JRoute::_('index.php?option=com_login&task=logout&uid='.$result->id .'&'. JUtility::getToken() .'=1');
 			}
 			if($params->get('name', 1) == 0) {
 				$results[$k]->name = $results[$k]->username;
