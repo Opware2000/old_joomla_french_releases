@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: framework.php 11405 2009-01-09 16:30:05Z willebil $
+* @version		$Id: framework.php 11987 2009-06-03 01:08:57Z ian $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -33,6 +33,7 @@ if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize(
 		exit();
 	}
 }
+
 
 /*
  * Joomla! system startup
