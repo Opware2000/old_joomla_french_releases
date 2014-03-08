@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: application.php 21916 2011-07-26 16:48:11Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -174,12 +174,12 @@ final class JSite extends JApplication
 					$document->setMetaData('rights', $this->getCfg('MetaRights'));
 					$document->setMetaData('language', $lang_code);
 					if ($router->getMode() == JROUTER_MODE_SEF) {
-						$document->setBase(JURI::current());
+						$document->setBase(htmlspecialchars(JURI::current()));
 					}
 					break;
 
 				case 'feed':
-					$document->setBase(JURI::current());
+					$document->setBase(htmlspecialchars(JURI::current()));
 					break;
 			}
 
