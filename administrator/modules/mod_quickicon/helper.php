@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20411 2011-01-23 06:15:49Z infograf768 $
+ * @version		$Id: helper.php 21672 2011-06-24 22:04:46Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	mod_quickicon
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -35,14 +35,18 @@ abstract class modQuickIconHelper
 	public static function button($button)
 	{
 		if (!empty($button['access'])) {
-			if (is_bool($button['access']) && $button['access'] == false) {
-				return '';
-			}
-
-			// Take each pair of permission, context values.
-			for ($i = 0, $n = count($button['access']); $i < $n; $i += 2) {
-				if (!JFactory::getUser()->authorise($button['access'][$i], $button['access'][$i+1])) {
+			if (is_bool($button['access'])) {
+				if ($button['access'] == false) {
 					return '';
+				}
+			}
+			else {
+
+				// Take each pair of permission, context values.
+				for ($i = 0, $n = count($button['access']); $i < $n; $i += 2) {
+					if (!JFactory::getUser()->authorise($button['access'][$i], $button['access'][$i+1])) {
+						return '';
+					}
 				}
 			}
 		}
@@ -133,7 +137,7 @@ abstract class modQuickIconHelper
 					'access' => array('core.manage', 'com_templates')
 				),
 				array(
-					'link' => JRoute::_('index.php?option=com_admin&task=profile.edit'),
+					'link' => JRoute::_('index.php?option=com_admin&task=profile.edit&id='.JFactory::getUser()->id),
 					'image' => 'header/icon-48-user-profile.png',
 					'text' => JText::_('MOD_QUICKICON_PROFILE'),
 					'access' => true

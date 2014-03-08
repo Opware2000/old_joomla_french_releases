@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.fullpage_dlg',{
 title:"Propri\u00E9t\u00E9s du document",
 meta_tab:"G\u00E9n\u00E9ral",

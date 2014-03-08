@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: default.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	mod_submenu
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -30,7 +30,7 @@ $hide = JRequest::getInt('hidemainmenu');
 				?><a href="<?php echo JFilterOutput::ampReplace($item[1]); ?>"><?php echo $item[0]; ?></a><?php
 			endif;
 		else :
-			?><?php echo $item[0]; ?><?php 
+			?><?php echo $item[0]; ?><?php
 		endif;
 	endif;
 	?>

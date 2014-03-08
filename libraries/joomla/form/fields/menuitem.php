@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		$Id: menuitem.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Framework
- * @subpackage	Form
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Form
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
@@ -20,25 +20,25 @@ require_once realpath(JPATH_ADMINISTRATOR.'/components/com_menus/helpers/menus.p
 /**
  * Supports an HTML select list of menu item
  *
- * @package		Joomla.Framework
- * @subpackage	Form
- * @since		1.6
+ * @package     Joomla.Platform
+ * @subpackage  Form
+ * @since       11.1
  */
 class JFormFieldMenuItem extends JFormFieldGroupedList
 {
 	/**
 	 * The form field type.
 	 *
-	 * @var		string
-	 * @since	1.6
+	 * @var    string
+	 * @since  11.1
 	 */
 	public $type = 'MenuItem';
 
 	/**
 	 * Method to get the field option groups.
 	 *
-	 * @return	array	The field option objects as a nested array in groups.
-	 * @since	1.6
+	 * @return  array  The field option objects as a nested array in groups.
+	 * @since   11.1
 	 */
 	protected function getGroups()
 	{
@@ -49,9 +49,10 @@ class JFormFieldMenuItem extends JFormFieldGroupedList
 		$menuType = (string) $this->element['menu_type'];
 		$published = $this->element['published'] ? explode(',', (string) $this->element['published']) : array();
 		$disable = $this->element['disable'] ? explode(',', (string) $this->element['disable']) : array();
+		$language = $this->element['language'] ? explode(',', (string) $this->element['language']) : array();
 
 		// Get the menu items.
-		$items = MenusHelper::getMenuLinks($menuType, 0, 0, $published);
+		$items = MenusHelper::getMenuLinks($menuType, 0, 0, $published, $language);
 
 		// Build group for a specific menu type.
 		if ($menuType) {

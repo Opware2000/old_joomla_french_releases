@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_ftp.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default_ftp.php 21529 2011-06-11 22:17:15Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 
 defined('_JEXEC') or die;
 ?>
-	<fieldset class="adminform" title="<?php echo JText::_('COM_LANGUAGES_FTP_TITLE');?>">
+	<fieldset class="adminform" title="<?php echo JText::_('COM_LANGUAGES_FTP_TITLE'); ?>">
 		<legend><?php echo JText::_('COM_LANGUAGES_FTP_TITLE'); ?></legend>
 
 		<?php echo JText::_('COM_LANGUAGES_FTP_DESC'); ?>

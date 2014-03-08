@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mod_articles_category.php 20806 2011-02-21 19:44:59Z dextercowley $
+ * @version		$Id: mod_articles_category.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_articles_category
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -64,7 +64,7 @@ if (!empty($list)) {
 	$article_grouping_direction = $params->get('article_grouping_direction', 'ksort');
 	$moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
 	$item_heading = $params->get('item_heading');
-	
+
 	if ($article_grouping !== 'none') {
 		$grouped = true;
 		switch($article_grouping)

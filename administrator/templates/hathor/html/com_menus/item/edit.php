@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit.php 21663 2011-06-23 13:51:35Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -17,7 +17,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.modal');
-$canDo		= MenusHelper::getActions();
+$canDo = MenusHelper::getActions();
 ?>
 
 <script type="text/javascript">
@@ -52,21 +52,28 @@ $canDo		= MenusHelper::getActions();
 <div class="col main-section">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_MENUS_ITEM_DETAILS');?></legend>
-			<ul class="adminformlist">				
+			<ul class="adminformlist">
 
 				<li><?php echo $this->form->getLabel('type'); ?>
 				<?php echo $this->form->getInput('type'); ?></li>
-                <li><?php echo $this->form->getLabel('title'); ?>
+
+				<li><?php echo $this->form->getLabel('title'); ?>
 				<?php echo $this->form->getInput('title'); ?></li>
 
 				<?php if ($this->item->type =='url'): ?>
 					<?php $this->form->setFieldAttribute('link','readonly','false');?>
 					<li><?php echo $this->form->getLabel('link'); ?>
 					<?php echo $this->form->getInput('link'); ?></li>
-				<?php endif ?>
+				<?php endif; ?>
 
-				<li><?php echo $this->form->getLabel('alias'); ?>
-				<?php echo $this->form->getInput('alias'); ?></li>
+				<?php if ($this->item->type == 'alias'): ?>
+					<li> <?php echo $this->form->getLabel('aliastip'); ?></li>
+				<?php endif; ?>
+
+				<?php if ($this->item->type !='url'): ?>
+					<li><?php echo $this->form->getLabel('alias'); ?>
+					<?php echo $this->form->getInput('alias'); ?></li>
+				<?php endif; ?>
 
 				<li><?php echo $this->form->getLabel('note'); ?>
 				<?php echo $this->form->getInput('note'); ?></li>
@@ -75,12 +82,12 @@ $canDo		= MenusHelper::getActions();
 					<li><?php echo $this->form->getLabel('link'); ?>
 					<?php echo $this->form->getInput('link'); ?></li>
 				<?php endif ?>
-				
-				<?php if ($canDo->get('core.edit.state')) : ?>	
+
+				<?php if ($canDo->get('core.edit.state')) : ?>
 					<li><?php echo $this->form->getLabel('published'); ?>
 					<?php echo $this->form->getInput('published'); ?></li>
 				<?php endif ?>
-				
+
 				<li><?php echo $this->form->getLabel('access'); ?>
 				<?php echo $this->form->getInput('access'); ?></li>
 
@@ -92,14 +99,14 @@ $canDo		= MenusHelper::getActions();
 
 				<li><?php echo $this->form->getLabel('browserNav'); ?>
 				<?php echo $this->form->getInput('browserNav'); ?></li>
-				
+
 				<?php if ($canDo->get('core.edit.state')) : ?>
 					<?php if ($this->item->type == 'component') : ?>
 					<li><?php echo $this->form->getLabel('home'); ?>
 					<?php echo $this->form->getInput('home'); ?></li>
-					<?php endif ?>
-				<?php endif ?>
-				
+					<?php endif; ?>
+				<?php endif; ?>
+
 				<li><?php echo $this->form->getLabel('language'); ?>
 				<?php echo $this->form->getInput('language'); ?></li>
 
@@ -116,7 +123,7 @@ $canDo		= MenusHelper::getActions();
 <div class="col options-section">
 	<?php echo JHtml::_('sliders.start','menu-sliders-'.$this->item->id); ?>
 	<?php //Load  parameters.
-			echo $this->loadTemplate('options'); ?>
+		echo $this->loadTemplate('options'); ?>
 
 		<div class="clr"></div>
 
@@ -128,11 +135,12 @@ $canDo		= MenusHelper::getActions();
 		<?php endif; ?>
 
 	<?php echo JHtml::_('sliders.end'); ?>
-</div>
+
 	<input type="hidden" name="task" value="" />
 	<?php echo $this->form->getInput('component_id'); ?>
 	<?php echo JHtml::_('form.token'); ?>
 	<input type="hidden" id="fieldtype" name="fieldtype" value="" />
+</div>
 </form>
 
 <div class="clr"></div>

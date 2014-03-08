@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modal.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: modal.php 21837 2011-07-12 18:12:35Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_newsfeeds
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -20,9 +20,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 <form action="<?php echo JRoute::_('index.php?option=com_newsfeeds&view=newsfeeds&layout=modal&tmpl=component');?>" method="post" name="adminForm" id="adminForm">
 	<fieldset class="filter clearfix">
 		<div class="left">
-			<label for="filter_search">
-				<?php echo JText::_('JSEARCH_FILTER_LABEL'); ?>
-			</label>
+			<label for="filter_search"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></label>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" size="30" title="<?php echo JText::_('COM_NEWSFEEDS_FILTER_SEARCH_DESC'); ?>" />
 
 			<button type="submit">

@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.table_dlg',{
 general_tab:"G\u00E9n\u00E9ral",
 advanced_tab:"Avanc\u00E9",
@@ -40,6 +40,7 @@ td:"Donn\u00E9es",
 th:"En-t\u00EAtes",
 cell_cell:"Modifier la cellule active",
 cell_row:"Modifier toutes les cellules de la ligne",
+cell_col:"Modifier toutes les cellules de la colonne",
 cell_all:"Modifier toutes les cellules du tableau",
 row_row:"Modifier la ligne active",
 row_odd:"Modifier toutes les lignes impaires",

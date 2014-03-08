@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: log.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: log.php 21725 2011-07-01 09:27:06Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -37,7 +37,12 @@ class  plgSystemLog extends JPlugin
 			case JAUTHENTICATE_STATUS_FAILURE :
 			{
 				$errorlog['status']  = $response['type'] . " FAILURE: ";
-				$errorlog['comment'] = $response['error_message'];
+				if ($this->params->get('log_username', 0)) {
+					$errorlog['comment'] = $response['error_message'] . ' ("' . $response['username'] . '")';
+				}
+				else {
+					$errorlog['comment'] = $response['error_message'];
+				}
 				$log->addEntry($errorlog);
 			}	break;
 

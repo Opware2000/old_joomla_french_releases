@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_component.php 20423 2011-01-24 10:22:44Z infograf768 $
+ * @version		$Id: default_component.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_menu
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,10 +14,10 @@ defined('_JEXEC') or die;
 $class = $item->anchor_css ? 'class="'.$item->anchor_css.'" ' : '';
 $title = $item->anchor_title ? 'title="'.$item->anchor_title.'" ' : '';
 if ($item->menu_image) {
-		$item->params->get('menu_text', 1 ) ? 
+		$item->params->get('menu_text', 1 ) ?
 		$linktype = '<img src="'.$item->menu_image.'" alt="'.$item->title.'" /><span class="image-title">'.$item->title.'</span> ' :
 		$linktype = '<img src="'.$item->menu_image.'" alt="'.$item->title.'" />';
-} 
+}
 else { $linktype = $item->title;
 }
 

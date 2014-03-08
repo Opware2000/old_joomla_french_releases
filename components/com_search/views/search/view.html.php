@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_search
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -40,7 +40,6 @@ class SearchViewSearch extends JView
 		$areas	= $this->get('areas');
 		$state		= $this->get('state');
 		$searchword = $state->get('keyword');
-
 		$params = $app->getParams();
 
 		$menus	= $app->getMenu();
@@ -50,7 +49,7 @@ class SearchViewSearch extends JView
 		// right from the menu item itself
 		if (is_object($menu)) {
 			$menu_params = new JRegistry;
-			$menu_params->loadJSON($menu->params);
+			$menu_params->loadString($menu->params);
 			if (!$menu_params->get('page_title')) {
 				$params->set('page_title',	JText::_('COM_SEARCH_SEARCH'));
 			}
@@ -60,8 +59,11 @@ class SearchViewSearch extends JView
 		}
 
 		$title = $params->get('page_title');
-		if ($app->getCfg('sitename_pagetitles', 0)) {
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
 
@@ -70,12 +72,12 @@ class SearchViewSearch extends JView
 			$this->document->setDescription($params->get('menu-meta_description'));
 		}
 
-		if ($params->get('menu-meta_keywords')) 
+		if ($params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $params->get('menu-meta_keywords'));
 		}
 
-		if ($params->get('robots')) 
+		if ($params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $params->get('robots'));
 		}
@@ -125,7 +127,7 @@ class SearchViewSearch extends JView
 			$total		= $this->get('total');
 			$pagination	= $this->get('pagination');
 
-			require_once JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'route.php';
+			require_once JPATH_SITE . '/components/com_content/helpers/route.php';
 
 			for ($i=0, $count = count($results); $i < $count; $i++)
 			{
@@ -136,8 +138,9 @@ class SearchViewSearch extends JView
 					$needle = $searchword;
 				}
 				else {
-					$searchwords = preg_split("/\s+/u", $searchword);
-					$needle = $searchwords[0];
+					$searchworda = preg_replace('#\xE3\x80\x80#s', ' ', $searchword);
+					$searchwords = preg_split("/\s+/u", $searchworda);
+ 					$needle = $searchwords[0];
 				}
 
 				$row = SearchHelper::prepareSearchContent($row, $needle);
@@ -168,12 +171,12 @@ class SearchViewSearch extends JView
 				$result->count		= $i + 1;
 			}
 		}
-		
+
 		// Check for layout override
 		$active = JFactory::getApplication()->getMenu()->getActive();
 		if (isset($active->query['layout'])) {
 			$this->setLayout($active->query['layout']);
-		}	
+		}
 
 		//Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($params->get('pageclass_sfx'));
@@ -185,6 +188,7 @@ class SearchViewSearch extends JView
 
 		$this->assign('ordering',		$state->get('ordering'));
 		$this->assign('searchword',		$searchword);
+		$this->assign('origkeyword',	$state->get('origkeyword'));
 		$this->assign('searchphrase',	$state->get('match'));
 		$this->assign('searchareas',	$areas);
 

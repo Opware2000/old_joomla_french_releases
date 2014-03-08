@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: link.php 21167 2011-04-18 18:25:26Z dextercowley $
+ * @version		$Id: link.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -24,7 +24,7 @@ class RedirectModelLink extends JModelAdmin
 	 * @since	1.6
 	 */
 	protected $text_prefix = 'COM_REDIRECT';
-	
+
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
@@ -35,13 +35,13 @@ class RedirectModelLink extends JModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		
+
 			if ($record->published != -2) {
 				return false;
 			}
 			$user = JFactory::getUser();
 			return $user->authorise('core.admin', 'com_redirect');
-		
+
 	}
 
 	/**
@@ -60,8 +60,8 @@ class RedirectModelLink extends JModelAdmin
 			return $user->authorise('core.admin', 'com_redirect');
 
 	}
-	
-	
+
+
 	/**
 	 * Returns a reference to the a Table object, always creating it.
 	 *

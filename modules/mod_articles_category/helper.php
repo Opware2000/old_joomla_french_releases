@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21144 2011-04-12 23:18:56Z dextercowley $
+ * @version		$Id: helper.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	mod_articles_category
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -18,7 +18,7 @@ require_once $com_path.'helpers/route.php';
 
 jimport('joomla.application.component.model');
 
-JModel::addIncludePath($com_path.DS.'models', 'ContentModel');
+JModel::addIncludePath($com_path . '/models', 'ContentModel');
 
 abstract class modArticlesCategoryHelper
 {

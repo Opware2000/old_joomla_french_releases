@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_children.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default_children.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -26,7 +26,7 @@ if (count($this->children[$this->category->id]) > 0 && $this->maxLevel != 0) :
 			<span class="item-title"><a href="<?php echo JRoute::_(ContactHelperRoute::getCategoryRoute($child->id));?>">
 				<?php echo $this->escape($child->title); ?></a>
 			</span>
-			
+
 			<?php if ($this->params->get('show_subcat_desc') == 1) :?>
 			<?php if ($child->description) : ?>
 				<div class="category-desc">
@@ -34,13 +34,13 @@ if (count($this->children[$this->category->id]) > 0 && $this->maxLevel != 0) :
 				</div>
 			<?php endif; ?>
             <?php endif; ?>
-            
+
             <?php if ($this->params->get('show_cat_items') == 1) :?>
 			<dl><dt>
 				<?php echo JText::_('COM_CONTACT_CAT_NUM'); ?></dt>
 				<dd><?php echo $child->numitems; ?></dd>
 			</dl>
-		<?php endif; ?> 
+		<?php endif; ?>
             <?php if(count($child->getChildren()) > 0 ) :
 				$this->children[$child->id] = $child->getChildren();
 				$this->category = $child;

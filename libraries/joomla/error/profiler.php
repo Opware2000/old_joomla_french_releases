@@ -1,70 +1,71 @@
 <?php
 /**
- * @version		$Id: profiler.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Framework
- * @subpackage	Error
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Error
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Utility class to assist in the process of benchmarking the execution
  * of sections of code to understand where time is being spent.
  *
- * @package		Joomla.Framework
- * @subpackage	Error
- * @since		1.0
+ * @package     Joomla.Platform
+ * @subpackage  Error
+ * @since       11.1
  */
 class JProfiler extends JObject
 {
 	/**
 	 * The start time.
 	 *
-	 * @var int
+	 * @var    integer
+	 * @since  11.1
 	 */
 	protected $_start = 0;
 
 	/**
 	 * The prefix to use in the output
 	 *
-	 * @var string
+	 * @var  string
 	 */
 	protected $_prefix = '';
 
 	/**
 	 * The buffer of profiling messages.
 	 *
-	 * @var array
+	 * @var    array
+	 * @since  11.1
 	 */
 	protected $_buffer= null;
 
 	/**
-	 * @var float
-	 * @since 1.6
+	 * @var    float
+	 * @since  11.1
 	 */
 	protected $_previous_time = 0.0;
 
 	/**
-	 * @var float
-	 * @since 1.6
+	 * @var    float
+	 * @since  11.1
 	 */
 	protected $_previous_mem = 0.0;
 
 	/**
 	 * Boolean if the OS is Windows.
 	 *
-	 * @var boolean
-	 * @since 1.6
+	 * @var    boolean
+	 * @since  11.1
 	 */
 	protected $_iswin = false;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string Prefix for mark messages
+	 * @param   string  $prefix  Prefix for mark messages
 	 */
 	public function __construct($prefix = '')
 	{
@@ -78,8 +79,10 @@ class JProfiler extends JObject
 	 * Returns the global Profiler object, only creating it
 	 * if it doesn't already exist.
 	 *
-	 * @param	string		Prefix used to distinguish profiler objects.
-	 * @return	JProfiler	The Profiler object.
+	 * @param   string  Prefix used to distinguish profiler objects.
+	 *
+	 * @return  JProfiler  The Profiler object.
+	 * @since   11.1
 	 */
 	public static function getInstance($prefix = '')
 	{
@@ -102,8 +105,11 @@ class JProfiler extends JObject
 	 * The mark is returned as text enclosed in <div> tags
 	 * with a CSS class of 'profiler'.
 	 *
-	 * @param string A label for the time mark
-	 * @return string Mark enclosed in <div> tags
+	 * @param   string  $label  A label for the time mark
+	 *
+	 * @return  string  Mark enclosed in <div> tags
+	 *
+	 * @since   11.1
 	 */
 	public function mark($label)
 	{
@@ -111,14 +117,15 @@ class JProfiler extends JObject
 		if (function_exists('memory_get_usage')) {
 			$current_mem = memory_get_usage() / 1048576;
 			$mark = sprintf(
-					'<code>%s %.3f seconds (+%.3f); %0.2f MB (+%0.2f) - %s</code>',
+					'<code>%s %.3f seconds (+%.3f); %0.2f MB (%s%0.3f) - %s</code>',
 					$this->_prefix,
 					$current,
 					$current - $this->_previous_time,
 					$current_mem,
+					($current_mem > $this->_previous_mem) ? '+' : '',
 					$current_mem - $this->_previous_mem,
 					$label
-					);
+				);
 		}
 		else {
 			$mark = sprintf(
@@ -127,7 +134,7 @@ class JProfiler extends JObject
 					$current,
 					$current - $this->_previous_time,
 					$label
-					);
+				);
 		}
 
 		$this->_previous_time = $current;
@@ -140,7 +147,8 @@ class JProfiler extends JObject
 	/**
 	 * Get the current time.
 	 *
-	 * @return float The current time
+	 * @return  float The current time
+	 * @since   11.1
 	 */
 	public static function getmicrotime()
 	{
@@ -152,8 +160,10 @@ class JProfiler extends JObject
 	/**
 	 * Get information about current memory usage.
 	 *
-	 * @return	int		The memory usage
-	 * @link	PHP_MANUAL#memory_get_usage
+	 * @return  integer  The memory usage
+	 *
+	 * @link    PHP_MANUAL#memory_get_usage
+	 * @since   11.1
 	 */
 	public function getMemory()
 	{
@@ -186,7 +196,7 @@ class JProfiler extends JObject
 	 * Returns an array of all marks created since the Profiler object
 	 * was instantiated.  Marks are strings as per {@link JProfiler::mark()}.
 	 *
-	 * @return	array	Array of profiler marks
+	 * @return  array  Array of profiler marks
 	 */
 	public function getBuffer()
 	{

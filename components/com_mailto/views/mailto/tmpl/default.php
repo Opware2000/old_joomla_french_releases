@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: default.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_mailto
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -35,7 +35,7 @@ $data	= $this->get('data');
 		<a href="javascript: void window.close()" title="<?php echo JText::_('COM_MAILTO_CLOSE_WINDOW'); ?>">
 		 <span><?php echo JText::_('COM_MAILTO_CLOSE_WINDOW'); ?> </span></a>
 	</div>
-	
+
 	<form action="<?php echo JURI::base() ?>index.php" id="mailtoForm" method="post">
 		<div class="formelm">
 			<label for="mailto_field"><?php echo JText::_('COM_MAILTO_EMAIL_TO'); ?></label>
@@ -50,7 +50,7 @@ $data	= $this->get('data');
 			<label for="from_field">
 			<?php echo JText::_('COM_MAILTO_YOUR_EMAIL'); ?></label>
 			<input type="text" id="from_field" name="from" class="inputbox" value="<?php echo $data->from ?>" size="25" />
-		</div>	
+		</div>
 		<div class="formelm">
 			<label for="subject_field">
 			<?php echo JText::_('COM_MAILTO_SUBJECT'); ?></label>

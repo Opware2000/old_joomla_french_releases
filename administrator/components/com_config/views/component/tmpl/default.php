@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20724 2011-02-16 08:41:47Z infograf768 $
+ * @version		$Id: default.php 21734 2011-07-04 21:30:32Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_config
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -31,7 +31,7 @@ JHtml::_('behavior.formvalidation');
 				<?php echo JText::_('JAPPLY');?></button>
 			<button type="button" onclick="Joomla.submitform('component.save', this.form);">
 				<?php echo JText::_('JSAVE');?></button>
-			<button type="button" onclick="window.parent.SqueezeBox.close();">
+			<button type="button" onclick="<?php echo JRequest::getBool('refresh', 0) ? 'window.parent.location.href=window.parent.location.href;' : '';?>  window.parent.SqueezeBox.close();">
 				<?php echo JText::_('JCANCEL');?></button>
 		</div>
 		<div class="configuration" >

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: items.php 21006 2011-03-21 06:20:03Z infograf768 $
+ * @version		$Id: items.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -45,6 +45,9 @@ class MenusModelItems extends JModelList
 				'client_id', 'a.client_id',
 				'home', 'a.home',
 			);
+			if (JFactory::getApplication()->get('menu_associations', 0)) {
+				$config['filter_fields'][] = 'association';
+			}
 		}
 
 		parent::__construct($config);
@@ -160,8 +163,10 @@ class MenusModelItems extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
+		$app	= JFactory::getApplication();
 
 		// Select all fields from the table.
 		$query->select($this->getState('list.select', 'a.*'));
@@ -182,6 +187,14 @@ class MenusModelItems extends JModelList
 		// Join over the asset groups.
 		$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
+
+		// Join over the associations.
+		if ($app->get('menu_associations', 0)) {
+			$query->select('COUNT(asso2.id)>1 as association');
+			$query->join('LEFT', '#__associations AS asso ON asso.id = a.id AND asso.context='.$db->quote('com_menus.item'));
+			$query->join('LEFT', '#__associations AS asso2 ON asso2.key = asso.key');
+			$query->group('a.id');
+		}
 
 		// Exclude the root category.
 		$query->where('a.id > 1');
@@ -225,6 +238,13 @@ class MenusModelItems extends JModelList
 		// Filter on the access level.
 		if ($access = $this->getState('filter.access')) {
 			$query->where('a.access = '.(int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN ('.$groups.')');
 		}
 
 		// Filter on the level.

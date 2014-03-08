@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: banner.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 jimport('joomla.application.component.helper');
 
-JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . DS .'tables');
+JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . '/tables');
 
 /**
  * Banner model for the Joomla Banners component.

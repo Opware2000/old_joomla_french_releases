@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default.php 21837 2011-07-12 18:12:35Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -16,7 +16,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('script','system/multiselect.js',false,true);
 
-$user 		= JFactory::getUser();
+$user		= JFactory::getUser();
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 ?>
@@ -29,26 +29,22 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 			<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
+
 		<div class="filter-select">
-			<label class="selectlabel" for="filter_client_id">
-				<?php echo JText::_('JGLOBAL_FILTER_CLIENT'); ?>
-			</label>
-			<select name="filter_client_id" id="filter_client_id" class="inputbox">
+			<label class="selectlabel" for="filter_template"><?php echo JText::_('COM_TEMPLATES_FILTER_TEMPLATE'); ?></label>
+			<select name="filter_template" class="inputbox" id="filter_template">
+				<option value="0"><?php echo JText::_('COM_TEMPLATES_FILTER_TEMPLATE'); ?></option>
+				<?php echo JHtml::_('select.options', TemplatesHelper::getTemplateOptions($this->state->get('filter.client_id')), 'value', 'text', $this->state->get('filter.template'));?>
+			</select>
+
+			<label class="selectlabel" for="filter_client_id"><?php echo JText::_('JGLOBAL_FILTER_CLIENT'); ?></label>
+			<select name="filter_client_id" class="inputbox" id="filter_client_id">
 				<option value="*"><?php echo JText::_('JGLOBAL_FILTER_CLIENT'); ?></option>
 				<?php echo JHtml::_('select.options', TemplatesHelper::getClientOptions(), 'value', 'text', $this->state->get('filter.client_id'));?>
 			</select>
 
-			<label class="selectlabel" for="filter_template">
-				<?php echo JText::_('COM_TEMPLATES_FILTER_TEMPLATE'); ?>
-			</label>
-			<select name="filter_template" id="filter_template" class="inputbox">
-				<option value="0"><?php echo JText::_('COM_TEMPLATES_FILTER_TEMPLATE'); ?></option>
-				<?php echo JHtml::_('select.options', TemplatesHelper::getTemplateOptions($this->state->get('filter.template')), 'value', 'text', $this->state->get('filter.template'));?>
-			</select>
-
-			<button type="button" id="filter-go" onclick="this.form.submit();">
+			<button type="submit" id="filter-go">
 				<?php echo JText::_('JSUBMIT'); ?></button>
-
 		</div>
 	</fieldset>
 	<div class="clr"> </div>
@@ -91,6 +87,13 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
 				</td>
 				<td>
+					<?php if ($this->preview && $item->client_id == '0'): ?>
+						<a target="_blank"href="<?php echo JURI::root().'index.php?tp=1&templateStyle='.(int) $item->id ?>"  class="jgrid hasTip" title="<?php echo  htmlspecialchars(JText::_('COM_TEMPLATES_TEMPLATE_PREVIEW')); ?>::<?php echo htmlspecialchars($item->title);?>" ><span class="state icon-16-preview"><span class="text"><?php echo JText::_('COM_TEMPLATES_TEMPLATE_PREVIEW'); ?></span></span></a>
+					<?php elseif ($item->client_id == '1'): ?>
+						<span class="jgrid hasTip" title="<?php echo  htmlspecialchars(JText::_('COM_TEMPLATES_TEMPLATE_NO_PREVIEW_ADMIN')); ?>" ><span class="state icon-16-nopreview"><span class="text"><?php echo JText::_('COM_TEMPLATES_TEMPLATE_NO_PREVIEW_ADMIN'); ?></span></span></span>
+					<?php else: ?>
+						<span class="jgrid hasTip" title="<?php echo  htmlspecialchars(JText::_('COM_TEMPLATES_TEMPLATE_NO_PREVIEW')); ?>" ><span class="state icon-16-nopreview"><span class="text"><?php echo JText::_('COM_TEMPLATES_TEMPLATE_NO_PREVIEW'); ?></span></span></span>
+					<?php endif; ?>
 					<?php if ($canEdit) : ?>
 					<a href="<?php echo JRoute::_('index.php?option=com_templates&task=style.edit&id='.(int) $item->id); ?>">
 						<?php echo $this->escape($item->title);?></a>

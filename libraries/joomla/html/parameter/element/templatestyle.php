@@ -1,31 +1,35 @@
 <?php
 /**
- * @version		$Id: templatestyle.php 21097 2011-04-07 15:38:03Z dextercowley $
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License, see LICENSE.php
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access.
-defined( '_JEXEC' ) or die( 'Access denied' );
+defined('JPATH_PLATFORM') or die;
 
 /**
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @deprecated	JParameter is deprecated and will be removed in a future version. Use JForm instead.
- * @since		1.6
-**/
+ * @package     Joomla.Platform
+ * @subpackage  Parameter
+ * @since       11.1
+ * @deprecated  Use JForm instead
+ */
 class JElementTemplateStyle extends JElement {
 
 	/**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	**/
-	var	$_name = 'TemplateStyle';
+	 * Element name
+	 *
+	 * @var    string
+	 */
+	protected	$_name = 'TemplateStyle';
 
+	/**
+	 * @return  string
+	 *
+	 * @deprecated
+	 * @since   11.1
+	 */
 	public function fetchElement( $name, $value, &$node, $control_name )
 	{
 		$db = JFactory::getDBO();
@@ -40,13 +44,20 @@ class JElementTemplateStyle extends JElement {
 		array_unshift( $data, $default );
 
 		$selected = $this->_getSelected();
-		$html = JHtml::_( 'select.genericlist', $data, $control_name.'['.$name.']', 'class="inputbox" size="6"', 'id', 'description', $selected );
+		$html = JHTML::_( 'select.genericlist', $data, $control_name.'['.$name.']', 'class="inputbox" size="6"', 'id', 'description', $selected );
+
 		return $html;
 	}
 
-	private function _getSelected()
+	/**
+	 *
+	 * @since   11.1
+	 *
+	 * @deprecated
+	 */
+	protected function _getSelected()
 	{
-		$id = JRequest::getVar( 'cid', 0 );
+		$id = JRequest::getVar('cid', 0);
 		$db = JFactory::getDBO();
 		$query = 'SELECT `template_style_id` FROM `#__menu` '
 			. 'WHERE id = '.$id[0];

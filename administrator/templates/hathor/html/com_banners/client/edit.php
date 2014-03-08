@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit.php 21503 2011-06-09 22:58:13Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -39,11 +39,11 @@ $canDo	= BannersHelper::getActions();
 				<li><?php echo $this->form->getLabel('email'); ?>
 				<?php echo $this->form->getInput('email'); ?></li>
 
-				<?php if ($canDo->get('core.edit.state')) { ?>
+				<?php if ($canDo->get('core.edit.state')) : ?>
 					<li><?php echo $this->form->getLabel('state'); ?>
 					<?php echo $this->form->getInput('state'); ?></li>
-				<?php }?>	
-				
+				<?php endif; ?>
+
 				<li><?php echo $this->form->getLabel('purchase_type'); ?>
 				<?php echo $this->form->getInput('purchase_type'); ?></li>
 

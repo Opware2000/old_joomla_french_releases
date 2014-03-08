@@ -1,28 +1,30 @@
 <?php
 /**
- * @version		$Id: modellist.php 20267 2011-01-11 03:44:44Z eddieajau $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Application
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.application.component.model');
 
 /**
  * Model class for handling lists of items.
  *
- * @package		Joomla.Framework
- * @subpackage	Application
- * @since		1.6
+ * @package     Joomla.Platform
+ * @subpackage  Application
+ * @since       11.1
  */
 class JModelList extends JModel
 {
 	/**
 	 * Internal memory based cache array of data.
 	 *
-	 * @var		array
-	 * @since	1.6
+	 * @var    array
+	 * @since  11.1
 	 */
 	protected $cache = array();
 
@@ -30,32 +32,36 @@ class JModelList extends JModel
 	 * Context string for the model type.  This is used to handle uniqueness
 	 * when dealing with the getStoreId() method and caching data structures.
 	 *
-	 * @var		string
-	 * @since	1.6
+	 * @var    string
+	 * @since  11.1
 	 */
 	protected $context = null;
 
 	/**
 	 * Valid filter fields or ordering.
 	 *
-	 * @var		array
-	 * @since	1.6
+	 * @var    array
+	 * @since  11.1
 	 */
 	protected $filter_fields = array();
 
 	/**
 	 * An internal cache for the last query used.
 	 *
-	 * @var		JDatabaseQuery
-	 * @since	1.6
+	 * @var    JDatabaseQuery
+	 * @since  11.1
 	 */
 	protected $query = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
+	 * @return  JModelList
+	 *
+	 * @see     JController
+	 * @since   11.1
 	 */
 	public function __construct($config = array())
 	{
@@ -77,10 +83,11 @@ class JModelList extends JModel
 	 *
 	 * This method ensures that the query is contructed only once for a given state of the model.
 	 *
-	 * @return	JDatabaseQuery
-	 * @since	1.6
+	 * @return  JDatabaseQuery  A JDatabaseQuery object
+	 *
+	 * @since   11.1
 	 */
-	private function _getListQuery()
+	protected function _getListQuery()
 	{
 		// Capture the last store id used.
 		static $lastStoreId;
@@ -100,8 +107,9 @@ class JModelList extends JModel
 	/**
 	 * Method to get an array of data items.
 	 *
-	 * @return	mixed	An array of data items on success, false on failure.
-	 * @since	1.6
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   11.1
 	 */
 	public function getItems()
 	{
@@ -132,8 +140,9 @@ class JModelList extends JModel
 	/**
 	 * Method to get a JDatabaseQuery object for retrieving the data set from a database.
 	 *
-	 * @return	object	A JDatabaseQuery object to retrieve the data set.
-	 * @since	1.6
+	 * @return  JDatabaseQuery   A JDatabaseQuery object to retrieve the data set.
+	 *
+	 * @since   11.1
 	 */
 	protected function getListQuery()
 	{
@@ -146,8 +155,9 @@ class JModelList extends JModel
 	/**
 	 * Method to get a JPagination object for the data set.
 	 *
-	 * @return	object	A JPagination object for the data set.
-	 * @since	1.6
+	 * @return  JPagination  A JPagination object for the data set.
+	 *
+	 * @since   11.1
 	 */
 	public function getPagination()
 	{
@@ -177,9 +187,11 @@ class JModelList extends JModel
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string	An identifier string to generate the store id.
-	 * @return	string	A store id.
-	 * @since	1.6
+	 * @param   string   $id  An identifier string to generate the store id.
+	 *
+	 * @return  string   A store id.
+	 *
+	 * @since   11.1
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -195,8 +207,9 @@ class JModelList extends JModel
 	/**
 	 * Method to get the total number of items for the data set.
 	 *
-	 * @return	integer	The total number of items available in the data set.
-	 * @since	1.6
+	 * @return  integer  The total number of items available in the data set.
+	 *
+	 * @since   11.1
 	 */
 	public function getTotal()
 	{
@@ -210,7 +223,7 @@ class JModelList extends JModel
 
 		// Load the total.
 		$query = $this->_getListQuery();
-		$total = (int) $this->_getListCount((string) $query);
+		$total = (int) $this->_getListCount($query);
 
 		// Check for a database error.
 		if ($this->_db->getErrorNum()) {
@@ -227,8 +240,9 @@ class JModelList extends JModel
 	/**
 	 * Method to get the starting number of items for the data set.
 	 *
-	 * @return	integer	The starting number of items available in the data set.
-	 * @since	1.6
+	 * @return  integer  The starting number of items available in the data set.
+	 *
+	 * @since   11.1
 	 */
 	public function getstart()
 	{
@@ -261,9 +275,12 @@ class JModelList extends JModel
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @param	string	An optional ordering field.
-	 * @param	string	An optional direction (asc|desc).
-	 * @since	1.6
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
+	 *
+	 * @return  void
+	 *
+	 * @since   11.1
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -303,16 +320,19 @@ class JModelList extends JModel
 
 	/**
 	 * Gets the value of a user state variable and sets it in the session
-	 * This is the same as the method in JApplication except that this also can optionally
-	 *    force you back to the first page when a filter has changed
 	 *
-	 * @param	string	The key of the user state variable.
-	 * @param	string	The name of the variable passed in a request.
-	 * @param	string	The default value for the variable if not found. Optional.
-	 * @param	string	Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
-	 * @param	boolean	If true, the limitstart in request is set to zero
-	 * @return	The request user state.
-	 * @since	1.5
+	 * This is the same as the method in JApplication except that this also can optionally
+	 * force you back to the first page when a filter has changed
+	 *
+	 * @param   string   $key        The key of the user state variable.
+	 * @param   string   $request    The name of the variable passed in a request.
+	 * @param   string   $default    The default value for the variable if not found. Optional.
+	 * @param   string   $type       Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
+	 * @param   boolean  $resetPage  If true, the limitstart in request is set to zero
+	 *
+	 * @return  The request user state.
+	 *
+	 * @since   11.1
 	 */
 	public function getUserStateFromRequest($key, $request, $default = null, $type = 'none', $resetPage = true)
 	{
@@ -325,7 +345,7 @@ class JModelList extends JModel
 			JRequest::setVar('limitstart', 0);
 		}
 
-		// Save the new value only if it was set in this request.
+		// Save the new value only if it is set in this request.
 		if ($new_state !== null) {
 			$app->setUserState($key, $new_state);
 		}

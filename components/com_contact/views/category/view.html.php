@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -69,7 +69,7 @@ class ContactViewCategory extends JView
 			$item		= &$items[$i];
 			$item->slug	= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
 			$temp		= new JRegistry();
-			$temp->loadJSON($item->params);
+			$temp->loadString($item->params);
 			$item->params = clone($params);
 			$item->params->merge($temp);
 
@@ -168,8 +168,11 @@ class ContactViewCategory extends JView
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0)) {
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 
 		$this->document->setTitle($title);
@@ -178,7 +181,7 @@ class ContactViewCategory extends JView
 		{
 			$this->document->setDescription($this->category->metadesc);
 		}
-		elseif (!$this->category->metadesc && $this->params->get('menu-meta_description')) 
+		elseif (!$this->category->metadesc && $this->params->get('menu-meta_description'))
 		{
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
@@ -187,18 +190,14 @@ class ContactViewCategory extends JView
 		{
 			$this->document->setMetadata('keywords', $this->category->metakey);
 		}
-		elseif (!$this->category->metakey && $this->params->get('menu-meta_keywords')) 
+		elseif (!$this->category->metakey && $this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots')) 
+		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
-		}
-
-		if ($app->getCfg('MetaTitle') == '1') {
-			$this->document->setMetaData('title', $this->category->getMetadata()->get('page_title'));
 		}
 
 		if ($app->getCfg('MetaAuthor') == '1') {

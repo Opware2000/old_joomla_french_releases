@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default.php 21837 2011-07-12 18:12:35Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,9 +10,9 @@
 // no direct access
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.DS.'helpers'.DS.'html');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('behavior.tooltip');
-JHtml::_('script','system/multiselect.js',false,true);
+JHtml::_('behavior.multiselect');
 JHtml::_('behavior.modal', 'a.modal');
 
 $user		= JFactory::getUser();
@@ -23,10 +23,10 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 <form action="<?php echo JRoute::_('index.php?option=com_banners&view=tracks'); ?>" method="post" name="adminForm" id="adminForm">
 	<fieldset id="filter-bar">
 		<div class="filter-search fltlft">
-			<label class="filter-hide-lbl"><?php echo JText::_('COM_BANNERS_BEGIN_LABEL'); ?></label>
+			<label class="filter-hide-lbl" for="filter_begin"><?php echo JText::_('COM_BANNERS_BEGIN_LABEL'); ?></label>
 			<?php echo JHtml::_('calendar',$this->state->get('filter.begin'), 'filter_begin','filter_begin','%Y-%m-%d' , array('size'=>10,'onchange'=>"this.form.fireEvent('submit');this.form.submit()"));?>
 
-			<label class="filter-hide-lbl"><?php echo JText::_('COM_BANNERS_END_LABEL'); ?></label>
+			<label class="filter-hide-lbl" for="filter_end"><?php echo JText::_('COM_BANNERS_END_LABEL'); ?></label>
 			<?php echo JHtml::_('calendar',$this->state->get('filter.end'), 'filter_end', 'filter_end','%Y-%m-%d' ,array('size'=>10,'onchange'=>"this.form.fireEvent('submit');this.form.submit()"));?>
 		</div>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	$Id: contactcreator.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version	$Id: contactcreator.php 21759 2011-07-07 15:59:36Z chdemko $
  *
  * Contact Creator
  * A tool to automatically create and synchronise contacts with a user
@@ -39,6 +39,10 @@ class plgUserContactCreator extends JPlugin
 	{
 		if(!$success) {
 			return false; // if the user wasn't stored we don't resync
+		}
+
+		if(!$isnew) {
+			return false; // if the user isn't new we don't sync
 		}
 
 		// ensure the user id is really an int

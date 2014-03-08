@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: view.html.php 21376 2011-05-24 17:11:48Z dextercowley $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -22,9 +22,8 @@ class JInstallationViewFilesystem extends JView
 	/**
 	 * Display the view
 	 *
-	 * @access	public
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$state = $this->get('State');
 		$form  = $this->get('Form');

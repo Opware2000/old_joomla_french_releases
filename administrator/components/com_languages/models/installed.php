@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: installed.php 21032 2011-03-29 16:38:31Z dextercowley $
+ * @version		$Id: installed.php 21518 2011-06-10 21:38:12Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -73,7 +73,7 @@ class LanguagesModelInstalled extends JModelList
 		$app = JFactory::getApplication('administrator');
 
 		// Load the filter state.
-		$clientId = $this->getUserStateFromRequest($this->context.'.filter.client_id', 'filter_client_id', 0);
+		$clientId = JRequest::getInt('client');
 		$this->setState('filter.client_id', $clientId);
 
 		// Load the parameters.
@@ -167,7 +167,7 @@ class LanguagesModelInstalled extends JModelList
 			$data	= array ();
 
 			foreach($langlist as $lang){
-				$file = $path.DS.$lang.DS.$lang.'.xml';
+				$file = $path . '/' . $lang . '/' . $lang.'.xml';
 				$info = JApplicationHelper::parseXMLLangMetaFile($file);
 				$row = new JObject();
 				$row->language = $lang;
@@ -320,7 +320,7 @@ class LanguagesModelInstalled extends JModelList
 		$this->cleanCache();
 		$this->cleanCache('_system', 0);
 		$this->cleanCache('_system', 1);
-		
+
 		return true;
 	}
 

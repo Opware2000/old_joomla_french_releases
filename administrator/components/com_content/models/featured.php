@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: featured.php 20267 2011-01-11 03:44:44Z eddieajau $
+ * @version		$Id: featured.php 21518 2011-06-10 21:38:12Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -8,7 +8,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__).DS.'articles.php';
+require_once dirname(__FILE__) . '/articles.php';
 
 /**
  * About Page Model

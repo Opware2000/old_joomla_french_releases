@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: languagefilter.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: languagefilter.php 21744 2011-07-06 08:40:23Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -32,61 +32,64 @@ class plgSystemLanguageFilter extends JPlugin
 
 	public function __construct(&$subject, $config)
 	{
-		$app = JFactory::getApplication();
-		$router = $app->getRouter();
-		if ($app->isSite()) {
-			// setup language data
-			self::$mode_sef 	= ($router->getMode() == JROUTER_MODE_SEF) ? true : false;
-			self::$sefs 		= JLanguageHelper::getLanguages('sef');
-			self::$lang_codes 	= JLanguageHelper::getLanguages('lang_code');
-			self::$default_lang = JComponentHelper::getParams('com_languages')->get('site', 'en-GB');
-			self::$default_sef 	= self::$lang_codes[self::$default_lang]->sef;
+		// Ensure that constructor is called one time
+		if (!self::$default_lang) {
+			$app = JFactory::getApplication();
+			$router = $app->getRouter();
+			if ($app->isSite()) {
+				// setup language data
+				self::$mode_sef 	= ($router->getMode() == JROUTER_MODE_SEF) ? true : false;
+				self::$sefs 		= JLanguageHelper::getLanguages('sef');
+				self::$lang_codes 	= JLanguageHelper::getLanguages('lang_code');
+				self::$default_lang = JComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+				self::$default_sef 	= self::$lang_codes[self::$default_lang]->sef;
 
-			$app->setLanguageFilter(true);
-			$uri = JFactory::getURI();
-			if (self::$mode_sef) {
-				// Get the route path from the request.
-				$path = JString::substr($uri->toString(), JString::strlen($uri->base()));
+				$app->setLanguageFilter(true);
+				$uri = JFactory::getURI();
+				if (self::$mode_sef) {
+					// Get the route path from the request.
+					$path = JString::substr($uri->toString(), JString::strlen($uri->base()));
 
-				// Apache mod_rewrite is Off
-				$path = JFactory::getConfig()->get('sef_rewrite') ? $path : JString::substr($path, 10);
+					// Apache mod_rewrite is Off
+					$path = JFactory::getConfig()->get('sef_rewrite') ? $path : JString::substr($path, 10);
 
-				// Trim any spaces or slashes from the ends of the path and explode into segments.
-				$path  = JString::trim($path, '/ ');
-				$parts = explode('/', $path);
+					// Trim any spaces or slashes from the ends of the path and explode into segments.
+					$path  = JString::trim($path, '/ ');
+					$parts = explode('/', $path);
 
-				// The language segment is always at the beginning of the route path if it exists.
-				$sef = $uri->getVar('lang');
-				
-				if (!empty($parts) && empty($sef)) {
-					$sef = reset($parts);
+					// The language segment is always at the beginning of the route path if it exists.
+					$sef = $uri->getVar('lang');
+
+					if (!empty($parts) && empty($sef)) {
+						$sef = reset($parts);
+					}
+				}
+				else {
+					$sef = $uri->getVar('lang');
+				}
+				if (isset(self::$sefs[$sef])) {
+					$lang_code = self::$sefs[$sef]->lang_code;
+					// Create a cookie
+					$conf = JFactory::getConfig();
+					$cookie_domain 	= $conf->get('config.cookie_domain', '');
+					$cookie_path 	= $conf->get('config.cookie_path', '/');
+					setcookie(JUtility::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
+					// set the request var
+					JRequest::setVar('language',$lang_code);
 				}
 			}
-			else {
-				$sef = $uri->getVar('lang');
-			}
-			if (isset(self::$sefs[$sef])) {
-				$lang_code = self::$sefs[$sef]->lang_code;
-				// Create a cookie
-				$conf = JFactory::getConfig();
-				$cookie_domain 	= $conf->get('config.cookie_domain', '');
-				$cookie_path 	= $conf->get('config.cookie_path', '/');
-				setcookie(JUtility::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
-				// set the request var
-				JRequest::setVar('language',$lang_code);
+			parent::__construct($subject, $config);
+			// 	Detect browser feature
+			if ($app->isSite()) {
+				$app->setDetectBrowser($this->params->get('detect_browser', '1')=='1');
 			}
 		}
-		parent::__construct($subject, $config);
-		// 	Detect browser feature
-		if ($app->isSite()) {
-			$app->setDetectBrowser($this->params->get('detect_browser', '1')=='1');
-		}
-
 	}
 
 	public function onAfterInitialise()
 	{
 		$app = JFactory::getApplication();
+		$app->set('menu_associations', $this->params->get('menu_associations', 0));
 		if ($app->isSite()) {
 			self::$tag 			= JFactory::getLanguage()->getTag();
 
@@ -126,7 +129,7 @@ class plgSystemLanguageFilter extends JPlugin
 					$test = true;
 					foreach ($vars as $key=>$value)
 					{
-						if ($uri->hasVar($key) && $uri->getVar($key) != $value) 
+						if ($uri->hasVar($key) && $uri->getVar($key) != $value)
 						{
 							$test = false;
 							break;
@@ -135,7 +138,7 @@ class plgSystemLanguageFilter extends JPlugin
 					if ($test) {
 						foreach ($vars as $key=>$value)
 						{
-							$uri->delVar($key); 
+							$uri->delVar($key);
 						}
 						$uri->delVar('Itemid');
 					}
@@ -160,8 +163,13 @@ class plgSystemLanguageFilter extends JPlugin
 	{
 		$array = array();
 		$lang_code = JRequest::getString(JUtility::getHash('language'), null ,'cookie');
+		// No cookie - let's try to detect browser language or use site default
 		if (!$lang_code) {
-			$lang_code = JLanguageHelper::detectLanguage();
+			if ($this->params->get('detect_browser', 1)){
+				$lang_code = JLanguageHelper::detectLanguage();
+			} else {
+				$lang_code = self::$default_sef;
+ 			}
 		}
 		if (self::$mode_sef) {
 			$path = $uri->getPath();
@@ -172,7 +180,7 @@ class plgSystemLanguageFilter extends JPlugin
 			if (!isset(self::$sefs[$sef])) {
 				$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
 				$uri->setPath($sef . '/' . $path);
-				
+
 				$post = JRequest::get('POST');
 				if (JRequest::getMethod() != "POST" || count($post) == 0)
 				{
@@ -225,7 +233,7 @@ class plgSystemLanguageFilter extends JPlugin
 		if ($this->params->get('automatic_change', '1')=='1' && key_exists('params', $user))
 		{
 			$registry = new JRegistry();
-			$registry->loadJSON($user['params']);
+			$registry->loadString($user['params']);
 			self::$_user_lang_code = $registry->get('language');
 			if (empty(self::$_user_lang_code)) {
 				self::$_user_lang_code = self::$default_lang;
@@ -252,7 +260,7 @@ class plgSystemLanguageFilter extends JPlugin
 		if ($this->params->get('automatic_change', '1')=='1' && key_exists('params', $user) && $success)
 		{
 			$registry = new JRegistry();
-			$registry->loadJSON($user['params']);
+			$registry->loadString($user['params']);
 			$lang_code = $registry->get('language');
 			if (empty($lang_code)) {
 				$lang_code = self::$default_lang;
@@ -295,16 +303,18 @@ class plgSystemLanguageFilter extends JPlugin
 		$app = JFactory::getApplication();
 		if ($app->isSite())
 		{
-			$lang_code = $user['language'];
-			if (empty($lang_code)) {
-				$lang_code = self::$default_lang;
+			if ($this->params->get('automatic_change', 1)) {
+				$lang_code = $user['language'];
+				if (empty($lang_code)) {
+					$lang_code = self::$default_lang;
+				}
+				self::$tag = $lang_code;
+				// Create a cookie
+				$conf = JFactory::getConfig();
+				$cookie_domain 	= $conf->get('config.cookie_domain', '');
+				$cookie_path 	= $conf->get('config.cookie_path', '/');
+				setcookie(JUtility::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
 			}
-			self::$tag = $lang_code;
-			// Create a cookie
-			$conf = JFactory::getConfig();
-			$cookie_domain 	= $conf->get('config.cookie_domain', '');
-			$cookie_path 	= $conf->get('config.cookie_path', '/');
-			setcookie(JUtility::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
 		}
 	}
 }

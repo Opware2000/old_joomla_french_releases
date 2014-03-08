@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 21603 2011-06-21 18:31:49Z dextercowley $
+ * @version		$Id: articles.php 21700 2011-06-28 04:32:41Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -482,7 +482,7 @@ class ContentModelArticles extends JModelList
 		foreach ($items as &$item)
 		{
 			$articleParams = new JRegistry;
-			$articleParams->loadJSON($item->attribs);
+			$articleParams->loadString($item->attribs);
 
 			// Unpack readmore and layout params
 			$item->alternative_readmore = $articleParams->get('alternative_readmore');

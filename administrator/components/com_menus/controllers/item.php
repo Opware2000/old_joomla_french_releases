@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: item.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: item.php 21744 2011-07-06 08:40:23Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -49,29 +49,17 @@ class MenusControllerItem extends JControllerForm
 	 * @return	void
 	 * @since	1.6
 	 */
-	function batch()
+	public function batch($model)
 	{
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app	= JFactory::getApplication();
 		$model	= $this->getModel('Item', '', array());
-		$vars	= JRequest::getVar('batch', array(), 'post', 'array');
-		$cid	= JRequest::getVar('cid', array(), 'post', 'array');
 
 		// Preset the redirect
 		$this->setRedirect(JRoute::_('index.php?option=com_menus&view=items'.$this->getRedirectToListAppend(), false));
 
-		// Attempt to run the batch operation.
-		if ($model->batch($vars, $cid)) {
-			$this->setMessage(JText::_('JGLOBAL_BATCH_SUCCESS'));
-
-			return true;
-		}
-		else {
-			$this->setMessage(JText::sprintf('JGLOBAL_ERROR_BATCH_FAILED', $model->getError()));
-			return false;
-		}
+		return parent::batch($model);
 	}
 
 	/**
@@ -161,6 +149,7 @@ class MenusControllerItem extends JControllerForm
 
 			// Reset the ID and then treat the request as for Apply.
 			$data['id']	= 0;
+			$data['associations'] = array();
 			$task		= 'apply';
 		}
 

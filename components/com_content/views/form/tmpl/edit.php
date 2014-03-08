@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: edit.php 21437 2011-06-04 05:23:08Z eddieajau $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -69,7 +69,13 @@ $params = $this->state->get('params');
 		<legend><?php echo JText::_('COM_CONTENT_PUBLISHING'); ?></legend>
 		<div class="formelm">
 		<?php echo $this->form->getLabel('catid'); ?>
-		<?php echo $this->form->getInput('catid'); ?>
+		<?php if($this->params->get('enable_category', 0) == 1) : ?>
+		<span class="category">
+		<?php echo $this->category_title; ?>
+		</span>
+		<?php else : ?>
+		<?php   echo $this->form->getInput('catid'); ?>
+		<?php endif;?>
 		</div>
 		<div class="formelm">
 		<?php echo $this->form->getLabel('created_by_alias'); ?>
@@ -129,6 +135,9 @@ $params = $this->state->get('params');
 
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
+		<?php if($this->params->get('enable_category', 0) == 1) :?>
+		<input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1);?>"/>
+		<?php endif;?>
 		<?php echo JHtml::_( 'form.token' ); ?>
 	</fieldset>
 </form>

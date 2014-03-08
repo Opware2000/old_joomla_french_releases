@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: blog_item.php 21092 2011-04-06 17:12:16Z infograf768 $
+ * @version		$Id: blog_item.php 21651 2011-06-23 05:31:49Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -103,19 +103,19 @@ JHtml::core();
 		</dd>
 <?php endif; ?>
 <?php if ($params->get('show_author') && !empty($this->item->author )) : ?>
-	<dd class="createdby"> 
+	<dd class="createdby">
 		<?php $author =  $this->item->author; ?>
 		<?php $author = ($this->item->created_by_alias ? $this->item->created_by_alias : $author);?>
 
 			<?php if (!empty($this->item->contactid ) &&  $params->get('link_author') == true):?>
-				<?php 	echo JText::sprintf('COM_CONTENT_WRITTEN_BY' , 
+				<?php 	echo JText::sprintf('COM_CONTENT_WRITTEN_BY' ,
 				 JHtml::_('link',JRoute::_('index.php?option=com_contact&view=contact&id='.$this->item->contactid),$author)); ?>
 
 			<?php else :?>
 				<?php echo JText::sprintf('COM_CONTENT_WRITTEN_BY', $author); ?>
 			<?php endif; ?>
 	</dd>
-<?php endif; ?>	
+<?php endif; ?>
 <?php if ($params->get('show_hits')) : ?>
 		<dd class="hits">
 		<?php echo JText::sprintf('COM_CONTENT_ARTICLE_HITS', $this->item->hits); ?>
@@ -135,7 +135,7 @@ JHtml::core();
 		$active = $menu->getActive();
 		$itemId = $active->id;
 		$link1 = JRoute::_('index.php?option=com_users&view=login&Itemid=' . $itemId);
-		$returnURL = JRoute::_(ContentHelperRoute::getArticleRoute($this->item->slug));
+		$returnURL = JRoute::_(ContentHelperRoute::getArticleRoute($this->item->slug, $this->item->catid));
 		$link = new JURI($link1);
 		$link->setVar('return', base64_encode($returnURL));
 	endif;
@@ -150,7 +150,7 @@ JHtml::core();
 						    echo JHtml::_('string.truncate', ($this->item->title), $params->get('readmore_limit'));
 						endif;
 					elseif ($params->get('show_readmore_title', 0) == 0) :
-						echo JText::sprintf('COM_CONTENT_READ_MORE_TITLE');	
+						echo JText::sprintf('COM_CONTENT_READ_MORE_TITLE');
 					else :
 						echo JText::_('COM_CONTENT_READ_MORE');
 						echo JHtml::_('string.truncate', ($this->item->title), $params->get('readmore_limit'));

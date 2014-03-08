@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: view.html.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -76,7 +76,7 @@ class TemplatesViewTemplates extends JView
 		JToolBarHelper::title(JText::_('COM_TEMPLATES_MANAGER_TEMPLATES'), 'thememanager');
 		if ($canDo->get('core.admin')) {
 			JToolBarHelper::preferences('com_templates');
-			JToolBarHelper::divider();	
+			JToolBarHelper::divider();
 		}
 		JToolBarHelper::help('JHELP_EXTENSIONS_TEMPLATE_MANAGER_TEMPLATES');
 	}

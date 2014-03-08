@@ -1,16 +1,15 @@
 <?php
 /**
- * @version		$Id: html.php 21020 2011-03-27 06:52:01Z infograf768 $
- * @package		Joomla.Framework
- * @subpackage	HTML
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// no direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
-JHtml::addIncludePath(JPATH_LIBRARIES.'/joomla/html/html');
+JHtml::addIncludePath(JPATH_PLATFORM.'/joomla/html/html');
 
 jimport('joomla.environment.uri');
 jimport('joomla.environment.browser');
@@ -19,23 +18,22 @@ jimport('joomla.filesystem.file');
 /**
  * Utility class for all HTML drawing classes
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	HTML
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ * @since       11.1
  */
 abstract class JHtml
 {
 	/**
 	 * Option values related to the generation of HTML output. Recognized
 	 * options are:
-	 * <ul><li>fmtDepth, integer. The current indent depth.
-	 * </li><li>fmtEol, string. The end of line string, default is linefeed.
-	 * </li><li>fmtIndent, string. The string to use for indentation, default is
-	 * tab.
-	 * </ul>
+	 *     fmtDepth, integer. The current indent depth.
+	 *     fmtEol, string. The end of line string, default is linefeed.
+	 *     fmtIndent, string. The string to use for indentation, default is
+	 *     tab.
 	 *
-	 * @var array
+	 * @var    array
+	 * @since  11.1
 	 */
 	static $formatOptions = array(
 		'format.depth' => 0,
@@ -43,20 +41,37 @@ abstract class JHtml
 		'format.indent' => "\t"
  );
 
-	private static $includePaths = array();
+	/**
+	 * An array to hold included paths
+	 *
+	 * @var    array
+	 * @since  11.1
+	 */
+ protected static $includePaths = array();
 
 	/**
 	 * An array to hold method references
 	 *
-	 * @var array
+	 * @var    array
+	 * @since  11.1
 	 */
-	private static $registry = array();
+	protected static $registry = array();
 
+	/**
+	 * Method to extract a key
+	 *
+	 * @param   string  $key   The name of helper method to load, (prefix).(class).function
+	 *                         prefix and class are optional and can be used to load custom
+	 *                         html helpers.
+	 *
+	 * @return   array   Contains lowercase key, prefix, file, function.
+	 * @since    11.1
+	 */
 	protected static function extract($key)
 	{
 		$key = preg_replace('#[^A-Z0-9_\.]#i', '', $key);
 
-		// Check to see if we need to load a helper file
+		// Check to see whether we need to load a helper file
 		$parts = explode('.', $key);
 
 		$prefix = (count($parts) == 3 ? array_shift($parts) : 'JHtml');
@@ -65,15 +80,19 @@ abstract class JHtml
 
 		return array(strtolower($prefix.'.'.$file.'.'.$func), $prefix, $file, $func);
 	}
+
 	/**
 	 * Class loader method
 	 *
 	 * Additional arguments may be supplied and are passed to the sub-class.
 	 * Additional include paths are also able to be specified for third-party use
 	 *
-	 * @param	string	The name of helper method to load, (prefix).(class).function
-	 *					prefix and class are optional and can be used to load custom
-	 *					html helpers.
+	 * @param   string  $key   The name of helper method to load, (prefix).(class).function
+	 *                         prefix and class are optional and can be used to load custom
+	 *                         html helpers.
+	 *
+	 * @return   mixed  JHtml::call($function, $args) or False on error
+	 * @since    11.1
 	 */
 	public static function _($key)
 	{
@@ -82,7 +101,7 @@ abstract class JHtml
 		{
 			$function = self::$registry[$key];
 			$args = func_get_args();
-			// remove function name from arguments
+			// Remove function name from arguments
 			array_shift($args);
 			return JHtml::call($function, $args);
 		}
@@ -114,7 +133,7 @@ abstract class JHtml
 		{
 			JHtml::register($key, $toCall);
 			$args = func_get_args();
-			// remove function name from arguments
+			// Remove function name from arguments
 			array_shift($args);
 			return JHtml::call($toCall, $args);
 		}
@@ -128,8 +147,11 @@ abstract class JHtml
 	/**
 	 * Registers a function to be called with a specific key
 	 *
-	 * @param	string	The name of the key
-	 * @param	string	Function or method
+	 * @param   string   The name of the key
+	 * @param   string   Function or method
+	 *
+	 * @return  boolean  True if the function is callable
+	 * @since   11.1
 	 */
 	public static function register($key, $function)
 	{
@@ -145,7 +167,10 @@ abstract class JHtml
 	/**
 	 * Removes a key for a method from registry.
 	 *
-	 * @param	string	The name of the key
+	 * @param   string  The name of the key
+	 *
+	 * @return  boolean  True if a set key is unset
+	 * @since   11.1
 	 */
 	public static function unregister($key)
 	{
@@ -161,7 +186,10 @@ abstract class JHtml
 	/**
 	 * Test if the key is registered.
 	 *
-	 * @param	string	The name of the key
+	 * @param   string  The name of the key
+	 *
+	 * @return  boolean  True if the key is registered.
+	 * @since   11.1
 	 */
 	public static function isRegistered($key)
 	{
@@ -172,10 +200,14 @@ abstract class JHtml
 	/**
 	 * Function caller method
 	 *
-	 * @param	string	Function or method to call
-	 * @param	array	Arguments to be passed to function
+	 * @param   string  Function or method to call
+	 * @param   array   Arguments to be passed to function
+	 *
+	 * @return  mixed   Function result or false on error.
+	 * @since   11.1
+	 * @see     http://php.net/manual/en/function.call-user-func-array.php
 	 */
-	private static function call($function, $args)
+	protected static function call($function, $args)
 	{
 		if (is_callable($function))
 		{
@@ -195,11 +227,12 @@ abstract class JHtml
 	/**
 	 * Write a <a></a> element
 	 *
-	 * @access	public
-	 * @param	string	The relative URL to use for the href attribute
-	 * @param	string	The target attribute to use
-	 * @param	array	An associative array of attributes to add
-	 * @since	1.5
+	 * @param   string   $url      The relative URL to use for the href attribute
+	 * @param   string   $text     The target attribute to use
+	 * @param   array    $attribs  An associative array of attributes to add
+	 *
+	 * @return  string   <a></a> string
+	 * @since   11.1
 	 */
 	public static function link($url, $text, $attribs = null)
 	{
@@ -213,12 +246,13 @@ abstract class JHtml
 	/**
 	 * Write a <iframe></iframe> element
 	 *
-	 * @access	public
-	 * @param	string	The relative URL to use for the src attribute
-	 * @param	string	The target attribute to use
-	 * @param	array	An associative array of attributes to add
-	 * @param	string	The message to display if the iframe tag is not supported
-	 * @since	1.5
+	 * @param   string  $url       The relative URL to use for the src attribute
+	 * @param   string  $name      The target attribute to use
+	 * @param   array   $attribs   An associative array of attributes to add
+	 * @param   string  $noFrames  The message to display if the iframe tag is not supported
+	 *
+	 * @return  string  <iframe></iframe> element or message if not supported
+	 * @since   11.1
 	 */
 	public static function iframe($url, $name, $attribs = null, $noFrames = '')
 	{
@@ -230,18 +264,19 @@ abstract class JHtml
 	}
 
 	/**
-	 * compute the files to be include
-	 * @param	string		path to file
-	 * @param	boolean		path to file is relative to /media folder
-	 * @param	boolean		detect browser to include specific browser js files
-	 * @param	folder		folder name to search into (images, css, js, ...)
-	 * @see		JBrowser
-	 * @return	array		files to be included
-	 * @since	1.6
+	 * Compute the files to be include
+	 * @param   string   $file            path to file
+	 * @param   boolean  $relative        path to file is relative to /media folder
+	 * @param   boolean  $detect_browser  detect browser to include specific browser js files
+	 * @param   folder   $folder          folder name to search into (images, css, js, ...)
+	 * @see     JBrowser
+	 *
+	 * @return  array    files to be included
+	 * @since   11.1
 	 */
-	private static function _includeRelativeFiles($file, $relative, $detect_browser, $folder)
+	protected static function _includeRelativeFiles($file, $relative, $detect_browser, $folder)
 	{
-		// if http is present in filename
+		// If http is present in filename
 		if (strpos($file, 'http') === 0)
 		{
 			$includes = array($file);
@@ -258,7 +293,7 @@ abstract class JHtml
 				$ext		= JFile::getExt($file);
 				$strip		= JFile::stripExt($file);
 
-				// try to include files named filename.ext, filename_browser.ext, filename_browser_major.ext, filename_browser_major_minor.ext
+				// Try to include files named filename.ext, filename_browser.ext, filename_browser_major.ext, filename_browser_major_minor.ext
 				// where major and minor are the browser version names
 				$potential = array($file, $strip.'_'.$browser.'.'.$ext,  $strip.'_'.$browser.'_'.$major.'.'.$ext, $strip.'_'.$browser.'_'.$major.'_'.$minor.'.'.$ext);
 			}
@@ -267,7 +302,7 @@ abstract class JHtml
 				$potential = array($file);
 			}
 
-			// if relative search in template directory or media directory
+			// If relative search in template directory or media directory
 			if($relative)
 			{
 
@@ -278,26 +313,26 @@ abstract class JHtml
 				// Prepare array of files
 				$includes = array();
 
-				// for each potential files
+				// For each potential files
 				foreach ($potential as $file)
 				{
-					// if the file is in the template folder
+					// If the file is in the template folder
 					if (file_exists(JPATH_THEMES . "/$template/$folder/$file"))
 					{
 						$includes[] = JURI::base(true) . "/templates/$template/$folder/$file";
 					}
 					else
 					{
-						// if the file contains any /: it can be in an media extension subfolder
+						// If the file contains any /: it can be in an media extension subfolder
 						if (strpos($file, '/'))
 						{
-							// divide the file extracting the extension as the first part before /
+							// Divide the file extracting the extension as the first part before /
 							list($extension, $file) = explode('/', $file, 2);
 
-							// if the file yet contains any /: it can be a plugin
+							// If the file yet contains any /: it can be a plugin
 							if (strpos($file, '/'))
 							{
-								// divide the file extracting the element as the first part before /
+								// Divide the file extracting the element as the first part before /
 								list($element, $file) = explode('/', $file, 2);
 
 								// Try to deal with plugins group in the media folder
@@ -341,7 +376,7 @@ abstract class JHtml
 					}
 				}
 			}
-			// if not relative and http is not present in filename
+			// If not relative and http is not present in filename
 			else
 			{
 				$includes = array();
@@ -359,12 +394,13 @@ abstract class JHtml
 	/**
 	 * Write a <img></img> element
 	 *
-	 * @access	public
-	 * @param	string	The relative or absolute URL to use for the src attribute
-	 * @param	string	The target attribute to use
-	 * @param	array	An associative array of attributes to add
-	 * @param	boolean	If set to true, it tries to find an override for the file in the template
-	 * @since	1.5
+	 * @param   string   $file       The relative or absolute URL to use for the src attribute
+	 * @param   string   $attribs    The target attribute to use
+	 * @param   array    $relative   An associative array of attributes to add
+	 * @param   boolean  $path_only  If set to true, it tries to find an override for the file in the template
+	 *
+	 * @return  string
+	 * @since   11.1
 	 */
 	public static function image($file, $alt, $attribs = null, $relative = false, $path_only = false)
 	{
@@ -374,7 +410,7 @@ abstract class JHtml
 
 		$includes = self::_includeRelativeFiles($file, $relative, false, 'images');
 
-		// if only path is required
+		// If only path is required
 		if($path_only)
 		{
 			if (count($includes)) {
@@ -392,44 +428,44 @@ abstract class JHtml
 	/**
 	 * Write a <link rel="stylesheet" style="text/css" /> element
 	 *
-	 * @param	string		path to file
-	 * @param	array		attributes to be added to the stylesheet
-	 * @param	boolean		path to file is relative to /media folder
-	 * @param	boolean		return the path to the file only
-	 * @param	boolean		detect browser to include specific browser css files
-	 *						will try to include file, file_*browser*, file_*browser*_*major*, file_*browser*_*major*_*minor*
-	 *						<table>
-	 *							<tr><th>Navigator</th>					<th>browser</th>	<th>major.minor</th></tr>
+	 * @param   string   path to file
+	 * @param   array    attributes to be added to the stylesheet
+	 * @param   boolean  path to file is relative to /media folder
+	 * @param   boolean  return the path to the file only
+	 * @param   boolean  detect browser to include specific browser css files
+	 *                   will try to include file, file_*browser*, file_*browser*_*major*, file_*browser*_*major*_*minor*
+	 *                      <table>
+	 *                         <tr><th>Navigator</th>                  <th>browser</th>	<th>major.minor</th></tr>
 	 *
-	 *							<tr><td>Safari 3.0.x</td>				<td>konqueror</td>	<td>522.x</td></tr>
-	 *							<tr><td>Safari 3.1.x and 3.2.x</td>		<td>konqueror</td>	<td>525.x</td></tr>
-	 *							<tr><td>Safari 4.0 to 4.0.2</td>		<td>konqueror</td>	<td>530.x</td></tr>
-	 *							<tr><td>Safari 4.0.3 to 4.0.4</td>		<td>konqueror</td>	<td>531.x</td></tr>
-	 *							<tr><td>iOS 4.0 Safari</td>				<td>konqueror</td>	<td>532.x</td></tr>
-	 *							<tr><td>Safari 5.0</td>					<td>konqueror</td>	<td>533.x</td></tr>
+	 *                         <tr><td>Safari 3.0.x</td>               <td>konqueror</td>	<td>522.x</td></tr>
+	 *                         <tr><td>Safari 3.1.x and 3.2.x</td>     <td>konqueror</td>	<td>525.x</td></tr>
+	 *                         <tr><td>Safari 4.0 to 4.0.2</td>        <td>konqueror</td>	<td>530.x</td></tr>
+	 *                         <tr><td>Safari 4.0.3 to 4.0.4</td>      <td>konqueror</td>	<td>531.x</td></tr>
+	 *                         <tr><td>iOS 4.0 Safari</td>             <td>konqueror</td>	<td>532.x</td></tr>
+	 *                         <tr><td>Safari 5.0</td>                 <td>konqueror</td>	<td>533.x</td></tr>
 	 *
-	 *							<tr><td>Google Chrome 1.0</td>			<td>konqueror</td>	<td>528.x</td></tr>
-	 *							<tr><td>Google Chrome 2.0</td>			<td>konqueror</td>	<td>530.x</td></tr>
-	 *							<tr><td>Google Chrome 3.0 and 4.x</td>	<td>konqueror</td>	<td>532.x</td></tr>
-	 *							<tr><td>Google Chrome 5.0</td>			<td>konqueror</td>	<td>533.x</td></tr>
+	 *                         <tr><td>Google Chrome 1.0</td>          <td>konqueror</td>	<td>528.x</td></tr>
+	 *                         <tr><td>Google Chrome 2.0</td>          <td>konqueror</td>	<td>530.x</td></tr>
+	 *                         <tr><td>Google Chrome 3.0 and 4.x</td>  <td>konqueror</td>	<td>532.x</td></tr>
+	 *                         <tr><td>Google Chrome 5.0</td>          <td>konqueror</td>	<td>533.x</td></tr>
 	 *
-	 *							<tr><td>Internet Explorer 5.5</td>		<td>msie</td>		<td>5.5</td></tr>
-	 *							<tr><td>Internet Explorer 6.x</td>		<td>msie</td>		<td>6.x</td></tr>
-	 *							<tr><td>Internet Explorer 7.x</td>		<td>msie</td>		<td>7.x</td></tr>
-	 *							<tr><td>Internet Explorer 8.x</td>		<td>msie</td>		<td>8.x</td></tr>
+	 *                         <tr><td>Internet Explorer 5.5</td>      <td>msie</td>		<td>5.5</td></tr>
+	 *                         <tr><td>Internet Explorer 6.x</td>      <td>msie</td>		<td>6.x</td></tr>
+	 *                         <tr><td>Internet Explorer 7.x</td>      <td>msie</td>		<td>7.x</td></tr>
+	 *                         <tr><td>Internet Explorer 8.x</td>      <td>msie</td>		<td>8.x</td></tr>
 	 *
-	 *							<tr><td>Firefox</td>					<td>mozilla</td>	<td>5.0</td></tr>
-	 *						</table>
-	 *						a lot of others
-	 * @see JBrowser
+	 *                         <tr><td>Firefox</td>                    <td>mozilla</td>	<td>5.0</td></tr>
+	 *                      </table>
+	 *                      a lot of others
+	 * @see     JBrowser
 	 *
-	 * @return	mixed		nothing if $path_only is false, null, path or array of path if specific css browser files were detected
-	 * @since	1.6
+	 * @return  mixed  nothing if $path_only is false, null, path or array of path if specific css browser files were detected
+	 * @since   11.1
 	 */
 	public static function stylesheet($file, $attribs = array(), $relative = false, $path_only = false, $detect_browser = true)
 	{
 		// Need to adjust for the change in API from 1.5 to 1.6.
-		// function stylesheet($filename, $path = 'media/system/css/', $attribs = array())
+		// Function stylesheet($filename, $path = 'media/system/css/', $attribs = array())
 		if (is_string($attribs)) {
 			// Assume this was the old $path variable.
 			$file = $attribs.$file;
@@ -443,7 +479,7 @@ abstract class JHtml
 
 		$includes = self::_includeRelativeFiles($file, $relative, $detect_browser, 'css');
 
-		// if only path is required
+		// If only path is required
 		if ($path_only) {
 			if (count($includes)==0) {
 				return null;
@@ -455,7 +491,7 @@ abstract class JHtml
 				return $includes;
 			}
 		}
-		// if inclusion is required
+		// If inclusion is required
 		else {
 			$document = JFactory::getDocument();
 			foreach ($includes as $include)
@@ -467,14 +503,15 @@ abstract class JHtml
 
 	/**
 	 * Write a <script></script> element
-	 * @param	string		path to file
-	 * @param	boolean		load the JS framework
-	 * @param	boolean		path to file is relative to /media folder
-	 * @param	boolean		return the path to the file only
-	 * @param	boolean		detect browser to include specific browser js files
-	 * @return	mixed		nothing if $path_only is false, null, path or array of path if specific js browser files were detected
-	 * @see 	JHtml::stylesheet
-	 * @since	1.6
+	 * @param   string   path to file
+	 * @param   boolean  load the JS framework
+	 * @param   boolean  path to file is relative to /media folder
+	 * @param   boolean  return the path to the file only
+	 * @param   boolean  detect browser to include specific browser js files
+	 *
+	 * @return  mixed    nothing if $path_only is false, null, path or array of path if specific js browser files were detected
+	 * @see     JHtml::stylesheet
+	 * @since   11.1
 	 */
 	public static function script($file, $framework = false, $relative = false, $path_only = false, $detect_browser = true)
 	{
@@ -488,14 +525,14 @@ abstract class JHtml
 			$framework	= $relative;
 		}
 
-		// Include mootools framework
+		// Include MooTools framework
 		if ($framework) {
 			JHtml::_('behavior.framework');
 		}
 
 		$includes = self::_includeRelativeFiles($file, $relative, $detect_browser, 'js');
 
-		// if only path is required
+		// If only path is required
 		if ($path_only) {
 			if (count($includes)==0) {
 				return null;
@@ -507,7 +544,7 @@ abstract class JHtml
 				return $includes;
 			}
 		}
-		// if inclusion is required
+		// If inclusion is required
 		else {
 			$document = JFactory::getDocument();
 			foreach ($includes as $include)
@@ -517,6 +554,13 @@ abstract class JHtml
 		}
 	}
 
+	/**
+	 *
+	 * @param   boolean  $debug  True if debugging is enabled.
+	 *
+	 * @return  void
+	 * @since   11.1
+	 */
 	public static function core($debug = null)
 	{
 		// If no debugging value is set, use the configuration setting
@@ -536,7 +580,10 @@ abstract class JHtml
 	 * Updates the formatOptions array with all valid values in the passed
 	 * array. See {@see JHtml::$formatOptions} for details.
 	 *
-	 * @param array Option key/value pairs.
+	 * @param   array  $options  Option key/value pairs.
+	 *
+	 * @return  void
+	 * @since   11.1
 	 */
 	public static function setFormatOptions($options)
 	{
@@ -547,18 +594,17 @@ abstract class JHtml
 		}
 	}
 
-
-
 	/**
 	 * Returns formated date according to a given format and time zone.
 	 *
-	 * @param	string	String in a format accepted by date(), defaults to "now".
-	 * @param	string	format optional format for strftime
-	 * @param	mixed	Time zone to be used for the date.  Special cases: boolean true for user
-	 *					setting, boolean false for server setting.
-	 * @return	string	A date translated by the given format and time zone.
-	 * @see		strftime
-	 * @since	1.5
+	 * @param   string    String in a format accepted by date(), defaults to "now".
+	 * @param   string    Format optional format for strftime
+	 * @param   mixed     Time zone to be used for the date.  Special cases: boolean true for user
+	 *                    setting, boolean false for server setting.
+	 *
+	 * @return  string    A date translated by the given format and time zone.
+	 * @see     strftime
+	 * @since   11.1
 	 */
 	public static function date($input = 'now', $format = null, $tz = true, $gregorian=false)
 	{
@@ -615,17 +661,18 @@ abstract class JHtml
 	/**
 	 * Creates a tooltip with an image as button
 	 *
-	 * @param	string			$tooltip The tip string
-	 * @param	string|array	$title The title of the tooltip or an associative array with keys contained in {'title','image','text','href','alt'} and values
-	 *							corresponding to parameters of the same name.
-	 * @param	string			$image The image for the tip, if no text is provided
-	 * @param	string			$text The text for the tip
-	 * @param	string			$href An URL that will be used to create the link
-	 * @param	string			$alt The alt attribute for img tag
- 	 * @return	string
-	 * @since	1.5
+	 * @param   string        $tooltip  The tip string
+	 * @param   mixed         $title    The title of the tooltip or an associative array with keys contained in {'title','image','text','href','alt'} and values
+	 *                                  corresponding to parameters of the same name.
+	 * @param   string        $image    The image for the tip, if no text is provided
+	 * @param   string        $text     The text for the tip
+	 * @param   string        $href     An URL that will be used to create the link
+	 * @param   string        $alt      The alt attribute for img tag
+ 	 *
+ 	 * @return  string
+	 * @since   11.1
 	 */
- 	public static function tooltip($tooltip, $title = '', $image = 'tooltip.png', $text = '', $href = '', $alt = 'Tooltip', $class='hasTip')
+ 	public static function tooltip($tooltip, $title = '', $image = 'tooltip.png', $text = '', $href = '', $alt = 'Tooltip', $class = 'hasTip')
  	{
  		if (is_array($title))
  		{
@@ -651,9 +698,10 @@ abstract class JHtml
  				$title = '';
  			}
  		}
- 		$tooltip	= addslashes(htmlspecialchars($tooltip,	ENT_COMPAT, 'UTF-8'));
-		$title		= addslashes(htmlspecialchars($title,	ENT_COMPAT, 'UTF-8'));
-		$alt 		= addslashes(htmlspecialchars($alt,		ENT_COMPAT, 'UTF-8'));
+
+ 		$tooltip	= htmlspecialchars($tooltip,	ENT_COMPAT, 'UTF-8');
+		$title		= htmlspecialchars($title,		ENT_COMPAT, 'UTF-8');
+		$alt 		= htmlspecialchars($alt,		ENT_COMPAT, 'UTF-8');
 
 		if (!$text) {
 			$text = self::image($image, $alt, null, true);
@@ -668,17 +716,21 @@ abstract class JHtml
 		if ($title) {
 			$tooltip = $title.'::'.$tooltip;
 		}
+
 		return '<span class="'.$class.'" title="' . $tooltip . '">'.$tip.'</span>';
 	}
 
 	/**
 	 * Displays a calendar control field
 	 *
-	 * @param	string	The date value
-	 * @param	string	The name of the text field
-	 * @param	string	The id of the text field
-	 * @param	string	The date format
-	 * @param	array	Additional html attributes
+	 * @param   string  $value    The date value
+	 * @param   string  $name     The name of the text field
+	 * @param   string  $id       The id of the text field
+	 * @param   string  $format   The date format
+	 * @param   array   $attribs  Additional HTML attributes
+	 *
+	 * @return
+	 * @since   11.1
 	 */
 	public static function calendar($value, $name, $id, $format = '%Y-%m-%d', $attribs = null)
 	{
@@ -704,10 +756,14 @@ abstract class JHtml
 			{
 				$document = JFactory::getDocument();
 				$document->addScriptDeclaration('window.addEvent(\'domready\', function() {Calendar.setup({
-				inputField: "'.$id.'",		// id of the input field
-				ifFormat: "'.$format.'",	// format of the input field
-				button: "'.$id.'_img",		// trigger for the calendar (button ID)
-				align: "Tl",				// alignment (defaults to "Bl")
+				// Id of the input field
+				inputField: "'.$id.'",
+				// Format of the input field
+				ifFormat: "'.$format.'",
+				// Trigger for the calendar (button ID)
+				button: "'.$id.'_img",
+				// Alignment (defaults to "Bl")
+				align: "Tl",
 				singleClick: true,
 				firstDay: '.JFactory::getLanguage()->getFirstDay().'
 				});});');
@@ -723,17 +779,17 @@ abstract class JHtml
 	 * Add a directory where JHtml should search for helpers. You may
 	 * either pass a string or an array of directories.
 	 *
-	 * @access	public
-	 * @param	string	A path to search.
-	 * @return	array	An array with directory elements
-	 * @since	1.5
+	 * @param   string  A path to search.
+	 *
+	 * @return  array   An array with directory elements
+	 * @since   11.1
 	 */
 	public static function addIncludePath($path = '')
 	{
-		// force path to array
+		// Force path to array
 		settype($path, 'array');
 
-		// loop through the path directories
+		// Loop through the path directories
 		foreach ($path as $dir)
 		{
 			if (!empty($dir) && !in_array($dir, JHtml::$includePaths)) {
@@ -743,5 +799,4 @@ abstract class JHtml
 
 		return JHtml::$includePaths;
 	}
-
 }

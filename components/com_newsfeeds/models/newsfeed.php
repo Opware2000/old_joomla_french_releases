@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: newsfeed.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: newsfeed.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -130,12 +130,12 @@ class NewsfeedsModelNewsfeed extends JModelItem
 
 				// Convert parameter fields to objects.
 				$registry = new JRegistry;
-				$registry->loadJSON($data->params);
+				$registry->loadString($data->params);
 				$data->params = clone $this->getState('params');
 				$data->params->merge($registry);
 
 				$registry = new JRegistry;
-				$registry->loadJSON($data->metadata);
+				$registry->loadString($data->metadata);
 				$data->metadata = $registry;
 
 				// Compute access permissions.

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<install version="1.6" client="site" type="language" method="upgrade">
+<extension version="1.7" client="site" type="language" method="upgrade">
 	<name>French (FR)</name>
     <tag>fr-FR</tag>
-	<version>1.6.4</version>
+	<version>1.7.0</version>
 	<creationDate>2010-12-24</creationDate>
 	<author>French translation team : joomla.fr</author>
 	<authorEmail>traduction@joomla.fr</authorEmail>
 	<authorUrl>www.joomla.fr</authorUrl>
-    <copyright>Copyright (C) 2005 - 2010 joomla.fr et Open Source Matters. Tous droits réservés</copyright>
+    <copyright>Copyright (C) 2005 - 2011 joomla.fr et Open Source Matters. Tous droits réservés</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<description>fr-FR site language</description>
 	<files>
@@ -82,4 +82,4 @@
 		<filename file="meta">fr-FR.xml</filename>
 	</files>
 	<params />
-</install>
+</extension>

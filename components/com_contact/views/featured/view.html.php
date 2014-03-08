@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21023 2011-03-28 10:55:01Z infograf768 $
+ * @version		$Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -63,7 +63,7 @@ class ContactViewFeatured extends JView
 			$item		= &$items[$i];
 			$item->slug	= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
 			$temp		= new JRegistry();
-			$temp->loadJSON($item->params);
+			$temp->loadString($item->params);
 			$item->params = clone($params);
 			$item->params->merge($temp);
 			if ($item->params->get('show_email', 0) == 1) {
@@ -118,8 +118,11 @@ class ContactViewFeatured extends JView
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0)) {
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
 
@@ -128,12 +131,12 @@ class ContactViewFeatured extends JView
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
 
-		if ($this->params->get('menu-meta_keywords')) 
+		if ($this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots')) 
+		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}

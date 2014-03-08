@@ -35,7 +35,7 @@
  * @author Marcus Bointon
  * @copyright 2004 - 2008 Andy Prevost
  * @license http://www.gnu.org/copyleft/lesser.html Distributed under the Lesser General Public License (LGPL)
- * @version $Id: smtp.php 18555 2010-08-21 03:23:52Z ian $
+ * @version $Id$
  */
 
 /**

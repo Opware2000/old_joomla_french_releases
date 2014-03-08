@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.template_dlg',{
 title:"Gabarit de mise en page",
 label:"Mise en page",

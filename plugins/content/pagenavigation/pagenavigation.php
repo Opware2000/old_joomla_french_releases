@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: pagenavigation.php 21147 2011-04-14 16:49:40Z dextercowley $
+ * @version		$Id: pagenavigation.php 21814 2011-07-11 14:51:10Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -34,6 +34,8 @@ class plgContentPagenavigation extends JPlugin
 			$html = '';
 			$db		= JFactory::getDbo();
 			$user	= JFactory::getUser();
+			$app	= JFactory::getApplication();
+			$lang	= JFactory::getLanguage();
 			$nullDate = $db->getNullDate();
 
 			$date	= JFactory::getDate();
@@ -109,6 +111,9 @@ class plgContentPagenavigation extends JPlugin
 			$query->where('a.catid = '. (int)$row->catid .' AND a.state = '. (int)$row->state
 						. ($canPublish ? '' : ' AND a.access = ' .(int)$row->access) . $xwhere);
 			$query->order($orderby);
+			if ($app->isSite() && $app->getLanguageFilter()) {
+				$query->where('a.language in ('.$db->quote($lang->getTag()).','.$db->quote('*').')');
+			}
 
 			$db->setQuery($query);
 			$list = $db->loadObjectList('id');
@@ -169,7 +174,7 @@ class plgContentPagenavigation extends JPlugin
 					;
 				}
 
-				
+
 
 				if ($row->next) {
 					$html .= '

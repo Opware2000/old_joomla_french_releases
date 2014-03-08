@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: index.php 20806 2011-02-21 19:44:59Z dextercowley $
+ * @version		$Id: index.php 21652 2011-06-23 05:33:52Z chdemko $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -33,12 +33,13 @@ array_pop($parts);
 define('JPATH_ROOT',			implode(DS, $parts));
 define('JPATH_SITE',			JPATH_ROOT);
 define('JPATH_CONFIGURATION',	JPATH_ROOT);
-define('JPATH_ADMINISTRATOR',	JPATH_ROOT.DS.'administrator');
-define('JPATH_LIBRARIES',		JPATH_ROOT.DS.'libraries');
-define('JPATH_PLUGINS',			JPATH_ROOT.DS.'plugins');
-define('JPATH_INSTALLATION',	JPATH_ROOT.DS.'installation');
+define('JPATH_ADMINISTRATOR',	JPATH_ROOT . '/administrator');
+define('JPATH_LIBRARIES',		JPATH_ROOT . '/libraries');
+define('JPATH_PLUGINS',			JPATH_ROOT . '/plugins');
+define('JPATH_INSTALLATION',	JPATH_ROOT . '/installation');
 define('JPATH_THEMES',			JPATH_BASE);
-define('JPATH_CACHE',			JPATH_ROOT.DS.'cache');
+define('JPATH_CACHE',			JPATH_ROOT . '/cache');
+define('JPATH_MANIFESTS',		JPATH_ADMINISTRATOR . '/manifests');
 
 /*
  * Joomla system checks.
@@ -55,21 +56,29 @@ if (file_exists(JPATH_CONFIGURATION.'/configuration.php') && (filesize(JPATH_CON
 	exit();
 }
 
-/*
- * Joomla system startup
- */
+//
+// Joomla system startup.
+//
+
+// Import the cms version library if necessary.
+if (!class_exists('JVersion')) {
+	require JPATH_ROOT.'/includes/version.php';
+}
 
 // Bootstrap the Joomla Framework.
-require_once JPATH_LIBRARIES.'/joomla/import.php';
+require_once JPATH_LIBRARIES.'/import.php';
 
 // Joomla library imports.
 jimport('joomla.database.table');
 jimport('joomla.user.user');
 jimport('joomla.environment.uri');
+jimport('joomla.filter.filterinput');
+jimport('joomla.filter.filteroutput');
 jimport('joomla.html.parameter');
 jimport('joomla.utilities.utility');
 jimport('joomla.language.language');
 jimport('joomla.utilities.string');
+jimport('joomla.utilities.arrayhelper');
 
 // Create the application object.
 $app = JFactory::getApplication('installation');

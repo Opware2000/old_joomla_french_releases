@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21059 2011-04-03 01:03:07Z dextercowley $
+ * @version		$Id: default.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.DS.'helpers');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 ?>
 <div class="archive<?php echo $this->pageclass_sfx;?>">
 <?php if ($this->params->get('show_page_heading', 1)) : ?>

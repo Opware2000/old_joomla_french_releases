@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: profile.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: profile.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -17,6 +17,20 @@ jimport('joomla.utilities.date');
  */
 class plgUserProfile extends JPlugin
 {
+	/**
+	 * Constructor
+	 *
+	 * @access      protected
+	 * @param       object  $subject The object to observe
+	 * @param       array   $config  An array that holds the plugin configuration
+	 * @since       1.5
+	 */
+	public function __construct(& $subject, $config)
+	{
+		parent::__construct($subject, $config);
+		$this->loadLanguage();
+	}
+
 	/**
 	 * @param	string	$context	The context for the data
 	 * @param	int		$data		The user id
@@ -36,30 +50,34 @@ class plgUserProfile extends JPlugin
 		{
 			$userId = isset($data->id) ? $data->id : 0;
 
-			// Load the profile data from the database.
-			$db = JFactory::getDbo();
-			$db->setQuery(
-				'SELECT profile_key, profile_value FROM #__user_profiles' .
-				' WHERE user_id = '.(int) $userId." AND profile_key LIKE 'profile.%'" .
-				' ORDER BY ordering'
-			);
-			$results = $db->loadRowList();
+			if (!isset($data->profile) and $userId > 0) {
 
-			// Check for a database error.
-			if ($db->getErrorNum())
-			{
-				$this->_subject->setError($db->getErrorMsg());
-				return false;
+				// Load the profile data from the database.
+				$db = JFactory::getDbo();
+				$db->setQuery(
+					'SELECT profile_key, profile_value FROM #__user_profiles' .
+					' WHERE user_id = '.(int) $userId." AND profile_key LIKE 'profile.%'" .
+					' ORDER BY ordering'
+				);
+				$results = $db->loadRowList();
+
+				// Check for a database error.
+				if ($db->getErrorNum())
+				{
+					$this->_subject->setError($db->getErrorMsg());
+					return false;
+				}
+
+				// Merge the profile data.
+				$data->profile = array();
+
+				foreach ($results as $v)
+				{
+					$k = str_replace('profile.', '', $v[0]);
+					$data->profile[$k] = $v[1];
+				}
 			}
 
-			// Merge the profile data.
-			$data->profile = array();
-
-			foreach ($results as $v)
-			{
-				$k = str_replace('profile.', '', $v[0]);
-				$data->profile[$k] = $v[1];
-			}
 			if (!JHtml::isRegistered('users.url')) {
 				JHtml::register('users.url', array(__CLASS__, 'url'));
 			}
@@ -97,7 +115,7 @@ class plgUserProfile extends JPlugin
 		if (empty($value)) {
 			return JHtml::_('users.value', $value);
 		} else {
-			return JHtml::_('date', $value);
+			return JHtml::_('date', $value, null, null);
 		}
 	}
 
@@ -120,9 +138,6 @@ class plgUserProfile extends JPlugin
 	 */
 	function onContentPrepareForm($form, $data)
 	{
-		// Load user_profile plugin language
-		$lang = JFactory::getLanguage();
-		$lang->load('plg_user_profile', JPATH_ADMINISTRATOR);
 
 		if (!($form instanceof JForm))
 		{

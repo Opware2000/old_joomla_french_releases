@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: debug.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: debug.php 21433 2011-06-04 04:35:15Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -30,9 +30,14 @@ class plgSystemDebug extends JPlugin
 	{
 		parent::__construct($subject, $config);
 
+		// Log the deprecated API.
+		if ($this->params->get('log-deprecated')) {
+			JLog::addLogger(array('text_file' => 'deprecated.php'), JLog::ALL, array('deprecated'));
+		}
+
 		// Only if debugging is enabled
 		if (JDEBUG) {
-			$config  = JFactory::getConfig(); 
+			$config  = JFactory::getConfig();
 			$config->set('gzip', 0);
 			ob_start();
 			ob_implicit_flush(false);
@@ -56,7 +61,7 @@ class plgSystemDebug extends JPlugin
 			return;
 		}
 
-		// Load the language 
+		// Load the language
 		$this->loadLanguage();
 
 		// Capture output
@@ -124,7 +129,7 @@ class plgSystemDebug extends JPlugin
 
 			$db	= JFactory::getDbo();
 
-			echo '<h4>'.JText::sprintf('PLG_DEBUG_QUERIES_LOGGED',  $db->getTicker()).'</h4>';
+			echo '<h4>'.JText::sprintf('PLG_DEBUG_QUERIES_LOGGED',  $db->getCount()).'</h4>';
 
 			if ($log = $db->getLog()) {
 				echo '<ol>';

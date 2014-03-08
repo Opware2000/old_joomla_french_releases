@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default.php 21663 2011-06-23 13:51:35Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -16,6 +16,21 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_cache'); ?>" method="post" name="adminForm" id="adminForm">
+	<fieldset id="filter-bar">
+		<legend class="element-invisible"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></legend>
+		<div class="filter-select fltrt">
+			<label class="selectlabel" for="filter_client_id">
+				<?php echo JText::_('COM_CACHE_SELECT_CLIENT'); ?>
+			</label>
+			<select name="filter_client_id" class="inputbox" id="filter_client_id">
+				<?php echo JHtml::_('select.options', CacheHelper::getClientOptions(), 'value', 'text', $this->state->get('clientId'));?>
+			</select>
+
+			<button type="submit" id="filter-go">
+				<?php echo JText::_('JSUBMIT'); ?></button>
+		</div>
+	</fieldset>
+	<div class="clr"> </div>
 <table class="adminlist">
 	<thead>
 		<tr>
@@ -23,7 +38,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				<?php echo JText::_('COM_CACHE_NUM'); ?>
 			</th>
 			<th class="checkmark-col">
-				<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('TPL_HATHOR_CHECKMARK_ALL'); ?>" onclick="checkAll(this)" />
+				<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 			</th>
 			<th class="title nowrap">
 				<?php echo JHtml::_('grid.sort',  'COM_CACHE_GROUP', 'group', $listDirn, $listOrder); ?>
@@ -57,7 +72,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				<?php echo $item->count; ?>
 			</td>
 			<td class="center">
-				<?php echo $item->size ?>
+				<?php echo JHtml::_('number.bytes', $item->size*1024); ?>
 			</td>
 		</tr>
 		<?php $i++; endforeach; ?>

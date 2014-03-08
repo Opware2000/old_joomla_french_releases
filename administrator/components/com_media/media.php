@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: media.php 20813 2011-02-21 21:08:29Z dextercowley $
+ * @version		$Id: media.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_media
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -15,11 +15,11 @@ defined('_JEXEC') or die;
 $user = JFactory::getUser();
 $asset = JRequest::getCmd('asset');
 $author = JRequest::getCmd('author');
- 
+
 if (	!$user->authorise('core.manage', 'com_media')
 	&&	(!$asset or (
 			!$user->authorise('core.edit', $asset)
-		&&	!$user->authorise('core.create', $asset) 
+		&&	!$user->authorise('core.create', $asset)
 		&& 	count($user->getAuthorisedCategories($asset, 'core.create')) == 0)
 		&&	!($user->id==$author && $user->authorise('core.edit.own', $asset))))
 {

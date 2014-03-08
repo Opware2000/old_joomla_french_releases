@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: category.php 21447 2011-06-04 17:39:55Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -113,15 +113,12 @@ class CategoriesControllerCategory extends JControllerForm
 	 *
 	 * @return	void
 	 */
-	public function batch()
+	public function batch($model)
 	{
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		// Initialise variables.
-		$app	= JFactory::getApplication();
+		// Set the model
 		$model	= $this->getModel('Category');
-		$vars	= JRequest::getVar('batch', array(), 'post', 'array');
-		$cid	= JRequest::getVar('cid', array(), 'post', 'array');
 
 		$extension = JRequest::getCmd('extension', '');
 		if ($extension) {
@@ -131,17 +128,7 @@ class CategoriesControllerCategory extends JControllerForm
 		// Preset the redirect
 		$this->setRedirect('index.php?option=com_categories&view=categories'.$extension);
 
-		// Attempt to run the batch operation.
-		if ($model->batch($vars, $cid)) {
-			$this->setMessage(JText::_('JGLOBAL_BATCH_SUCCESS'));
-
-			return true;
-		}
-		else {
-			$this->setMessage(JText::_(JText::sprintf('COM_CATEGORIES_ERROR_BATCH_FAILED', $model->getError())));
-
-			return false;
-		}
+		return parent::batch($model);
 	}
 
 	/**

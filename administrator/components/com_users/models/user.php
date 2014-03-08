@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: user.php 20653 2011-02-10 10:30:31Z chdemko $
+ * @version		$Id: user.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -305,7 +305,7 @@ class UsersModelUser extends JModelAdmin
 						}
 
 						// Trigger the onUserBeforeSave event.
-						$result = $dispatcher->trigger('onUserBeforeSave', array($old, false));
+						$result = $dispatcher->trigger('onUserBeforeSave', array($old, false, $table->getProperties()));
 						if (in_array(false, $result, true)) {
 							// Plugin will have to raise it's own error or throw an exception.
 							return false;
@@ -361,6 +361,8 @@ class UsersModelUser extends JModelAdmin
 		$table		= $this->getTable();
 		$pks		= (array) $pks;
 
+		JPluginHelper::importPlugin('user');
+
 		// Access checks.
 		foreach ($pks as $i => $pk)
 		{
@@ -387,7 +389,7 @@ class UsersModelUser extends JModelAdmin
 						}
 
 						// Trigger the onUserBeforeSave event.
-						$result = $dispatcher->trigger('onUserBeforeSave', array($old, false));
+						$result = $dispatcher->trigger('onUserBeforeSave', array($old, false, $table->getProperties()));
 						if (in_array(false, $result, true)) {
 							// Plugin will have to raise it's own error or throw an exception.
 							return false;

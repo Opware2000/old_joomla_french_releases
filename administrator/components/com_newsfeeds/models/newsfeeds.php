@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: newsfeeds.php 20267 2011-01-11 03:44:44Z eddieajau $
+ * @version		$Id: newsfeeds.php 21590 2011-06-20 20:13:43Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -121,6 +121,7 @@ class NewsfeedsModelNewsfeeds extends JModelList
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -152,6 +153,13 @@ class NewsfeedsModelNewsfeeds extends JModelList
 		// Filter by access level.
 		if ($access = $this->getState('filter.access')) {
 			$query->where('a.access = '.(int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN ('.$groups.')');
 		}
 
 		// Filter by published state.

@@ -34,7 +34,7 @@
  * @author Andy Prevost
  * @author Marcus Bointon
  * @copyright 2004 - 2009 Andy Prevost
- * @version $Id: phpmailer.php 18555 2010-08-21 03:23:52Z ian $
+ * @version $Id$
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 

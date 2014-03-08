@@ -1,32 +1,34 @@
 <?php
 /**
- * @version		$Id: apc.php 20228 2011-01-10 00:52:54Z eddieajau $
- * @package		Joomla.Framework
- * @subpackage	Cache
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Cache
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * APC cache storage handler
  *
- * @package		Joomla.Framework
- * @subpackage	Cache
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Cache
+ * @see         http://php.net/manual/en/book.apc.php
+ * @since       11.1
  */
 class JCacheStorageApc extends JCacheStorage
 {
 	/**
 	 * Get cached data from APC by id and group
 	 *
-	 * @param	string	$id			The cache data id
-	 * @param	string	$group		The cache data group
-	 * @param	boolean	$checkTime	True to verify cache time expiration threshold
-	 * @return	mixed	Boolean false on failure or a cached data string
-	 * @since	1.5
+	 * @param   string   $id         The cache data id
+	 * @param   string   $group      The cache data group
+	 * @param   boolean  $checkTime  True to verify cache time expiration threshold
+	 *
+	 * @return  mixed    Boolean     False on failure or a cached data string
+	 *
+	 * @since   11.1
 	 */
 	public function get($id, $group, $checkTime = true)
 	{
@@ -37,8 +39,9 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Get all cached data
 	 *
-	 * @return	array data
-	 * @since	1.6
+	 * @return  array  data
+	 *
+	 * @since   11.1
 	 */
 	public function getAll()
 	{
@@ -76,11 +79,13 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Store the data to APC by id and group
 	 *
-	 * @param	string	$id		The cache data id
-	 * @param	string	$group	The cache data group
-	 * @param	string	$data	The data to store in cache
-	 * @return	boolean	True on success, false otherwise
-	 * @since	1.5
+	 * @param   string   $id     The cache data id
+	 * @param   string   $group  The cache data group
+	 * @param   string   $data   The data to store in cache
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   11.1
 	 */
 	public function store($id, $group, $data)
 	{
@@ -91,10 +96,12 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Remove a cached data entry by id and group
 	 *
-	 * @param	string	$id		The cache data id
-	 * @param	string	$group	The cache data group
-	 * @return	boolean	True on success, false otherwise
-	 * @since	1.5
+	 * @param   string  $id     The cache data id
+	 * @param   string  $group  The cache data group
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   11.1
 	 */
 	public function remove($id, $group)
 	{
@@ -105,13 +112,15 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Clean cache for a group given a mode.
 	 *
-	 * group mode		: cleans all cache in the group
-	 * notgroup mode	: cleans all cache not in the group
+	 * group mode    : cleans all cache in the group
+	 * notgroup mode : cleans all cache not in the group
 	 *
-	 * @param	string	$group	The cache data group
-	 * @param	string	$mode	The mode for cleaning cache [group|notgroup]
-	 * @return	boolean	True on success, false otherwise
-	 * @since	1.5
+	 * @param   string  $group  The cache data group
+	 * @param   string  $mode   The mode for cleaning cache [group|notgroup]
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   11.1
 	 */
 	public function clean($group, $mode = null)
 	{
@@ -131,8 +140,9 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Force garbage collect expired cache data as items are removed only on fetch!
 	 *
-	 * @return boolean  True on success, false otherwise.
-	 * @since	1.6
+	 * @return  boolean  True on success, false otherwise.
+	 *
+	 * @since   11.1
 	 */
 	public function gc()
 	{
@@ -151,7 +161,9 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Test to see if the cache storage is available.
 	 *
-	 * @return boolean  True on success, false otherwise.
+	 * @return  boolean  True on success, false otherwise.
+	 *
+	 * @since   11.1
 	 */
 	public static function test()
 	{
@@ -161,15 +173,17 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Lock cached item - override parent as this is more efficient
 	 *
-	 * @param	string	$id		The cache data id
-	 * @param	string	$group	The cache data group
-	 * @param	integer	$locktime Cached item max lock time
-	 * @return	boolean	True on success, false otherwise.
-	 * @since	1.6
+	 * @param   string   $id        The cache data id
+	 * @param   string   $group     The cache data group
+	 * @param   integer  $locktime  Cached item max lock time
+	 *
+	 * @return  boolean  True on success, false otherwise.
+	 *
+	 * @since   11.1
 	 */
 	public function lock($id,$group,$locktime)
 	{
-		$returning = new stdClass();
+		$returning = new stdClass;
 		$returning->locklooped = false;
 
 		$looptime = $locktime * 10;
@@ -205,11 +219,13 @@ class JCacheStorageApc extends JCacheStorage
 	/**
 	 * Unlock cached item - override parent for cacheid compatibility with lock
 	 *
-	 * @param	string	$id		The cache data id
-	 * @param	string	$group	The cache data group
-	 * @param	integer	$locktime Cached item max lock time
-	 * @return	boolean	True on success, false otherwise.
-	 * @since	1.6
+	 * @param   string   $id        The cache data id
+	 * @param   string   $group     The cache data group
+	 * @param   integer  $locktime  Cached item max lock time
+	 *
+	 * @return  boolean  True on success, false otherwise.
+	 *
+	 * @since   11.1
 	 */
 	public function unlock($id,$group=null)
 	{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit_metadata.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit_metadata.php 21503 2011-06-09 22:58:13Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -23,20 +23,16 @@ foreach ($fieldSets as $name => $fieldSet) :
 			<?php if ($name == 'jmetadata') : // Include the real fields in this panel. ?>
 				<li><?php echo $this->form->getLabel('metadesc'); ?>
 				<?php echo $this->form->getInput('metadesc'); ?></li>
-	
+
 				<li><?php echo $this->form->getLabel('metakey'); ?>
 				<?php echo $this->form->getInput('metakey'); ?></li>
-	
+
 				<li><?php echo $this->form->getLabel('xreference'); ?>
 				<?php echo $this->form->getInput('xreference'); ?></li>
 			<?php endif; ?>
 			<?php foreach ($this->form->getFieldset($name) as $field) : ?>
-				<li>
-					<?php if (!$field->hidden): ?>
-						<?php echo $field->label; ?>
-					<?php endif; ?>
-					<?php echo $field->input; ?>
-				</li>
+				<li><?php echo $field->label; ?>
+				<?php echo $field->input; ?></li>
 			<?php endforeach; ?>
 		</ul>
 	</fieldset>

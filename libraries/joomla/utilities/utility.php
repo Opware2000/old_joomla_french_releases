@@ -1,43 +1,43 @@
 <?php
 /**
- * @version		$Id: utility.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Framework
- * @subpackage	Utilities
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Utilities
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * JUtility is a utility functions class
  *
- * @package		Joomla.Framework
- * @subpackage	Utilities
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Utilities
+ * @since       11.1
  */
 class JUtility
 {
 	/**
 	 * Mail function (uses phpMailer)
 	 *
-	 * @param	string	$from		From email address
-	 * @param	string	$fromname	From name
-	 * @param	mixed	$recipient	Recipient email address(es)
-	 * @param	string	$subject	Email subject
-	 * @param	string	$body		Message body
-	 * @param	boolean	$mode		false = plain text, true = HTML
-	 * @param	mixed	$cc			CC email address(es)
-	 * @param	mixed	$bcc		BCC email address(es)
-	 * @param	mixed	$attachment	Attachment file name(s)
-	 * @param	mixed	$replyto	Reply to email address(es)
-	 * @param	mixed	$replytoname Reply to name(s)
-	 * @return	boolean	True on success
+	 * @param   string   $from         From email address
+	 * @param   string   $fromname     From name
+	 * @param   mixed    $recipient    Recipient email address(es)
+	 * @param   string   $subject      Email subject
+	 * @param   string   $body         Message body
+	 * @param   boolean  $mode         False = plain text, true = HTML
+	 * @param   mixed    $cc           CC email address(es)
+	 * @param   mixed    $bcc          BCC email address(es)
+	 * @param   mixed    $attachment   Attachment file name(s)
+	 * @param   mixed    $replyto      Reply to email address(es)
+	 * @param   mixed    $replytoname  Reply to name(s)
 	 *
-	 * @since		1.5
-	 * @deprecated  1.6
-	 * @see			JMail::sendMail()
+	 * @return  boolean  True on success
+	 * @since   11.1
+	 *
+	 * @deprecated
+	 * @see     JMail::sendMail()
 	 */
 	public static function sendMail($from, $fromname, $recipient, $subject, $body, $mode=0, $cc=null, $bcc=null, $attachment=null, $replyto=null, $replytoname=null)
 	{
@@ -53,17 +53,18 @@ class JUtility
 	/**
 	 * Sends mail to administrator for approval of a user submission
 	 *
-	 * @param	string	$adminName	Name of administrator
-	 * @param	string	$adminEmail	Email address of administrator
-	 * @param	string	$email		[NOT USED TODO: Deprecate?]
-	 * @param	string	$type		Type of item to approve
-	 * @param	string	$title		Title of item to approve
-	 * @param	string	$author		Author of item to approve
+	 * @param   string   $adminName   Name of administrator
+	 * @param   string   $adminEmail  Email address of administrator
+	 * @param   string   $email       [NOT USED]
+	 * @param   string   $type        Type of item to approve
+	 * @param   string   $title       Title of item to approve
+	 * @param   string   $author      Author of item to approve
 	 *
-	 * @return	boolean True on success
+	 * @return  boolean  True on success
+	 * @since   11.1
 	 *
-	 * @deprecated  1.6
-	 * @see			JMail::sendAdminMail()
+	 * @deprecated
+	 * @see      JMail::sendAdminMail()
 	 */
 	public static function sendAdminMail($adminName, $adminEmail, $email, $type, $title, $author, $url = null)
 	{
@@ -78,12 +79,14 @@ class JUtility
 	/**
 	 * Provides a secure hash based on a seed
 	 *
-	 * @param	string	$seed	Seed string.
+	 * @param   string  $seed  Seed string.
 	 *
-	 * @return	string
+	 * @return  string
+	 * @since   11.1
 	 *
-	 * @deprecated  1.6
-	 * @see			JApplication:getHash()
+	 * @deprecated
+	 *
+	 * @see     JApplication:getHash()
 	 */
 	public static function getHash($seed)
 	{
@@ -95,11 +98,13 @@ class JUtility
 	/**
 	 * Method to determine a hash for anti-spoofing variable names
 	 *
-	 * @return	string	Hashed var name
+	 * @param   boolean  $forceNew  Force creation of a new token.
 	 *
-	 * @since		1.5
-	 * @deprecated  1.6
-	 * @see			JApplication:getHash()
+	 * @return  string   Hashed var name
+	 * @since   11.1
+	 *
+	 * @deprecated
+	 * @see     JApplication:getHash()
 	 */
 	public static function getToken($forceNew = false)
 	{
@@ -109,13 +114,12 @@ class JUtility
 	}
 
 	/**
-	 * Method to extract key/value pairs out of a string with xml style attributes
+	 * Method to extract key/value pairs out of a string with XML style attributes
 	 *
-	 * @param	string	$string	String containing xml style attributes
+	 * @param   string  $string  String containing XML style attributes
 	 *
-	 * @return	array	Key/Value pairs for the attributes
-	 *
-	 * @since		1.5
+	 * @return  array   Key/Value pairs for the attributes
+	 * @since       11.1
 	 */
 	public static function parseAttributes($string)
 	{
@@ -123,7 +127,7 @@ class JUtility
 		$attr		= array();
 		$retarray	= array();
 
-		// Lets grab all the key/value pairs using a regular expression
+		// Let's grab all the key/value pairs using a regular expression
 		preg_match_all('/([\w:-]+)[\s]?=[\s]?"([^"]*)"/i', $string, $attr);
 
 		if (is_array($attr)) {
@@ -140,11 +144,11 @@ class JUtility
 	/**
 	 * Method to determine if the host OS is  Windows
 	 *
-	 * @return	boolean	True if Windows OS.
+	 * @return  boolean  True if Windows OS.
+	 * @since   11.1
 	 *
-	 * @since		1.5
-	 * @deprecated  1.6
-	 * @see			JApplication::isWinOS()
+	 * @deprecated
+	 * @see         JApplication::isWinOS()
 	 */
 	public static function isWinOS()
 	{
@@ -156,13 +160,13 @@ class JUtility
 	/**
 	 * Method to dump the structure of a variable for debugging purposes
 	 *
-	 * @param	mixed	$var		A variable
-	 * @param	boolean	$htmlSafe	True to ensure all characters are htmlsafe
+	 * @param   mixed    $var       A variable
+	 * @param   boolean  $htmlSafe  True to ensure all characters are htmlsafe
 	 *
-	 * @return	string
+	 * @return  string
+	 * @since       11.1
 	 *
-	 * @since		1.5
-	 * @deprecated  1.6
+	 * @deprecated
 	 */
 	public static function dump(&$var, $htmlSafe = true)
 	{
@@ -175,14 +179,14 @@ class JUtility
 	 * Prepend a reference to an element to the beginning of an array.
 	 * Renumbers numeric keys, so $value is always inserted to $array[0]
 	 *
-	 * @param	$array array
-	 * @param	$value mixed
+	 * @param   array  $array  Array to be modified
+	 * @param   mixed  $value  Value to add
 	 *
-	 * @return	int
+	 * @return  integer
+	 * @since   11.1
 	 *
-	 * @since		1.5
-	 * @deprecated  1.6
-	 * @see			http://www.php.net/manual/en/function.array-unshift.php#40270
+	 * @deprecated
+	 * @see      http://www.php.net/manual/en/function.array-unshift.php#40270
 	 */
 	function array_unshift_ref(&$array, &$value)
 	{
@@ -195,13 +199,13 @@ class JUtility
 	/**
 	 * Return the byte value of a particular string
 	 *
-	 * @param	string	$val	String optionally with G, M or K suffix
+	 * @param   string  $val  String optionally with G, M or K suffix
 	 *
-	 * @return	int size in bytes
+	 * @return  integer  size in bytes
+	 * @since   11.1
 	 *
-	 * @since		1.6
-	 * @deprecated  1.6
-	 * @see			JHtmlNumber::bytes
+	 * @deprecated
+	 * @see       JHtmlNumber::bytes
 	 */
 	function return_bytes($val)
 	{

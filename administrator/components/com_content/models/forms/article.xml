@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<!--
-		$Id: article.xml 20990 2011-03-18 16:42:30Z infograf768 $
+		$Id: article.xml 21521 2011-06-10 22:21:18Z chdemko $
 	-->
 <form>
 	<fieldset>
 		<field name="id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
-			description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0" 
+			description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
 			readonly="true"  />
 
 		<field name="asset_id" type="hidden" filter="unset" />
@@ -304,7 +304,7 @@
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			
+
 			<field
 				name="show_noauth"
 				type="list"
@@ -314,21 +314,21 @@
 						<option value="0">JNO</option>
 						<option value="1">JYES</option>
 			</field>
-		
+
 			<field
 				name="spacer2"
 				type="spacer"
 				hr="true"
 			/>
-			
+
 
 
 			<field name="alternative_readmore" type="inputbox"
-				label="JFIELD_READMORE_LABEL" 
+				label="JFIELD_READMORE_LABEL"
 				description="JFIELD_READMORE_DESC"
 				class="inputbox" size="25" />
 
-			<field name="article_layout" type="componentlayout" 
+			<field name="article_layout" type="componentlayout"
 				label="JFIELD_ALT_LAYOUT_LABEL"
 				description="JFIELD_ALT_COMPONENT_LAYOUT_DESC"
 				useglobal="true"
@@ -357,7 +357,7 @@
 			size="20" />
 
 		<field name="rights" type="textarea" label="JFIELD_META_RIGHTS_LABEL"
-			description="JFIELD_META_RIGHTS_DESC" required="" filter="string"
+			description="JFIELD_META_RIGHTS_DESC" required="false" filter="string"
 			cols="30" rows="2" />
 		<field name="xreference" type="text"
 			label="COM_CONTENT_FIELD_XREFERENCE_LABEL" description="COM_CONTENT_FIELD_XREFERENCE_DESC"

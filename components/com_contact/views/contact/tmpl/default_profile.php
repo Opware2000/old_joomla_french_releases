@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_profile.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default_profile.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 <div class="contact-profile" id="users-profile-custom">
 	<dl>
 	<?php foreach ($fields as $profile) :
-		if ($profile->value) : 
+		if ($profile->value) :
 			echo '<dt>'.$profile->label.'</dt>';
 			$profile->text = htmlspecialchars($profile->value, ENT_COMPAT, 'UTF-8');
 

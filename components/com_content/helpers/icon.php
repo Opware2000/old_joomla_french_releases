@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: icon.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: icon.php 21706 2011-06-28 21:28:56Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -40,7 +40,7 @@ class JHtmlIcon
 
 	static function email($article, $params, $attribs = array())
 	{
-		require_once(JPATH_SITE.DS.'components'.DS.'com_mailto'.DS.'helpers'.DS.'mailto.php');
+		require_once(JPATH_SITE . '/components/com_mailto/helpers/mailto.php');
 		$uri	= JURI::getInstance();
 		$base	= $uri->toString(array('scheme', 'host', 'port'));
 		$template = JFactory::getApplication()->getTemplate();
@@ -103,7 +103,7 @@ class JHtmlIcon
 			return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 		}
 
-		$url	= 'index.php?task=article.edit&a_id='.$article->id.'&return='.base64_encode($uri);
+		$url	= 'index.php?option=com_content&task=article.edit&a_id='.$article->id.'&return='.base64_encode($uri);
 		$icon	= $article->state ? 'edit.png' : 'edit_unpublished.png';
 		$text	= JHtml::_('image','system/'.$icon, JText::_('JGLOBAL_EDIT'), NULL, true);
 

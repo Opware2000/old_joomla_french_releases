@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: form.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: form.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -78,7 +78,7 @@ class ContentModelForm extends ContentModelArticle
 
 		// Convert attrib field to Registry.
 		$value->params = new JRegistry;
-		$value->params->loadJSON($value->attribs);
+		$value->params->loadString($value->attribs);
 
 		// Compute selected asset permissions.
 		$user	= JFactory::getUser();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: weblink.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: weblink.php 21481 2011-06-08 00:38:29Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -34,7 +34,7 @@ class WeblinksModelWeblink extends JModelItem
 	 *
 	 * @since	1.6
 	 */
-	public function populateState()
+	protected function populateState()
 	{
 		$app = JFactory::getApplication();
 		$params	= $app->getParams();

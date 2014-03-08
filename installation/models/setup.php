@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: setup.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: setup.php 21676 2011-06-25 07:43:49Z chdemko $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -35,6 +35,8 @@ class JInstallationModelSetup extends JModel
 	/**
 	 * Store the current setup options in the session.
 	 *
+	 * @param	array	$options
+	 *
 	 * @return	array
 	 * @since	1.6
 	 */
@@ -48,9 +50,10 @@ class JInstallationModelSetup extends JModel
 		$options = array_merge($old, (array)$options);
 		$session->set('setup.options', $options);
 
-		// If the setup language is set in the options, set it separately in the session.
+		// If the setup language is set in the options, set it separately in the session and JLanguage.
 		if (!empty($options['language'])) {
 			$session->set('setup.language', $options['language']);
+			JFactory::getLanguage()->setLanguage($options['language']);
 		}
 
 		return $options;
@@ -75,10 +78,14 @@ class JInstallationModelSetup extends JModel
 		jimport('joomla.form.form');
 		JForm::addFormPath(JPATH_COMPONENT.'/models/forms');
 		JForm::addFieldPath(JPATH_COMPONENT.'/models/fields');
+		JForm::addRulePath(JPATH_COMPONENT.'/models/rules');
 
-		try {
+		try
+		{
 			$form = JForm::getInstance('jform', $view, array('control' => 'jform'));
-		} catch (Exception $e) {
+		}
+		catch (Exception $e)
+		{
 			$this->setError($e->getMessage());
 			return false;
 		}
@@ -95,6 +102,7 @@ class JInstallationModelSetup extends JModel
 	}
 
 	/**
+	 * @return	array
 	 * @since	1.6
 	 */
 	public function getDboptions()
@@ -111,8 +119,8 @@ class JInstallationModelSetup extends JModel
 		// Iterate over the options, building an array.
 		$found = false;
 
-		foreach ($map as $k => $v) {
-
+		foreach ($map as $k => $v)
+		{
 			// Only list available options.
 			if (!function_exists($v)) {
 				continue;
@@ -186,7 +194,8 @@ class JInstallationModelSetup extends JModel
 			$disabled_functions = explode(',', trim($disabled_functions));
 			$number_of_disabled_functions = count($disabled_functions);
 
-			for($i = 0; $i < $number_of_disabled_functions; $i++) {
+			for ($i = 0; $i < $number_of_disabled_functions; $i++)
+			{
 				$disabled_functions[$i] = trim($disabled_functions[$i]);
 			}
 
@@ -198,7 +207,7 @@ class JInstallationModelSetup extends JModel
 		} else {
 
 			// Attempt to detect their existence; even pure PHP implementation of them will trigger a positive response, though.
-			if( phpversion() >= '5.3.0' ) {
+			if (phpversion() >= '5.3.0') {
 				$result = function_exists('parse_ini_string');
 			} else {
 				$result = function_exists('parse_ini_file');
@@ -299,7 +308,8 @@ class JInstallationModelSetup extends JModel
 		$result = true;
 		$options = $this->getPhpOptions();
 
-		foreach($options as $option) {
+		foreach ($options as $option)
+		{
 			if (is_null($option->notice)) {
 				$result = ($result && $option->state);
 			}
@@ -403,7 +413,8 @@ class JInstallationModelSetup extends JModel
 		// Check the validation results.
 		if ($return === false) {
 			// Get the validation messages from the form.
-			foreach ($form->getErrors() as $message) {
+			foreach ($form->getErrors() as $message)
+			{
 				$this->setError($message);
 			}
 

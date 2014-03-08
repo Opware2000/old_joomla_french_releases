@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 20648 2011-02-10 09:09:54Z chdemko $
+ * @version		$Id: category.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -85,7 +85,7 @@ class WeblinksModelCategory extends JModelList
 		for ($i = 0, $n = count($items); $i < $n; $i++) {
 			if (!isset($this->_params)) {
 				$params = new JRegistry;
-				$params->loadJSON($items[$i]->params);
+				$params->loadString($items[$i]->params);
 				$items[$i]->params = $params;
 			}
 		}
@@ -224,12 +224,12 @@ class WeblinksModelCategory extends JModelList
 			$menu = $app->getMenu();
 			$active = $menu->getActive();
 			$params = new JRegistry();
-			
+
 			if($active)
 			{
-				$params->loadJSON($active->params);
+				$params->loadString($active->params);
 			}
-			
+
 			$options = array();
 			$options['countItems'] = $params->get('show_cat_num_links_cat', 1) || $params->get('show_empty_categories', 0);
 			$categories = JCategories::getInstance('Weblinks', $options);

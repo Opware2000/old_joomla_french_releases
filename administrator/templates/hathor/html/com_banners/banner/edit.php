@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit.php 21553 2011-06-17 14:28:21Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -53,23 +53,19 @@ JHtml::_('behavior.formvalidation');
 
 				<li><?php echo $this->form->getLabel('access'); ?>
 				<?php echo $this->form->getInput('access'); ?></li>
-				
+
 				<li><?php echo $this->form->getLabel('catid'); ?>
 				<?php echo $this->form->getInput('catid'); ?></li>
 
-				<li><?php echo $this->form->getLabel('type'); ?>
-				<?php echo $this->form->getInput('type'); ?></li>
-				
 				<li><?php echo $this->form->getLabel('state'); ?>
 				<?php echo $this->form->getInput('state'); ?></li>
-				
+
+				<li><?php echo $this->form->getLabel('type'); ?>
+				<?php echo $this->form->getInput('type'); ?></li>
+
 				<?php foreach($this->form->getFieldset('image') as $field): ?>
-					<li>
-					<?php if (!$field->hidden): ?>
-						<?php echo $field->label; ?>
-					<?php endif; ?>
-					<?php echo $field->input; ?>
-					</li>
+					<li><?php echo $field->label; ?>
+						<?php echo $field->input; ?></li>
 				<?php endforeach; ?>
 
 				<li><div id="custom">
@@ -86,9 +82,6 @@ JHtml::_('behavior.formvalidation');
 
 				<li><?php echo $this->form->getLabel('description'); ?>
 				<?php echo $this->form->getInput('description'); ?></li>
-
-				<li><?php echo $this->form->getLabel('state'); ?>
-				<?php echo $this->form->getInput('state'); ?></li>
 
 				<li><?php echo $this->form->getLabel('language'); ?>
 				<?php echo $this->form->getInput('language'); ?></li>
@@ -109,12 +102,8 @@ JHtml::_('behavior.formvalidation');
 		<legend class="element-invisible"><?php echo JText::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach($this->form->getFieldset('publish') as $field): ?>
-				<li>
-					<?php if (!$field->hidden): ?>
-						<?php echo $field->label; ?>
-					<?php endif; ?>
-					<?php echo $field->input; ?>
-				</li>
+				<li><?php echo $field->label; ?>
+					<?php echo $field->input; ?></li>
 			<?php endforeach; ?>
 			</ul>
 		</fieldset>
@@ -124,12 +113,8 @@ JHtml::_('behavior.formvalidation');
 		<legend class="element-invisible"><?php echo JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?></legend>
 			<ul class="adminformlist">
 				<?php foreach($this->form->getFieldset('metadata') as $field): ?>
-					<?php if ($field->hidden): ?>
-						<li><?php echo $field->input; ?></li>
-					<?php else : ?>
-						<li><?php echo $field->label; ?>
+					<li><?php echo $field->label; ?>
 						<?php echo $field->input; ?></li>
-					<?php endif; ?>
 				<?php endforeach; ?>
 			</ul>
 		</fieldset>

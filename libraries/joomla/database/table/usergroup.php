@@ -1,29 +1,33 @@
 <?php
 /**
- * @version		$Id: usergroup.php 20196 2011-01-09 02:40:25Z ian $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Database
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.database.table');
 
 /**
  * Usergroup table class.
  *
- * @package		Joomla.Framework
- * @subpackage	Database
- * @version		1.0
+ * @package     Joomla.Platform
+ * @subpackage  Database
+ * @since       11.1
  */
 class JTableUsergroup extends JTable
 {
 	/**
 	 * Constructor
 	 *
-	 * @param	object	Database object
-	 * @return	void
-	 * @since	1.0
+	 * @param   database  &$db  A database connector object
+	 *
+	 * @return  JTableUsergroup
+	 *
+	 * @since   11.1
 	 */
 	public function __construct(&$db)
 	{
@@ -33,8 +37,9 @@ class JTableUsergroup extends JTable
 	/**
 	 * Method to check the current record to save
 	 *
-	 * @return	boolean	True on success
-	 * @since	1.6
+	 * @return  boolean  True on success
+	 *
+	 * @since   11.1
 	 */
 	public function check()
 	{
@@ -66,11 +71,12 @@ class JTableUsergroup extends JTable
 	/**
 	 * Method to recursively rebuild the nested set tree.
 	 *
-	 * @param	integer	The root of the tree to rebuild.
-	 * @param	integer	The left id to start with in building the tree.
+	 * @param   integer  $parent_id  The root of the tree to rebuild.
+	 * @param   integer  $left       The left id to start with in building the tree.
 	 *
-	 * @return	boolean	True on success
-	 * @since	1.6
+	 * @return  boolean  True on success
+	 *
+	 * @since   11.1
 	 */
 	public function rebuild($parent_id = 0, $left = 0)
 	{
@@ -83,7 +89,7 @@ class JTableUsergroup extends JTable
 			' WHERE parent_id='. (int)$parent_id .
 			' ORDER BY parent_id, title'
 		);
-		$children = $db->loadResultArray();
+		$children = $db->loadColumn();
 
 		// the right value of this node is the left value + 1
 		$right = $left + 1;
@@ -119,10 +125,11 @@ class JTableUsergroup extends JTable
 	/**
 	 * Inserts a new row if id is zero or updates an existing row in the database table
 	 *
-	 * @param	boolean		$updateNulls	If false, null object variables are not updated
+	 * @param   boolean  $updateNulls    If false, null object variables are not updated
 	 *
-	 * @return	boolean		True successful, false otherwise and an internal error message is set
-	 * @since	1.6
+	 * @return  boolean  True if successful, false otherwise and an internal error message is set
+	 *
+	 * @since   11.1
 	 */
 	function store($updateNulls = false)
 	{
@@ -135,12 +142,13 @@ class JTableUsergroup extends JTable
 	}
 
 	/**
-	 * Delete this object and it's dependancies
+	 * Delete this object and its dependancies
 	 *
-	 * @param	int		$oid	The primary key of the user group to delete.
+	 * @param   integer  $oid  The primary key of the user group to delete.
 	 *
-	 * @return	mixed	Boolean or Exception.
-	 * @since	1.6
+	 * @return  mixed  Boolean or Exception.
+	 *
+	 * @since   11.1
 	 */
 	function delete($oid = null)
 	{
@@ -164,20 +172,20 @@ class JTableUsergroup extends JTable
 		// Select the category ID and it's children
 		$db->setQuery(
 			'SELECT c.id' .
-			' FROM `'.$this->_tbl.'` AS c' .
+			' FROM '.$db->quoteName($this->_tbl).' AS c' .
 			' WHERE c.lft >= '.(int) $this->lft.' AND c.rgt <= '.$this->rgt
 		);
-		$ids = $db->loadResultArray();
+		$ids = $db->loadColumn();
 		if (empty($ids)) {
 			return new JException(JText::_('JLIB_DATABASE_ERROR_DELETE_CATEGORY'));
 		}
 
-		// Delete the category dependancies
+		// Delete the category dependencies
 		// @todo Remove all related threads, posts and subscriptions
 
-		// Delete the category and it's children
+		// Delete the category and its children
 		$db->setQuery(
-			'DELETE FROM `'.$this->_tbl.'`' .
+			'DELETE FROM '.$db->quoteName($this->_tbl).
 			' WHERE id IN ('.implode(',', $ids).')'
 		);
 		if (!$db->query()) {

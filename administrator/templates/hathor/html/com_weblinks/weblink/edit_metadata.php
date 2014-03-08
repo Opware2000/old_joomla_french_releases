@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit_metadata.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit_metadata.php 21529 2011-06-11 22:17:15Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -26,7 +26,7 @@ foreach ($fieldSets as $name => $fieldSet) :
 				<?php echo $this->form->getInput('metadesc'); ?></li>
 
 				<li><?php echo $this->form->getLabel('metakey'); ?>
-				<?php echo $this->form->getInput('metakey'); ?><li>
+				<?php echo $this->form->getInput('metakey'); ?></li>
 
 				<li><?php echo $this->form->getLabel('xreference'); ?>
 				<?php echo $this->form->getInput('xreference'); ?></li>

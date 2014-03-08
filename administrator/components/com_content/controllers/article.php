@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: article.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -113,5 +113,24 @@ class ContentControllerArticle extends JControllerForm
 
 		// Since there is no asset tracking, revert to the component permissions.
 		return parent::allowEdit($data, $key);
+	}
+
+	/**
+	 * Method to run batch operations.
+	 *
+	 * @return	void
+	 * @since	1.6
+	 */
+	public function batch($model)
+	{
+		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		// Set the model
+		$model	= $this->getModel('Article', '', array());
+
+		// Preset the redirect
+		$this->setRedirect(JRoute::_('index.php?option=com_content&view=articles'.$this->getRedirectToListAppend(), false));
+
+		return parent::batch($model);
 	}
 }

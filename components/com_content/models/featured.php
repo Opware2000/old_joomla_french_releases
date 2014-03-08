@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: featured.php 20469 2011-01-28 14:35:19Z chdemko $
+ * @version		$Id: featured.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 // No direct access
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . DS . 'articles.php';
+require_once dirname(__FILE__) . '/articles.php';
 
 /**
  * Frontpage Component Model
@@ -60,9 +60,10 @@ class ContentModelFeatured extends ContentModelArticles
 		}
 
 		// check for category selection
-		if (is_array($featuredCategories = $params->get('featured_categories'))) {
-			$this->setState('filter.frontpage.categories', $featuredCategories);
-		}
+		if ($params->get('featured_categories') && implode(',', $params->get('featured_categories'))  == true) {
+			$featuredCategories = $params->get('featured_categories');
+ 			$this->setState('filter.frontpage.categories', $featuredCategories);
+ 		}
 	}
 
 	/**

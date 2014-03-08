@@ -5,7 +5,7 @@
 	-->
 <form>
 	<fieldset>
-		<field name="id" type="text" default="0" 
+		<field name="id" type="text" default="0"
 			readonly="true" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
 			description="JGLOBAL_FIELD_ID_DESC" />
 
@@ -173,7 +173,7 @@
 				extension="com_newsfeeds"
 				view="newsfeed"
 				useglobal="true"
-				/>		
+				/>
 		</fieldset>
 	</fields>
 
@@ -194,7 +194,7 @@
 
 			<field name="rights" type="text"
 				label="JFIELD_META_RIGHTS_LABEL" description="JFIELD_META_RIGHTS_DESC"
-				required="" filter="string" cols="30" rows="2" />
+				required="false" filter="string" cols="30" rows="2" />
 		</fieldset>
 	</fields>
 </form>

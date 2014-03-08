@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: icon.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: icon.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -23,7 +23,7 @@ class JHtmlIcon
 
 	static function email($contact, $params, $attribs = array())
 	{
-		require_once(JPATH_SITE.DS.'components'.DS.'com_mailto'.DS.'helpers'.DS.'mailto.php');
+		require_once(JPATH_SITE . '/components/com_mailto/helpers/mailto.php');
 		$uri	= JURI::getInstance();
 		$base	= $uri->toString(array('scheme', 'host', 'port'));
 		$link	= $base.JRoute::_(ContentHelperRoute::getArticleRoute($article->slug, $article->catid) , false);

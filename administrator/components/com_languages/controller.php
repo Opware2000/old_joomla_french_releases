@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: controller.php 21343 2011-05-12 10:56:24Z infograf768 $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -42,7 +42,8 @@ class LanguagesController extends JController
 		LanguagesHelper::addSubmenu(JRequest::getCmd('view', 'installed'));
 
 		$view	= JRequest::getCmd('view', 'languages');
-		$layout = JRequest::getCmd('layout', 'default');
+		$layout	= JRequest::getCmd('layout', 'default');
+		$client	= JRequest::getInt('client');
 		$id		= JRequest::getInt('id');
 
 		// Check for edit form.

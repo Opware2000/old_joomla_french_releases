@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 21039 2011-03-31 15:47:46Z dextercowley $
+ * @version		$Id: articles.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -128,8 +128,9 @@ class ContentModelArticles extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -165,6 +166,13 @@ class ContentModelArticles extends JModelList
 		// Filter by access level.
 		if ($access = $this->getState('filter.access')) {
 			$query->where('a.access = ' . (int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN ('.$groups.')');
 		}
 
 		// Filter by published state
@@ -251,7 +259,7 @@ class ContentModelArticles extends JModelList
 		// Return the result
 		return $db->loadObjectList();
 	}
-	
+
 	/**
 	 * Method to get a list of articles.
 	 * Overridden to add a check for access levels.
@@ -275,5 +283,5 @@ class ContentModelArticles extends JModelList
 			}
 		}
 		return $items;
-	}	
+	}
 }

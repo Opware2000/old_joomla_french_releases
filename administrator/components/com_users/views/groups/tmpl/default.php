@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default.php 21595 2011-06-21 02:51:29Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -15,7 +15,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
 // Load the tooltip behavior.
 JHtml::_('behavior.tooltip');
-JHtml::_('script','system/multiselect.js',false,true);
+JHtml::_('behavior.multiselect');
 
 $user		= JFactory::getUser();
 $listOrder	= $this->escape($this->state->get('list.ordering'));
@@ -60,7 +60,7 @@ JText::script('COM_USERS_GROUPS_CONFIRM_DELETE');
 		<thead>
 			<tr>
 				<th width="1%">
-					<input type="checkbox" name="checkall-toggle" value="" onclick="checkAll(this)" />
+					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 				</th>
 				<th class="left">
 					<?php echo JText::_('COM_USERS_HEADING_GROUP_TITLE'); ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: cache.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: cache.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_cache
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -52,7 +52,7 @@ class CacheModelCache extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
-		
+
 		$clientId = $this->getUserStateFromRequest($this->context.'.filter.client_id', 'filter_client_id', 0, 'int');
 		$this->setState('clientId', $clientId == 1 ? 1 : 0);
 
@@ -113,12 +113,12 @@ class CacheModelCache extends JModelList
 			'defaultgroup'	=> '',
 			'storage' 		=> $conf->get('cache_handler', ''),
 			'caching'		=> true,
-			'cachebase'		=> ($this->getState('clientId') == 1) ? JPATH_ADMINISTRATOR.DS.'cache' : $conf->get('cache_path', JPATH_SITE.DS.'cache')
+			'cachebase'		=> ($this->getState('clientId') == 1) ? JPATH_ADMINISTRATOR . '/cache' : $conf->get('cache_path', JPATH_SITE . '/cache')
 		);
 
 		jimport('joomla.cache.cache');
 		$cache = JCache::getInstance('', $options);
-		
+
 		return $cache;
 	}
 

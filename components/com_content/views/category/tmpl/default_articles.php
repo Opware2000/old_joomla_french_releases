@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_articles.php 21687 2011-06-26 23:41:41Z dextercowley $
+ * @version		$Id: default_articles.php 21700 2011-06-28 04:32:41Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -32,7 +32,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 <form action="<?php echo htmlspecialchars(JFactory::getURI()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 	<?php if ($this->params->get('show_headings') || $this->params->get('filter_field') != 'hide' || $this->params->get('show_pagination_limit')) :?>
 	<fieldset class="filters">
-		<?php if ($this->params->get('filter_field') != 'hide') :?>	
+		<?php if ($this->params->get('filter_field') != 'hide') :?>
 		<legend class="hidelabeltxt">
 			<?php echo JText::_('JGLOBAL_FILTER_LABEL'); ?>
 		</legend>
@@ -49,7 +49,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 			<?php echo $this->pagination->getLimitBox(); ?>
 		</div>
 		<?php endif; ?>
-		
+
 	<!-- @TODO add hidden inputs -->
 		<input type="hidden" name="filter_order" value="" />
 		<input type="hidden" name="filter_order_Dir" value="" />
@@ -160,11 +160,15 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+<?php endif; ?>
 
 <?php // Code to add a link to submit an article. ?>
 <?php if ($this->category->getParams()->get('access-create')) : ?>
-	<?php echo JHtml::_('icon.create', $article, $article->params); ?>
+	<?php echo JHtml::_('icon.create', $this->category, $this->category->params); ?>
 <?php  endif; ?>
+
+<?php // Add pagination links ?>
+<?php if (!empty($this->items)) : ?>
 	<?php if (($this->params->def('show_pagination', 2) == 1  || ($this->params->get('show_pagination') == 2)) && ($this->pagination->get('pages.total') > 1)) : ?>
 	<div class="pagination">
 
@@ -178,4 +182,4 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 	</div>
 	<?php endif; ?>
 </form>
-<?php endif; ?>
+<?php  endif; ?>

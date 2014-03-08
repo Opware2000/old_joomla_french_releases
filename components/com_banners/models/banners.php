@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banners.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: banners.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modellist');
 jimport('joomla.application.component.helper');
 
-JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . DS . 'tables');
+JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . '/tables');
 
 /**
  * Banners model for the Joomla Banners component.
@@ -182,7 +182,7 @@ class BannersModelBanners extends JModelList
 			foreach ($this->cache['items'] as &$item)
 			{
 				$parameters = new JRegistry;
-				$parameters->loadJSON($item->params);
+				$parameters->loadString($item->params);
 				$item->params = $parameters;
 			}
 		}

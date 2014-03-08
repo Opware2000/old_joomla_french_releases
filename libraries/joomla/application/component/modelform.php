@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		$Id: modelform.php 21088 2011-04-05 22:06:34Z dextercowley $
- * @package		Joomla.Framework
- * @subpackage	Application
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Application
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('_JEXEC') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.application.component.model');
 jimport('joomla.form.form');
@@ -15,23 +15,31 @@ jimport('joomla.form.form');
 /**
  * Prototype form model.
  *
- * @package		Joomla.Framework
- * @subpackage	Application
- * @since		1.6
+ * @package     Joomla.Platform
+ * @subpackage  Application
+ * @since       11.1
+ *
+ * @see  JForm
+ * @see  JFormField
+ * @see  JformRule
  */
 abstract class JModelForm extends JModel
 {
 	/**
 	 * Array of form objects.
+	 *
+	 * @var    array
+	 * @since  11.1
 	 */
 	protected $_forms = array();
 
 	/**
 	 * Method to checkin a row.
 	 *
-	 * @param	integer	$pk The numeric id of the primary key.
+	 * @param   integer  $pk The numeric id of the primary key.
 	 *
-	 * @return	boolean	False on failure or error, true otherwise.
+	 * @return  boolean  False on failure or error, true otherwise.
+	 * @since   11.1
 	 */
 	public function checkin($pk = null)
 	{
@@ -65,9 +73,10 @@ abstract class JModelForm extends JModel
 	/**
 	 * Method to check-out a row for editing.
 	 *
-	 * @param	int		$pk	The numeric id of the primary key.
+	 * @param   integer  $pk	The numeric id of the primary key.
 	 *
-	 * @return	boolean	False on failure or error, true otherwise.
+	 * @return  boolean	False on failure or error, true otherwise.
+	 * @since   11.1
 	 */
 	public function checkout($pk = null)
 	{
@@ -101,22 +110,27 @@ abstract class JModelForm extends JModel
 	/**
 	 * Abstract method for getting the form from the model.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	mixed	A JForm object on success, false on failure
-	 * @since	1.6
+	 * @param   array    $data      Data for the form.
+	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+	 *
+	 * @return  mixed  A JForm object on success, false on failure
+	 * @since   11.1
 	 */
 	abstract public function getForm($data = array(), $loadData = true);
 
 	/**
 	 * Method to get a form object.
 	 *
-	 * @param	string		$name		The name of the form.
-	 * @param	string		$source		The form source. Can be XML string if file flag is set to false.
-	 * @param	array		$options	Optional array of options for the form creation.
-	 * @param	boolean		$clear		Optional argument to force load a new form.
-	 * @param	string		$xpath		An optional xpath to search for the fields.
-	 * @return	mixed		JForm object on success, False on error.
+	 * @param   string   $name     The name of the form.
+	 * @param   string   $source   The form source. Can be XML string if file flag is set to false.
+	 * @param   array    $options  Optional array of options for the form creation.
+	 * @param   boolean  $clear    Optional argument to force load a new form.
+	 * @param   string   $xpath    An optional xpath to search for the fields.
+	 *
+	 * @return  mixed  JForm object on success, False on error.
+	 *
+	 * @see     JForm
+	 * @since   11.1
 	 */
 	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
 	{
@@ -166,8 +180,8 @@ abstract class JModelForm extends JModel
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
-	 * @return	array	The default data is an empty array.
-	 * @since	1.6
+	 * @return  array    The default data is an empty array.
+	 * @since   11.1
 	 */
 	protected function loadFormData()
 	{
@@ -177,11 +191,15 @@ abstract class JModelForm extends JModel
 	/**
 	 * Method to allow derived classes to preprocess the form.
 	 *
-	 * @param	object	A form object.
-	 * @param	mixed	The data expected for the form.
-	 * @param	string	The name of the plugin group to import (defaults to "content").
-	 * @throws	Exception if there is an error in the form event.
-	 * @since	1.6
+	 * @param   object  $form   A form object.
+	 * @param   mixed   $data   The data expected for the form.
+	 * @param   string  $group  The name of the plugin group to import (defaults to "content").
+	 *
+	 * @return  void
+	 *
+	 * @see     JFormField
+	 * @since   11.1
+	 * @throws  Exception if there is an error in the form event.
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
@@ -209,16 +227,21 @@ abstract class JModelForm extends JModel
 	/**
 	 * Method to validate the form data.
 	 *
-	 * @param	object		$form		The form to validate against.
-	 * @param	array		$data		The data to validate.
-	 * @return	mixed		Array of filtered data if valid, false otherwise.
-	 * @since	1.1
+	 * @param   object  $form   The form to validate against.
+	 * @param   array   $data   The data to validate.
+	 * @param   string  $group  The name of the field group to validate.
+	 *
+	 * @return  mixed  Array of filtered data if valid, false otherwise.
+	 *
+	 * @see     JFormRule
+	 * @see     JFilterInput
+	 * @since   11.1
 	 */
-	function validate($form, $data)
+	function validate($form, $data, $group = null)
 	{
 		// Filter and validate the form data.
 		$data	= $form->filter($data);
-		$return	= $form->validate($data);
+		$return	= $form->validate($data, $group);
 
 		// Check for an error.
 		if (JError::isError($return)) {

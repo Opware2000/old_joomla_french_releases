@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: logout.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: logout.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -31,6 +31,7 @@ class plgSystemLogout extends JPlugin
 	function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
+		$this->loadLanguage();
 
 		$hash = JUtility::getHash('plgSystemLogout');
 		if (JFactory::getApplication()->isSite() and JRequest::getString($hash, null ,'cookie'))
@@ -77,7 +78,6 @@ class plgSystemLogout extends JPlugin
 		// Make sure the error is a 403 and we are in the frontend.
 		if ($error->getCode() == 403 and $app->isSite()) {
 			// Redirect to the home page
-			$this->loadLanguage();
 			$app->redirect('index.php', JText::_('PLG_SYSTEM_LOGOUT_REDIRECT'), null, true, false);
 		}
 		else {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: en-GB.xml 21134 2011-04-10 17:07:29Z infograf768 $ -->
-<metafile version="1.6" client="administrator">
+<!-- $Id: en-GB.xml 21875 2011-07-17 07:35:28Z infograf768 $ -->
+<metafile version="1.7" client="administrator">
 	<name>English (United Kingdom)</name>
-	<version>1.6.2</version>
+	<version>1.7.0</version>
 	<creationDate>2008-03-15</creationDate>
 	<author>Joomla! Project</author>
 	<authorEmail>admin@joomla.org</authorEmail>
@@ -75,8 +75,6 @@
 		<filename>en-GB.mod_login.sys.ini</filename>
 		<filename>en-GB.mod_menu.ini</filename>
 		<filename>en-GB.mod_menu.sys.ini</filename>
-		<filename>en-GB.mod_online.ini</filename>
-		<filename>en-GB.mod_online.sys.ini</filename>
 		<filename>en-GB.mod_popular.ini</filename>
 		<filename>en-GB.mod_popular.sys.ini</filename>
 		<filename>en-GB.mod_quickicon.ini</filename>
@@ -89,10 +87,6 @@
 		<filename>en-GB.mod_title.sys.ini</filename>
 		<filename>en-GB.mod_toolbar.ini</filename>
 		<filename>en-GB.mod_toolbar.sys.ini</filename>
-		<filename>en-GB.mod_unread.ini</filename>
-		<filename>en-GB.mod_unread.sys.ini</filename>
-		<filename>en-GB.plg_authentication_example.ini</filename>
-		<filename>en-GB.plg_authentication_example.sys.ini</filename>
 		<filename>en-GB.plg_authentication_gmail.ini</filename>
 		<filename>en-GB.plg_authentication_gmail.sys.ini</filename>
 		<filename>en-GB.plg_authentication_joomla.ini</filename>

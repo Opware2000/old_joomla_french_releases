@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: languages.php 21032 2011-03-29 16:38:31Z dextercowley $
+ * @version		$Id: languages.php 21745 2011-07-06 09:05:21Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -37,6 +37,8 @@ class LanguagesModelLanguages extends JModelList
 				'sef', 'a.sef',
 				'image', 'a.image',
 				'published', 'a.published',
+				'ordering', 'a.ordering',
+				'home','l.home',
 			);
 		}
 
@@ -104,9 +106,13 @@ class LanguagesModelLanguages extends JModelList
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		// Select all fields from the users table.
-		$query->select($this->getState('list.select', 'a.*'));
+		// Select all fields from the languages table.
+		$query->select($this->getState('list.select', 'a.*', 'l.home'));
 		$query->from('`#__languages` AS a');
+
+		// Select the language home pages
+		$query->select('l.home AS home');
+		$query->join('LEFT', '`#__menu`  AS l  ON  l.language = a.lang_code AND l.home=1  AND l.language <> \'*\'' );
 
 		// Filter on the published state.
 		$published = $this->getState('filter.published');
@@ -186,6 +192,6 @@ class LanguagesModelLanguages extends JModelList
 		parent::cleanCache('_system', 1);
 		parent::cleanCache('com_languages', 0);
 		parent::cleanCache('com_languages', 1);
-	}	
+	}
 
 }

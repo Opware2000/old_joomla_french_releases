@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: edit.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_weblinks
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -83,6 +83,6 @@ $params = $this->state->get('params');
 
 		<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
 		<input type="hidden" name="task" value="" />
-		<?php echo JHtml::_( 'form.token' ); ?>		
+		<?php echo JHtml::_( 'form.token' ); ?>
 	</form>
 </div>

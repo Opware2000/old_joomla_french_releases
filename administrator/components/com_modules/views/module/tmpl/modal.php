@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modal.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: modal.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_modules
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -18,6 +18,6 @@ defined('_JEXEC') or die;
 </div>
 <div class="clr"></div>
 
-<?php 
+<?php
 $this->setLayout('edit');
 echo $this->loadTemplate();

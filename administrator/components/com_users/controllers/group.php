@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: group.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: group.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -40,7 +40,7 @@ class UsersControllerGroup extends JControllerForm
 	{
 		return (JFactory::getUser()->authorise('core.admin', $this->option) && parent::allowSave($data, $key));
 	}
-	
+
 	/**
 	 * Overrides JControllerForm::allowEdit
 	 *
@@ -64,5 +64,5 @@ class UsersControllerGroup extends JControllerForm
 
 		return parent::allowEdit($data, $key);
 	}
-	
+
 }

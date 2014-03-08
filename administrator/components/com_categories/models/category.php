@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: category.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -37,13 +37,13 @@ class CategoriesModelCategory extends JModelAdmin
 		if (!empty($record->id)) {
 			if ($record->published != -2) {
 				return ;
-			}		
+			}
 			$user = JFactory::getUser();
 
 			return $user->authorise('core.delete', $record->extension.'.category.'.(int) $record->id);
 
 		}
-	}			
+	}
 
 	/**
 	 * Method to test whether a record can be deleted.
@@ -136,7 +136,7 @@ class CategoriesModelCategory extends JModelAdmin
 
 			// Convert the metadata field to an array.
 			$registry = new JRegistry();
-			$registry->loadJSON($result->metadata);
+			$registry->loadString($result->metadata);
 			$result->metadata = $registry->toArray();
 
 			// Convert the created and modified dates to local user time for display in the form.
@@ -265,7 +265,14 @@ class CategoriesModelCategory extends JModelAdmin
 		// Get the component form if it exists
 		jimport('joomla.filesystem.path');
 		$name = 'category'.($section ? ('.'.$section):'');
-		$path = JPath::clean(JPATH_ADMINISTRATOR."/components/$component/$name.xml");
+
+		// Looking first in the component models/forms folder
+		$path = JPath::clean(JPATH_ADMINISTRATOR."/components/$component/models/forms/$name.xml");
+
+		// Old way: looking in the component folder
+		if (!file_exists($path)) {
+			$path = JPath::clean(JPATH_ADMINISTRATOR."/components/$component/$name.xml");
+		}
 
 		if (file_exists($path)) {
 			$lang->load($component, JPATH_BASE, null, false, false);
@@ -338,15 +345,9 @@ class CategoriesModelCategory extends JModelAdmin
 
 		// Alter the title for save as copy
 		if (JRequest::getVar('task') == 'save2copy') {
-			$orig_data	= JRequest::getVar('jform', array(), 'post', 'array');
-			$orig_table = clone($this->getTable());
-			$orig_table->load( (int) $orig_data['id']);
-
-			if (((int) $data['parent_id'] === (int) $orig_table->parent_id) 
-			 && ($data['alias'] == $orig_table->alias)) {
-				$data['title'] .= ' '.JText::_('JGLOBAL_COPY');	
-				$data['alias'] .= '-copy';
-			}
+			list($title,$alias) = $this->generateNewTitle($data['parent_id'], $data['alias'], $data['title']);
+			$data['title']	= $title;
+			$data['alias']	= $alias;
 		}
 
 		// Bind the data.
@@ -399,7 +400,7 @@ class CategoriesModelCategory extends JModelAdmin
 
 		// Clear the cache
 		$this->cleanCache();
-		
+
 		return true;
 	}
 
@@ -421,7 +422,7 @@ class CategoriesModelCategory extends JModelAdmin
 
 		// Clear the cache
 		$this->cleanCache();
-		
+
 		return true;
 	}
 
@@ -445,64 +446,9 @@ class CategoriesModelCategory extends JModelAdmin
 
 		// Clear the cache
 		$this->cleanCache();
-		
+
 		return true;
 
-	}
-
-	/**
-	 * Method to perform batch operations on a category or a set of categories.
-	 *
-	 * @param	array	An array of commands to perform.
-	 * @param	array	An array of category ids.
-	 * @return	boolean	Returns true on success, false on failure.
-	 * @since	1.6
-	 */
-	function batch($commands, $pks)
-	{
-		// Sanitize user ids.
-		$pks = array_unique($pks);
-		JArrayHelper::toInteger($pks);
-
-		// Remove any values of zero.
-		if (array_search(0, $pks, true)) {
-			unset($pks[array_search(0, $pks, true)]);
-		}
-
-		if (empty($pks)) {
-			$this->setError(JText::_('COM_CATEGORIES_NO_ITEM_SELECTED'));
-			return false;
-		}
-
-		$done = false;
-
-		if (!empty($commands['assetgroup_id'])) {
-			if (!$this->batchAccess($commands['assetgroup_id'], $pks)) {
-				return false;
-			}
-			$done = true;
-		}
-
-		if (!empty($commands['category_id'])) {
-			$cmd = JArrayHelper::getValue($commands, 'move_copy', 'c');
-
-			if ($cmd == 'c' && !$this->batchCopy($commands['category_id'], $pks)) {
-				return false;
-			} else if ($cmd == 'm' && !$this->batchMove($commands['category_id'], $pks)) {
-				return false;
-			}
-			$done = true;
-		}
-
-		if (!$done) {
-			$this->setError(JText::_('JGLOBAL_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
-			return false;
-		}
-
-		// Clear the cache
-		$this->cleanCache();
-		
-		return true;
 	}
 
 	/**
@@ -522,7 +468,7 @@ class CategoriesModelCategory extends JModelAdmin
 		foreach ($pks as $pk) {
 			if (!$user->authorise('core.edit', $extension.'.category.'.$pk)) {
 				// Error since user cannot edit this category
-				$this->setError(JText::_('JGLOBAL_BATCH_CATEGORY_CANNOT_EDIT'));
+				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_EDIT'));
 				return false;
 			}
 		}
@@ -536,7 +482,7 @@ class CategoriesModelCategory extends JModelAdmin
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -579,7 +525,7 @@ class CategoriesModelCategory extends JModelAdmin
 				$user->authorise('core.create', $extension.'.category.'.$parentId);
 			if (!$canCreate) {
 				// Error since user cannot create in parent category
-				$this->setError(JText::_('JGLOBAL_BATCH_CATEGORY_CANNOT_CREATE'));
+				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 		}
@@ -592,7 +538,7 @@ class CategoriesModelCategory extends JModelAdmin
 			}
 			// Make sure we can create in root
 			elseif (!$user->authorise('core.create', $extension)) {
-				$this->setError(JText::_('JGLOBAL_BATCH_CATEGORY_CANNOT_CREATE'));
+				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 		}
@@ -671,6 +617,11 @@ class CategoriesModelCategory extends JModelAdmin
 			$table->lft			= null;
 			$table->rgt			= null;
 
+			// Alter the title & alias
+			list($title,$alias) = $this->generateNewTitle($table->parent_id, $table->alias, $table->title);
+			$table->title   = $title;
+			$table->alias   = $alias;
+
 			// Store the row.
 			if (!$table->store()) {
 				$this->setError($table->getError());
@@ -735,7 +686,7 @@ class CategoriesModelCategory extends JModelAdmin
 				$user->authorise('core.create', $extension.'.category.'.$parentId);
 			if (!$canCreate) {
 				// Error since user cannot create in parent category
-				$this->setError(JText::_('JGLOBAL_BATCH_CATEGORY_CANNOT_CREATE'));
+				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 
@@ -744,7 +695,7 @@ class CategoriesModelCategory extends JModelAdmin
 			foreach ($pks as $pk) {
 				if (!$user->authorise('core.edit', $extension.'.category.'.$pk)) {
 					// Error since user cannot edit this category
-					$this->setError(JText::_('JGLOBAL_BATCH_CATEGORY_CANNOT_EDIT'));
+					$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_EDIT'));
 					return false;
 				}
 			}
@@ -837,5 +788,36 @@ class CategoriesModelCategory extends JModelAdmin
 				parent::cleanCache($extension);
 				break;
 		}
+	}
+
+	/**
+	 * Method to change the title & alias.
+	 *
+	 * @param	int     The value of the parent category ID.
+	 * @param   sting   The value of the category alias.
+	 * @param   sting   The value of the category title.
+	 *
+	 * @return	array   Contains title and alias.
+	 * @since	1.7
+	 */
+	function generateNewTitle(&$parent_id, &$alias, &$title)
+	{
+		// Alter the title & alias
+		$catTable = JTable::getInstance('Category', 'JTable');
+		while ($catTable->load(array('alias'=>$alias, 'parent_id'=>$parent_id))) {
+			$m = null;
+			if (preg_match('#-(\d+)$#', $alias, $m)) {
+				$alias = preg_replace('#-(\d+)$#', '-'.($m[1] + 1).'', $alias);
+			} else {
+				$alias .= '-2';
+			}
+			if (preg_match('#\((\d+)\)$#', $title, $m)) {
+				$title = preg_replace('#\(\d+\)$#', '('.($m[1] + 1).')', $title);
+			} else {
+				$title .= ' (2)';
+			}
+		}
+
+		return array($title, $alias);
 	}
 }

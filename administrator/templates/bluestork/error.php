@@ -11,14 +11,11 @@
 // no direct access
 defined('_JEXEC') or die;
 
-$app = JFactory::getApplication();
-//$template = $app->getTemplate(true);
-//$params = $template->params;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo  $this->language; ?>" lang="<?php echo  $this->language; ?>" dir="<?php echo  $this->direction; ?>" >
 <head>
-	<jdoc:include type="head" />
+
 	<link rel="stylesheet" href="templates/system/css/system.css" type="text/css" />
 	<link href="templates/<?php echo  $this->template ?>/css/template.css" rel="stylesheet" type="text/css" />
 
@@ -32,11 +29,7 @@ $app = JFactory::getApplication();
 </head>
 <body id="minwidth-body">
 	<div id="border-top" class="h_blue">
-		<div>
-			<div>
-				<span class="logo"><a href="http://www.joomla.org" target="_blank"><img src="templates/<?php echo  $this->template ?>/images/logo.png" alt="Joomla!" /></a></span>
-			</div>
-		</div>
+		<span class="logo"><a href="http://www.joomla.org" target="_blank"><img src="templates/<?php echo  $this->template ?>/images/logo.png" alt="Joomla!" /></a></span>
 	</div>
 	<div id="content-box">
 		<div class="border">
@@ -52,7 +45,7 @@ $app = JFactory::getApplication();
 	</div>
 	<div class="clr"></div>
 	<noscript>
-			<?php echo  JText::_('JGLOBAL_WARNJAVASCRIPT') ?>
+		<?php echo  JText::_('JGLOBAL_WARNJAVASCRIPT') ?>
 	</noscript>
 	<div class="clr"></div>
 	<div id="border-bottom"><div><div></div></div></div>

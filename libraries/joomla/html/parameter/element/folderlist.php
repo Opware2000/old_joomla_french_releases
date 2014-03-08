@@ -1,40 +1,43 @@
 <?php
 /**
- * @version		$Id: folderlist.php 20972 2011-03-16 13:57:36Z chdemko $
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access.
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Renders a filelist element
  *
- * @package		Joomla.Framework
+ * @package     Joomla.Platform
  * @subpackage	Parameter
+ * @since		11.1
  * @deprecated	JParameter is deprecated and will be removed in a future version. Use JForm instead.
- * @since		1.5
  */
-
 class JElementFolderlist extends JElement
 {
 	/**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	 * Element name
+	 *
+	 * @var    string
+	 */
 	protected $_name = 'Folderlist';
 
+	/**
+	 *
+	 * @since   11.1
+	 *
+	 * @deprecated
+	 */
 	public function fetchElement($name, $value, &$node, $control_name)
 	{
 		jimport('joomla.filesystem.folder');
 
 		// Initialise variables.
-		$path		= JPATH_ROOT.DS.$node->attributes('directory');
+		$path		= JPATH_ROOT . '/' . $node->attributes('directory');
 		$filter		= $node->attributes('filter');
 		$exclude	= $node->attributes('exclude');
 		$folders	= JFolder::folders($path, $filter);

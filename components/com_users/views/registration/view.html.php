@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21023 2011-03-28 10:55:01Z infograf768 $
+ * @version		$Id: view.html.php 21367 2011-05-18 12:29:19Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -83,8 +83,11 @@ class UsersViewRegistration extends JView
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0)) {
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
 
@@ -93,12 +96,12 @@ class UsersViewRegistration extends JView
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
 
-		if ($this->params->get('menu-meta_keywords')) 
+		if ($this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots')) 
+		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}

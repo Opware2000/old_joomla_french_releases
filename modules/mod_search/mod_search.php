@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mod_search.php 20806 2011-02-21 19:44:59Z dextercowley $
+ * @version		$Id: mod_search.php 21597 2011-06-21 13:14:15Z chdemko $
  * @package		Joomla.Site
  * @subpackage	mod_search
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,6 +14,15 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__).'/helper.php';
 
 $lang = JFactory::getLanguage();
+
+if ($params->get('opensearch', 1)) {
+	$doc = JFactory::getDocument();
+	$app = JFactory::getApplication();
+
+	$ostitle = $params->get('opensearch_title', JText::_('MOD_SEARCH_SEARCHBUTTON_TEXT').' '.$app->getCfg('sitename'));
+	$doc->addHeadLink(JURI::getInstance()->toString(array('scheme', 'host', 'port')).JRoute::_('&option=com_search&format=opensearch'), 'search', 'rel', array('title' => $ostitle, 'type' => 'application/opensearchdescription+xml'));
+}
+
 $upper_limit = $lang->getUpperLimitSearchWord();
 
 $button			= $params->get('button', '');

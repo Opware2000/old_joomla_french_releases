@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default.php 21744 2011-07-06 08:40:23Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,9 +14,10 @@ defined('_JEXEC') or die;
 // Include the component HTML helpers.
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
-JHtml::_('script','system/multiselect.js',false,true);
+JHtml::_('behavior.multiselect');
 
 $user		= JFactory::getUser();
+$app		= JFactory::getApplication();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
@@ -24,6 +25,7 @@ $ordering 	= ($listOrder == 'a.lft');
 $canOrder	= $user->authorise('core.edit.state',	'com_menus');
 $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 ?>
+<?php //Set up the filter bar. ?>
 <form action="<?php echo JRoute::_('index.php?option=com_menus&view=items');?>" method="post" name="adminForm" id="adminForm">
 	<fieldset id="filter-bar">
 	<legend class="element-invisible"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></legend>
@@ -34,18 +36,17 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select">
-
 			<label class="selectlabel" for="menutype">
 				<?php echo JText::_('TPL_HATHOR_COM_MENUS_MENU'); ?>
 			</label>
-			<select name="menutype" id="menutype" class="inputbox">
+			<select name="menutype" class="inputbox" id="menutype">
 				<?php echo JHtml::_('select.options', JHtml::_('menu.menus'), 'value', 'text', $this->state->get('filter.menutype'));?>
 			</select>
 
 			<label class="selectlabel" for="filter_level">
 				<?php echo JText::_('COM_MENUS_OPTION_SELECT_LEVEL'); ?>
 			</label>
-			<select name="filter_level" id="filter_level" class="inputbox">
+			<select name="filter_level" class="inputbox" id="filter_level">
 				<option value=""><?php echo JText::_('COM_MENUS_OPTION_SELECT_LEVEL');?></option>
 				<?php echo JHtml::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level'));?>
 			</select>
@@ -53,7 +54,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
             <label class="selectlabel" for="filter_published">
 				<?php echo JText::_('JOPTION_SELECT_PUBLISHED'); ?>
 			</label>
-			<select name="filter_published" id="filter_published" class="inputbox">
+			<select name="filter_published" class="inputbox" id="filter_published">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('archived' => false)), 'value', 'text', $this->state->get('filter.published'), true);?>
 			</select>
@@ -61,7 +62,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
             <label class="selectlabel" for="filter_access">
 				<?php echo JText::_('JOPTION_SELECT_ACCESS'); ?>
 			</label>
-			<select name="filter_access" id="filter_access" class="inputbox">
+			<select name="filter_access" class="inputbox" id="filter_access">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
 			</select>
@@ -69,23 +70,22 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 			<label class="selectlabel" for="filter_language">
 				<?php echo JText::_('JOPTION_SELECT_LANGUAGE'); ?>
 			</label>
-			<select name="filter_language" id="filter_language" class="inputbox">
+			<select name="filter_language" class="inputbox" id="filter_language">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_LANGUAGE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('contentlanguage.existing', true, true), 'value', 'text', $this->state->get('filter.language'));?>
 			</select>
 
-			<button type="button" id="filter-go" onclick="this.form.submit();">
+			<button type="submit" id="filter-go">
 				<?php echo JText::_('JSUBMIT'); ?></button>
-
 		</div>
 	</fieldset>
 	<div class="clr"> </div>
-
+<?php //Set up the grid heading. ?>
 	<table class="adminlist">
 		<thead>
 			<tr>
 				<th class="checkmark-col">
-					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('TPL_HATHOR_CHECKMARK_ALL'); ?>" onclick="checkAll(this)" />
+					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 				</th>
 				<th class="title">
 					<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
@@ -108,6 +108,11 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 				<th class="home-col">
 					<?php echo JHtml::_('grid.sort', 'COM_MENUS_HEADING_HOME', 'a.home', $listDirn, $listOrder); ?>
 				</th>
+				<?php if ($app->get('menu_associations', 0)):?>
+				<th class="width-5">
+					<?php echo JHtml::_('grid.sort', 'COM_MENUS_HEADING_ASSOCIATION', 'association', $listDirn, $listOrder); ?>
+				</th>
+				<?php endif;?>
 				<th class="language-col">
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?>
 				</th>
@@ -121,14 +126,12 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 		<?php
 		$originalOrders = array();
 		foreach ($this->items as $i => $item) :
-			// $lang = JFactory::getLanguage();
-			// $lang->load($item->componentname, JPATH_ADMINISTRATOR);
 			$orderkey = array_search($item->id, $this->ordering[$item->parent_id]);
 			$canCreate	= $user->authorise('core.create',		'com_menus');
 			$canEdit	= $user->authorise('core.edit',			'com_menus');
 			$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $item->checked_out==$user->get('id')|| $item->checked_out==0;
 			$canChange	= $user->authorise('core.edit.state',	'com_menus') && $canCheckin;
-		?>
+			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center">
 					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -146,10 +149,14 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 					<?php endif; ?>
 					<p class="smallsub" title="<?php echo $this->escape($item->path);?>">
 						<?php echo str_repeat('<span class="gtr">|&mdash;</span>', $item->level-1) ?>
-						<?php if (empty($item->note)) : ?>
-							<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias));?>
-						<?php else : ?>
-							<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS_NOTE', $this->escape($item->alias), $this->escape($item->note));?>
+						<?php if ($item->type !='url') : ?>
+							<?php if (empty($item->note)) : ?>
+								<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias));?>
+							<?php else : ?>
+								<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS_NOTE', $this->escape($item->alias), $this->escape($item->note));?>
+							<?php endif; ?>
+						<?php elseif($item->type =='url' && $item->note) : ?>
+							<?php echo JText::sprintf('JGLOBAL_LIST_NOTE', $this->escape($item->note));?>
 						<?php endif; ?></p>
 				</td>
 				<td class="center">
@@ -188,6 +195,13 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 						<?php endif;?>
 					<?php endif; ?>
 				</td>
+				<?php if ($app->get('menu_associations', 0)):?>
+				<td class="center">
+					<?php if ($item->association):?>
+						<?php echo JHtml::_('MenusHtml.Menus.association', $item->id);?>
+					<?php endif;?>
+				</td>
+				<?php endif;?>
 				<td class="center">
 					<?php if ($item->language==''):?>
 						<?php echo JText::_('JDEFAULT'); ?>
@@ -209,6 +223,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 	<?php echo $this->pagination->getListFooter(); ?>
 	<div class="clr"> </div>
 
+	<?php //Load the batch processing form. ?>
 	<?php echo $this->loadTemplate('batch'); ?>
 
 	<input type="hidden" name="task" value="" />

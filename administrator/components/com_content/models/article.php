@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: article.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -124,12 +124,12 @@ class ContentModelArticle extends JModelAdmin
 		if ($item = parent::getItem($pk)) {
 			// Convert the params field to an array.
 			$registry = new JRegistry;
-			$registry->loadJSON($item->attribs);
+			$registry->loadString($item->attribs);
 			$item->attribs = $registry->toArray();
 
 			// Convert the params field to an array.
 			$registry = new JRegistry;
-			$registry->loadJSON($item->metadata);
+			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
 
 			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
@@ -222,6 +222,13 @@ class ContentModelArticle extends JModelAdmin
 	 */
 	public function save($data)
 	{
+		// Alter the title for save as copy
+		if (JRequest::getVar('task') == 'save2copy') {
+			list($title,$alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['title']);
+			$data['title']	= $title;
+			$data['alias']	= $alias;
+		}
+
 		if (parent::save($data)) {
 			if (isset($data['featured'])) {
 				$this->featured($this->getState($this->getName().'.id'), $data['featured']);
@@ -287,10 +294,10 @@ class ContentModelArticle extends JModelAdmin
 				if (!is_array($old_featured = $db->loadResultArray())) {
 					throw new Exception($db->getErrorMsg());
 				}
-				
+
 				// we diff the arrays to get a list of the articles that are newly featured
 				$new_featured = array_diff($pks, $old_featured);
-				
+
 				// Featuring.
 				$tuples = array();
 				foreach ($new_featured as $pk) {
@@ -349,5 +356,5 @@ class ContentModelArticle extends JModelAdmin
 		parent::cleanCache('mod_articles_latest');
 		parent::cleanCache('mod_articles_news');
 		parent::cleanCache('mod_articles_popular');
-	}	
+	}
 }

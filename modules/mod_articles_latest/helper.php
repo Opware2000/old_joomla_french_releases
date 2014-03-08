@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20541 2011-02-03 21:12:06Z dextercowley $
+ * @version		$Id: helper.php 21451 2011-06-04 19:00:00Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_articles_latest
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -104,7 +104,7 @@ abstract class modArticlesLatestHelper
 				// We know that user has the privilege to view the article
 				$item->link = JRoute::_(ContentHelperRoute::getArticleRoute($item->slug, $item->catslug));
 			} else {
-				$item->link = JRoute::_('index.php?option=com_user&view=login');
+				$item->link = JRoute::_('index.php?option=com_users&view=login');
 			}
 		}
 

@@ -1,19 +1,13 @@
 <?php
 /**
- * @version		$Id:tar.php 6961 2007-03-15 16:06:53Z tcp $
- * @package		Joomla.Framework
- * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
+ * @package     Joomla.Platform
+ * @subpackage  FileSystem
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// Check to ensure this file is within the rest of the framework
-defined('JPATH_BASE') or die();
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Tar format adapter for the JArchive class
@@ -24,15 +18,17 @@ defined('JPATH_BASE') or die();
  * @contributor  Michael Slusarz <slusarz@horde.org>
  * @contributor  Michael Cochrane <mike@graftonhall.co.nz>
  *
- * @package 	Joomla.Framework
- * @subpackage	FileSystem
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  FileSystem
+ * @since       11.1
  */
 class JArchiveTar extends JObject
 {
 	/**
 	 * Tar file types.
-	 * @var array
+	 *
+	 * @var    array
+	 * @since  11.1
 	 */
 	var $_types = array (
 		0x0 => 'Unix file',
@@ -48,7 +44,9 @@ class JArchiveTar extends JObject
 
 	/**
 	 * Tar file flags.
-	 * @var array
+	 *
+	 * @var    array
+	 * @since  11.1
 	 */
 	var $_flags = array (
 		'FTEXT' => 0x01,
@@ -60,29 +58,34 @@ class JArchiveTar extends JObject
 
 	/**
 	 * Tar file data buffer
-	 * @var string
+	 *
+	 * @var    string
+	 * @since  11.1
 	 */
 	var $_data = null;
 
 	/**
 	 * Tar file metadata array
-	 * @var array
+	 *
+	 * @var    array
+	 * @since  11.1
 	 */
 	var $_metadata = null;
 
 	/**
 	* Extract a ZIP compressed file to a given path
 	*
-	* @access	public
-	* @param	string	$archive		Path to ZIP archive to extract
-	* @param	string	$destination	Path to extract archive into
-	* @param	array	$options		Extraction options [unused]
-	* @return	boolean	True if successful
-	* @since	1.5
+	* @param   string   $archive      Path to ZIP archive to extract
+	* @param   string   $destination  Path to extract archive into
+	* @param   array    $options      Extraction options [unused]
+	*
+	* @return  boolean  True if successful
+	*
+	* @since   11.1
 	*/
-	function extract($archive, $destination, $options = array ())
+	public function extract($archive, $destination, $options = array ())
 	{
-		// Initialize variables
+		// Initialise variables.
 		$this->_data = null;
 		$this->_metadata = null;
 
@@ -103,7 +106,7 @@ class JArchiveTar extends JObject
 			if ($type == 'file' || $type == 'unix file')
 			{
 				$buffer = $this->_metadata[$i]['data'];
-				$path = JPath::clean($destination.DS.$this->_metadata[$i]['name']);
+				$path = JPath::clean($destination . '/' . $this->_metadata[$i]['name']);
 				// Make sure the destination folder exists
 				if (!JFolder::create(dirname($path)))
 				{
@@ -123,21 +126,22 @@ class JArchiveTar extends JObject
 	/**
 	 * Get the list of files/data from a Tar archive buffer.
 	 *
-	 * @access	private
-	 * @param 	string	$data	The Tar archive buffer.
-	 * @return	array	Archive metadata array
-	 * <pre>
-	 * KEY: Position in the array
-	 * VALUES: 'attr'  --  File attributes
-	 *         'data'  --  Raw file contents
-	 *         'date'  --  File modification time
-	 *         'name'  --  Filename
-	 *         'size'  --  Original file size
-	 *         'type'  --  File type
-	 * </pre>
-	 * @since	1.5
+	 * @param   string  $data   The Tar archive buffer.
+	 *
+	 * @return   array  Archive metadata array
+	 *                  <pre>
+	 *                   KEY: Position in the array
+	 *                   VALUES: 'attr'  --  File attributes
+	 *                           'data'  --  Raw file contents
+	 *                           'date'  --  File modification time
+	 *                           'name'  --  Filename
+	 *                           'size'  --  Original file size
+	 *                           'type'  --  File type
+	 *                   </pre>
+	 *
+	 * @since    11.1
 	 */
-	function _getTarInfo(& $data)
+	protected function _getTarInfo(& $data)
 	{
 		$position = 0;
 		$return_array = array ();
@@ -158,8 +162,10 @@ class JArchiveTar extends JObject
 				$file = array (
 					'attr' => null,
 					'data' => null,
-					'date' => octdec($info['mtime']
-				), 'name' => trim($info['filename']), 'size' => octdec($info['size']), 'type' => isset ($this->_types[$info['typeflag']]) ? $this->_types[$info['typeflag']] : null);
+					'date' => octdec($info['mtime']),
+					'name' => trim($info['filename']),
+					'size' => octdec($info['size']),
+					'type' => isset ($this->_types[$info['typeflag']]) ? $this->_types[$info['typeflag']] : null);
 
 				if (($info['typeflag'] == 0) || ($info['typeflag'] == 0x30) || ($info['typeflag'] == 0x35)) {
 					/* File or folder. */
@@ -167,16 +173,17 @@ class JArchiveTar extends JObject
 
 					$mode = hexdec(substr($info['mode'], 4, 3));
 					$file['attr'] = (($info['typeflag'] == 0x35) ? 'd' : '-') .
-					 (($mode & 0x400) ? 'r' : '-') .
-					 (($mode & 0x200) ? 'w' : '-') .
-					 (($mode & 0x100) ? 'x' : '-') .
-					 (($mode & 0x040) ? 'r' : '-') .
-					 (($mode & 0x020) ? 'w' : '-') .
-					 (($mode & 0x010) ? 'x' : '-') .
-					 (($mode & 0x004) ? 'r' : '-') .
-					 (($mode & 0x002) ? 'w' : '-') .
-					 (($mode & 0x001) ? 'x' : '-');
-				} else {
+					(($mode & 0x400) ? 'r' : '-') .
+					(($mode & 0x200) ? 'w' : '-') .
+					(($mode & 0x100) ? 'x' : '-') .
+					(($mode & 0x040) ? 'r' : '-') .
+					(($mode & 0x020) ? 'w' : '-') .
+					(($mode & 0x010) ? 'x' : '-') .
+					(($mode & 0x004) ? 'r' : '-') .
+					(($mode & 0x002) ? 'w' : '-') .
+					(($mode & 0x001) ? 'x' : '-');
+				}
+				else {
 					/* Some other type. */
 				}
 				$return_array[] = $file;

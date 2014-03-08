@@ -1,12 +1,12 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.simple',{
 bold_desc:"Gras (Ctrl+B)",
 italic_desc:"Italique (Ctrl+I)",
-underline_desc:"Soulign\u00E9 (Ctrl+U)",
-striketrough_desc:"Barr\u00E9",
-bullist_desc:"Liste \u00E0 puce",
-numlist_desc:"Liste num\u00E9rot\u00E9e",
+underline_desc:"Souligné (Ctrl+U)",
+striketrough_desc:"Barré",
+bullist_desc:"Liste à puce",
+numlist_desc:"Liste chronologique",
 undo_desc:"Annuler (Ctrl+Z)",
-redo_desc:"R\u00E9tablir (Ctrl+Y)",
-cleanup_desc:"Nettoyer/Fermer les balises",
+redo_desc:"Rétablir (Ctrl+Y)",
+cleanup_desc:"Nettoyer/Fermer les balises"
 });

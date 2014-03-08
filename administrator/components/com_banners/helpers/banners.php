@@ -1,9 +1,11 @@
 <?php
 /**
- * @version		$Id: banners.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: banners.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
+
+defined('_JEXEC') or die;
 
 /**
  * Banners component helper.
@@ -107,7 +109,7 @@ class BannersHelper
 			return false;
 		}
 
-		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . DS . 'tables');
+		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . '/tables');
 
 		foreach ($rows as $row) {
 			$purchase_type = $row->purchase_type;

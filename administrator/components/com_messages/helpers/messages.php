@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: messages.php 20952 2011-03-11 16:09:38Z infograf768 $
+ * @version		$Id: messages.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -25,7 +25,7 @@ class MessagesHelper extends JController
 	 * @return	void
 	 * @since	1.6
 	 */
-	
+
 	public static function addSubmenu($vName)
 	{
 		JSubMenuHelper::addEntry(

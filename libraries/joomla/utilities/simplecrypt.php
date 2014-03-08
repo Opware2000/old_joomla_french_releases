@@ -1,42 +1,40 @@
 <?php
 /**
- * @version		$Id: simplecrypt.php 21039 2011-03-31 15:47:46Z dextercowley $
- * @package		Joomla.Framework
- * @subpackage	Utilities
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Utilities
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * JSimpleCrypt is a very simple encryption algorithm for encyrpting/decrypting strings
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	Utilities
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Utilities
+ * @since       11.1
  */
 class JSimpleCrypt extends JObject
 {
 	/**
 	 * Encryption/Decryption Key
-	 * @access	private
-	 * @var		string
+	 *
+	 * @var    string
 	 */
-	var $_key;
+	protected $_key;
 
 	/**
-	 * Object Constructor takes an optional key to be used for encryption/decryption.  If no key is given then the
+	 * Object Constructor takes an optional key to be used for encryption/decryption. If no key is given then the
 	 * secret word from the configuration object is used.
 	 *
-	 * @access	protected
-	 * @param	string	$key	Optional encryption key
-	 * @return	void
-	 * @since	1.5
+	 * @param   string  $key  Optional encryption key
+	 *
+	 * @return  void
+	 * @since   11.1
 	 */
-	function __construct($key = null)
+	public function __construct($key = null)
 	{
 		if ($key) {
 			$this->_key = (string) $key;
@@ -46,14 +44,29 @@ class JSimpleCrypt extends JObject
 		}
 	}
 
-	function decrypt($s)
+	/**
+	 * Decrypt a string
+	 *
+	 * @param   string  $s  String to decrypt
+	 *
+	 * @return  string
+	 * @since   11.1
+	 */
+	public function decrypt($s)
 	{
 		$ai = $this->_hexToIntArray($s);
 		(string) $s1 = $this->_xorString($ai);
 		return $s1;
 	}
-
-	function encrypt($s)
+	/**
+	 * Encrypt a string
+	 *
+	 * @param   string  $s  String to encrypt
+	 *
+	 * @return  string
+	 * @since   11.1
+	 */
+	public function encrypt($s)
 	{
 		$ai = $this->_xorCharString($s);
 		$s1 = "";
@@ -62,7 +75,16 @@ class JSimpleCrypt extends JObject
 		return $s1;
 	}
 
-	function _hexToInt($s, $i)
+	/**
+	 * Convert hex to an integer
+	 *
+	 * @param   string   $s
+	 * @param   integer  $i
+	 *
+	 * @return  integer
+	 * @since   11.1
+	 */
+	protected function _hexToInt($s, $i)
 	{
 		(int) $j = $i * 2;
 		(string) $s1 = $s;
@@ -128,8 +150,15 @@ class JSimpleCrypt extends JObject
 
 		return $k;
 	}
-
-	function _hexToIntArray($s)
+	/**
+	 * Convert hex to an array of integers
+	 *
+	 * @param   string  $s
+	 *
+	 * @return  array[integers]
+	 * @since   11.1
+	 */
+	protected function _hexToIntArray($s)
 	{
 		(string) $s1 = $s;
 		(int) $i = strlen($s1);
@@ -141,16 +170,31 @@ class JSimpleCrypt extends JObject
 
 		return $ai;
 	}
-
-	function _charToInt($c)
+	/**
+	 * Convert character string to integer
+	 *
+	 * @param   string  $c
+	 *
+	 * @return  integer
+	 * @since   11.1
+	 */
+	protected function _charToInt($c)
 	{
 		$ac[0] = $c;
 		return $ac;
 	}
 
-	function _xorString($ai)
+	/**
+	 * XorString
+	 *
+	 * @param   $ai
+	 *
+	 * @return  string
+	 * @since   11.1
+	 */
+	protected function _xorString($ai)
 	{
-		$s = $this->_key; //
+		$s = $this->_key;
 		(int) $i = strlen($s);
 		$ai1 = $ai;
 		(int) $j = count($ai1);
@@ -165,8 +209,15 @@ class JSimpleCrypt extends JObject
 		(string) $s1 = implode('', $ac);
 		return $s1;
 	}
-
-	function _intToHex($i)
+	/**
+	 * Convert integer to hex
+	 *
+	 * @param   integer  $i
+	 *
+	 * @return  string
+	 * @since   11.1
+	 */
+	protected function _intToHex($i)
 	{
 		(int) $j = (int) $i / 16;
 		if ((int) $j == 0) {
@@ -179,8 +230,15 @@ class JSimpleCrypt extends JObject
 
 		return $s;
 	}
-
-	function _xorCharString($s)
+	/**
+	 * Use xor encryption
+	 *
+	 * @param   string  $s
+	 *
+	 * @return  array[integer]
+	 * @since   11.1
+	 */
+	protected function _xorCharString($s)
 	{
 		$ac = preg_split('//', $s, -1, PREG_SPLIT_NO_EMPTY);
 		(string) $s1 = $this->_key;

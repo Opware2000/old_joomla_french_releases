@@ -1,31 +1,34 @@
 <?php
 /**
- * @version		$Id: help.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Framework
- * @subpackage	Language
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Language
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
+
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Help system class
  *
- * @package		Joomla.Framework
- * @subpackage	Language
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Language
+ * @since       11.1
  */
 class JHelp
 {
 	/**
 	 * Create a URL for a given help key reference
 	 *
-	 * @param	string	$ref			The name of the help screen (its key reference)
-	 * @param	boolean	$useComponent	Use the help file in the component directory
-	 * @param	string	$override		Use this URL instead of any other
-	 * @param	string	$component		Name of component (or null for current component)
+	 * @param   string   $ref           The name of the help screen (its key reference)
+	 * @param   boolean  $useComponent  Use the help file in the component directory
+	 * @param   string   $override      Use this URL instead of any other
+	 * @param   string   $component     Name of component (or null for current component)
 	 *
-	 * @return	string
-	 * @sicne	1.5
+	 * @return  string
+	 *
+	 * @since   11.1
 	 */
 	static function createURL($ref, $useComponent = false, $override = null, $component = null)
 	{
@@ -36,10 +39,10 @@ class JHelp
 			$component = JApplicationHelper::getComponentName();
 		}
 
-		/*
-		 *  Determine the location of the help file.  At this stage the URL
-		 *  can contain substitution codes that will be replaced later.
-		 */
+
+		//  Determine the location of the help file.  At this stage the URL
+		//  can contain substitution codes that will be replaced later.
+
 		if ($override) {
 			$url = $override;
 		}
@@ -83,7 +86,7 @@ class JHelp
 		 *  Replace substitution codes in the URL.
 		 */
 		$lang		= JFactory::getLanguage();
-		$version 	= new JVersion();
+		$version 	= new JVersion;
 		$jver		= explode( '.', $version->getShortVersion() );
 		$jlang		= explode( '-', $lang->getTag() );
 
@@ -137,11 +140,12 @@ class JHelp
 	/**
 	 * Builds a list of the help sites which can be used in a select option.
 	 *
-	 * @param	string	$pathToXml	Path to an xml file.
-	 * @param	string	$selected	Language tag to select (if exists).
+	 * @param   string  $pathToXml  Path to an XML file.
+	 * @param   string  $selecte    Language tag to select (if exists).
 	 *
-	 * @return	array	An array of arrays (text, value, selected).
-	 * @since	1.5
+	 * @return  array  An array of arrays (text, value, selected).
+	 *
+	 * @since   11.1
 	 */
 	static function createSiteList($pathToXml, $selected = null)
 	{

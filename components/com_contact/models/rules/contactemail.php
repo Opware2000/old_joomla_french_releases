@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contactemail.php 20982 2011-03-17 16:12:00Z chdemko $
+ * @version		$Id: contactemail.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -20,15 +20,15 @@ class JFormRuleContactEmail extends JFormRuleEmail
 		if(!parent::test($element, $value, $group, $input, $form)){
 			return false;
 		}
-		
+
 		$params = JComponentHelper::getParams('com_contact');
 		$banned = $params->get('banned_email');
-		
+
 		foreach(explode(';', $banned) as $item){
 			if (JString::stristr($item, $value) !== false)
 					return false;
 		}
-		
+
 		return true;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * @version		$Id: mediamanager.js 20828 2011-02-22 04:22:21Z dextercowley $
+ * @version		$Id: mediamanager.js 21443 2011-06-04 13:46:28Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -33,7 +33,7 @@ var MediaManager = this.MediaManager = {
 				   	uri = this._getUriObject(this.frameurl);
 				   	current	= uri.file+'?'+uri.query;
 
-					if (current != node.data.url) {
+					if (current != 'undefined?undefined' && current != node.data.url) {
 						window.frames[target].location.href = node.data.url;
 					}
 				}.bind(this)

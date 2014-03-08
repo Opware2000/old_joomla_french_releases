@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 20989 2011-03-18 09:19:41Z infograf768 $
+ * @version		$Id: view.html.php 21655 2011-06-23 05:43:24Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -60,19 +60,19 @@ class NewsfeedsViewNewsfeed extends JView
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||count($user->getAuthorisedCategories('com_newsfeeds', 'core.create')) > 0)) {
-			JToolBarHelper::apply('newsfeed.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('newsfeed.save', 'JTOOLBAR_SAVE');
+			JToolBarHelper::apply('newsfeed.apply');
+			JToolBarHelper::save('newsfeed.save');
 		}
-		if (!$checkedOut && count($user->getAuthorisedCategories('com_newsfeeds', 'core.create')) > 0){		
-			JToolBarHelper::custom('newsfeed.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+		if (!$checkedOut && count($user->getAuthorisedCategories('com_newsfeeds', 'core.create')) > 0){
+			JToolBarHelper::save2new('newsfeed.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::custom('newsfeed.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			JToolBarHelper::save2copy('newsfeed.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('newsfeed.cancel','JTOOLBAR_CANCEL');
+			JToolBarHelper::cancel('newsfeed.cancel');
 		} else {
 			JToolBarHelper::cancel('newsfeed.cancel', 'JTOOLBAR_CLOSE');
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: helper.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_articles_news
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -55,7 +55,7 @@ abstract class modArticlesNewsHelper
 		$ordering = $params->get('ordering', 'a.publish_up');
 		$model->setState('list.ordering', $ordering);
 		if (trim($ordering) == 'rand()') {
-			$model->setState('list.direction', '');			
+			$model->setState('list.direction', '');
 		} else {
 			$model->setState('list.direction', 'DESC');
 		}

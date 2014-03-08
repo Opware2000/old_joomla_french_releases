@@ -1,67 +1,76 @@
 <?php
 /**
- * @version		$Id: rss.php 21039 2011-03-31 15:47:46Z dextercowley $
- * @package		Joomla.Framework
- * @subpackage	Document
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
-
+defined('JPATH_PLATFORM') or die;
 
 /**
  * JDocumentRenderer_RSS is a feed that implements RSS 2.0 Specification
  *
- * @package		Joomla.Framework
- * @subpackage	Document
- * @see			http://www.rssboard.org/rss-specification
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ * @see         http://www.rssboard.org/rss-specification
+ * @since       11.1
  */
 class JDocumentRendererRSS extends JDocumentRenderer
 {
 	/**
 	 * Renderer mime type
 	 *
-	 * @var		string
-	 * @access	private
+	 * @var    string
+	 * @since  11.1
 	 */
-	var $_mime = "application/rss+xml";
+	protected $_mime = "application/rss+xml";
 
 	/**
 	 * Render the feed
 	 *
-	 * @access public
-	 * @return	string
+	 * @return  string
+	 *
+	 * @since   11.1
 	 */
-	function render()
+	public function render()
 	{
 		$app	= JFactory::getApplication();
+
+		// Gets and sets timezone offset from site configuration
+		$tz	= new DateTimeZone($app->getCfg('offset'));
 		$now	= JFactory::getDate();
+		$now->setTimeZone($tz);
+
 		$data	= &$this->_doc;
 
 		$uri = JFactory::getURI();
 		$url = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
 		$syndicationURL = JRoute::_('&format=feed&type=rss');
-		
-		$feed_title = htmlspecialchars(
-			$app->getCfg('sitename_pagetitles',0)?
-			JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $data->title):
-			$data->title
-		, ENT_COMPAT, 'UTF-8');
+
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $data->title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $data->title, $app->getCfg('sitename'));
+		}
+		else {
+			$title = $data->title;
+		}
+
+		$feed_title = htmlspecialchars($title, ENT_COMPAT, 'UTF-8');
 
 		$feed = "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
 		$feed.= "	<channel>\n";
 		$feed.= "		<title>".$feed_title."</title>\n";
 		$feed.= "		<description>".$data->description."</description>\n";
 		$feed.= "		<link>".str_replace(' ','%20',$url.$data->link)."</link>\n";
-		$feed.= "		<lastBuildDate>".htmlspecialchars($now->toRFC822(), ENT_COMPAT, 'UTF-8')."</lastBuildDate>\n";
+		$feed.= "		<lastBuildDate>".htmlspecialchars($now->toRFC822(true), ENT_COMPAT, 'UTF-8')."</lastBuildDate>\n";
 		$feed.= "		<generator>".$data->getGenerator()."</generator>\n";
 		$feed.= '		<atom:link rel="self" type="application/rss+xml" href="'.str_replace(' ','%20',$url.$syndicationURL)."\"/>\n";
 
-		if ($data->image!=null)
-		{
+		if ($data->image!=null) {
 			$feed.= "		<image>\n";
 			$feed.= "			<url>".$data->image->url."</url>\n";
 			$feed.= "			<title>".htmlspecialchars($data->image->title, ENT_COMPAT, 'UTF-8')."</title>\n";
@@ -92,7 +101,8 @@ class JDocumentRendererRSS extends JDocumentRenderer
 		}
 		if ($data->pubDate!="") {
 			$pubDate = JFactory::getDate($data->pubDate);
-			$feed.= "		<pubDate>".htmlspecialchars($pubDate->toRFC822(),ENT_COMPAT, 'UTF-8')."</pubDate>\n";
+			$pubDate->setTimeZone($tz);
+			$feed.= "		<pubDate>".htmlspecialchars($pubDate->toRFC822(true), ENT_COMPAT, 'UTF-8')."</pubDate>\n";
 		}
 		if (empty($data->category) === false) {
 			if (is_array($data->category)) {
@@ -128,14 +138,14 @@ class JDocumentRendererRSS extends JDocumentRenderer
 			$feed.= "		<item>\n";
 			$feed.= "			<title>".htmlspecialchars(strip_tags($data->items[$i]->title), ENT_COMPAT, 'UTF-8')."</title>\n";
 			$feed.= "			<link>".str_replace(' ','%20',$data->items[$i]->link)."</link>\n";
-			
+
 			if (empty($data->items[$i]->guid) === true) {
 				$feed.= "			<guid isPermaLink=\"true\">".str_replace(' ','%20',$data->items[$i]->link)."</guid>\n";
 			}
 			else {
 				$feed.= "			<guid isPermaLink=\"false\">".htmlspecialchars($data->items[$i]->guid, ENT_COMPAT, 'UTF-8')."</guid>\n";
 			}
-			
+
 			$feed.= "			<description><![CDATA[".$this->_relToAbs($data->items[$i]->description)."]]></description>\n";
 
 			if ($data->items[$i]->authorEmail!="") {
@@ -143,7 +153,7 @@ class JDocumentRendererRSS extends JDocumentRenderer
 										$data->items[$i]->author . ')', ENT_COMPAT, 'UTF-8')."</author>\n";
 			}
 			/*
-			// on hold
+			// On hold
 			if ($data->items[$i]->source!="") {
 					$data.= "			<source>".htmlspecialchars($data->items[$i]->source, ENT_COMPAT, 'UTF-8')."</source>\n";
 			}
@@ -162,8 +172,9 @@ class JDocumentRendererRSS extends JDocumentRenderer
 				$feed.= "			<comments>".htmlspecialchars($data->items[$i]->comments, ENT_COMPAT, 'UTF-8')."</comments>\n";
 			}
 			if ($data->items[$i]->date!="") {
-			$itemDate = JFactory::getDate($data->items[$i]->date);
-				$feed.= "			<pubDate>".htmlspecialchars($itemDate->toRFC822(), ENT_COMPAT, 'UTF-8')."</pubDate>\n";
+				$itemDate = JFactory::getDate($data->items[$i]->date);
+				$itemDate->setTimeZone($tz);
+				$feed.= "			<pubDate>".htmlspecialchars($itemDate->toRFC822(true), ENT_COMPAT, 'UTF-8')."</pubDate>\n";
 			}
 			if ($data->items[$i]->enclosure != NULL)
 			{
@@ -186,13 +197,16 @@ class JDocumentRendererRSS extends JDocumentRenderer
 	/**
 	 * Convert links in a text from relative to absolute
 	 *
-	 * @access public
-	 * @return	string
+	 * @param   string  $text  The text processed
+	 *
+	 * @return  string   Text with converted links
+	 *
+	 * @since   11.1
 	 */
-	function _relToAbs($text)
+	public function _relToAbs($text)
 	{
 		$base = JURI::base();
-		$text = preg_replace("/(href|src)=\"(?!http|ftp|https|mailto)([^\"]*)\"/", "$1=\"$base\$2\"", $text);
+		$text = preg_replace("/(href|src)=\"(?!http|ftp|https|mailto|data)([^\"]*)\"/", "$1=\"$base\$2\"", $text);
 
 		return $text;
 	}

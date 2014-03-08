@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: weblink.php 21603 2011-06-21 18:31:49Z dextercowley $
+ * @version		$Id: weblink.php 21700 2011-06-28 04:32:41Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -39,14 +39,14 @@ class WeblinksModelWeblink extends JModelAdmin
 				return ;
 			}
 			$user = JFactory::getUser();
-	
+
 			if ($record->catid) {
 				return $user->authorise('core.delete', 'com_weblinks.category.'.(int) $record->catid);
 			}
 			else {
 				return parent::canDelete($record);
 			}
-		}	
+		}
 	}
 
 	/**
@@ -165,7 +165,7 @@ class WeblinksModelWeblink extends JModelAdmin
 		if ($item = parent::getItem($pk)) {
 			// Convert the params field to an array.
 			$registry = new JRegistry;
-			$registry->loadJSON($item->metadata);
+			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
 		}
 

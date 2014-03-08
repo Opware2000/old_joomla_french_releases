@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21084 2011-04-05 00:49:22Z dextercowley $
+ * @version		$Id: helper.php 21359 2011-05-14 17:13:18Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_users_latest
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -20,7 +20,7 @@ class modUsersLatestHelper
 		$query->select('a.id, a.name, a.username, a.registerDate');
 		$query->order('a.registerDate DESC');
 		$query->from('#__users AS a');
-		$db->setQuery($query,0,$params->get('shownumber'));;
+		$db->setQuery($query,0,$params->get('shownumber'));
 		$result = $db->loadObjectList();
 		return (array) $result;
 	}

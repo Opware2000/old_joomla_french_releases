@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.advlink_dlg',{
 title:"Ins\u00E9rer/\u00E9diter un lien",
 url:"Lien URL",
@@ -33,6 +33,8 @@ popup_location:"Afficher la barre d'adresse",
 popup_resizable:"Fen\u00EAtre redimensionnable",
 popup_dependent:"Nouvel onglet (navigateurs r\u00E9cents)",
 popup_size:"Taille",
+width:"Largeur",
+height:"Hauteur",
 popup_position:"Position (X/Y)",
 id:"Id de l'\u00E9l\u00E9ment",
 style:"Styles",

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: emailcloak.php 21141 2011-04-11 17:20:15Z dextercowley $
+ * @version		$Id: emailcloak.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -80,7 +80,7 @@ class plgContentEmailcloak extends JPlugin
 		$searchEmailLink = $searchEmail . '([?&][\x20-\x7f][^"<>]+)';
 		// anyText
 		$searchText = '([\x20-\x7f][^<>]+)';
-		
+
 		//Any Image link
 		$searchImage	=	"(<img[^>]+>)";
 
@@ -150,7 +150,7 @@ class plgContentEmailcloak extends JPlugin
 			// Replace the found address with the js cloaked email
 			$text = substr_replace($text, $replacement, $regs[0][1], strlen($regs[0][0]));
 		}
-		
+
 	/*
 		 * Search for derivatives of link code <a href="mailto:email@amail.com">
 		 * <img anything></a>

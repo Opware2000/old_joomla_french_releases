@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: contact.php 21477 2011-06-08 00:25:11Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -19,11 +19,12 @@ abstract class JHtmlContact
 	/**
 	 * @param	int $value	The featured value
 	 * @param	int $i
+	 * @param	bool $canChange Whether the value can be changed or not
 	 *
 	 * @return	string	The anchor tag to toggle featured/unfeatured contacts.
 	 * @since	1.6
 	 */
-	static function featured($value = 0, $i)
+	static function featured($value = 0, $i, $canChange = true)
 	{
 		// Array of image, task, title, action
 		$states	= array(
@@ -31,8 +32,11 @@ abstract class JHtmlContact
 			1	=> array('featured.png', 'contacts.unfeatured', 'JFEATURED', 'COM_CONTACT_TOGGLE_TO_UNFEATURE'),
 		);
 		$state	= JArrayHelper::getValue($states, (int) $value, $states[1]);
-		$html	= '<a href="#" onclick="return listItemTask(\'cb'.$i.'\',\''.$state[1].'\')" title="'.JText::_($state[3]).'">'
-				. JHtml::_('image','admin/'.$state[0], JText::_($state[2]), NULL, true).'</a>';
+		$html	= JHtml::_('image','admin/'.$state[0], JText::_($state[2]), NULL, true);
+		if ($canChange) {
+			$html	= '<a href="#" onclick="return listItemTask(\'cb'.$i.'\',\''.$state[1].'\')" title="'.JText::_($state[3]).'">'
+					. $html .'</a>';
+		}
 
 		return $html;
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.vcf.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: view.vcf.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -15,7 +15,7 @@ class ContactViewContact extends JView
 {
 	protected $state;
 	protected $item;
-	
+
 	public function display()
 	{
 		// Get model data.
@@ -36,7 +36,7 @@ class ContactViewContact extends JView
 		$params 	= $app->getParams();
 		$user		= JFactory::getUser();
 		$dispatcher =& JDispatcher::getInstance();
-		
+
 		// Compute lastname, firstname and middlename
 		$item->name = trim($item->name);
 
@@ -70,7 +70,7 @@ class ContactViewContact extends JView
 		$rev = date('c',strtotime($item->modified));
 
 		JResponse::setHeader('Content-disposition','attachment; filename="'.$card_name.'.vcf"', true);
-		
+
 		$vcard = array();
 		$vcard[].= 'BEGIN:VCARD';
 		$vcard[].= 'VERSION:3.0';
@@ -90,5 +90,5 @@ class ContactViewContact extends JView
 		echo implode("\n",$vcard);
 		return true;
 	}
-}	
+}
 

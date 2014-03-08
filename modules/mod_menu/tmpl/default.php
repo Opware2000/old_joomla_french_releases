@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20983 2011-03-17 16:19:45Z chdemko $
+ * @version		$Id: default.php 21726 2011-07-02 05:46:46Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_menu
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -22,29 +22,30 @@ defined('_JEXEC') or die;
 ?>>
 <?php
 foreach ($list as $i => &$item) :
-	$class = '';
+	$class = 'item-'.$item->id;
 	if ($item->id == $active_id) {
-		$class .= 'current ';
+		$class .= ' current';
 	}
 
 	if (	$item->type == 'alias' &&
 			in_array($item->params->get('aliasoptions'),$path)
 		||	in_array($item->id, $path)) {
-	  $class .= 'active ';
+		$class .= ' active';
 	}
+
 	if ($item->deeper) {
-		$class .= 'deeper ';
+		$class .= ' deeper';
 	}
-	
+
 	if ($item->parent) {
-		$class .= 'parent ';
+		$class .= ' parent';
 	}
 
 	if (!empty($class)) {
 		$class = ' class="'.trim($class) .'"';
 	}
 
-	echo '<li id="item-'.$item->id.'"'.$class.'>';
+	echo '<li'.$class.'>';
 
 	// Render the menu item.
 	switch ($item->type) :

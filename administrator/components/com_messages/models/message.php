@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: message.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: message.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -105,12 +105,21 @@ class MessagesModelMessage extends JModelAdmin
 					$this->setError(JText::_('JERROR_ALERTNOAUTHOR'));
 					return false;
 				}
+				else {
+					// Mark message read
+					$db		= $this->getDbo();
+					$query	= $db->getQuery(true);
+					$query->update('#__messages');
+					$query->set('state = 1');
+					$query->where('message_id = '.$this->item->message_id);
+					$db->setQuery($query)->query();
+				}
 			}
-		
+
 			// Get the user name for an existing messasge.
 			if ($this->item->user_id_from && $fromUser = new JUser($this->item->user_id_from)) {
 				$this->item->set('from_user_name', $fromUser->name);
-			}		
+			}
 		}
 		return $this->item;
 	}

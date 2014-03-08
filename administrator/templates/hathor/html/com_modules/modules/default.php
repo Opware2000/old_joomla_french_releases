@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: default.php 21663 2011-06-23 13:51:35Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 // Include the component HTML helpers.
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
-JHtml::_('script','system/multiselect.js',false,true);
+JHtml::_('behavior.multiselect');
 
 $client 	= $this->state->get('filter.client_id') ? 'administrator' : 'site';
 $user 		= JFactory::getUser();
@@ -32,24 +32,27 @@ $saveOrder	= $listOrder == 'ordering';
 			<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
+
 		<div class="filter-select">
 			<label class="selectlabel" for="filter_client_id">
 				<?php echo JText::_('JGLOBAL_FILTER_CLIENT'); ?>
 			</label>
-			<select name="filter_client_id" id="filter_client_id" class="inputbox">
+			<select name="filter_client_id" class="inputbox" id="filter_client_id">
 				<?php echo JHtml::_('select.options', ModulesHelper::getClientOptions(), 'value', 'text', $this->state->get('filter.client_id'));?>
 			</select>
+
             <label class="selectlabel" for="filter_state">
 				<?php echo JText::_('JOPTION_SELECT_PUBLISHED'); ?>
 			</label>
-			<select name="filter_state" id="filter_state" class="inputbox">
+			<select name="filter_state" class="inputbox" id="filter_state">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getStateOptions(), 'value', 'text', $this->state->get('filter.state'));?>
 			</select>
+
             <label class="selectlabel" for="filter_position">
 				<?php echo JText::_('COM_MODULES_OPTION_SELECT_POSITION'); ?>
 			</label>
-			<select name="filter_position" id="filter_position" class="inputbox">
+			<select name="filter_position" class="inputbox" id="filter_position">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_POSITION');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getPositions($this->state->get('filter.client_id')), 'value', 'text', $this->state->get('filter.position'));?>
 			</select>
@@ -57,16 +60,15 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_module">
 				<?php echo JText::_('COM_MODULES_OPTION_SELECT_MODULE'); ?>
 			</label>
-			<select name="filter_module" id="filter_module" class="inputbox">
+			<select name="filter_module" class="inputbox" id="filter_module">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_MODULE');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getModules($this->state->get('filter.client_id')), 'value', 'text', $this->state->get('filter.module'));?>
 			</select>
 
-
 			<label class="selectlabel" for="filter_access">
 				<?php echo JText::_('JOPTION_SELECT_ACCESS'); ?>
 			</label>
-			<select name="filter_access" id="filter_access" class="inputbox">
+			<select name="filter_access" class="inputbox" id="filter_access">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
 			</select>
@@ -74,12 +76,12 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_language">
 				<?php echo JText::_('JOPTION_SELECT_LANGUAGE'); ?>
 			</label>
-			<select name="filter_language" id="filter_language" class="inputbox">
+			<select name="filter_language" class="inputbox" id="filter_language">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_LANGUAGE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('contentlanguage.existing', true, true), 'value', 'text', $this->state->get('filter.language'));?>
 			</select>
 
-			<button type="button" id="filter-go" onclick="this.form.submit();">
+			<button type="submit" id="filter-go">
 				<?php echo JText::_('JSUBMIT'); ?></button>
 
 		</div>
@@ -90,7 +92,7 @@ $saveOrder	= $listOrder == 'ordering';
 		<thead>
 			<tr>
 				<th class="checkmark-col">
-					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('TPL_HATHOR_CHECKMARK_ALL'); ?>" onclick="checkAll(this)" />
+					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 				</th>
 				<th class="title">
 					<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'title', $listDirn, $listOrder); ?>

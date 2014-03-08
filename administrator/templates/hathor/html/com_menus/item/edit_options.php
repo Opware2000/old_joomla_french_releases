@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit_options.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: edit_options.php 21744 2011-07-06 08:40:23Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 		if (isset($fieldSet->description) && trim($fieldSet->description)) :
 			echo '<p class="tip">'.$this->escape(JText::_($fieldSet->description)).'</p>';
 		endif;
-		?>
+	?>
 		<fieldset class="panelform">
 			<legend class="element-invisible"><?php echo JText::_($label) ?></legend>
 			<?php $hidden_fields = ''; ?>
@@ -35,7 +35,7 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 				<?php endforeach; ?>
 			</ul>
-		<?php echo $hidden_fields; ?>
+			<?php echo $hidden_fields; ?>
 		</fieldset>
 <?php
 	}
@@ -50,6 +50,7 @@ defined('_JEXEC') or die;
 				echo '<p class="tip">'.$this->escape(JText::_($fieldSet->description)).'</p>';
 			endif;
 			?>
+		<div class="clr"></div>
 		<fieldset class="panelform">
 			<legend class="element-invisible"><?php echo JText::_($label) ?></legend>
 			<ul class="adminformlist">
@@ -60,3 +61,26 @@ defined('_JEXEC') or die;
 			</ul>
 		</fieldset>
 <?php endforeach;?>
+<?php
+
+	$fieldSets = $this->form->getFieldsets('associations');
+
+	foreach ($fieldSets as $name => $fieldSet) :
+		$label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_MENUS_'.$name.'_FIELDSET_LABEL';
+		echo JHtml::_('sliders.panel',JText::_($label), $name.'-options');
+			if (isset($fieldSet->description) && trim($fieldSet->description)) :
+				echo '<p class="tip">'.$this->escape(JText::_($fieldSet->description)).'</p>';
+			endif;
+			?>
+		<div class="clr"></div>
+		<fieldset class="panelform">
+			<legend class="element-invisible"><?php echo JText::_($label) ?></legend>
+			<ul class="adminformlist">
+				<?php foreach ($this->form->getFieldset($name) as $field) : ?>
+					<li><?php echo $field->label; ?>
+					<?php echo $field->input; ?></li>
+				<?php endforeach; ?>
+			</ul>
+		</fieldset>
+<?php endforeach;?>
+

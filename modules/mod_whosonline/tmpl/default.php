@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21084 2011-04-05 00:49:22Z dextercowley $
+ * @version		$Id: default.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_whosonline
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<?php if ($showmode == 0 || $showmode == 2) : ?> 
+<?php if ($showmode == 0 || $showmode == 2) : ?>
 	<?php $guest = JText::plural('MOD_WHOSONLINE_GUESTS', $count['guest']); ?>
 	<?php $member = JText::plural('MOD_WHOSONLINE_MEMBERS', $count['user']); ?>
 	<p><?php echo JText::sprintf('MOD_WHOSONLINE_WE_HAVE', $guest, $member); ?></p>

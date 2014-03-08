@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: database.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: database.php 21376 2011-05-24 17:11:48Z dextercowley $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -18,18 +18,18 @@ class JInstallationHelperDatabase
 	/**
 	 * Method to get a JDatabase object.
 	 *
-	 * @access	public
-	 * @param	string	The database driver to use.
-	 * @param	string	The hostname to connect on.
-	 * @param	string	The user name to connect with.
-	 * @param	string	The password to use for connection authentication.
-	 * @param	string	The database to use.
-	 * @param	string	The table prefix to use.
-	 * @param	boolean True if the database should be selected.
+	 * @param	string	$driver		The database driver to use.
+	 * @param	string	$host		The hostname to connect on.
+	 * @param	string	$user		The user name to connect with.
+	 * @param	string	$password	The password to use for connection authentication.
+	 * @param	string	$database	The database to use.
+	 * @param	string	$prefix		The table prefix to use.
+	 * @param	boolean $select		True if the database should be selected.
+	 *
 	 * @return	mixed	JDatabase object on success, JException on error.
 	 * @since	1.0
 	 */
-	static function & getDBO($driver, $host, $user, $password, $database, $prefix, $select = true)
+	public static function & getDBO($driver, $host, $user, $password, $database, $prefix, $select = true)
 	{
 		static $db;
 

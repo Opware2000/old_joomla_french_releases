@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: site.xml 20332 2011-01-16 11:14:12Z infograf768 $ -->
+<!-- $Id: site.xml 21330 2011-05-11 04:18:33Z eddieajau $ -->
 <form>
 	<fieldset>
 		<field name="site_name" type="text" id="site_name" class="inputbox"
@@ -43,18 +43,18 @@
 			default="0"
 			required="true"
 		/>
-		
+
 		<!-- Advanced Settings -->
 		<fieldset name="advanced">
 			<field name="site_metadesc" type="textarea" id="site_metadesc" class="text_area"
 				label="INSTL_SITE_METADESC_LABEL"
 				rows="3"
 			/>
-			
+
 			<field name="site_metakeys" type="textarea" id="site_metakeys" class="text_area"
 				label="INSTL_SITE_METAKEYS_LABEL"
 				rows="3"
 			/>
-		</fieldset>	
+		</fieldset>
 	</fieldset>
 </form>

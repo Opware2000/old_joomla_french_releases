@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: language.php 21032 2011-03-29 16:38:31Z dextercowley $
+ * @version		$Id: language.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -221,7 +221,7 @@ class LanguagesModelLanguage extends JModelAdmin
 
 		return true;
 	}
-	
+
 	/**
 	 * Custom clean cache method
 	 *
@@ -232,5 +232,5 @@ class LanguagesModelLanguage extends JModelAdmin
 		parent::cleanCache('_system', 1);
 		parent::cleanCache('com_languages', 0);
 		parent::cleanCache('com_languages', 1);
-	}	
+	}
 }

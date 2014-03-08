@@ -1,5 +1,5 @@
 /**
- * @version		$Id: template_rtl.css 20415 2011-01-23 15:51:42Z infograf768 $
+ * @version		$Id: template_rtl.css 21743 2011-07-06 08:24:29Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -8,20 +8,12 @@ body{
 	direction: rtl;
 }
 
-#header2 {
-	background-image: url(../images/j_header_right_rtl.png);
-}
-
-#header3 {
-	background-image: url(../images/j_header_left_rtl.png);
-}
-
-#header3 span.logo {
+#header .logo {
 	float: left;
 	padding-left:15px;
 }
 
-#header3 span {
+#header span {
 	padding-right: 15px;
 }
 
@@ -94,15 +86,15 @@ fieldset#jform_db_old input {
 }
 
  /* System Messages */
- 
- #system-message dd ul { 
+
+ #system-message dd ul {
  background-position: 99.5% top;
  }
- 
+
  /**
  * System Standard Messages
  */
- 
+
 #system-message dd.message ul {
 	background-color: #C3D2E5;
 	background-image: url(../../../media/system/images/notice-info.png) no-repeat;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_system.php 20542 2011-02-04 07:06:15Z infograf768 $
+ * @version		$Id: default_system.php 21438 2011-06-04 13:35:56Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_admin
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -84,6 +84,13 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<?php echo $this->info['version'];?>
+				</td>
+			</tr>
+				<td>
+					<strong><?php echo JText::_('COM_ADMIN_PLATFORM_VERSION'); ?></strong>
+				</td>
+				<td>
+					<?php echo $this->info['platform'];?>
 				</td>
 			</tr>
 			<tr>

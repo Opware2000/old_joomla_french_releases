@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: languages.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: languages.php 21343 2011-05-12 10:56:24Z infograf768 $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -25,8 +25,13 @@ class LanguagesHelper
 	public static function addSubmenu($vName)
 	{
 		JSubMenuHelper::addEntry(
-			JText::_('COM_LANGUAGES_SUBMENU_INSTALLED'),
-			'index.php?option=com_languages&view=installed',
+			JText::_('COM_LANGUAGES_SUBMENU_INSTALLED_SITE'),
+			'index.php?option=com_languages&view=installed&client=0',
+			$vName == 'installed'
+		);
+		JSubMenuHelper::addEntry(
+			JText::_('COM_LANGUAGES_SUBMENU_INSTALLED_ADMINISTRATOR'),
+			'index.php?option=com_languages&view=installed&client=1',
 			$vName == 'installed'
 		);
 		JSubMenuHelper::addEntry(

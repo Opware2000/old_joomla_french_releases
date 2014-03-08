@@ -1,30 +1,32 @@
 <?php
 /**
-* @version		$Id: extension.php 20196 2011-01-09 02:40:25Z ian $
-* @package		Joomla.Framework
-* @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
-* @license		GNU General Public License, see LICENSE.php
-*/
+ * @package     Joomla.Platform
+ * @subpackage  Database
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
+ */
 
-// Check to ensure this file is within the rest of the framework
-defined('JPATH_BASE') or die();
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Extension table
  * Replaces plugins table
  *
- * @package		Joomla.Framework
- * @subpackage		Table
- * @since	1.6
+ * @package     Joomla.Platform
+ * @subpackage  Table
+ * @since       11.1
  */
 class JTableExtension extends JTable
 {
 	/**
 	 * Contructor
 	 *
-	 * @access var
-	 * @param database A database connector object
+	 * @param   database  &$db  A database connector object
+	 *
+	 * @return  JTableExtension
+	 *
+	 * @since   11.1
 	 */
 	function __construct(&$db) {
 		parent::__construct('#__extensions', 'extension_id', $db);
@@ -33,13 +35,14 @@ class JTableExtension extends JTable
 	/**
 	* Overloaded check function
 	*
-	* @access public
-	* @return boolean True if the object is ok
-	* @see JTable:bind
+	* @return  boolean  True if the object is ok
+	*
+	* @see     JTable:bind
+	* @since   11.1
 	*/
 	function check()
 	{
-		// check for valid name
+		// Check for valid name
 		if (trim($this->name) == '' || trim($this->element) == '') {
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_EXTENSION'));
 			return false;
@@ -50,24 +53,27 @@ class JTableExtension extends JTable
 	/**
 	* Overloaded bind function
 	*
-	* @access public
-	* @param array $hash named array
-	* @return null|string	null is operation was satisfactory, otherwise returns an error
-	* @see JTable:bind
-	* @since 1.5
+	* @param   array  $array   Named array
+	* @param   mixed  $ignore  An optional array or space separated list of properties
+	*                          to ignore while binding.
+	*
+	* @return  mixed  Null if operation was satisfactory, otherwise returns an error
+	*
+	* @see     JTable:bind
+	* @since   11.1
 	*/
 	function bind($array, $ignore = '')
 	{
 		if (isset($array['params']) && is_array($array['params']))
 		{
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string)$registry;
 		}
 
 		if (isset($array['control']) && is_array($array['control']))
 		{
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['control']);
 			$array['control'] = (string)$registry;
 		}
@@ -75,6 +81,15 @@ class JTableExtension extends JTable
 		return parent::bind($array, $ignore);
 	}
 
+	/**
+	 * Method to create and execute a SELECT WHERE query.
+	 *
+	 * @param   array  $options  Array of options
+	 *
+	 * @return  JDatabase  object
+	 *
+	 * @since   11.1
+	 */
 	function find($options=array())
 	{
 		$dbo = JFactory::getDBO();
@@ -92,11 +107,14 @@ class JTableExtension extends JTable
 	 * table.  The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param	mixed	An optional array of primary key values to update.  If not
-	 *					set the instance property value is used.
-	 * @param	integer The publishing state. eg. [0 = unpublished, 1 = published]
-	 * @param	integer The user id of the user performing the operation.
-	 * @return	boolean	True on success.
+	 * @param   mixed    $pks     An optional array of primary key values to update.  If not
+	 *                            set the instance property value is used.
+	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published]
+	 * @param   integer  $userId  The user id of the user performing the operation.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @since   11.1
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -134,8 +152,8 @@ class JTableExtension extends JTable
 
 		// Update the publishing state for rows with the given primary keys.
 		$this->_db->setQuery(
-			'UPDATE `'.$this->_tbl.'`' .
-			' SET `enabled` = '.(int) $state .
+			'UPDATE '.$this->_db->quoteName($this->_tbl).
+			' SET '.$this->_db->quoteName('enabled').' = '.(int) $state .
 			' WHERE ('.$where.')' .
 			$checkin
 		);

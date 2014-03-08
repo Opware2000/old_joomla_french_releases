@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: banner.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -46,7 +46,7 @@ class BannersModelBanner extends JModelAdmin
 			else {
 				return parent::canDelete($record);
 			}
-		}	
+		}
 	}
 
 	/**

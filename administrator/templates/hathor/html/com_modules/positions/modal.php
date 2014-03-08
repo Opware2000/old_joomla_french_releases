@@ -41,7 +41,7 @@ $type		= $this->state->get('filter.type');
 			<label class="selectlabel" for="filter_state">
 				<?php echo JText::_('JOPTION_SELECT_PUBLISHED'); ?>
 			</label>
-			<select name="filter_state" id="filter_state" class="inputbox">
+			<select name="filter_state" class="inputbox" id="filter_state">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.templateStates'), 'value', 'text', $state, true);?>
 			</select>
@@ -49,7 +49,7 @@ $type		= $this->state->get('filter.type');
 			<label class="selectlabel" for="filter_type">
 				<?php echo JText::_('COM_MODULES_OPTION_SELECT_TYPE'); ?>
 			</label>
-			<select name="filter_type" id="filter_type" class="inputbox">
+			<select name="filter_type" class="inputbox" id="filter_type">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_TYPE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.types'), 'value', 'text', $type, true);?>
 			</select>
@@ -57,14 +57,13 @@ $type		= $this->state->get('filter.type');
 			<label class="selectlabel" for="filter_template">
 				<?php echo JText::_('JOPTION_SELECT_TEMPLATE'); ?>
 			</label>
-			<select name="filter_template" id="filter_template" class="inputbox">
+			<select name="filter_template" class="inputbox" id="filter_template">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_TEMPLATE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.templates', $clientId), 'value', 'text', $template, true);?>
 			</select>
 
-			<button type="button" id="filter-go" onclick="this.form.submit();">
+			<button type="submit" id="filter-go">
 				<?php echo JText::_('JSUBMIT'); ?></button>
-
 		</div>
 	</fieldset>
 

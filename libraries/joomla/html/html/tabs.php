@@ -1,18 +1,19 @@
 <?php
 /**
- * @version		$Id: tabs.php 21020 2011-03-27 06:52:01Z infograf768 $
- * @package		Joomla.Framework
- * @subpackage	HTML
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
+
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Utility class for Tabs elements.
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	HTML
+ * @package     Joomla.Platform
+ * @subpackage  HTML
  * @version		1.6
  */
 abstract class JHtmlTabs
@@ -20,10 +21,10 @@ abstract class JHtmlTabs
 	/**
 	 * Creates a panes and creates the JavaScript object for it.
 	 *
-	 * @param	string	The pane identifier
-	 * @param	array	An array of option.
-	 * @return	string
-	 * @since	1.6
+	 * @param   string  The pane identifier
+	 * @param   array   An array of option.
+	 * @return  string
+	 * @since   11.1
 	 */
 	public static function start($group='tabs', $params=array())
 	{
@@ -35,8 +36,8 @@ abstract class JHtmlTabs
 	/**
 	 * Close the current pane
 	 *
-	 * @return	string
-	 * @since	1.6
+	 * @return  string
+	 * @since   11.1
 	 */
 	public static function end()
 	{
@@ -46,10 +47,10 @@ abstract class JHtmlTabs
 	/**
 	 * Begins the display of a new panel.
 	 *
-	 * @param	string	Text to display.
-	 * @param	string	Identifier of the panel.
-	 * @return	string
-	 * @since	1.6
+	 * @param   string  Text to display.
+	 * @param   string  Identifier of the panel.
+	 * @return  string
+	 * @since   11.1
 	 */
 	public static function panel($text, $id)
 	{
@@ -59,10 +60,10 @@ abstract class JHtmlTabs
 	/**
 	 * Load the JavaScript behavior.
 	 *
-	 * @param	string	The pane identifier.
-	 * @param	array	Array of options.
-	 * @return	void
-	 * @since	1.6
+	 * @param   string  The pane identifier.
+	 * @param   array  Array of options.
+	 * @return  void
+	 * @since   11.1
 	 */
 	protected static function _loadBehavior($group, $params = array())
 	{
@@ -70,14 +71,14 @@ abstract class JHtmlTabs
 
 		if (!array_key_exists($group,$loaded))
 		{
-			// Include mootools framework
+			// Include MooTools framework
 			JHtml::_('behavior.framework', true);
 
-			$display = (isset($params['startOffset'])) ? (int)$params['startOffset'] : null ;
 			$options = '{';
 			$opt['onActive']			= (isset($params['onActive'])) ? $params['onActive'] : null ;
 			$opt['onBackground']		= (isset($params['onBackground'])) ? $params['onBackground'] : null ;
-			$opt['display']				= (isset($params['useCookie']) && $params['useCookie']) ? JRequest::getInt('jpanetabs_' . $group, $display, 'cookie') : $display ;
+			$opt['display']				= (isset($params['startOffset'])) ? (int)$params['startOffset'] : null ;
+			$opt['useStorage']			= (isset($params['useCookie']) && $params['useCookie']) ? 'true' : null ;
 			$opt['titleSelector']		= "'dt.tabs'";
 			$opt['descriptionSelector']	= "'dd.tabs'";
 			foreach ($opt as $k => $v)
@@ -91,7 +92,11 @@ abstract class JHtmlTabs
 			}
 			$options .= '}';
 
-			$js = '	window.addEvent(\'domready\', function(){ $$(\'dl#'.$group.'.tabs\').each(function(tabs){ new JTabs(tabs, '.$options.'); }); });';
+			$js = '	window.addEvent(\'domready\', function(){
+						$$(\'dl#'.$group.'.tabs\').each(function(tabs){
+							new JTabs(tabs, '.$options.');
+						});
+					});';
 
 			$document = JFactory::getDocument();
 			$document->addScriptDeclaration($js);

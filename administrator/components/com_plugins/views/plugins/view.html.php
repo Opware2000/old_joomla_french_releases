@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: view.html.php 21705 2011-06-28 21:19:50Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -55,15 +55,15 @@ class PluginsViewPlugins extends JView
 		JToolBarHelper::title(JText::_('COM_PLUGINS_MANAGER_PLUGINS'), 'plugin');
 
 		if ($canDo->get('core.edit')) {
-			JToolBarHelper::editList('plugin.edit', 'JTOOLBAR_EDIT');
+			JToolBarHelper::editList('plugin.edit');
 		}
 
 		if ($canDo->get('core.edit.state')) {
 			JToolBarHelper::divider();
-			JToolBarHelper::custom('plugins.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_ENABLE', true);
-			JToolBarHelper::custom('plugins.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_DISABLE', true);
+			JToolBarHelper::publish('plugins.publish', 'JTOOLBAR_ENABLE', true);
+			JToolBarHelper::unpublish('plugins.unpublish', 'JTOOLBAR_DISABLE', true);
 			JToolBarHelper::divider();
-			JToolBarHelper::custom('plugins.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+			JToolBarHelper::checkin('plugins.checkin');
 		}
 
 		if ($canDo->get('core.admin')) {

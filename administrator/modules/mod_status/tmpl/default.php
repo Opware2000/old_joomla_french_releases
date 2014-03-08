@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20431 2011-01-24 17:57:54Z infograf768 $
+ * @version		$Id: default.php 21721 2011-07-01 08:48:47Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	mod_status
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -31,9 +31,6 @@ if ($params->get('show_messages', 1)) :
 			($hideLinks ? '' : '</a>').
 			'</span>';
 endif;
-
-// Print the Preview link to Main site.
-	$output[] = '<span class="viewsite"><a href="'.JURI::root().'" target="_blank">'.JText::_('MOD_STATUS_VIEW_SITE').'</a></span>';
 
 // Reverse rendering order for rtl display.
 if ($lang->isRTL()) :

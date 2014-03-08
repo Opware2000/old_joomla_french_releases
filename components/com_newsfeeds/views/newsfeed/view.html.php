@@ -1,6 +1,6 @@
 <?php
 /**
- * version $Id: view.html.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * version $Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_newsfeeds
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -63,10 +63,10 @@ class NewsfeedsViewNewsfeed extends JView
 		$categoryModel = JModel::getInstance('Category', 'NewsfeedsModel', array('ignore_request' => true));
 		$categoryModel->setState('category.id', $item->catid);
 		$categoryModel->setState('list.ordering', 'a.name');
-		$categoryModel->setState('list.direction', 'asc');		
+		$categoryModel->setState('list.direction', 'asc');
 		$items = $categoryModel->getItems();
 		}
-		
+
 		// Check for errors.
 		// @TODO Maybe this could go into JComponentHelper::raiseErrors($this->get('Errors'))
 		if (count($errors = $this->get('Errors'))) {
@@ -81,7 +81,7 @@ class NewsfeedsViewNewsfeed extends JView
 		$item->parent_slug = $item->category_alias ? ($item->parent_id . ':' . $item->parent_alias) : $item->parent_id;
 
 		// check if cache directory is writeable
-		$cacheDir = JPATH_CACHE.DS;
+		$cacheDir = JPATH_CACHE . '/';
 
 		if (!is_writable($cacheDir)) {
 			JError::raiseNotice('0', JText::_('COM_NEWSFEEDS_CACHE_DIRECTORY_UNWRITABLE'));
@@ -94,7 +94,7 @@ class NewsfeedsViewNewsfeed extends JView
 		$newsfeed_params = clone $item->params;
 		$active = $app->getMenu()->getActive();
 		$temp = clone ($params);
-		
+
 		// Check to see which parameters should take priority
 		if ($active)
 		{
@@ -131,7 +131,7 @@ class NewsfeedsViewNewsfeed extends JView
 			$temp->merge($newsfeed_params);
 			$item->params = $temp;
 			// Check for alternative layouts (since we are not in a single-newsfeed menu item)
-			if ($layout = $item->params->get('newsfeed_layout')) 
+			if ($layout = $item->params->get('newsfeed_layout'))
 			{
 				$this->setLayout($layout);
 			}
@@ -154,9 +154,9 @@ class NewsfeedsViewNewsfeed extends JView
 
 		// Get the newsfeed
 		$newsfeed = $item;
-		
+
 		$temp = new JRegistry();
-		$temp->loadJSON($item->params);
+		$temp->loadString($item->params);
 		$params->merge($temp);
 
 		//  get RSS parsed object
@@ -231,7 +231,7 @@ class NewsfeedsViewNewsfeed extends JView
 		}
 
 		$title = $this->params->get('page_title', '');
-		
+
 		$id = (int) @$menu->query['id'];
 
 		// if the menu item does not concern this newsfeed
@@ -241,7 +241,7 @@ class NewsfeedsViewNewsfeed extends JView
 			if ($this->item->name) {
 				$title = $this->item->name;
 			}
-			
+
 			$path = array(array('title' => $this->item->name, 'link' => ''));
 			$category = JCategories::getInstance('Newsfeeds')->get($this->item->catid);
 			while (($menu->query['option'] != 'com_newsfeeds' || $menu->query['view'] == 'newsfeed' || $id != $category->id) && $category->id > 1)
@@ -259,8 +259,11 @@ class NewsfeedsViewNewsfeed extends JView
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
-		else if ($app->getCfg('sitename_pagetitles', 0)) {
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		if (empty($title)) {
 			$title = $this->item->name;
@@ -271,7 +274,7 @@ class NewsfeedsViewNewsfeed extends JView
 		{
 			$this->document->setDescription($this->item->metadesc);
 		}
-		elseif (!$this->item->metadesc && $this->params->get('menu-meta_description')) 
+		elseif (!$this->item->metadesc && $this->params->get('menu-meta_description'))
 		{
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
@@ -280,12 +283,12 @@ class NewsfeedsViewNewsfeed extends JView
 		{
 			$this->document->setMetadata('keywords', $this->item->metakey);
 		}
-		elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords')) 
+		elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots')) 
+		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 20509 2011-01-31 23:16:43Z dextercowley $
+ * @version		$Id: edit.php 21529 2011-06-11 22:17:15Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_newsfeeds
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -34,7 +34,7 @@ JHtml::_('behavior.keepalive');
 			<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('name'); ?>
 			<?php echo $this->form->getInput('name'); ?></li>
-            
+
    			<li><?php echo $this->form->getLabel('alias'); ?>
 			<?php echo $this->form->getInput('alias'); ?></li>
 
@@ -69,7 +69,6 @@ JHtml::_('behavior.keepalive');
 
 			<fieldset class="panelform">
 			<ul class="adminformlist">
-				
 				<li><?php echo $this->form->getLabel('created_by'); ?>
 				<?php echo $this->form->getInput('created_by'); ?></li>
 
@@ -104,8 +103,7 @@ JHtml::_('behavior.keepalive');
 
 				<li><?php //echo $this->form->getLabel('xreference'); // Missing from schema! ?>
 				<?php //echo $this->form->getInput('xreference'); ?></li>
-
-				</ul>
+			</ul>
 			</fieldset>
 
 			<?php echo $this->loadTemplate('params'); ?>

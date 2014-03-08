@@ -64,12 +64,19 @@ var JFormValidator = new Class({
 	{
 		// Iterate through the form object and attach the validate method to all input fields.
 		form.getElements('input,textarea,select,button').each(function(el){
+			if (el.hasClass('required')) {
+				el.set('aria-required', 'true');
+				el.set('required', 'required');
+			}
 			if ((document.id(el).get('tag') == 'input' || document.id(el).get('tag') == 'button') && document.id(el).get('type') == 'submit') {
 				if (el.hasClass('validate')) {
 					el.onclick = function(){return document.formvalidator.isValid(this.form);};
 				}
 			} else {
 				el.addEvent('blur', function(){return document.formvalidator.validate(this);});
+				if (el.hasClass('validate-email')) {
+					el.type = 'email';
+				}
 			}
 		});
 	},
@@ -77,13 +84,13 @@ var JFormValidator = new Class({
 	validate: function(el)
 	{
 		el = document.id(el);
-    
+
 		// Ignore the element if its currently disabled, because are not submitted for the http-request. For those case return always true.
 		if(el.get('disabled')) {
 			this.handleResponse(true, el);
 			return true;
 		}
-    
+
 		// If the field is required make sure it has a value
 		if (el.hasClass('required')) {
 			if (el.get('tag')=='fieldset' && (el.hasClass('radio') || el.hasClass('checkboxes'))) {

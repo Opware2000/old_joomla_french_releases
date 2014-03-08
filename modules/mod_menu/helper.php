@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20805 2011-02-21 19:41:07Z dextercowley $
+ * @version		$Id: helper.php 21322 2011-05-11 01:10:29Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -66,7 +66,7 @@ class modMenuHelper
 					$items[$lastitem]->shallower	= ($item->level < $items[$lastitem]->level);
 					$items[$lastitem]->level_diff	= ($items[$lastitem]->level - $item->level);
 				}
-				
+
 				$item->parent = (boolean) $menu->getItems('parent_id', (int) $item->id, true);
 
 				$lastitem			= $i;
@@ -108,7 +108,7 @@ class modMenuHelper
 				else {
 					$item->flink = JRoute::_($item->flink);
 				}
-				
+
 				$item->title = htmlspecialchars($item->title);
 				$item->anchor_css = htmlspecialchars($item->params->get('menu-anchor_css', ''));
 				$item->anchor_title = htmlspecialchars($item->params->get('menu-anchor_title', ''));

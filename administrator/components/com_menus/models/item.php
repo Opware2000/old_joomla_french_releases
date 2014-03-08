@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: item.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: item.php 21744 2011-07-06 08:40:23Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 // Include dependancies.
 jimport('joomla.application.component.modeladmin');
+jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.folder');
 require_once JPATH_COMPONENT.'/helpers/menus.php';
 
 /**
@@ -58,11 +60,11 @@ class MenusModelItem extends JModelAdmin
 		if (!empty($record->id)) {
 			if ($record->published != -2) {
 				return ;
-			}	
+			}
 			$user = JFactory::getUser();
 
 		return $user->authorise('core.delete', 'com_menus.item.'.(int) $record->id);
-		}	
+		}
 	}
 
 	/**
@@ -142,43 +144,6 @@ class MenusModelItem extends JModelAdmin
 	}
 
 	/**
-	 * Batch access level changes for a group of rows.
-	 *
-	 * @param	int		$value	The new value matching an Asset Group ID.
-	 * @param	array	$pks	An array of row IDs.
-	 *
-	 * @return	booelan	True if successful, false otherwise and internal error is set.
-	 * @since	1.6
-	 */
-	protected function batchAccess($value, $pks)
-	{
-		// Check that user has edit permission for menus
-		$user	= JFactory::getUser();
-		if (!$user->authorise('core.edit', 'com_menus')) {
-			$this->setError(JText::_('JGLOBAL_BATCH_MENU_ITEM_CANNOT_EDIT'));
-			return false;
-		}
-		$table = $this->getTable();
-
-		foreach ($pks as $pk)
-		{
-			$table->reset();
-			$table->load($pk);
-			$table->access = (int) $value;
-
-			if (!$table->store()) {
-				$this->setError($table->getError());
-				return false;
-			}
-		}
-
-		// Clean the cache
-		$this->cleanCache();
-
-		return true;
-	}
-
-	/**
 	 * Batch copy menu items to a new menu or parent.
 	 *
 	 * @param	int		$value	The new menu or sub-item.
@@ -220,11 +185,11 @@ class MenusModelItem extends JModelAdmin
 				return false;
 			}
 		}
-		
+
 		// Check that user has create permission for menus
 		$user	= JFactory::getUser();
 		if (!$user->authorise('core.create', 'com_menus')) {
-			$this->setError(JText::_('JGLOBAL_BATCH_MENU_ITEM_CANNOT_CREATE'));
+			$this->setError(JText::_('COM_MENUS_BATCH_MENU_ITEM_CANNOT_CREATE'));
 			return false;
 		}
 
@@ -298,9 +263,10 @@ class MenusModelItem extends JModelAdmin
 
 			// TODO: Deal with ordering?
 			//$table->ordering	= 1;
-			$table->level		= null;
+			$table->level	= null;
 			$table->lft		= null;
-			$table->rgt	= null;
+			$table->rgt		= null;
+			$table->home	= 0;
 
 			// Alter the title & alias
 			list($title,$alias) = $this->generateNewTitle($table->parent_id, $table->alias, $table->title);
@@ -337,7 +303,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return true;
 	}
 
@@ -376,16 +342,16 @@ class MenusModelItem extends JModelAdmin
 				}
 			}
 		}
-		
+
 		// Check that user has create and edit permission for menus
 		$user	= JFactory::getUser();
 		if (!$user->authorise('core.create', 'com_menus')) {
-			$this->setError(JText::_('JGLOBAL_BATCH_MENU_ITEM_CANNOT_CREATE'));
+			$this->setError(JText::_('COM_MENUS_BATCH_MENU_ITEM_CANNOT_CREATE'));
 			return false;
 		}
 
 		if (!$user->authorise('core.edit', 'com_menus')) {
-			$this->setError(JText::_('JGLOBAL_BATCH_MENU_ITEM_CANNOT_EDIT'));
+			$this->setError(JText::_('COM_MENUS_BATCH_MENU_ITEM_CANNOT_EDIT'));
 			return false;
 		}
 
@@ -468,7 +434,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return true;
 	}
 
@@ -652,7 +618,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Convert the params field to an array.
 		$registry = new JRegistry;
-		$registry->loadJSON($table->params);
+		$registry->loadString($table->params);
 		$result->params = $registry->toArray();
 
 		// Merge the request arguments in to the params for a component.
@@ -674,6 +640,16 @@ class MenusModelItem extends JModelAdmin
 			$args = array();
 			parse_str(parse_url($table->link, PHP_URL_QUERY), $args);
 			$result->params = array_merge($result->params, $args);
+		}
+
+		// Load associated menu items
+		if (JFactory::getApplication()->get('menu_associations', 0)) {
+			if ($pk != null) {
+				$result->associations = MenusHelper::getAssociations($pk);
+			}
+			else {
+				$result->associations = array();
+			}
 		}
 
 		return $result;
@@ -800,8 +776,6 @@ class MenusModelItem extends JModelAdmin
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
-		jimport('joomla.filesystem.file');
-		jimport('joomla.filesystem.folder');
 
 		// Initialise variables.
 		$link = $this->getState('item.link');
@@ -870,9 +844,9 @@ class MenusModelItem extends JModelAdmin
 					$path = JPath::clean($base.'/metadata.xml');
 					if (JFile::exists($path)) {
 						$formFile = $path;
-					}						
-				}			
-			}	
+					}
+				}
+			}
 		}
 
 		if ($formFile) {
@@ -917,11 +891,41 @@ class MenusModelItem extends JModelAdmin
 				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
 			}
 		}
-		
+
 
 		// Load the specific type file
 		if (!$form->loadFile('item_'.$type, false, false)) {
 			throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
+		}
+
+		// Association menu items
+		if (JFactory::getApplication()->get('menu_associations', 0)) {
+			$languages = JLanguageHelper::getLanguages('lang_code');
+
+			$addform = new JXMLElement('<form />');
+			$fields = $addform->addChild('fields');
+			$fields->addAttribute('name', 'associations');
+			$fieldset = $fields->addChild('fieldset');
+			$fieldset->addAttribute('name', 'item_associations');
+			$fieldset->addAttribute('description', 'COM_MENUS_ITEM_ASSOCIATIONS_FIELDSET_DESC');
+			$add = false;
+			foreach ($languages as $tag => $language)
+			{
+				if ($tag != $data['language']) {
+					$add = true;
+					$field = $fieldset->addChild('field');
+					$field->addAttribute('name', $tag);
+					$field->addAttribute('type', 'menuitem');
+					$field->addAttribute('language', $tag);
+					$field->addAttribute('label',$language->title);
+					$field->addAttribute('translate_label','false');
+					$option = $field->addChild('option', 'COM_MENUS_ITEM_FIELD_ASSOCIATION_NO_VALUE');
+					$option->addAttribute('value','');
+				}
+			}
+			if ($add) {
+				$form->load($addform, false);
+			}
 		}
 
 		// Trigger the default form events.
@@ -962,7 +966,7 @@ class MenusModelItem extends JModelAdmin
 		foreach ($items as &$item)
 		{
 			$registry = new JRegistry;
-			$registry->loadJSON($item->params);
+			$registry->loadString($item->params);
 			$params = (string)$registry;
 
 			$db->setQuery(
@@ -980,7 +984,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return true;
 	}
 
@@ -1017,11 +1021,12 @@ class MenusModelItem extends JModelAdmin
 			return false;
 		}
 
-		// Alter the title & alias for save as copy.
+		// Alter the title & alias for save as copy.  Also, unset the home record.
 		if(!$isNew && $data['id'] == 0){
 			list($title,$alias) = $this->generateNewTitle($table->parent_id, $table->alias, $table->title);
-			$table->title = $title;
-			$table->alias = $alias;
+			$table->title	= $title;
+			$table->alias	= $alias;
+			$table->home	= 0;
 		}
 
 		// Check the data.
@@ -1045,9 +1050,57 @@ class MenusModelItem extends JModelAdmin
 		$this->setState('item.id', $table->id);
 		$this->setState('item.menutype', $table->menutype);
 
+		// Load associated menu items
+		if (JFactory::getApplication()->get('menu_associations', 0)) {
+			// Adding self to the association
+			$associations = $data['associations'];
+			foreach ($associations as $tag=>$id) {
+				if (empty($id)) {
+					unset($associations[$tag]);
+				}
+			}
+
+			// Detecting all item menus
+			$all_language = $table->language == '*';
+			if ($all_language && !empty($associations)) {
+				JError::raiseNotice(403, JText::_('COM_MENUS_ERROR_ALL_LANGUAGE_ASSOCIATED'));
+			}
+
+			$associations[$table->language]=$table->id;
+
+			// Deleting old association for these items
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->delete('#__associations');
+			$query->where('context='.$db->quote('com_menus.item'));
+			$query->where('id IN ('.implode(',', $associations).')');
+			$db->setQuery($query);
+			$db->query();
+			if ($error = $db->getErrorMsg()) {
+				$this->setError($error);
+				return false;
+			}
+
+			if (!$all_language && count($associations)>1) {
+				// Adding new association for these items
+				$key = md5(json_encode($associations));
+				$query->clear();
+				$query->insert('#__associations');
+				foreach ($associations as $tag=>$id) {
+					$query->values($id.','.$db->quote('com_menus.item').','.$db->quote($key));
+				}
+				$db->setQuery($query);
+				$db->query();
+				if ($error = $db->getErrorMsg()) {
+					$this->setError($error);
+					return false;
+				}
+			}
+		}
+
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		if (isset($data['link'])) {
 			$base 	= JURI::base();
 			$juri 	= JURI::getInstance($base.$data['link']);
@@ -1083,7 +1136,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return true;
 	}
 
@@ -1153,7 +1206,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return true;
 	}
 
@@ -1187,7 +1240,7 @@ class MenusModelItem extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-				
+
 		return parent::publish($pks,$value);
 	}
 
@@ -1220,7 +1273,7 @@ class MenusModelItem extends JModelAdmin
 
 		return array($title ,$alias);
 	}
-	
+
 	/**
 	 * Custom clean cache method
 	 *
@@ -1229,6 +1282,6 @@ class MenusModelItem extends JModelAdmin
 	function cleanCache() {
 		parent::cleanCache('com_modules');
 		parent::cleanCache('mod_menu');
-	}	
-	
+	}
+
 }

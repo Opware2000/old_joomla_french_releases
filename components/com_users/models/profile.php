@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: profile.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: profile.php 21798 2011-07-10 05:52:40Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -227,6 +227,9 @@ class UsersModelProfile extends JModelForm
 		// Prepare the data for the user object.
 		$data['email']		= $data['email1'];
 		$data['password']	= $data['password1'];
+
+		// Unset the username so it does not get overwritten
+		unset($data['username']);
 
 		// Unset the block so it does not get overwritten
 		unset($data['block']);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: modules.php 21475 2011-06-07 22:49:07Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.bluestork
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -29,23 +29,12 @@ defined('_JEXEC') or die;
  */
 function modChrome_rounded($module, &$params, &$attribs)
 {
-	if ($module->content)
-	{
+	if ($module->content) {
 		?>
 		<div id="<?php echo $attribs['id'] ?>">
-			<div class="t">
-				<div class="t">
-					<div class="t"></div>
-				</div>
-			</div>
 			<div class="m">
 				<?php echo $module->content; ?>
 				<div class="clr"></div>
-			</div>
-			<div class="b">
-				<div class="b">
-					<div class="b"></div>
-				</div>
 			</div>
 		</div>
 		<?php

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 20899 2011-03-07 20:56:09Z ian $
+ * @version		$Id: application.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_config
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -150,9 +150,9 @@ class ConfigControllerApplication extends JController
 		jimport('joomla.client.helper');
 		JClientHelper::setCredentialsFromRequest('ftp');
 
-		if (($data = file_get_contents('http://help.joomla.org/helpsites-16.xml')) === false) {
+		if (($data = file_get_contents('http://help.joomla.org/helpsites.xml')) === false) {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_ERROR_HELPREFRESH_FETCH'), 'error');
-		} else if (!JFile::write(JPATH_BASE.DS.'help'.DS.'helpsites-16.xml', $data)) {
+		} else if (!JFile::write(JPATH_BASE . '/help/helpsites.xml', $data)) {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_ERROR_HELPREFRESH_ERROR_STORE'), 'error');
 		} else {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_HELPREFRESH_SUCCESS'));
@@ -172,10 +172,10 @@ class ConfigControllerApplication extends JController
 			JFactory::getApplication()->redirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}
-		
+
 		// Check for request forgeries.
 		JRequest::checkToken( 'get' ) or die( 'Invalid Token' );
-		
+
 		// Initialise model.
 		$model	= $this->getModel('Application');
 

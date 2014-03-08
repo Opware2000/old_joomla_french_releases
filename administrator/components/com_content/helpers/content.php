@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: content.php 20786 2011-02-19 19:03:24Z infograf768 $
+ * @version		$Id: content.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -197,7 +197,7 @@ class ContentHelper
 			else {
 				$filter = JFilterInput::getInstance();
 			}
-			
+
 			$text = $filter->clean($text, 'html');
 		}
 

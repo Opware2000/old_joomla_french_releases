@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default.php 21744 2011-07-06 08:40:23Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_menus
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -13,10 +13,11 @@ defined('_JEXEC') or die;
 // Include the component HTML helpers.
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
-JHtml::_('script','system/multiselect.js',false,true);
+JHtml::_('behavior.multiselect');
 
-$user	= JFactory::getUser();
-$userId	= $user->get('id');
+$user		= JFactory::getUser();
+$app		= JFactory::getApplication();
+$userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $ordering 	= ($listOrder == 'a.lft');
@@ -67,7 +68,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 		<thead>
 			<tr>
 				<th width="1%">
-					<input type="checkbox" name="checkall-toggle" value="" onclick="checkAll(this)" />
+					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 				</th>
 				<th class="title">
 					<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
@@ -77,7 +78,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 				</th>
 				<th width="13%">
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.lft', $listDirn, $listOrder); ?>
-					<?php if ($canOrder && $saveOrder) : ?>
+					<?php if ($canOrder && $saveOrder) :?>
 						<?php echo JHtml::_('grid.order',  $this->items, 'filesave.png', 'items.saveorder'); ?>
 					<?php endif; ?>
 				</th>
@@ -90,6 +91,11 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 				<th width="5%">
 					<?php echo JHtml::_('grid.sort', 'COM_MENUS_HEADING_HOME', 'a.home', $listDirn, $listOrder); ?>
 				</th>
+				<?php if ($app->get('menu_associations', 0)):?>
+				<th width="5%">
+					<?php echo JHtml::_('grid.sort', 'COM_MENUS_HEADING_ASSOCIATION', 'association', $listDirn, $listOrder); ?>
+				</th>
+				<?php endif;?>
 				<th width="5%">
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?>
 				</th>
@@ -179,6 +185,13 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 						<?php endif;?>
 					<?php endif; ?>
 				</td>
+				<?php if ($app->get('menu_associations', 0)):?>
+				<td class="center">
+					<?php if ($item->association):?>
+						<?php echo JHtml::_('MenusHtml.Menus.association', $item->id);?>
+					<?php endif;?>
+				</td>
+				<?php endif;?>
 				<td class="center">
 					<?php if ($item->language==''):?>
 						<?php echo JText::_('JDEFAULT'); ?>
@@ -196,7 +209,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-<?php //Load the batch processing form. ?>
+	<?php //Load the batch processing form. ?>
 	<?php echo $this->loadTemplate('batch'); ?>
 
 	<div>

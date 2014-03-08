@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('JPATH_BASE') or die();
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.installer.filemanifest');
 jimport('joomla.base.adapterinstance');
@@ -60,9 +60,7 @@ class JInstallerFile extends JAdapterInstance
 
 		// Set element
 		$manifestPath = JPath::clean($this->parent->getPath('manifest'));
-		$element = explode(DS, $manifestPath);
-		$element = $element[count($element) - 1];
-		$element = preg_replace('/\.xml/', '', $element);
+		$element = preg_replace('/\.xml/', '', basename($manifestPath));
 		$this->set('element', $element);
 
 		// Get the component description
@@ -303,20 +301,21 @@ class JInstallerFile extends JAdapterInstance
 			return false;
 		}
 
-		// Clobber any possible pending updates
-		$update = JTable::getInstance('update');
-		$uid = $update->find(
-			array(
-				'element'	=> $this->get('element'),
-				'type'		=> 'file',
-				'client_id'	=> '',
-				'folder'	=> ''
-			)
-		);
+                // Clobber any possible pending updates
+                $update = JTable::getInstance('update');
+                $uid = $update->find(
+                        array(
+                                'element'       => $this->get('element'),
+                                'type'          => 'file',
+                                'client_id'     => '',
+                                'folder'        => ''
+                        )
+                );
 
-		if ($uid) {
-			$update->delete($uid);
-		}
+                if ($uid) {
+                        $update->delete($uid);
+                }
+
 
 		// And now we run the postflight
 		ob_start();
@@ -370,6 +369,11 @@ class JInstallerFile extends JAdapterInstance
 			return false;
 		}
 
+		if ($row->protected) {
+			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_WARNCOREFILE'));
+			return false;
+		}
+
 		$retval = true;
 		$manifestFile = JPATH_MANIFESTS . '/files/' . $row->element .'.xml';
 
@@ -396,6 +400,63 @@ class JInstallerFile extends JAdapterInstance
 			}
 
 			$this->manifest = $xml;
+
+			// If there is an manifest class file, let's load it
+			$this->scriptElement = $this->manifest->scriptfile;
+			$manifestScript = (string)$this->manifest->scriptfile;
+
+			if ($manifestScript) {
+				$manifestScriptFile = $this->parent->getPath('extension_root') . '/' . $manifestScript;
+
+				if (is_file($manifestScriptFile)) {
+					// Load the file
+					include_once $manifestScriptFile;
+				}
+
+				// Set the class name
+				$classname = $row->element.'InstallerScript';
+
+				if (class_exists($classname)) {
+					// Create a new instance
+					$this->parent->manifestClass = new $classname($this);
+					// And set this so we can copy it later
+					$this->set('manifest_script', $manifestScript);
+					// Note: if we don't find the class, don't bother to copy the file
+				}
+			}
+
+			ob_start();
+			ob_implicit_flush(false);
+
+			// Run uninstall if possible
+			if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'uninstall')) {
+				$this->parent->manifestClass->uninstall($this);
+			}
+
+			$msg = ob_get_contents();
+			ob_end_clean();
+
+			/*
+			 * Let's run the uninstall queries for the component
+			 *	If Joomla 1.5 compatible, with discreet sql files - execute appropriate
+			 *	file for utf-8 support or non-utf support
+			 */
+			// Try for Joomla 1.5 type queries
+			// Second argument is the utf compatible version attribute
+			$utfresult = $this->parent->parseSQLFiles($this->manifest->uninstall->sql);
+
+			if ($utfresult === false) {
+				// Install failed, rollback changes
+				JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_SQL_ERROR', $db->stderr(true)));
+				$retval = false;
+			}
+
+			// Remove the schema version
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->delete()->from('#__schemas')->where('extension_id = '. $row->extension_id);
+			$db->setQuery($query);
+			$db->Query();
 
 			// Set root folder names
 			$packagePath = $this->parent->getPath('source');

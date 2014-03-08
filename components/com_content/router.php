@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: router.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: router.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -66,7 +66,7 @@ function ContentBuildRoute(&$query)
 
 		unset($query['view']);
 
-		if ($view == 'article') { 
+		if ($view == 'article') {
 			if (isset($query['id']) && isset($query['catid']) && $query['catid']) {
 				$catid = $query['catid'];
 				$id = $query['id'];

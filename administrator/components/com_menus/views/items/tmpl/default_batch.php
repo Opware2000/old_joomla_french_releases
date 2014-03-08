@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_batch.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default_batch.php 21447 2011-06-04 17:39:55Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_menus
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -11,17 +11,14 @@
 defined('_JEXEC') or die;
 
 $options = array(
-	JHtml::_('select.option', 'c', JText::_('JGLOBAL_BATCH_COPY')),
-	JHtml::_('select.option', 'm', JText::_('JGLOBAL_BATCH_MOVE'))
+	JHtml::_('select.option', 'c', JText::_('JLIB_HTML_BATCH_COPY')),
+	JHtml::_('select.option', 'm', JText::_('JLIB_HTML_BATCH_MOVE'))
 );
 $published = $this->state->get('filter.published');
 ?>
 <fieldset class="batch">
 	<legend><?php echo JText::_('COM_MENUS_BATCH_OPTIONS');?></legend>
-	<label id="batch-access-lbl" for="batch-access" class="hasTip" title="<?php echo JText::_('JGLOBAL_BATCH_ACCESS_LABEL').'::'.JText::_('JGLOBAL_BATCH_ACCESS_LABEL_DESC'); ?>">
-		<?php echo JText::_('JGLOBAL_BATCH_ACCESS_LABEL') ?>
-	</label>
-	<?php echo JHtml::_('access.assetgrouplist', 'batch[assetgroup_id]', '', 'class="inputbox"', array('title' => JText::_('JGLOBAL_BATCH_NOCHANGE'), 'id' => 'batch-access'));?>
+	<?php echo JHtml::_('batch.access');?>
 
 	<?php if ($published >= 0) : ?>
 		<label id="batch-choose-action-lbl" for="batch-choose-action">

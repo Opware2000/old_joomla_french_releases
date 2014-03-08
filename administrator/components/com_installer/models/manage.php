@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: manage.php 20267 2011-01-11 03:44:44Z eddieajau $
+ * @version		$Id: manage.php 21650 2011-06-23 05:29:17Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -85,7 +85,7 @@ class InstallerModelManage extends InstallerModel
 	 * @return	boolean True on success
 	 * @since	1.5
 	 */
-	function publish($eid = array(), $value = 1)
+	function publish(&$eid = array(), $value = 1)
 	{
 		// Initialise variables.
 		$user = JFactory::getUser();
@@ -105,10 +105,18 @@ class InstallerModelManage extends InstallerModel
 
 			// Get a table object for the extension type
 			$table = JTable::getInstance('Extension');
-
+			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_templates/tables');
 			// Enable the extension in the table and store it in the database
-			foreach($eid as $id) {
+			foreach($eid as $i=>$id) {
 				$table->load($id);
+				if ($table->type == 'template') {
+					$style = JTable::getInstance('Style', 'TemplatesTable');
+					if ($style->load(array('template' => $table->element, 'client_id' => $table->client_id, 'home'=>1))) {
+						JError::raiseNotice(403, JText::_('COM_INSTALLER_ERROR_DISABLE_DEFAULT_TEMPLATE_NOT_PERMITTED'));
+						unset($eid[$i]);
+						continue;
+					}
+				}
 				$table->enabled = $value;
 				if (!$table->store()) {
 					$this->setError($table->getError());
@@ -243,7 +251,7 @@ class InstallerModelManage extends InstallerModel
 		$client = $this->getState('filter.client_id');
 		$group = $this->getState('filter.group');
 		$hideprotected = $this->getState('filter.hideprotected');
-		$query = new JDatabaseQuery;
+		$query = JFactory::getDBO()->getQuery(true);
 		$query->select('*');
 		$query->from('#__extensions');
 		$query->where('state=0');

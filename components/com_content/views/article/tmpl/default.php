@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.DS.'helpers');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
 $params		= $this->item->params;
@@ -48,19 +48,19 @@ $user		= JFactory::getUser();
 			<?php echo JHtml::_('icon.email',  $this->item, $params); ?>
 			</li>
 		<?php endif; ?>
-		
+
 		<?php if ($canEdit) : ?>
 			<li class="edit-icon">
 			<?php echo JHtml::_('icon.edit', $this->item, $params); ?>
 			</li>
 		<?php endif; ?>
-		
+
 	<?php else : ?>
 		<li>
 		<?php echo JHtml::_('icon.print_screen',  $this->item, $params); ?>
 		</li>
 	<?php endif; ?>
-	
+
 	</ul>
 <?php endif; ?>
 
@@ -116,19 +116,20 @@ endif; ?>
 	</dd>
 <?php endif; ?>
 <?php if ($params->get('show_author') && !empty($this->item->author )) : ?>
-	<dd class="createdby"> 
-	<?php $author =  $this->item->author; ?>
-	<?php $author = ($this->item->created_by_alias ? $this->item->created_by_alias : $author);?>
-
-	<?php if (!empty($this->item->contactid ) &&  $params->get('link_author') == true):?>
-		<?php 	echo JText::sprintf('COM_CONTENT_WRITTEN_BY' , 
-		 JHtml::_('link',JRoute::_('index.php?option=com_contact&view=contact&id='.$this->item->contactid),$author)); ?>
-
-	<?php else :?>
+	<dd class="createdby">
+	<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
+	<?php if (!empty($this->item->contactid) && $params->get('link_author') == true): ?>
+	<?php
+		$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid;
+		$item = JSite::getMenu()->getItems('link', $needle, true);
+		$cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
+	?>
+		<?php echo JText::sprintf('COM_CONTENT_WRITTEN_BY', JHtml::_('link', JRoute::_($cntlink), $author)); ?>
+	<?php else: ?>
 		<?php echo JText::sprintf('COM_CONTENT_WRITTEN_BY', $author); ?>
 	<?php endif; ?>
 	</dd>
-<?php endif; ?>	
+<?php endif; ?>
 <?php if ($params->get('show_hits')) : ?>
 	<dd class="hits">
 	<?php echo JText::sprintf('COM_CONTENT_ARTICLE_HITS', $this->item->hits); ?>
@@ -143,7 +144,7 @@ endif; ?>
 <?php endif; ?>
 <?php if ($params->get('access-view')):?>
 	<?php echo $this->item->text; ?>
-	
+
 	<?php //optional teaser intro text for guests ?>
 <?php elseif ($params->get('show_noauth') == true AND  $user->get('guest') ) : ?>
 	<?php echo $this->item->introtext; ?>
@@ -153,8 +154,8 @@ endif; ?>
 		$link = new JURI($link1);?>
 		<p class="readmore">
 		<a href="<?php echo $link; ?>">
-		<?php $attribs = json_decode($this->item->attribs);  ?> 
-		<?php 
+		<?php $attribs = json_decode($this->item->attribs);  ?>
+		<?php
 		if ($attribs->alternative_readmore == null) :
 			echo JText::_('COM_CONTENT_REGISTER_TO_READ_MORE');
 		elseif ($readmore = $this->item->alternative_readmore) :
@@ -163,7 +164,7 @@ endif; ?>
 			    echo JHtml::_('string.truncate', ($this->item->title), $params->get('readmore_limit'));
 			endif;
 		elseif ($params->get('show_readmore_title', 0) == 0) :
-			echo JText::sprintf('COM_CONTENT_READ_MORE_TITLE');	
+			echo JText::sprintf('COM_CONTENT_READ_MORE_TITLE');
 		else :
 			echo JText::_('COM_CONTENT_READ_MORE');
 			echo JHtml::_('string.truncate', ($this->item->title), $params->get('readmore_limit'));

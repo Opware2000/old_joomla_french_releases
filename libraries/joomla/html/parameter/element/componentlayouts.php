@@ -1,31 +1,37 @@
 <?php
 /**
- * @version		$Id: componentlayouts.php 21020 2011-03-27 06:52:01Z infograf768 $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
-require_once dirname(__FILE__).DS.'list.php';
+require_once dirname(__FILE__) . '/list.php';
 
 /**
  * Parameter to display a list of the layouts for a component view from the extension or default template overrides.
  *
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @deprecated	JParameter is deprecated and will be removed in a future version. Use JForm instead.
+ * @package     Joomla.Platform
+ * @subpackage  Parameter
+ * @deprecated  User JForm instead
  */
 class JElementComponentLayouts extends JElementList
 {
 	/**
-	 * @var		string
+	 * @var    string
 	 */
 	protected $_name = 'ComponentLayouts';
 
 	/**
 	 * Get the options for the list.
+	 *
+	 * @return  array
+	 *
+	 * @deprecated
+	 * @since   11.1
 	 */
 	protected function _getOptions(&$node)
 	{
@@ -45,8 +51,8 @@ class JElementComponentLayouts extends JElementList
 		{
 			$view	= preg_replace('#\W#', '', $view);
 			$extn	= preg_replace('#\W#', '', $extn);
-			$path1	= JPATH_SITE.DS.'components'.DS.$extn.DS.'views'.DS.$view.DS.'tmpl';
-			$path2	= JPATH_SITE.DS.'templates'.DS.$template.DS.'html'.DS.$extn.DS.$view;
+			$path1	= JPATH_SITE . '/components/' . $extn . '/views/' . $view . '/tmpl';
+			$path2	= JPATH_SITE . '/templates/' . $template . '/html/' . $extn . '/' . $view;
 			$options[]	= JHtml::_('select.option', '', JText::_('JOPTION_USE_MENU_REQUEST_SETTING'));
 		}
 

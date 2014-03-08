@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: update.php 21170 2011-04-18 21:33:11Z dextercowley $
+ * @version		$Id: update.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -115,7 +115,7 @@ class InstallerModelUpdate extends JModelList
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Enables any disabled rows in #__update_sites table
 	 *
@@ -162,7 +162,7 @@ class InstallerModelUpdate extends JModelList
 
 			$result = $res & $result;
 		}
-		
+
 		// Set the final state
 		$this->setState('result', $result);
 	}
@@ -197,19 +197,19 @@ class InstallerModelUpdate extends JModelList
 		$tmp_dest	= $config->get('tmp_path');
 
 		// Unpack the downloaded package file
-		$package	= JInstallerHelper::unpack($tmp_dest.DS.$p_file);
+		$package	= JInstallerHelper::unpack($tmp_dest . '/' . $p_file);
 
 		// Get an installer instance
 		$installer	= JInstaller::getInstance();
 		$update->set('type', $package['type']);
 
 		// Install the package
-		if (!$installer->install($package['dir'])) {
-			// There was an error installing the package
+		if (!$installer->update($package['dir'])) {
+			// There was an error updating the package
 			$msg = JText::sprintf('COM_INSTALLER_MSG_UPDATE_ERROR', JText::_('COM_INSTALLER_TYPE_TYPE_'.strtoupper($package['type'])));
 			$result = false;
 		} else {
-			// Package installed sucessfully
+			// Package updated successfully
 			$msg = JText::sprintf('COM_INSTALLER_MSG_UPDATE_SUCCESS', JText::_('COM_INSTALLER_TYPE_TYPE_'.strtoupper($package['type'])));
 			$result = true;
 		}
@@ -229,7 +229,7 @@ class InstallerModelUpdate extends JModelList
 		// Cleanup the install files
 		if (!is_file($package['packagefile'])) {
 			$config = JFactory::getConfig();
-			$package['packagefile'] = $config->get('tmp_path').DS.$package['packagefile'];
+			$package['packagefile'] = $config->get('tmp_path') . '/' . $package['packagefile'];
 		}
 
 		JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);

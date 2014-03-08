@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_items.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default_items.php 21834 2011-07-12 18:03:40Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	mod_articles_categories
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 foreach ($list as $item) :
 
 ?>
-	<li> <?php $levelup=$item->level-$startLevel -1; ?>
+	<li <?php if ($_SERVER['PHP_SELF'] == JRoute::_(ContentHelperRoute::getCategoryRoute($item->id))) echo ' class="active"';?>> <?php $levelup=$item->level-$startLevel -1; ?>
   <h<?php echo $params->get('item_heading')+ $levelup; ?>>
 		<a href="<?php echo JRoute::_(ContentHelperRoute::getCategoryRoute($item->id)); ?>">
 		<?php echo $item->title;?></a>

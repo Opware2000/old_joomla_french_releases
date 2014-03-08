@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21169 2011-04-18 19:52:28Z dextercowley $
+ * @version		$Id: application.php 21650 2011-06-23 05:29:17Z chdemko $
  * @package		Joomla.Administrator
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -141,7 +141,6 @@ class JAdministrator extends JApplication
 			switch ($document->getType()) {
 				case 'html':
 					$document->setMetaData('keywords', $this->getCfg('MetaKeys'));
-					JHtml::_('behavior.framework', true);
 					break;
 
 				default:
@@ -187,7 +186,7 @@ class JAdministrator extends JApplication
 		$rootUser	= $config->get('root_user');
 		if (property_exists('JConfig', 'root_user') &&
 			(JFactory::getUser()->get('username') == $rootUser || JFactory::getUser()->id === (string) $rootUser)) {
-			JError::raiseNotice(200, JText::sprintf('JWARNING_REMOVE_ROOT_USER', 'index.php?option=com_config&task=application.removeroot&'. JUtility::getToken() .'=1'));			
+			JError::raiseNotice(200, JText::sprintf('JWARNING_REMOVE_ROOT_USER', 'index.php?option=com_config&task=application.removeroot&'. JUtility::getToken() .'=1'));
 		}
 
 		$params = array(
@@ -262,24 +261,22 @@ class JAdministrator extends JApplication
 			// Load the template name from the database
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('template, params');
-			$query->from('#__template_styles');
-			$query->where('client_id = 1');
+			$query->select('template, s.params');
+			$query->from('#__template_styles as s');
+			$query->leftJoin('#__extensions as e ON e.type='.$db->quote('template').' AND e.element=s.template AND e.client_id=s.client_id');
 			if ($admin_style)
 			{
-				$query->where('id = '.(int)$admin_style);
+				$query->where('s.client_id = 1 AND id = '.(int)$admin_style. ' AND e.enabled = 1','OR');
 			}
-			else
-			{
-				$query->where('home = 1');
-			}
+			$query->where('s.client_id = 1 AND home = 1','OR');
+			$query->order('home');
 			$db->setQuery($query);
 			$template = $db->loadObject();
 
 			$template->template = JFilterInput::getInstance()->clean($template->template, 'cmd');
 			$template->params = new JRegistry($template->params);
 
-			if (!file_exists(JPATH_THEMES.DS.$template->template.DS.'index.php'))
+			if (!file_exists(JPATH_THEMES . '/' . $template->template . '/index.php'))
 			{
 				$template->params = new JRegistry();
 				$template->template = 'bluestork';

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version                $Id: index.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version                $Id: index.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package                Joomla.Site
  * @subpackage	Templates.beez_20
  * @copyright        Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -55,7 +55,7 @@ $doc->addScript($this->baseurl.'/templates/beez_20/javascript/md_stylechanger.js
                 <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/beez_20/css/<?php echo htmlspecialchars($color); ?>.css" type="text/css" />
 <?php			if ($this->direction == 'rtl') : ?>
                 <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/beez_20/css/template_rtl.css" type="text/css" />
-<?php				if (file_exists(JPATH_SITE. DS . '/templates/beez_20/css/' . $color . '_rtl.css')) :?>
+<?php				if (file_exists(JPATH_SITE . '/templates/beez_20/css/' . $color . '_rtl.css')) :?>
                 <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/beez_20/css/<?php echo $color ?>_rtl.css" type="text/css" />
 <?php				endif; ?>
 <?php			endif; ?>
@@ -145,9 +145,9 @@ $doc->addScript($this->baseurl.'/templates/beez_20/javascript/md_stylechanger.js
                         </div><!-- end header -->
                         <div id="<?php echo $showRightColumn ? 'contentarea2' : 'contentarea'; ?>">
                                         <div id="breadcrumbs">
-                                            
+
                                                         <jdoc:include type="modules" name="position-2" />
-                                            
+
                                         </div>
 
                                         <?php if ($navposition=='left' AND $showleft) : ?>
@@ -171,15 +171,7 @@ $doc->addScript($this->baseurl.'/templates/beez_20/javascript/md_stylechanger.js
                                                         </div>
                                                 <?php endif; ?>
 
-                                                <?php if ($this->getBuffer('message')) : ?>
-                                                        <div class="error">
-                                                                <h2>
-                                                                        <?php echo JText::_('JNOTICE'); ?>
-                                                                </h2>
-                                                                <jdoc:include type="message" />
-                                                        </div>
-                                                <?php endif; ?>
-
+                                                        <jdoc:include type="message" />
                                                         <jdoc:include type="component" />
 
                                                 </div><!-- end main -->

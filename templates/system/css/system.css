@@ -1,5 +1,5 @@
 /**
- * @version		$Id: system.css 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: system.css 21322 2011-05-11 01:10:29Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -15,5 +15,8 @@ border-bottom: 4px solid #c4d3df;
 }
 
 /* Debug */
-#system-debug     { color: #ccc; background-color: #fff; padding: 10px; margin: 10px; }
-#system-debug div { font-size: 11px;}
+#system-debug     { color: #777; background-color: #eee; padding: 10px; margin: 10px; text-align: left; }
+#system-debug div { font-size: 11px;  font-family: monospace; }
+#system-debug ol  { padding-left: 1.5em; }
+#system-debug ol li { font-size: 11px; margin-bottom: 0.5em; font-family: monospace; }
+#system-debug h4 { margin-bottom: 0.5em; margin-top: 1.0em; }

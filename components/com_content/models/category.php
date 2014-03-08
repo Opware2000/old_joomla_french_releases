@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 21145 2011-04-12 23:21:04Z dextercowley $
+ * @version		$Id: category.php 21822 2011-07-12 10:40:17Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -115,7 +115,7 @@ class ContentModelCategory extends JModelList
 		$menuParams = new JRegistry;
 
 		if ($menu = $app->getMenu()->getActive()) {
-			$menuParams->loadJSON($menu->params);
+			$menuParams->loadString($menu->params);
 		}
 
 		$mergedParams = clone $menuParams;
@@ -166,7 +166,7 @@ class ContentModelCategory extends JModelList
 		$this->setState('list.direction', $listOrder);
 
 		$this->setState('list.start', JRequest::getVar('limitstart', 0, '', 'int'));
-		
+
 		// set limit for query. If list, use parameter. If blog, add blog parameters for limit.
 		if ((JRequest::getCmd('layout') == 'blog') || $params->get('layout_type') == 'blog') {
 			$limit = $params->get('num_leading_articles') + $params->get('num_intro_articles') + $params->get('num_links');
@@ -401,6 +401,15 @@ class ContentModelCategory extends JModelList
 			$this->getCategory();
 		}
 
+		// Order subcategories
+		if (sizeof($this->_children)) {
+			$params = $this->getState()->get('params');
+			if ($params->get('orderby_pri') == 'alpha' || $params->get('orderby_pri') == 'ralpha') {
+				jimport('joomla.utilities.arrayhelper');
+				JArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
+			}
+		}
+		
 		return $this->_children;
 	}
 }

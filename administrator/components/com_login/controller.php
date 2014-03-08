@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 20899 2011-03-07 20:56:09Z ian $
+ * @version		$Id: controller.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License, see LICENSE.php
  */
@@ -75,7 +75,7 @@ class LoginController extends JController
 	public function logout()
 	{
 		JRequest::checkToken('default') or jexit(JText::_('JInvalid_Token'));
-				
+
 		$app = JFactory::getApplication();
 
 		$userid = JRequest::getInt('uid', null);

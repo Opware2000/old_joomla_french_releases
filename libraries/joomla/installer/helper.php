@@ -1,12 +1,13 @@
 <?php
 /**
- * @version		$Id: helper.php 21693 2011-06-27 16:44:53Z dextercowley $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Installer
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
@@ -16,21 +17,20 @@ jimport('joomla.filesystem.path');
 /**
  * Installer helper class
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	Installer
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Installer
+ * @since       11.1
  */
 abstract class JInstallerHelper
 {
 	/**
 	 * Downloads a package
 	 *
-	 * @static
-	 * @param string URL of file to download
-	 * @param string Download target filename [optional]
-	 * @return mixed Path to downloaded package or boolean false on failure
-	 * @since 1.5
+	 * @param   string URL of file to download
+	 * @param   string Download target filename [optional]
+	 *
+	 * @return  mixed    Path to downloaded package or boolean false on failure
+	 * @since   11.1
 	 */
 	public static function downloadPackage($url, $target = false)
 	{
@@ -66,10 +66,10 @@ abstract class JInstallerHelper
 
 		// Set the target path if not given
 		if (!$target) {
-			$target = $config->get('tmp_path').DS.self::getFilenameFromURL($url);
+			$target = $config->get('tmp_path') . '/' . self::getFilenameFromURL($url);
 		}
 		else {
-			$target = $config->get('tmp_path').DS.basename($target);
+			$target = $config->get('tmp_path') . '/' . basename($target);
 		}
 
 		// Initialise contents buffer
@@ -91,11 +91,11 @@ abstract class JInstallerHelper
 		// Close file pointer resource
 		fclose($inputHandle);
 
-		// restore error tracking to what it was before
+		// Restore error tracking to what it was before
 		ini_set('track_errors',$track_errors);
 
 		// bump the max execution time because not using built in php zip libs are slow
-		set_time_limit(ini_get('max_execution_time'));
+		@set_time_limit(ini_get('max_execution_time'));
 
 		// Return the name of the downloaded package
 		return basename($target);
@@ -105,10 +105,10 @@ abstract class JInstallerHelper
 	 * Unpacks a file and verifies it as a Joomla element package
 	 * Supports .gz .tar .tar.gz and .zip
 	 *
-	 * @static
-	 * @param string $p_filename The uploaded package filename or install directory
-	 * @return Array Two elements - extractdir and packagefile
-	 * @since 1.5
+	 * @param   string   $p_filename The uploaded package filename or install directory
+	 *
+	 * @return  array    Two elements - extractdir and packagefile
+	 * @since   11.1
 	 */
 	public static function unpack($p_filename)
 	{
@@ -119,10 +119,10 @@ abstract class JInstallerHelper
 		$tmpdir = uniqid('install_');
 
 		// Clean the paths to use for archive extraction
-		$extractdir = JPath::clean(dirname($p_filename).DS.$tmpdir);
+		$extractdir = JPath::clean(dirname($p_filename) . '/' . $tmpdir);
 		$archivename = JPath::clean($archivename);
 
-		// do the unpacking of the archive
+		// Do the unpacking of the archive
 		$result = JArchive::extract($archivename, $extractdir);
 
 		if ($result === false) {
@@ -131,7 +131,7 @@ abstract class JInstallerHelper
 
 
 		/*
-		 * Lets set the extraction directory and package file in the result array so we can
+		 * Let's set the extraction directory and package file in the result array so we can
 		 * cleanup everything properly later on.
 		 */
 		$retval['extractdir'] = $extractdir;
@@ -148,9 +148,9 @@ abstract class JInstallerHelper
 
 		if (count($dirList) == 1)
 		{
-			if (JFolder::exists($extractdir.DS.$dirList[0]))
+			if (JFolder::exists($extractdir . '/' . $dirList[0]))
 			{
-				$extractdir = JPath::clean($extractdir.DS.$dirList[0]);
+				$extractdir = JPath::clean($extractdir . '/' . $dirList[0]);
 			}
 		}
 
@@ -175,14 +175,14 @@ abstract class JInstallerHelper
 	/**
 	 * Method to detect the extension type from a package directory
 	 *
-	 * @static
-	 * @param string $p_dir Path to package directory
-	 * @return mixed Extension type string or boolean false on fail
-	 * @since 1.5
+	 * @param   string   $p_dir Path to package directory
+	 *
+	 * @return  mixed  Extension type string or boolean false on fail
+	 * @since   11.1
 	 */
 	public static function detectType($p_dir)
 	{
-		// Search the install dir for an xml file
+		// Search the install dir for an XML file
 		$files = JFolder::files($p_dir, '\.xml$', 1, true);
 
 		if ( ! count($files))
@@ -219,10 +219,10 @@ abstract class JInstallerHelper
 	/**
 	 * Gets a file name out of a url
 	 *
-	 * @static
-	 * @param string $url URL to get name from
-	 * @return mixed String filename or boolean false if failed
-	 * @since 1.5
+	 * @param   string  $url URL to get name from
+	 *
+	 * @return  mixed  String filename or boolean false if failed
+	 * @since   11.1
 	 */
 	public static function getFilenameFromURL($url)
 	{
@@ -237,11 +237,11 @@ abstract class JInstallerHelper
 	/**
 	 * Clean up temporary uploaded package and unpacked extension
 	 *
-	 * @static
-	 * @param string $package Path to the uploaded package file
-	 * @param string $resultdir Path to the unpacked extension
-	 * @return boolean True on success
-	 * @since 1.5
+	 * @param   string  $package Path to the uploaded package file
+	 * @param   string  $resultdir Path to the unpacked extension
+	 *
+	 * @return  boolean  True on success
+	 * @since   11.1
 	 */
 	public static function cleanupInstall($package, $resultdir)
 	{
@@ -256,18 +256,21 @@ abstract class JInstallerHelper
 		if (is_file($package)) {
 			JFile::delete($package);
 		}
-		elseif (is_file(JPath::clean($config->get('tmp_path').DS.$package)))
+		elseif (is_file(JPath::clean($config->get('tmp_path') . '/' . $package)))
 		{
 			// It might also be just a base filename
-			JFile::delete(JPath::clean($config->get('tmp_path').DS.$package));
+			JFile::delete(JPath::clean($config->get('tmp_path') . '/' . $package));
 		}
 	}
 
 	/**
+	 * Splitsql
+	 *
 	 * Splits contents of a sql file into array of discreet queries
 	 * queries need to be delimited with end of statement marker ';'
-	 * @param string
-	 * @return array
+	 * @param   string
+	 *
+	 * @return  array
 	 */
 	public static function splitSql($sql)
 	{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: view.html.php 21677 2011-06-25 20:56:56Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -36,19 +36,21 @@ class ContactViewContact extends JView
 		$state		= $this->get('State');
 		$item		= $this->get('Item');
 		$this->form	= $this->get('Form');
-		
+
 		// Get the parameters
 		$params = JComponentHelper::getParams('com_contact');
-		
+
 		if ($item) {
 			// If we found an item, merge the item parameters
 			$params->merge($item->params);
-			
+
 			// Get Category Model data
 			$categoryModel = JModel::getInstance('Category', 'ContactModel', array('ignore_request' => true));
 			$categoryModel->setState('category.id', $item->catid);
 			$categoryModel->setState('list.ordering', 'a.name');
 			$categoryModel->setState('list.direction', 'asc');
+			$categoryModel->setState('filter.published', 1);
+
 			$contacts = $categoryModel->getItems();
 		}
 
@@ -58,7 +60,7 @@ class ContactViewContact extends JView
 
 			return false;
 		}
-		
+
 		// check if access is not public
 		$groups	= $user->getAuthorisedViewLevels();
 
@@ -194,15 +196,15 @@ class ContactViewContact extends JView
 		else {
 			$this->params->def('page_heading', JText::_('COM_CONTACT_DEFAULT_PAGE_TITLE'));
 		}
-		
+
 		$title = $this->params->get('page_title', '');
-		
+
 		$id = (int) @$menu->query['id'];
 
 		// if the menu item does not concern this contact
-		if ($menu && ($menu->query['option'] != 'com_contact' || $menu->query['view'] != 'contact' || $id != $this->item->id)) 
+		if ($menu && ($menu->query['option'] != 'com_contact' || $menu->query['view'] != 'contact' || $id != $this->item->id))
 		{
-			
+
 			// If this is not a single contact menu item, set the page title to the contact title
 			if ($this->item->name) {
 				$title = $this->item->name;
@@ -227,8 +229,11 @@ class ContactViewContact extends JView
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0)) {
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 
 		if (empty($title)) {
@@ -240,7 +245,7 @@ class ContactViewContact extends JView
 		{
 			$this->document->setDescription($this->item->metadesc);
 		}
-		elseif (!$this->item->metadesc && $this->params->get('menu-meta_description')) 
+		elseif (!$this->item->metadesc && $this->params->get('menu-meta_description'))
 		{
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
@@ -249,18 +254,14 @@ class ContactViewContact extends JView
 		{
 			$this->document->setMetadata('keywords', $this->item->metakey);
 		}
-		elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords')) 
+		elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
 
-		if ($this->params->get('robots')) 
+		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
-		}
-
-		if ($app->getCfg('MetaTitle') == '1') {
-			$this->document->setMetaData('title', $this->item->name);
 		}
 
 		$mdata = $this->item->metadata->toArray();

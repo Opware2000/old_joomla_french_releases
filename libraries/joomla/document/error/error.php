@@ -1,21 +1,20 @@
 <?php
 /**
- * @version		$Id: error.php 20650 2011-02-10 10:14:12Z infograf768 $
- * @package		Joomla.Framework
- * @subpackage	Document
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * DocumentError class, provides an easy interface to parse and display an error page
  *
- * @package		Joomla.Framework
- * @subpackage	Document
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ * @since       11.1
  */
 
 jimport('joomla.document.document');
@@ -24,18 +23,21 @@ class JDocumentError extends JDocument
 {
 	/**
 	 * Error Object
-	 * @var	object
+	 *
+	 * @var    object
+	 * @since  11.1
 	 */
 	var $_error;
 
 	/**
 	 * Class constructor
 	 *
-	 * @access protected
-	 * @param	string	$type		(either html or tex)
-	 * @param	array	$attributes Associative array of attributes
+	 * @param   string  $type        Either HTML or text
+	 * @param   array   $attributes  Associative array of attributes
+	 *
+	 * @since   11.1
 	 */
-	function __construct($options = array())
+	public function __construct($options = array())
 	{
 		parent::__construct($options);
 
@@ -49,12 +51,13 @@ class JDocumentError extends JDocument
 	/**
 	 * Set error object
 	 *
-	 * @access	public
-	 * @param	object	$error	Error object to set
-	 * @return	boolean	True on success
-	 * @since	1.5
+	 * @param   object  $error  Error object to set
+	 *
+	 * @return  boolean  True on success
+	 *
+	 * @since   11.1
 	 */
-	function setError($error)
+	public function setError($error)
 	{
 		if (JError::isError($error)) {
 			$this->_error = & $error;
@@ -67,11 +70,15 @@ class JDocumentError extends JDocument
 	/**
 	 * Render the document
 	 *
-	 * @access public
-	 * @param boolean	$cache		If true, cache the output
-	 * @param array		$params		Associative array of attributes
+	 * @param   boolean  $cache    If true, cache the output
+	 * @param   array    $params   Associative array of attributes
+	 *
+	 *
+	 * @return  string   The rendered data
+	 *
+	 * @since   11.1
 	 */
-	function render($cache = false, $params = array())
+	public function render($cache = false, $params = array())
 	{
 		// If no error object is set return null
 		if (!isset($this->_error)) {
@@ -86,7 +93,7 @@ class JDocumentError extends JDocument
 		$directory	= isset($params['directory']) ? $params['directory'] : 'templates';
 		$template	= isset($params['template']) ? JFilterInput::getInstance()->clean($params['template'], 'cmd') : 'system';
 
-		if (!file_exists($directory.DS.$template.DS.$file)) {
+		if (!file_exists($directory . '/' . $template . '/' . $file)) {
 			$template = 'system';
 		}
 
@@ -97,7 +104,7 @@ class JDocumentError extends JDocument
 		$this->error	= $this->_error;
 
 		// load
-		$data = $this->_loadTemplate($directory.DS.$template, $file);
+		$data = $this->_loadTemplate($directory . '/' . $template, $file);
 
 		parent::render();
 		return $data;
@@ -106,23 +113,26 @@ class JDocumentError extends JDocument
 	/**
 	 * Load a template file
 	 *
-	 * @param string	$template	The name of the template
-	 * @param string	$filename	The actual filename
-	 * @return string The contents of the template
+	 * @param   string  $template   The name of the template
+	 * @param   string  $filename   The actual filename
+	 *
+	 * @return  string  The contents of the template
+	 *
+	 * @since   11.1
 	 */
 	function _loadTemplate($directory, $filename)
 	{
 		$contents = '';
 
-		//Check to see if we have a valid template file
-		if (file_exists($directory.DS.$filename))
+		// Check to see if we have a valid template file
+		if (file_exists($directory . '/' . $filename))
 		{
-			//store the file path
-			$this->_file = $directory.DS.$filename;
+			// Store the file path
+			$this->_file = $directory . '/' . $filename;
 
-			//get the file content
+			// Get the file content
 			ob_start();
-			require_once $directory.DS.$filename;
+			require_once $directory . '/' . $filename;
 			$contents = ob_get_contents();
 			ob_end_clean();
 		}
@@ -130,6 +140,13 @@ class JDocumentError extends JDocument
 		return $contents;
 	}
 
+	/**
+	 * Render the backtrace
+	 *
+	 * @return  string  The contents of the backtrace
+	 *
+	 * @since   11.1
+	 */
 	function renderBacktrace()
 	{
 		$contents	= null;

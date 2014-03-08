@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: application.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_config
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -82,7 +82,7 @@ class ConfigModelApplication extends JModelForm
 		{
 			jimport('joomla.access.rules');
 			$rules	= new JRules($data['rules']);
-				
+
 			// Check that we aren't removing our Super User permission
 			// Need to get groups from database, since they might have changed
 			$myGroups = JAccess::getGroupsByUser(JFactory::getUser()->get('id'));
@@ -92,8 +92,8 @@ class ConfigModelApplication extends JModelForm
 				$this->setError(JText::_('COM_CONFIG_ERROR_REMOVING_SUPER_ADMIN'));
 				return false;
 			}
-			
-			
+
+
 			$asset	= JTable::getInstance('asset');
 			if ($asset->loadByName('root.1'))
 			{
@@ -169,7 +169,7 @@ class ConfigModelApplication extends JModelForm
 		jimport('joomla.filesystem.file');
 
 		// Set the configuration file path.
-		$file = JPATH_CONFIGURATION.DS.'configuration.php';
+		$file = JPATH_CONFIGURATION . '/configuration.php';
 
 		// Overwrite the old FTP credentials with the new ones.
 		$temp = JFactory::getConfig();
@@ -238,7 +238,7 @@ class ConfigModelApplication extends JModelForm
 		jimport('joomla.filesystem.file');
 
 		// Set the configuration file path.
-		$file = JPATH_CONFIGURATION.DS.'configuration.php';
+		$file = JPATH_CONFIGURATION . '/configuration.php';
 
 		// Overwrite the old FTP credentials with the new ones.
 		$temp = JFactory::getConfig();

@@ -1,34 +1,37 @@
 <?php
 /**
- * @version		$Id:sql.php 6961 2007-03-15 16:06:53Z tcp $
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  HTML
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Renders a SQL element
  *
- * @package		Joomla.Framework
- * @subpackage	Parameter
- * @deprecated	JParameter is deprecated and will be removed in a future version. Use JForm instead.
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Parameter
+ * @since       11.1
+ * @deprecated  JParameter is deprecated and will be removed in a future version. Use JForm instead.
  */
-
 class JElementSQL extends JElement
 {
 	/**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	 * Element name
+	 *
+	 * @var    string
+	 */
 	protected $_name = 'SQL';
 
+	/**
+	 *
+	 * @since   11.1
+	 *
+	 * @deprecated
+	 */
 	public function fetchElement($name, $value, &$node, $control_name)
 	{
 		$db			= JFactory::getDbo();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: configuration.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: configuration.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -21,7 +21,10 @@ require_once JPATH_INSTALLATION.'/helpers/database.php';
  */
 class JInstallationModelConfiguration extends JModel
 {
-	function setup($options)
+	/**
+	 * @return boolean
+	 */
+	public function setup($options)
 	{
 		// Get the options as a JObject for easier handling.
 		$options = JArrayHelper::toObject($options, 'JObject');
@@ -103,7 +106,6 @@ class JInstallationModelConfiguration extends JModel
 		/* Meta Settings */
 		$registry->set('MetaDesc', $options->site_metadesc);
 		$registry->set('MetaKeys', $options->site_metakeys);
-		$registry->set('MetaTitle', 1);
 		$registry->set('MetaAuthor', 1);
 
 		/* SEO Settings */
@@ -114,8 +116,8 @@ class JInstallationModelConfiguration extends JModel
 
 		/* Feed Settings */
 		$registry->set('feed_limit', 10);
-		$registry->set('log_path', JPATH_ROOT.DS.'logs');
-		$registry->set('tmp_path', JPATH_ROOT.DS.'tmp');
+		$registry->set('log_path', JPATH_ROOT . '/logs');
+		$registry->set('tmp_path', JPATH_ROOT . '/tmp');
 
 		/* Session Setting */
 		$registry->set('lifetime', 15);
@@ -126,13 +128,13 @@ class JInstallationModelConfiguration extends JModel
 
 
 		// Build the configuration file path.
-		$path = JPATH_CONFIGURATION.DS.'configuration.php';
+		$path = JPATH_CONFIGURATION . '/configuration.php';
 
 		// Determine if the configuration file path is writable.
 		if (file_exists($path)) {
 			$canWrite = is_writable($path);
 		} else {
-			$canWrite = is_writable(JPATH_CONFIGURATION.DS);
+			$canWrite = is_writable(JPATH_CONFIGURATION . '/');
 		}
 
 		/*
@@ -154,8 +156,7 @@ class JInstallationModelConfiguration extends JModel
 			$useFTP = false;
 		}
 
-		if ($useFTP == true)
-		{
+		if ($useFTP == true) {
 			// Connect the FTP client
 			jimport('joomla.client.ftp');
 			jimport('joomla.filesystem.path');
@@ -174,9 +175,7 @@ class JInstallationModelConfiguration extends JModel
 			}
 
 			$ftp->quit();
-		}
-		else
-		{
+		} else {
 			if ($canWrite) {
 				file_put_contents($path, $buffer);
 				$session = JFactory::getSession();

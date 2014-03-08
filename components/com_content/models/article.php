@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 21603 2011-06-21 18:31:49Z dextercowley $
+ * @version		$Id: article.php 21700 2011-06-28 04:32:41Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -158,12 +158,12 @@ class ContentModelArticle extends JModelItem
 
 				// Convert parameter fields to objects.
 				$registry = new JRegistry;
-				$registry->loadJSON($data->attribs);
+				$registry->loadString($data->attribs);
 				$data->params = clone $this->getState('params');
 				$data->params->merge($registry);
 
 				$registry = new JRegistry;
-				$registry->loadJSON($data->metadata);
+				$registry->loadString($data->metadata);
 				$data->metadata = $registry;
 
 				// Compute selected asset permissions.

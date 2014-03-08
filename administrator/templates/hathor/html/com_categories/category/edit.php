@@ -1,6 +1,6 @@
 <?php
 /**
- * @version	 $Id: edit.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version	 $Id: edit.php 21503 2011-06-09 22:58:13Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -38,50 +38,50 @@ JHtml::_('behavior.keepalive');
 	<div class="col main-section">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_CATEGORIES_FIELDSET_DETAILS');?></legend>
-				<ul class="adminformlist">
-					<li><?php echo $this->form->getLabel('title'); ?>
-					<?php echo $this->form->getInput('title'); ?></li>
+			<ul class="adminformlist">
+				<li><?php echo $this->form->getLabel('title'); ?>
+				<?php echo $this->form->getInput('title'); ?></li>
 
-					<li><?php echo $this->form->getLabel('alias'); ?>
-					<?php echo $this->form->getInput('alias'); ?></li>
+				<li><?php echo $this->form->getLabel('alias'); ?>
+				<?php echo $this->form->getInput('alias'); ?></li>
 
-					<li><?php echo $this->form->getLabel('extension'); ?>
-					<?php echo $this->form->getInput('extension'); ?></li>
+				<li><?php echo $this->form->getLabel('extension'); ?>
+				<?php echo $this->form->getInput('extension'); ?></li>
 
-					<li><?php echo $this->form->getLabel('parent_id'); ?>
-					<?php echo $this->form->getInput('parent_id'); ?></li>
+				<li><?php echo $this->form->getLabel('parent_id'); ?>
+				<?php echo $this->form->getInput('parent_id'); ?></li>
 
-					<li><?php echo $this->form->getLabel('published'); ?>
-					<?php echo $this->form->getInput('published'); ?></li>
+				<li><?php echo $this->form->getLabel('published'); ?>
+				<?php echo $this->form->getInput('published'); ?></li>
 
-					<li><?php echo $this->form->getLabel('access'); ?>
-					<?php echo $this->form->getInput('access'); ?></li>
-					
-					<?php if ($this->canDo->get('core.admin')): ?>
+				<li><?php echo $this->form->getLabel('access'); ?>
+				<?php echo $this->form->getInput('access'); ?></li>
+
+				<?php if ($this->canDo->get('core.admin')): ?>
 					<li><span class="faux-label"><?php echo JText::_('JGLOBAL_ACTION_PERMISSIONS_LABEL'); ?></span>
       					<button type="button" onclick="document.location.href='#access-rules';">
       					<?php echo JText::_('JGLOBAL_PERMISSIONS_ANCHOR'); ?></button>
     				</li>
-    				<?php endif; ?>	
+    			<?php endif; ?>
 
-					<li><?php echo $this->form->getLabel('language'); ?>
-					<?php echo $this->form->getInput('language'); ?></li>
+				<li><?php echo $this->form->getLabel('language'); ?>
+				<?php echo $this->form->getInput('language'); ?></li>
 
-					<li><?php echo $this->form->getLabel('id'); ?>
-					<?php echo $this->form->getInput('id'); ?></li>
-				</ul>
+				<li><?php echo $this->form->getLabel('id'); ?>
+				<?php echo $this->form->getInput('id'); ?></li>
+			</ul>
 
-				<div class="clr"></div>
-				<?php echo $this->form->getLabel('description'); ?>
-				<div class="clr"></div>
-				<?php echo $this->form->getInput('description'); ?>
-				<div class="clr"></div>
+			<div class="clr"></div>
+			<?php echo $this->form->getLabel('description'); ?>
+			<div class="clr"></div>
+			<?php echo $this->form->getInput('description'); ?>
+			<div class="clr"></div>
 		</fieldset>
 	</div>
 
 	<div class="col options-section">
 
-		<?php echo JHtml::_('sliders.start','plugin-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
+		<?php echo JHtml::_('sliders.start','categories-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
 			<?php echo $this->loadTemplate('options'); ?>
 			<div class="clr"></div>
 
@@ -92,27 +92,27 @@ JHtml::_('behavior.keepalive');
 			</fieldset>
 
 		<?php echo JHtml::_('sliders.end'); ?>
-		</div>
-		<div class="clr"></div>
-		
-		<?php if ($this->canDo->get('core.admin')): ?>
+	</div>
+	<div class="clr"></div>
+
+	<?php if ($this->canDo->get('core.admin')): ?>
 		<div  class="col rules-section">
 
 			<?php echo JHtml::_('sliders.start','permissions-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
-		
-			<?php echo JHtml::_('sliders.panel',JText::_('COM_CATEGORIES_FIELDSET_RULES'), 'access-rules'); ?>	
+
+			<?php echo JHtml::_('sliders.panel',JText::_('COM_CATEGORIES_FIELDSET_RULES'), 'access-rules'); ?>
 			<fieldset class="panelform">
 			<legend class="element-invisible"><?php echo JText::_('COM_CATEGORIES_FIELDSET_RULES'); ?></legend>
 				<?php echo $this->form->getLabel('rules'); ?>
 				<?php echo $this->form->getInput('rules'); ?>
 			</fieldset>
-				
+
 			<?php echo JHtml::_('sliders.end'); ?>
 		</div>
 	<?php endif; ?>
-	<div>	
-	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+	<div>
+		<input type="hidden" name="task" value="" />
+		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>
 <div class="clr"></div>

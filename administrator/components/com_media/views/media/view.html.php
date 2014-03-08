@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: view.html.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -23,7 +23,7 @@ class MediaViewMedia extends JView
 	{
 		$app	= JFactory::getApplication();
 		$config = JComponentHelper::getParams('com_media');
-		
+
 		$lang	= JFactory::getLanguage();
 
 		$style = $app->getUserStateFromRequest('media.list.layout', 'layout', 'thumbs', 'word');
@@ -46,7 +46,7 @@ class MediaViewMedia extends JView
 		});");
 
 		JHtml::_('script','system/mootree.js', true, true, false, false);
-		JHtml::_('stylesheet','system/mootree.css', array(), true);	
+		JHtml::_('stylesheet','system/mootree.css', array(), true);
 		if ($lang->isRTL()) :
 			JHtml::_('stylesheet','media/mootree_rtl.css', array(), true);
 		endif;

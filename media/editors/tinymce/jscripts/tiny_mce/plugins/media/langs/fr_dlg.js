@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.media_dlg',{
 title:"Ins\u00E9rer/Editer un m\u00E9dia",
 general:"G\u00E9n\u00E9ral",
@@ -14,8 +14,8 @@ name:"Nom",
 class_name:"Classes CSS",
 vspace:"Espace vertical",
 hspace:"Espace horizontal",
-play:"Lecture automatique",
-loop:"En boucle",
+play:"Lecture auto",
+loop:"Boucle",
 menu:"Menu",
 quality:"Qualit\u00E9",
 scale:"Affichage",
@@ -92,7 +92,6 @@ align_bottom_right:"Bas Droite",
 flv_options:"Options vid\u00E9o Flash",
 flv_scalemode:"Mode affichage",
 flv_buffer:"Tampon",
-flv_startimage:"Image de d\u00E9part",
 flv_starttime:"Point de d\u00E9part",
 flv_defaultvolume:"Volume par d\u00E9faut",
 flv_hiddengui:"Masquer GUI (Graphical User Interface)",
@@ -100,5 +99,12 @@ flv_autostart:"D\u00E9marrage Auto",
 flv_loop:"Boucle",
 flv_showscalemodes:"Afficher les modes proportion",
 flv_smoothvideo:"Smooth vid\u00E9o",
-flv_jscallback:"JS Callback"
+flv_jscallback:"JS Callback",
+html5_video_options:"Options vid\u00E9o HTML5",
+altsource1:"Source 1 alt\u00E9rnative",
+altsource2:"Source 2 alt\u00E9rnative",
+preload:"Pr\u00E9chargement",
+poster:"Poster",
+
+source:"Source"
 });

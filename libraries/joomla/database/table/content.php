@@ -1,27 +1,33 @@
 <?php
 /**
- * @version		$Id: content.php 20228 2011-01-10 00:52:54Z eddieajau $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Database
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.database.tableasset');
 
 /**
  * Content table
  *
- * @package		Joomla.Framework
- * @subpackage	Table
- * @since		1.0
+ * @package     Joomla.Platform
+ * @subpackage  Table
+ * @since       11.1
  */
 class JTableContent extends JTable
 {
 	/**
-	 * @param	database	A database connector object
-	 * @since	1.0
+	 * Constructor
+	 *
+	 * @param   database  &$db  A database connector object
+	 *
+	 * @return  JTableContent
+	 *
+	 * @since   11.1
 	 */
 	function __construct(&$db)
 	{
@@ -30,11 +36,12 @@ class JTableContent extends JTable
 
 	/**
 	 * Method to compute the default name of the asset.
-	 * The default name is in the form `table_name.id`
+	 * The default name is in the form table_name.id
 	 * where id is the value of the primary key of the table.
 	 *
-	 * @return	string
-	 * @since	1.6
+	 * @return  string
+	 *
+	 * @since   11.1
 	 */
 	protected function _getAssetName()
 	{
@@ -45,8 +52,9 @@ class JTableContent extends JTable
 	/**
 	 * Method to return the title to use for the asset table.
 	 *
-	 * @return	string
-	 * @since	1.6
+	 * @return  string
+	 *
+	 * @since   11.1
 	 */
 	protected function _getAssetTitle()
 	{
@@ -54,10 +62,14 @@ class JTableContent extends JTable
 	}
 
 	/**
-	 * Get the parent asset id for the record
+	 * Method to get the parent asset id for the record
 	 *
-	 * @return	int
-	 * @since	1.6
+	 * @param   JTable   $table  A JTable object for the asset parent
+	 * @param   integer  $id
+	 *
+	 * @return  integer
+	 *
+	 * @since   11.1
 	 */
 	protected function _getAssetParentId($table = null, $id = null)
 	{
@@ -91,11 +103,14 @@ class JTableContent extends JTable
 	/**
 	 * Overloaded bind function
 	 *
-	 * @param	array		$hash named array
+	 * @param   array  $array   Named array
+	 * @param   mixed  $ignore  An optional array or space separated list of properties
+	 *                          to ignore while binding.
 	 *
-	 * @return	null|string	null is operation was satisfactory, otherwise returns an error
-	 * @see		JTable:bind
-	 * @since	1.5
+	 * @return  mixed  Null if operation was satisfactory, otherwise returns an error string
+	 *
+	 * @see     JTable:bind
+	 * @since   11.1
 	 */
 	public function bind($array, $ignore = '')
 	{
@@ -113,13 +128,13 @@ class JTableContent extends JTable
 		}
 
 		if (isset($array['attribs']) && is_array($array['attribs'])) {
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['attribs']);
 			$array['attribs'] = (string)$registry;
 		}
 
 		if (isset($array['metadata']) && is_array($array['metadata'])) {
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string)$registry;
 		}
@@ -136,9 +151,10 @@ class JTableContent extends JTable
 	/**
 	 * Overloaded check function
 	 *
-	 * @return	boolean
-	 * @see		JTable::check
-	 * @since	1.5
+	 * @return  boolean  True on success, false on failure
+	 *
+	 * @see     JTable::check
+	 * @since   11.1
 	 */
 	public function check()
 	{
@@ -167,41 +183,42 @@ class JTableContent extends JTable
 		}
 
 		// Check the publish down date is not earlier than publish up.
-		if (intval($this->publish_down) > 0 && $this->publish_down < $this->publish_up) {
+		if ($this->publish_down > $this->_db->getNullDate() && $this->publish_down < $this->publish_up) {
 			// Swap the dates.
 			$temp = $this->publish_up;
 			$this->publish_up = $this->publish_down;
 			$this->publish_down = $temp;
 		}
 
-		// clean up keywords -- eliminate extra spaces between phrases
+		// Clean up keywords -- eliminate extra spaces between phrases
 		// and cr (\r) and lf (\n) characters from string
 		if (!empty($this->metakey)) {
-			// only process if not empty
+			// Only process if not empty
 			$bad_characters = array("\n", "\r", "\"", "<", ">"); // array of characters to remove
 			$after_clean = JString::str_ireplace($bad_characters, "", $this->metakey); // remove bad characters
 			$keys = explode(',', $after_clean); // create array using commas as delimiter
 			$clean_keys = array();
 
 			foreach($keys as $key) {
-				if (trim($key)) {  // ignore blank keywords
+				if (trim($key)) {
+					// Ignore blank keywords
 					$clean_keys[] = trim($key);
 				}
 			}
 			$this->metakey = implode(", ", $clean_keys); // put array back together delimited by ", "
 		}
 
-
 		return true;
 	}
 
 	/**
-	 * Overriden JTable::store to set modified data and user id.
+	 * Overrides JTable::store to set modified data and user id.
 	 *
-	 * @param	boolean	True to update fields even if they are null.
+	 * @param   boolean  True to update fields even if they are null.
 	 *
-	 * @return	boolean	True on success.
-	 * @since	1.6
+	 * @return  boolean  True on success.
+	 *
+	 * @since   11.1
 	 */
 	public function store($updateNulls = false)
 	{
@@ -223,7 +240,7 @@ class JTableContent extends JTable
 				$this->created_by = $user->get('id');
 			}
 		}
-	// Verify that the alias is unique
+		// Verify that the alias is unique
 		$table = JTable::getInstance('Content','JTable');
 		if ($table->load(array('alias'=>$this->alias,'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS'));
@@ -234,16 +251,17 @@ class JTableContent extends JTable
 
 	/**
 	 * Method to set the publishing state for a row or list of rows in the database
-	 * table.  The method respects checked out rows by other users and will attempt
+	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param	mixed	An optional array of primary key values to update.  If not
-	 *					set the instance property value is used.
-	 * @param	integer The publishing state. eg. [0 = unpublished, 1 = published]
-	 * @param	integer The user id of the user performing the operation.
+	 * @param   mixed    $pks      An optional array of primary key values to update.  If not
+	 *                            set the instance property value is used.
+	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published]
+	 * @param   integer  $userId  The user id of the user performing the operation.
 	 *
-	 * @return	boolean	True on success.
-	 * @since	1.0.4
+	 * @return  boolean  True on success.
+	 *
+	 * @since   11.1
 	 */
 	public function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -279,8 +297,8 @@ class JTableContent extends JTable
 
 		// Update the publishing state for rows with the given primary keys.
 		$this->_db->setQuery(
-			'UPDATE `'.$this->_tbl.'`' .
-			' SET `state` = '.(int) $state .
+			'UPDATE '.$this->_db->quoteName($this->_tbl).
+			' SET '.$this->_db->quoteName('state').' = '.(int) $state .
 			' WHERE ('.$where.')' .
 			$checkin
 		);
@@ -313,8 +331,11 @@ class JTableContent extends JTable
 	/**
 	 * Converts record to XML
 	 *
-	 * @param	boolean	Map foreign keys to text values
-	 * @since	1.5
+	 * @param   boolean  $mapKeysToText  Map foreign keys to text values
+	 *
+	 * @return  string    Record in XML format
+	 *
+	 * @since   11.1
 	 */
 	function toXML($mapKeysToText=false)
 	{

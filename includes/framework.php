@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: framework.php 21171 2011-04-18 21:50:18Z dextercowley $
+ * @version		$Id: framework.php 21879 2011-07-17 22:33:34Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 //
 
 if (!file_exists(JPATH_CONFIGURATION.'/configuration.php') || (filesize(JPATH_CONFIGURATION.'/configuration.php') < 10) || file_exists(JPATH_INSTALLATION.'/index.php')) {
-	
+
 	if (file_exists(JPATH_INSTALLATION.'/index.php')) {
 		header('Location: '.substr($_SERVER['REQUEST_URI'],0,strpos($_SERVER['REQUEST_URI'],'index.php')).'installation/index.php');
 		exit();
@@ -36,8 +36,13 @@ if (!file_exists(JPATH_CONFIGURATION.'/configuration.php') || (filesize(JPATH_CO
 // Joomla system startup.
 //
 
+// Import the cms version library if necessary.
+if (!class_exists('JVersion')) {
+    require JPATH_ROOT.'/includes/version.php';
+}
+
 // System includes.
-require_once JPATH_LIBRARIES.'/joomla/import.php';
+require_once JPATH_LIBRARIES.'/import.php';
 
 // Pre-Load configuration.
 require_once JPATH_CONFIGURATION.'/configuration.php';
@@ -73,9 +78,12 @@ if (JDEBUG) {
 jimport('joomla.application.menu');
 jimport('joomla.user.user');
 jimport('joomla.environment.uri');
+jimport('joomla.filter.filterinput');
+jimport('joomla.filter.filteroutput');
 jimport('joomla.html.html');
 jimport('joomla.utilities.utility');
 jimport('joomla.event.event');
 jimport('joomla.event.dispatcher');
 jimport('joomla.language.language');
 jimport('joomla.utilities.string');
+jimport('joomla.utilities.arrayhelper');

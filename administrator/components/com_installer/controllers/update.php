@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: update.php 21170 2011-04-18 21:33:11Z dextercowley $
+ * @version		$Id: update.php 21440 2011-06-04 13:40:19Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -34,7 +34,19 @@ class InstallerControllerUpdate extends JController {
 			$cache = JFactory::getCache('mod_menu');
 			$cache->clean();
 		}
-		$this->setRedirect(JRoute::_('index.php?option=com_installer&view=update',false));
+
+		$app = JFactory::getApplication();
+		$redirect_url = $app->getUserState('com_installer.redirect_url');
+		if(empty($redirect_url)) {
+			$redirect_url = JRoute::_('index.php?option=com_installer&view=update',false);
+		} else
+		{
+			// wipe out the user state when we're going to redirect
+			$app->setUserState('com_installer.redirect_url', '');
+			$app->setUserState('com_installer.message', '');
+			$app->setUserState('com_installer.extension_message', '');
+		}
+		$this->setRedirect($redirect_url);
 	}
 
 	/**

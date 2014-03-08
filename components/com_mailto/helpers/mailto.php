@@ -1,11 +1,13 @@
 <?php
 /**
- * @version		$Id: mailto.php 20484 2011-01-30 16:27:23Z dextercowley $
+ * @version		$Id: mailto.php 21389 2011-05-26 17:28:26Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_mailto
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
+
+defined('_JEXEC') or die;
 
 /**
  * @package		Joomla.Site
@@ -14,7 +16,7 @@
 abstract class MailtoHelper
 {
 	/**
-	 * Adds a URL to the mailto system and returns the hash 
+	 * Adds a URL to the mailto system and returns the hash
 	 *
 	 * @param string url
 	 * @return URL hash
@@ -78,8 +80,8 @@ abstract class MailtoHelper
 			$session->set('com_mailto.links', $mailto_links);
 			$cleaned = true;
 		}
-		
-		
+
+
 	}
 }
 

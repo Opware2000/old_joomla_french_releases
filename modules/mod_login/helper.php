@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: helper.php 21421 2011-06-03 07:21:02Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	mod_login
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -40,7 +40,7 @@ class modLoginHelper
 		if (!$url)
 		{
 			// stay on the same page
-			$uri = JFactory::getURI();
+			$uri = clone JFactory::getURI();
 			$vars = $router->parse($uri);
 			unset($vars['lang']);
 			if ($router->getMode() == JROUTER_MODE_SEF)
@@ -71,7 +71,7 @@ class modLoginHelper
 
 		return base64_encode($url);
 	}
-	
+
 	static function getType()
 	{
 		$user = JFactory::getUser();

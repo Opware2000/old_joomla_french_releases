@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 20206 2011-01-09 17:11:35Z chdemko $
+ * @version		$Id: edit.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -53,7 +53,7 @@ $lang->load( 'plg_user_profile', JPATH_ADMINISTRATOR );
 			<button type="submit" class="validate"><span><?php echo JText::_('JSUBMIT'); ?></span></button>
 			<?php echo JText::_('COM_USERS_OR'); ?>
 			<a href="<?php echo JRoute::_(''); ?>" title="<?php echo JText::_('JCANCEL'); ?>"><?php echo JText::_('JCANCEL'); ?></a>
-		
+
 			<input type="hidden" name="option" value="com_users" />
 			<input type="hidden" name="task" value="profile.save" />
 			<?php echo JHtml::_('form.token'); ?>

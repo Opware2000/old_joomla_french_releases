@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20899 2011-03-07 20:56:09Z ian $
+ * @version		$Id: helper.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	mod_logged
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
@@ -27,7 +27,7 @@ abstract class modLoggedHelper
 		// Initialise variables
 		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
-		$query = new JDatabaseQuery;
+		$query = $db->getQuery(true);
 
 		$query->select('s.time, s.client_id, u.id, u.name, u.username');
 		$query->from('#__session AS s');
@@ -45,7 +45,7 @@ abstract class modLoggedHelper
 		foreach($results as $k => $result)
 		{
 			$results[$k]->logoutLink = '';
-			
+
 			if($user->authorise('core.manage', 'com_users'))
 			{
 				$results[$k]->editLink = JRoute::_('index.php?option=com_users&task=user.edit&id='.$result->id);

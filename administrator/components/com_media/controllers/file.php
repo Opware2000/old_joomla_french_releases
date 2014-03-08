@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: file.php 20808 2011-02-21 19:55:35Z dextercowley $
+ * @version		$Id: file.php 21518 2011-06-10 21:38:12Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -37,7 +37,7 @@ class MediaControllerFile extends JController
 		$file		= JRequest::getVar('Filedata', '', 'files', 'array');
 		$folder		= JRequest::getVar('folder', '', '', 'path');
 		$return		= JRequest::getVar('return-url', null, 'post', 'base64');
-		
+
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -61,8 +61,8 @@ class MediaControllerFile extends JController
 				JError::raiseNotice(100, JText::_($err));
 				return false;
 			}
-			
-			$filepath = JPath::clean(COM_MEDIA_BASE.DS.$folder.DS.strtolower($file['name']));
+
+			$filepath = JPath::clean(COM_MEDIA_BASE . '/' . $folder . '/' . strtolower($file['name']));
 
 			// Trigger the onContentBeforeSave event.
 			JPluginHelper::importPlugin('content');
@@ -164,7 +164,7 @@ class MediaControllerFile extends JController
 						continue;
 					}
 
-					$fullPath = JPath::clean(COM_MEDIA_BASE.DS.$folder.DS.$path);
+					$fullPath = JPath::clean(COM_MEDIA_BASE . '/' . $folder . '/' . $path);
 					$object_file = new JObject(array('filepath' => $fullPath));
 					if (is_file($fullPath))
 					{

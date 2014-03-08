@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.style_dlg',{
 title:"Ins\u00E9rer/Editer un style",
 apply:"Appliquer",
@@ -60,5 +60,12 @@ visibility:"Visibilit\u00E9",
 zindex:"Z-index",
 overflow:"Superposer",
 placement:"Position",
-clip:"Liaison"
+clip:"Liaison",
+text:"Texte",
+background:"Fond",
+block:"Bloc",
+box:"Box",
+border:"Bordure",
+list:"Liste",
+position:"Position"
 });

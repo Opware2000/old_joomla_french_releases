@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: controller.php 21321 2011-05-11 01:05:59Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_mailto
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -60,7 +60,7 @@ class MailtoController extends JController
 		$MailFrom	= $app->getCfg('mailfrom');
 		$FromName	= $app->getCfg('fromname');
 
-		$link		= MailtoHelper::validateHash(JRequest::getCMD('link', '', 'post')); 
+		$link		= MailtoHelper::validateHash(JRequest::getCMD('link', '', 'post'));
 
 		// Verify that this is a local link
 		if (!$link || !JURI::isInternal($link)) {

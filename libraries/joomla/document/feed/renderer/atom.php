@@ -1,16 +1,13 @@
 <?php
 /**
- * @version		$Id: atom.php 21039 2011-03-31 15:47:46Z dextercowley $
- * @package		Joomla.Framework
- * @subpackage	Document
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
-
-
+defined('JPATH_PLATFORM') or die;
 
 /**
  * JDocumentRenderer_Atom is a feed that implements the atom specification
@@ -19,10 +16,10 @@ defined('JPATH_BASE') or die;
  * produce valid atom files. For example, you have to specify either an editor
  * for the feed or an author for every single feed item.
  *
- * @package		Joomla.Framework
- * @subpackage	Document
- * @see http://www.atomenabled.org/developers/syndication/atom-format-spec.php
- * @since	1.5
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ * @see         http://www.atomenabled.org/developers/syndication/atom-format-spec.php
+ * @since       11.1
  */
 
  class JDocumentRendererAtom extends JDocumentRenderer
@@ -30,32 +27,43 @@ defined('JPATH_BASE') or die;
 	/**
 	 * Document mime type
 	 *
-	 * @var		string
-	 * @access	private
+	 * @var    string
+	 * @since  11.1
 	 */
-	var $_mime = "application/atom+xml";
+	protected $_mime = "application/atom+xml";
 
 	/**
 	 * Render the feed
 	 *
-	 * @access public
-	 * @return string
+	 * @return  string
+	 * @since  11.1
 	 */
-	function render()
+	public function render()
 	{
 		$app	= JFactory::getApplication();
+
+		// Gets and sets timezone offset from site configuration
+		$tz	= new DateTimeZone($app->getCfg('offset'));
 		$now	= JFactory::getDate();
+		$now->setTimeZone($tz);
+
 		$data	= &$this->_doc;
 
 		$uri = JFactory::getURI();
 		$url = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
 		$syndicationURL = JRoute::_('&format=feed&type=atom');
-		
-		$feed_title = htmlspecialchars(
-			$app->getCfg('sitename_pagetitles',0)?
-			JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $data->title):
-			$data->title
-		, ENT_COMPAT, 'UTF-8');
+
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $data->title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $data->title, $app->getCfg('sitename'));
+		}
+		else {
+			$title = $data->title;
+		}
+
+		$feed_title = htmlspecialchars($title, ENT_COMPAT, 'UTF-8');
 
 		$feed = "<feed xmlns=\"http://www.w3.org/2005/Atom\" ";
 		if ($data->language!="") {
@@ -76,7 +84,7 @@ defined('JPATH_BASE') or die;
 		}
 		$feed.= "	<link rel=\"alternate\" type=\"text/html\" href=\"".$url."\"/>\n";
 		$feed.= "	<id>".str_replace(' ','%20',$data->getBase())."</id>\n";
-		$feed.= "	<updated>".htmlspecialchars($now->toISO8601(), ENT_COMPAT, 'UTF-8')."</updated>\n";
+		$feed.= "	<updated>".htmlspecialchars($now->toISO8601(true), ENT_COMPAT, 'UTF-8')."</updated>\n";
 		if ($data->editor!="") {
 			$feed.= "	<author>\n";
 			$feed.= "		<name>".$data->editor."</name>\n";
@@ -88,7 +96,7 @@ defined('JPATH_BASE') or die;
 		$feed.= "	<generator uri=\"http://joomla.org\" version=\"1.6\">".$data->getGenerator()."</generator>\n";
 		$feed.= '	<link rel="self" type="application/atom+xml" href="'.str_replace(' ','%20',$url.$syndicationURL)."\"/>\n";
 
-		for ($i=0, $count = count($data->items); $i < $count; $i++)
+		for ($i = 0, $count = count($data->items); $i < $count; $i++)
 		{
 			$feed.= "	<entry>\n";
 			$feed.= "		<title>".htmlspecialchars(strip_tags($data->items[$i]->title), ENT_COMPAT, 'UTF-8')."</title>\n";
@@ -98,8 +106,9 @@ defined('JPATH_BASE') or die;
 				$data->items[$i]->date = $now->toUnix();
 			}
 			$itemDate = JFactory::getDate($data->items[$i]->date);
-			$feed.= "		<published>".htmlspecialchars($itemDate->toISO8601(), ENT_COMPAT, 'UTF-8')."</published>\n";
-			$feed.= "		<updated>".htmlspecialchars($itemDate->toISO8601(),ENT_COMPAT, 'UTF-8')."</updated>\n";
+			$itemDate->setTimeZone($tz);
+			$feed.= "		<published>".htmlspecialchars($itemDate->toISO8601(true), ENT_COMPAT, 'UTF-8')."</published>\n";
+			$feed.= "		<updated>".htmlspecialchars($itemDate->toISO8601(true), ENT_COMPAT, 'UTF-8')."</updated>\n";
 			if (empty($data->items[$i]->guid) === true) {
 				$feed.= "		<id>".str_replace(' ', '%20', $url.$data->items[$i]->link)."</id>\n";
 			}

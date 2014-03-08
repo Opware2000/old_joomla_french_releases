@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 20411 2011-01-23 06:15:49Z infograf768 $
+ * @version		$Id: modules.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -45,10 +45,10 @@ function modChrome_sliders($module, &$params, &$attribs)
 			echo JHtml::_('sliders.panel', $module->title, 'module'.$module->id);
 		}
 		elseif (method_exists('mod'.$module->name.'Helper','getTitle')) {
-			echo JHtml::_('sliders.panel', call_user_func_array(array('mod'.$module->name.'Helper','getTitle'), array($params)), 'module'.$module->id);		
+			echo JHtml::_('sliders.panel', call_user_func_array(array('mod'.$module->name.'Helper','getTitle'), array($params)), 'module'.$module->id);
 		}
 		else {
-			echo JHtml::_('sliders.panel', JText::_('MOD_'.$module->name.'_TITLE'), 'module'.$module->id);		
+			echo JHtml::_('sliders.panel', JText::_('MOD_'.$module->name.'_TITLE'), 'module'.$module->id);
 		}
 		echo $content;
 	}
@@ -66,10 +66,10 @@ function modChrome_tabs($module, &$params, &$attribs)
 			echo JHtml::_('tabs.panel', $module->title, 'module'.$module->id);
 		}
 		elseif (method_exists('mod'.$module->name.'Helper','getTitle')) {
-			echo JHtml::_('tabs.panel', call_user_func_array(array('mod'.$module->name.'Helper','getTitle'), array($params)), 'module'.$module->id);		
+			echo JHtml::_('tabs.panel', call_user_func_array(array('mod'.$module->name.'Helper','getTitle'), array($params)), 'module'.$module->id);
 		}
 		else {
-			echo JHtml::_('tabs.panel', JText::_('MOD_'.$module->name.'_TITLE'), 'module'.$module->id);		
+			echo JHtml::_('tabs.panel', JText::_('MOD_'.$module->name.'_TITLE'), 'module'.$module->id);
 		}
 		echo $content;
 	}

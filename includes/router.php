@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: router.php 20757 2011-02-18 04:38:02Z dextercowley $
+ * @version		$Id: router.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -114,7 +114,7 @@ class JRouterSite extends JRouter
 		$vars	= array();
 		$app	= JFactory::getApplication();
 		$menu	= $app->getMenu(true);
-		 
+
 		//Handle an empty URL (special case)
 		if (!$uri->getVar('Itemid') && !$uri->getVar('option')) {
 			$item = $menu->getDefault(JFactory::getLanguage()->getTag());
@@ -143,7 +143,7 @@ class JRouterSite extends JRouter
 
 		// Only an Itemid  OR if filter language plugin set? Get the full information from the itemid
 		if (count($this->getVars()) == 1 || ( $app->getLanguageFilter() && count( $this->getVars()) == 2 )) {
-			
+
 			$item = $menu->getItem($this->getVar('Itemid'));
 			if ($item !== NULL && is_array($item->query)) {
 				$vars = $vars + $item->query;
@@ -241,7 +241,7 @@ class JRouterSite extends JRouter
 			$component = preg_replace('/[^A-Z0-9_\.-]/i', '', $this->_vars['option']);
 
 			// Use the component routing handler if it exists
-			$path = JPATH_SITE.DS.'components'.DS.$component.DS.'router.php';
+			$path = JPATH_SITE . '/components/' . $component . '/router.php';
 
 			if (file_exists($path) && count($segments)) {
 				if ($component != "com_search") { // Cheap fix on searches
@@ -300,7 +300,7 @@ class JRouterSite extends JRouter
 		$tmp		= '';
 
 		// Use the component routing handler if it exists
-		$path = JPATH_SITE.DS.'components'.DS.$component.DS.'router.php';
+		$path = JPATH_SITE . '/components/' . $component . '/router.php';
 
 		// Use the custom routing handler if it exists
 		if (file_exists($path) && !empty($query)) {

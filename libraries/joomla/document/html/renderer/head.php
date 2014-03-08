@@ -1,28 +1,35 @@
 <?php
 /**
- * @version		$Id: head.php 20874 2011-03-03 17:05:10Z dextercowley $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * JDocument head renderer
  *
- * @package		Joomla.Framework
- * @subpackage	Document
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  Document
+ * @since       11.1
  */
 class JDocumentRendererHead extends JDocumentRenderer
 {
 	/**
 	 * Renders the document head and returns the results as a string
 	 *
-	 * @param	string $name	(unused)
-	 * @param	array $params	Associative array of values
-	 * @return	string			The output of the script
+	 * @param   string  $head     (unused)
+	 * @param   array   $params   Associative array of values
+	 * @param   string  $content  The script
+	 *
+	 * @return  string  The output of the script
+	 *
+	 * @since   11.1
+	 *
+	 * @note    Unused arguments are retained to preserve backward compatibility.
 	 */
 	public function render($head, $params = array(), $content = null)
 	{
@@ -35,16 +42,20 @@ class JDocumentRendererHead extends JDocumentRenderer
 	}
 
 	/**
-	 * Generates the head html and return the results as a string
+	 * Generates the head HTML and return the results as a string
 	 *
-	 * @return string
+	 * @param   $document  The document for which the head will be created
+	 *
+	 * @return  string  The head hTML
+	 *
+	 * @since   11.1
 	 */
 	public function fetchHead(&$document)
 	{
 		// Trigger the onBeforeCompileHead event (skip for installation, since it causes an error)
 		$app = JFactory::getApplication();
 		$app->triggerEvent('onBeforeCompileHead');
-		// get line endings
+		// Get line endings
 		$lnEnd	= $document->_getLineEnd();
 		$tab	= $document->_getTab();
 		$tagEnd	= ' />';
@@ -65,13 +76,13 @@ class JDocumentRendererHead extends JDocumentRenderer
 					$content.= '; charset=' . $document->getCharset();
 					$buffer .= $tab.'<meta http-equiv="'.$name.'" content="'.htmlspecialchars($content).'"'.$tagEnd.$lnEnd;
 				}
-				else if ($type == 'standard') {
+				else if ($type == 'standard' && !empty($content)) {
 					$buffer .= $tab.'<meta name="'.$name.'" content="'.htmlspecialchars($content).'"'.$tagEnd.$lnEnd;
 				}
 			}
 		}
 
-		// dont add empty descriptions
+		// Don't add empty descriptions
 		$documentDescription = $document->getDescription();
 		if ($documentDescription) {
 			$buffer .= $tab.'<meta name="description" content="'.htmlspecialchars($documentDescription).'" />'.$lnEnd;
@@ -81,8 +92,13 @@ class JDocumentRendererHead extends JDocumentRenderer
 		$buffer .= $tab.'<title>'.htmlspecialchars($document->getTitle(), ENT_COMPAT, 'UTF-8').'</title>'.$lnEnd;
 
 		// Generate link declarations
-		foreach ($document->_links as $link) {
-			$buffer .= $tab.$link.$tagEnd.$lnEnd;
+		foreach ($document->_links as $link => $linkAtrr)
+		{
+			$buffer .= $tab.'<link href="'.$link.'" '.$linkAtrr['relType'].'="'.$linkAtrr['relation'].'"';
+			if ($temp = JArrayHelper::toString($linkAtrr['attribs'])) {
+				$buffer .= ' '.$temp;
+			}
+			$buffer .= ' />'.$lnEnd;
 		}
 
 		// Generate stylesheet links
@@ -93,7 +109,7 @@ class JDocumentRendererHead extends JDocumentRenderer
 				$buffer .= ' media="'.$strAttr['media'].'" ';
 			}
 			if ($temp = JArrayHelper::toString($strAttr['attribs'])) {
-				$buffer .= ' '.$temp;;
+				$buffer .= ' '.$temp;
 			}
 			$buffer .= $tagEnd.$lnEnd;
 		}

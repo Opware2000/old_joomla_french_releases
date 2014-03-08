@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.xhtmlxtras_dlg',{
 attribute_label_title:"Titre",
 attribute_label_id:"ID unique",

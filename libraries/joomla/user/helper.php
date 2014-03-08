@@ -1,33 +1,35 @@
 <?php
 /**
- * @version		$Id:helper.php 6961 2007-03-15 16:06:53Z tcp $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  User
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
- * Authorization helper class, provides static methods to perform various tasks relevant
- * to the Joomla user and authorization classes
+ * Authorisation helper class, provides static methods to perform various tasks relevant
+ * to the Joomla user and authorisation classes
  *
  * This class has influences and some method logic from the Horde Auth package
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	User
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  User
+ * @since       11.1
  */
-class JUserHelper
+abstract class JUserHelper
 {
 	/**
 	 * Method to add a user to a group.
 	 *
-	 * @param	integer		$userId		The id of the user.
-	 * @param	integer		$groupId	The id of the group.
-	 * @return	mixed		Boolean true on success, JException on error.
-	 * @since	1.6
+	 * @param   integer  $userId   The id of the user.
+	 * @param   integer  $groupId  The id of the group.
+	 *
+	 * @return  mixed  Boolean true on success, JException on error.
+	 *
+	 * @since   11.1
 	 */
 	public static function addUserToGroup($userId, $groupId)
 	{
@@ -81,9 +83,11 @@ class JUserHelper
 	/**
 	 * Method to get a list of groups a user is in.
 	 *
-	 * @param	integer		$userId		The id of the user.
-	 * @return	mixed		Array on success, JException on error.
-	 * @since	1.6
+	 * @param   integer  $userId  The id of the user.
+	 *
+	 * @return  mixed  Array on success, JException on error.
+	 *
+	 * @since   11.1
 	 */
 	public static function getUserGroups($userId)
 	{
@@ -96,10 +100,11 @@ class JUserHelper
 	/**
 	 * Method to remove a user from a group.
 	 *
-	 * @param	integer		$userId		The id of the user.
-	 * @param	integer		$groupId	The id of the group.
-	 * @return	mixed		Boolean true on success, JException on error.
-	 * @since	1.6
+	 * @param   integer  $userId		The id of the user.
+	 * @param   integer  $groupId	The id of the group.
+	 *
+	 * @return  mixed    Boolean true on success, JException on error.
+	 * @since   11.1
 	 */
 	public static function removeUserFromGroup($userId, $groupId)
 	{
@@ -107,10 +112,11 @@ class JUserHelper
 		$user = JUser::getInstance((int) $userId);
 
 		// Remove the user from the group if necessary.
-		if (in_array($groupId, $user->groups))
+        $key = array_search($groupId, $user->groups);
+		if ($key !== false)
 		{
 			// Remove the user from the group.
-			unset($user->groups[$groupId]);
+			unset($user->groups[$key]);
 
 			// Store the user object.
 			if (!$user->save()) {
@@ -134,11 +140,12 @@ class JUserHelper
 	/**
 	 * Method to set the groups for a user.
 	 *
-	 * @access	public
-	 * @param	integer		$userId		The id of the user.
-	 * @param	array		$groups		An array of group ids to put the user in.
-	 * @return	mixed		Boolean true on success, JException on error.
-	 * @since	1.6
+	 * @param   integer  $userId  The id of the user.
+	 * @param   array    $groups  An array of group ids to put the user in.
+	 *
+	 * @return  mixed  Boolean true on success, JException on error.
+	 *
+	 * @since   11.1
 	 */
 	public static function setUserGroups($userId, $groups)
 	{
@@ -188,6 +195,12 @@ class JUserHelper
 
 	/**
 	 * Gets the user profile information
+	 *
+	 * @param   integer  $userId  The id of the user.
+	 *
+	 * @return  object
+	 *
+	 * @since   11.1
 	 */
 	function getProfile($userId = 0)
 	{
@@ -199,7 +212,7 @@ class JUserHelper
 			$user	= JFactory::getUser((int) $userId);
 		}
 
-		// Get the dispatcher and load the users plugins.
+		// Get the dispatcher and load the user's plugins.
 		$dispatcher	= JDispatcher::getInstance();
 		JPluginHelper::importPlugin('user');
 
@@ -214,16 +227,18 @@ class JUserHelper
 	/**
 	 * Method to activate a user
 	 *
-	 * @param	string	$activation	Activation string
-	 * @return	boolean			True on success
-	 * @since	1.5
+	 * @param   string  $activation  Activation string
+	 *
+	 * @return  boolean  True on success
+	 *
+	 * @since   11.1
 	 */
 	public static function activateUser($activation)
 	{
 		// Initialize some variables.
 		$db = JFactory::getDbo();
 
-		// Lets get the id of the user we want to activate
+		// Let's get the id of the user we want to activate
 		$query = 'SELECT id'
 		. ' FROM #__users'
 		. ' WHERE activation = '.$db->Quote($activation)
@@ -260,8 +275,11 @@ class JUserHelper
 	/**
 	 * Returns userid if a user exists
 	 *
-	 * @param string The username to search on
-	 * @return int The user id or 0 if not found
+	 * @param   string The username to search on
+	 *
+	 * @return  integer  The user id or 0 if not found
+	 *
+	 * @since   11.1
 	 */
 	public static function getUserId($username)
 	{
@@ -276,18 +294,19 @@ class JUserHelper
 	/**
 	 * Formats a password using the current encryption.
 	 *
-	 * @access	public
-	 * @param	string	$plaintext	The plaintext password to encrypt.
-	 * @param	string	$salt		The salt to use to encrypt the password. []
-	 *								If not present, a new salt will be
-	 *								generated.
-	 * @param	string	$encryption	The kind of pasword encryption to use.
-	 *								Defaults to md5-hex.
-	 * @param	boolean	$show_encrypt  Some password systems prepend the kind of
-	 *								encryption to the crypted password ({SHA},
-	 *								etc). Defaults to false.
+	 * @param   string   $plaintext     The plaintext password to encrypt.
+	 * @param   string   $salt          The salt to use to encrypt the password. []
+	 *                                  If not present, a new salt will be
+	 *                                  generated.
+	 * @param   string   $encryption    The kind of pasword encryption to use.
+	 *                                  Defaults to md5-hex.
+	 * @param   boolean  $show_encrypt  Some password systems prepend the kind of
+	 *                                  encryption to the crypted password ({SHA},
+	 *                                  etc). Defaults to false.
 	 *
-	 * @return string  The encrypted password.
+	 * @return  string  The encrypted password.
+	 *
+	 * @since   11.1
 	 */
 	public static function getCryptedPassword($plaintext, $salt = '', $encryption = 'md5-hex', $show_encrypt = false)
 	{
@@ -373,16 +392,17 @@ class JUserHelper
 	 * of an existing password, or for encryption types that use the plaintext
 	 * in the generation of the salt.
 	 *
-	 * @access public
-	 * @param string $encryption  The kind of pasword encryption to use.
-	 *							Defaults to md5-hex.
-	 * @param string $seed		The seed to get the salt from (probably a
-	 *							previously generated password). Defaults to
-	 *							generating a new seed.
-	 * @param string $plaintext	The plaintext password that we're generating
-	 *							a salt for. Defaults to none.
+	 * @param   string  $encryption  The kind of pasword encryption to use.
+	 *                               Defaults to md5-hex.
+	 * @param   string  $seed        The seed to get the salt from (probably a
+	 *                               previously generated password). Defaults to
+	 *                               generating a new seed.
+	 * @param   string  $plaintext   The plaintext password that we're generating
+	 *                               a salt for. Defaults to none.
 	 *
-	 * @return string  The generated or extracted salt.
+	 * @return  string  The generated or extracted salt.
+	 *
+	 * @since   11.1
 	 */
 	public static function getSalt($encryption = 'md5-hex', $seed = '', $plaintext = '')
 	{
@@ -460,10 +480,11 @@ class JUserHelper
 	/**
 	 * Generate a random password
 	 *
-	 * @static
-	 * @param	int		$length	Length of the password to generate
-	 * @return	string			Random Password
-	 * @since	1.5
+	 * @param   integer  $length  Length of the password to generate
+	 *
+	 * @return  string  Random Password
+	 *
+	 * @since   11.1
 	 */
 	public static function genRandomPassword($length = 8)
 	{
@@ -486,13 +507,14 @@ class JUserHelper
 	/**
 	 * Converts to allowed 64 characters for APRMD5 passwords.
 	 *
-	 * @access private
-	 * @param string  $value
-	 * @param integer $count
-	 * @return string  $value converted to the 64 MD5 characters.
-	 * @since 1.5
+	 * @param   string   $value
+	 * @param   integer  $count
+	 *
+	 * @return  string  $value converted to the 64 MD5 characters.
+	 *
+	 * @since   11.1
 	 */
-	private static function _toAPRMD5($value, $count)
+	protected static function _toAPRMD5($value, $count)
 	{
 		/* 64 characters that are valid for APRMD5 passwords. */
 		$APRMD5 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -509,10 +531,11 @@ class JUserHelper
 	/**
 	 * Converts hexadecimal string to binary data.
 	 *
-	 * @access private
-	 * @param string $hex  Hex data.
-	 * @return string  Binary data.
-	 * @since 1.5
+	 * @param   string   $hex  Hex data.
+	 *
+	 * @return  string  Binary data.
+	 *
+	 * @since   11.1
 	 */
 	private static function _bin($hex)
 	{

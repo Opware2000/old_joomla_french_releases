@@ -1,33 +1,40 @@
 <?php
 /**
- * @version		$Id: user.php 20228 2011-01-10 00:52:54Z eddieajau $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  Database
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Users table
  *
- * @package		Joomla.Framework
- * @subpackage	Table
- * @since		1.0
+ * @package     Joomla.Platform
+ * @subpackage  Table
+ * @since       11.1
  */
 class JTableUser extends JTable
 {
 	/**
 	 * Associative array of user names => group ids
 	 *
-	 * @access	public
-	 * @since	1.6
-	 * @var		array
+	 * @var    array
+	 * @since   11.1
 	 */
 	var $groups;
 
 	/**
-	* @param database A database connector object
-	*/
+	 * Contructor
+	 *
+	 * @param  database   A database connector object
+	 *
+	 * @return  JTableUser
+	 *
+	 * @since  11.1
+	 */
 	function __construct(&$db)
 	{
 		parent::__construct('#__users', 'id', $db);
@@ -41,10 +48,13 @@ class JTableUser extends JTable
 	 * Method to load a user, user groups, and any other necessary data
 	 * from the database so that it can be bound to the user object.
 	 *
-	 * @access	public
-	 * @param	integer		$userId		An optional user id.
-	 * @return	boolean		True on success, false on failure.
-	 * @since	1.0
+	 * @param   integer  $userId  An optional user id.
+	 * @param   boolean  $reset   False if row not found or on error
+	 *                            (internal error state set in that case).
+	 *
+	 * @return  boolean  True on success, false on failure.
+	 *
+	 * @since   11.1
 	 */
 	function load($userId = null, $reset = true)
 	{
@@ -109,16 +119,17 @@ class JTableUser extends JTable
 	/**
 	 * Method to bind the user, user groups, and any other necessary data.
 	 *
-	 * @access	public
-	 * @param	array		$array		The data to bind.
-	 * @param	mixed		$ignore		An array or space separated list of fields to ignore.
-	 * @return	boolean		True on success, false on failure.
-	 * @since	1.0
+	 * @param   array    $array    The data to bind.
+	 * @param   mixed    $ignore   An array or space separated list of fields to ignore.
+	 *
+	 * @return  boolean  True on success, false on failure.
+	 *
+	 * @since   11.1
 	 */
 	function bind($array, $ignore = '')
 	{
 		if (key_exists('params', $array) && is_array($array['params'])) {
-			$registry = new JRegistry();
+			$registry = new JRegistry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string)$registry;
 		}
@@ -134,9 +145,9 @@ class JTableUser extends JTable
 
 			// Get the titles for the user groups.
 			$this->_db->setQuery(
-				'SELECT `id`, `title`' .
-				' FROM `#__usergroups`' .
-				' WHERE `id` = '.implode(' OR `id` = ', $this->groups)
+				'SELECT '.$this->_db->quoteName('id').', '.$this->_db->quoteName('title') .
+				' FROM '.$this->_db->quoteName('#__usergroups') .
+				' WHERE '.$this->_db->quoteName('id').' = '.implode(' OR '.$this->_db->quoteName('id').' = ', $this->groups)
 			);
 			// Set the titles for the user groups.
 			$this->groups = $this->_db->loadAssocList('title','id');
@@ -154,7 +165,9 @@ class JTableUser extends JTable
 	/**
 	 * Validation and filtering
 	 *
-	 * @return boolean True is satisfactory
+	 * @return  boolean  True is satisfactory
+	 *
+	 * @since   11.1
 	 */
 	function check()
 	{
@@ -182,7 +195,7 @@ class JTableUser extends JTable
 		}
 
 		// Set the registration timestamp
-		if ($this->registerDate == null || $this->registerDate == '0000-00-00 00:00:00' ) {
+		if ($this->registerDate == null || $this->registerDate == $this->_db->getNullDate() ) {
 			$this->registerDate = JFactory::getDate()->toMySQL();
 		}
 
@@ -234,6 +247,20 @@ class JTableUser extends JTable
 		return true;
 	}
 
+	/**
+	 * Method to store a row in the database from the JTable instance properties.
+	 * If a primary key value is set the row with that primary key value will be
+	 * updated with the instance property values.  If no primary key value is set
+	 * a new row will be inserted into the database with the properties from the
+	 * JTable instance.
+	 *
+	 * @param   boolean  $updateNulls  True to update fields even if they are null.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @link    http://docs.joomla.org/JTable/store
+	 * @since   11.1
+	 */
 	function store($updateNulls = false)
 	{
 		// Get the table key and key value.
@@ -271,8 +298,8 @@ class JTableUser extends JTable
 		{
 			// Delete the old user group maps.
 			$this->_db->setQuery(
-				'DELETE FROM `#__user_usergroup_map`' .
-				' WHERE `user_id` = '.(int) $this->id
+				'DELETE FROM '.$this->_db->quoteName('#__user_usergroup_map') .
+				' WHERE '.$this->_db->quoteName('user_id').' = '.(int) $this->id
 			);
 			$this->_db->query();
 
@@ -284,7 +311,7 @@ class JTableUser extends JTable
 
 			// Set the new user group maps.
 			$this->_db->setQuery(
-				'INSERT INTO `#__user_usergroup_map` (`user_id`, `group_id`)' .
+				'INSERT INTO '.$this->_db->quoteName('#__user_usergroup_map').' ('.$this->_db->quoteName('user_id').', '.$this->_db->quoteName('group_id').')' .
 				' VALUES ('.$this->id.', '.implode('), ('.$this->id.', ', $this->groups).')'
 			);
 			$this->_db->query();
@@ -303,10 +330,11 @@ class JTableUser extends JTable
 	 * Method to delete a user, user groups, and any other necessary
 	 * data from the database.
 	 *
-	 * @access	public
-	 * @param	integer		$userId		An optional user id.
-	 * @return	boolean		True on success, false on failure.
-	 * @since	1.0
+	 * @param   integer  $userId   An optional user id.
+	 *
+	 * @return  boolean  True on success, false on failure.
+	 *
+	 * @since   11.1
 	 */
 	function delete($userId = null)
 	{
@@ -318,8 +346,8 @@ class JTableUser extends JTable
 
 		// Delete the user.
 		$this->_db->setQuery(
-			'DELETE FROM `'.$this->_tbl.'`' .
-			' WHERE `'.$this->_tbl_key.'` = '.(int) $this->$k
+			'DELETE FROM '.$this->_db->quoteName($this->_tbl).
+			' WHERE '.$this->_db->quoteName($this->_tbl_key).' = '.(int) $this->$k
 		);
 		$this->_db->query();
 
@@ -331,8 +359,8 @@ class JTableUser extends JTable
 
 		// Delete the user group maps.
 		$this->_db->setQuery(
-			'DELETE FROM `#__user_usergroup_map`' .
-			' WHERE `user_id` = '.(int) $this->$k
+			'DELETE FROM '.$this->_db->quoteName('#__user_usergroup_map') .
+			' WHERE '.$this->_db->quoteName('user_id').' = '.(int) $this->$k
 		);
 		$this->_db->query();
 
@@ -347,8 +375,8 @@ class JTableUser extends JTable
 		 */
 
 		$this->_db->setQuery(
-			'DELETE FROM `#__messages_cfg`' .
-			' WHERE `user_id` = '.(int) $this->$k
+			'DELETE FROM '.$this->_db->quoteName('#__messages_cfg') .
+			' WHERE '.$this->_db->quoteName('user_id').' = '.(int) $this->$k
 		);
 		$this->_db->query();
 
@@ -359,8 +387,8 @@ class JTableUser extends JTable
 		}
 
 		$this->_db->setQuery(
-			'DELETE FROM `#__messages`' .
-			' WHERE `user_id_to` = '.(int) $this->$k
+			'DELETE FROM '.$this->_db->quoteName('#__messages') .
+			' WHERE '.$this->_db->quoteName('user_id_to').' = '.(int) $this->$k
 		);
 		$this->_db->query();
 
@@ -376,8 +404,11 @@ class JTableUser extends JTable
 	/**
 	 * Updates last visit time of user
 	 *
-	 * @param int The timestamp, defaults to 'now'
-	 * @return boolean False if an error occurs
+	 * @param   integer  The timestamp, defaults to 'now'
+	 *
+	 * @return  boolean  False if an error occurs
+	 *
+	 * @since   11.1
 	 */
 	function setLastVisit($timeStamp = null, $userId = null)
 	{
@@ -396,16 +427,17 @@ class JTableUser extends JTable
 		$date = JFactory::getDate($timeStamp);
 
 		// Update the database row for the user.
-		$this->_db->setQuery(
-			'UPDATE `'.$this->_tbl.'`' .
-			' SET `lastvisitDate` = '.$this->_db->Quote($date->toMySQL()) .
-			' WHERE `id` = '.(int) $userId
-		);
-		$this->_db->query();
+		$db = $this->_db;
+		$query = $db->getQuery(true);
+		$query->update($db->quoteName($this->_tbl));
+		$query->set($db->quoteName('lastvisitDate') . '=' . $db->quote($date->format($db->getDateFormat())));
+		$query->where($db->quoteName('id') . '=' . (int)$userId);
+		$db->setQuery($query);
+		$db->query();
 
 		// Check for a database error.
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
+		if ($db->getErrorNum()) {
+			$this->setError($db->getErrorMsg());
 			return false;
 		}
 

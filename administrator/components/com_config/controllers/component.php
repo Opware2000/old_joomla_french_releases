@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: component.php 20756 2011-02-18 04:34:38Z dextercowley $
+ * @version		$Id: component.php 21734 2011-07-04 21:30:32Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	com_config
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -103,13 +103,13 @@ class ConfigControllerComponent extends JController
 			$this->setRedirect('index.php?option=com_config&view=component&component='.$option.'&tmpl=component', $message, 'error');
 			return false;
 		}
-		
+
 		// Set the redirect based on the task.
 		switch ($this->getTask())
 		{
 			case 'apply':
 				$message = JText::_('COM_CONFIG_SAVE_SUCCESS');
-				$this->setRedirect('index.php?option=com_config&view=component&component='.$option.'&tmpl=component', $message);
+				$this->setRedirect('index.php?option=com_config&view=component&component='.$option.'&tmpl=component&refresh=1', $message);
 				break;
 
 			case 'save':
@@ -117,7 +117,7 @@ class ConfigControllerComponent extends JController
 				$this->setRedirect('index.php?option=com_config&view=close&tmpl=component');
 				break;
 		}
-		
+
 		return true;
 	}
 }

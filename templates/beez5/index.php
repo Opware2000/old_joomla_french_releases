@@ -143,9 +143,9 @@ $doc->addScript($this->baseurl.'/templates/beez5/javascript/md_stylechanger.js',
 		<?php endif; ?>
 		<div id="<?php echo $showRightColumn ? 'contentarea2' : 'contentarea'; ?>">
 					<div id="breadcrumbs">
-						
+
 							<jdoc:include type="modules" name="position-2" />
-					
+
 					</div>
 
 					<?php if ($navposition=='left' AND $showleft) : ?>
@@ -177,15 +177,7 @@ $doc->addScript($this->baseurl.'/templates/beez5/javascript/md_stylechanger.js',
 							</div>
 						<?php endif; ?>
 
-						<?php if ($this->getBuffer('message')) : ?>
-							<div class="error">
-								<h2>
-									<?php echo JText::_('TPL_BEEZ5_SYSTEM_MESSAGE'); ?>
-								</h2>
-								<jdoc:include type="message" />
-							</div>
-						<?php endif; ?>
-
+							<jdoc:include type="message" />
 							<jdoc:include type="component" />
 
 						</div><!-- end main -->

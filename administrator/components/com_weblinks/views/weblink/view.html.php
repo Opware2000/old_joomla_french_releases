@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 20989 2011-03-18 09:19:41Z infograf768 $
+ * @version		$Id: view.html.php 21655 2011-06-23 05:43:24Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -61,18 +61,18 @@ class WeblinksViewWeblink extends JView
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||(count($user->getAuthorisedCategories('com_weblinks', 'core.create')))))
 		{
-			JToolBarHelper::apply('weblink.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('weblink.save', 'JTOOLBAR_SAVE');
+			JToolBarHelper::apply('weblink.apply');
+			JToolBarHelper::save('weblink.save');
 		}
-		if (!$checkedOut && (count($user->getAuthorisedCategories('com_weblinks', 'core.create')))){			
-			JToolBarHelper::custom('weblink.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+		if (!$checkedOut && (count($user->getAuthorisedCategories('com_weblinks', 'core.create')))){
+			JToolBarHelper::save2new('weblink.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && (count($user->getAuthorisedCategories('com_weblinks', 'core.create')) > 0)) {
-			JToolBarHelper::custom('weblink.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			JToolBarHelper::save2copy('weblink.save2copy');
 		}
 		if (empty($this->item->id)) {
-			JToolBarHelper::cancel('weblink.cancel', 'JTOOLBAR_CANCEL');
+			JToolBarHelper::cancel('weblink.cancel');
 		}
 		else {
 			JToolBarHelper::cancel('weblink.cancel', 'JTOOLBAR_CLOSE');

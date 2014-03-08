@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: contact.php 21593 2011-06-21 02:45:51Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -30,14 +30,14 @@ class ContactModelContact extends JModelAdmin
 	 * @since	1.6
 	 */
 	protected function canDelete($record)
-	{ 
+	{
 		if (!empty($record->id)) {
 			if ($record->published != -2) {
 				return ;
-			}		
+			}
 			$user = JFactory::getUser();
 			return $user->authorise('core.delete', 'com_contact.category.'.(int) $record->catid);
-		}	
+		}
 	}
 
 	/**
@@ -127,7 +127,7 @@ class ContactModelContact extends JModelAdmin
 		if ($item = parent::getItem($pk)) {
 			// Convert the params field to an array.
 			$registry = new JRegistry;
-			$registry->loadJSON($item->metadata);
+			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
 		}
 

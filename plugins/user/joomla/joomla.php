@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: joomla.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: joomla.php 21707 2011-06-28 21:31:53Z chdemko $
  * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -132,12 +132,13 @@ class plgUserJoomla extends JPlugin
 
 		// If _getUser returned an error, then pass it back.
 		if (JError::isError($instance)) {
-			return $instance;
+			return false;
 		}
 
 		// If the user is blocked, redirect with an error
 		if ($instance->get('block') == 1) {
-			return JError::raiseWarning('SOME_ERROR_CODE', JText::_('JERROR_NOLOGIN_BLOCKED'));
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('JERROR_NOLOGIN_BLOCKED'));
+			return false;
 		}
 
 		// Authorise the user based on the group information
@@ -148,7 +149,8 @@ class plgUserJoomla extends JPlugin
 		// Chek the user can login.
 		$result	= $instance->authorise($options['action']);
 		if (!$result) {
-			return JError::raiseWarning(401, JText::_('JERROR_LOGIN_DENIED'));
+			JError::raiseWarning(401, JText::_('JERROR_LOGIN_DENIED'));
+			return false;
 		}
 
 		// Mark the user as logged in
@@ -159,7 +161,7 @@ class plgUserJoomla extends JPlugin
 		$session->set('user', $instance);
 
 		$db = JFactory::getDBO();
-		
+
 		// Check to see the the session already exists.
 		$app = JFactory::getApplication();
 		$app->checkSession();
@@ -208,7 +210,7 @@ class plgUserJoomla extends JPlugin
 			// Destroy the php session for this user
 			$session->destroy();
 		}
-		
+
 		// Force logout all users with that userid
 		$db = JFactory::getDBO();
 		$db->setQuery(

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: weblinks.php 20267 2011-01-11 03:44:44Z eddieajau $
+ * @version		$Id: weblinks.php 21766 2011-07-08 12:20:23Z eddieajau $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -18,7 +18,7 @@ jimport('joomla.application.component.modellist');
  */
 class WeblinksModelWeblinks extends JModelList
 {
-	
+
 	/**
 	 * Constructor.
 	 *
@@ -52,8 +52,8 @@ class WeblinksModelWeblinks extends JModelList
 
 		parent::__construct($config);
 	}
-	
-	
+
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -124,6 +124,7 @@ class WeblinksModelWeblinks extends JModelList
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -156,6 +157,13 @@ class WeblinksModelWeblinks extends JModelList
 		// Filter by access level.
 		if ($access = $this->getState('filter.access')) {
 			$query->where('a.access = '.(int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN ('.$groups.')');
 		}
 
 		// Filter by published state

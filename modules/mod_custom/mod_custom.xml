@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension
 	type="module"
-	version="1.6.0"
+	version="1.7"
 	client="administrator">
 	<name>mod_custom</name>
 	<author>Joomla! Project</author>
@@ -10,7 +10,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>1.6.0</version>
+	<version>1.7.0</version>
 	<description>MOD_CUSTOM_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_custom">mod_custom.php</filename>
@@ -19,7 +19,7 @@
 	</files>
 	<languages>
 		<language tag="en-GB">en-GB.mod_custom.ini</language>
-		<language tag="en-GB">en-GB.mod_custom.sys.ini</language>	
+		<language tag="en-GB">en-GB.mod_custom.sys.ini</language>
 	</languages>
 
 	<help key="JHELP_EXTENSIONS_MODULE_MANAGER_CUSTOM_HTML" />
@@ -37,6 +37,8 @@
 					<option
 						value="1">JYes</option>
 				</field>
+				<field name="backgroundimage" type="media"
+					label="MOD_CUSTOM_FIELD_BACKGROUNDIMAGE_LABEL" description="MOD_BACKGROUNDIMAGE_FIELD_LOGO_DESC" />
 			</fieldset>
 			<fieldset
 				name="advanced">

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: source.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: source.php 21320 2011-05-11 01:01:37Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_templates
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -69,6 +69,18 @@ class TemplatesModelSource extends JModelForm
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication();
+
+		// Codemirror or Editor None should be enabled
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select('COUNT(*)');
+		$query->from('#__extensions as a');
+		$query->where('(a.name ='.$db->quote('plg_editors_codemirror').' AND a.enabled = 1) OR (a.name ='.$db->quote('plg_editors_none').' AND a.enabled = 1)');
+		$db->setQuery($query);
+		$state = $db->loadResult();
+		if ((int)$state < 1 ) {
+			$app->enqueueMessage(JText::_('COM_TEMPLATES_ERROR_EDITOR_DISABLED'), 'warning');
+		}
 
 		// Get the form.
 		$form = $this->loadForm('com_templates.source', 'source', array('control' => 'jform', 'load_data' => $loadData));

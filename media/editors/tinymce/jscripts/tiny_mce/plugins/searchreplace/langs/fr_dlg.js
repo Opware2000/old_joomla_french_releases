@@ -1,4 +1,4 @@
-// FR lang variables - Sarki pour Joomla! FR 31-07-09
+// FR lang variables - Sarki pour Joomla! FR 2011-07-17
 tinyMCE.addI18n('fr.searchreplace_dlg',{
 searchnext_desc:"Trouver d'autres r\u00E9sultats",
 notfound:"La recherche a \u00E9t\u00E9 effectu\u00E9e avec succ\u00E8s mais aucun r\u00E9sultat n'a pas pu \u00EAtre trouv\u00E9.",

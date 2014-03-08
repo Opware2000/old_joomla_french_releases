@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20985 2011-03-17 18:34:35Z infograf768 $
+ * @version		$Id: default.php 21518 2011-06-10 21:38:12Z chdemko $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.DS.'helpers');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // If the page class is defined, add to class as suffix.
 // It will be a separate class if the user starts it with a space

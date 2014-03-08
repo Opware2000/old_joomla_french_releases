@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_items.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: default_items.php 21538 2011-06-14 09:39:42Z infograf768 $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -10,7 +10,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.DS.'helpers');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 $params = &$this->params;
 ?>
 
@@ -34,7 +34,7 @@ $params = &$this->params;
 <?php if ($params->get('show_parent_category')) : ?>
 		<dd class="parent-category-name">
 			<?php	$title = $this->escape($item->parent_title);
-					$url = '<a href="'.JRoute::_(ContentHelperRoute::getCategoryRoute($item->catslug)).'">'.$title.'</a>';?>
+					$url = '<a href="'.JRoute::_(ContentHelperRoute::getCategoryRoute($item->parent_slug)).'">'.$title.'</a>';?>
 			<?php if ($params->get('link_parent_category') && $item->parent_slug) : ?>
 				<?php echo JText::sprintf('COM_CONTENT_PARENT', $url); ?>
 				<?php else : ?>
@@ -70,19 +70,19 @@ $params = &$this->params;
 		</dd>
 <?php endif; ?>
 <?php if ($params->get('show_author') && !empty($item->author )) : ?>
-	<dd class="createdby"> 
+	<dd class="createdby">
 		<?php $author =  $item->author; ?>
 		<?php $author = ($item->created_by_alias ? $item->created_by_alias : $author);?>
 
 			<?php if (!empty($item->contactid ) &&  $params->get('link_author') == true):?>
-				<?php 	echo JText::sprintf('COM_CONTENT_WRITTEN_BY' , 
+				<?php 	echo JText::sprintf('COM_CONTENT_WRITTEN_BY' ,
 				 JHtml::_('link',JRoute::_('index.php?option=com_contact&view=contact&id='.$item->contactid),$author)); ?>
 
 			<?php else :?>
 				<?php echo JText::sprintf('COM_CONTENT_WRITTEN_BY', $author); ?>
 			<?php endif; ?>
 	</dd>
-<?php endif; ?>	
+<?php endif; ?>
 <?php if ($params->get('show_hits')) : ?>
 		<dd class="hits">
 		<?php echo JText::sprintf('COM_CONTENT_ARTICLE_HITS', $item->hits); ?>
@@ -95,7 +95,7 @@ $params = &$this->params;
 <?php if ($params->get('show_intro')) :?>
 	<div class="intro">
 		<?php echo JHtml::_('string.truncate', $item->introtext, $params->get('introtext_limit')); ?>
-	</div>		
+	</div>
 <?php endif; ?>
 	</li>
 <?php endforeach; ?>

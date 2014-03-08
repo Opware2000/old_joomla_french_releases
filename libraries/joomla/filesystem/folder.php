@@ -1,40 +1,39 @@
 <?php
 /**
- * @version		$Id: folder.php 21738 2011-07-05 13:52:51Z chdemko $
- * @package		Joomla.Framework
- * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Platform
+ * @subpackage  FileSystem
+ *
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-// No direct access
-defined('JPATH_BASE') or die;
+defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.filesystem.path');
 
 /**
  * A Folder handling class
  *
- * @static
- * @package		Joomla.Framework
- * @subpackage	FileSystem
- * @since		1.5
+ * @package     Joomla.Platform
+ * @subpackage  FileSystem
+ * @since       11.1
  */
 abstract class JFolder
 {
 	/**
 	 * Copy a folder.
 	 *
-	 * @param	string	The path to the source folder.
-	 * @param	string	The path to the destination folder.
-	 * @param	string	An optional base path to prefix to the file names.
-	 * @param	boolean	Optionally force folder/file overwrites.
-	 * @return	mixed	JError object on failure or boolean True on success.
-	 * @since	1.5
+	 * @param   string   $src          The path to the source folder.
+	 * @param   string   $dest         The path to the destination folder.
+	 * @param   string   $path         An optional base path to prefix to the file names.
+	 * @param   boolean  $use_streams  Optionally force folder/file overwrites.
+	 *
+	 * @return  mixed  JError object on failure or boolean True on success.
+	 * @since   11.1
 	 */
 	public static function copy($src, $dest, $path = '', $force = false, $use_streams=false)
 	{
-		set_time_limit(ini_get('max_execution_time'));
+		@set_time_limit(ini_get('max_execution_time'));
 
 		// Initialise variables.
 		jimport('joomla.client.helper');
@@ -42,8 +41,8 @@ abstract class JFolder
 
 		if ($path)
 		{
-			$src = JPath::clean($path . DS . $src);
-			$dest = JPath::clean($path . DS . $dest);
+			$src = JPath::clean($path . '/' . $src);
+			$dest = JPath::clean($path . '/' . $dest);
 		}
 
 		// Eliminate trailing directory separators, if any
@@ -62,7 +61,7 @@ abstract class JFolder
 			return JError::raiseError(-1, JText::_('JLIB_FILESYSTEM_ERROR_FOLDER_CREATE'));
 		}
 
-		// if we're using ftp and don't have streams enabled
+		// If we're using ftp and don't have streams enabled
 		if ($FTPOptions['enabled'] == 1 && !$use_streams)
 		{
 			// Connect the FTP client
@@ -78,8 +77,8 @@ abstract class JFolder
 			// Walk through the directory copying files and recursing into folders.
 			while (($file = readdir($dh)) !== false)
 			{
-				$sfid = $src . DS . $file;
-				$dfid = $dest . DS . $file;
+				$sfid = $src . '/' . $file;
+				$dfid = $dest . '/' . $file;
 				switch (filetype($sfid))
 				{
 					case 'dir':
@@ -110,8 +109,8 @@ abstract class JFolder
 			// Walk through the directory copying files and recursing into folders.
 			while (($file = readdir($dh)) !== false)
 			{
-				$sfid = $src . DS . $file;
-				$dfid = $dest . DS . $file;
+				$sfid = $src . '/' . $file;
+				$dfid = $dest . '/' . $file;
 				switch (filetype($sfid))
 				{
 					case 'dir':
@@ -148,10 +147,11 @@ abstract class JFolder
 	/**
 	 * Create a folder -- and all necessary parent folders.
 	 *
-	 * @param string A path to create from the base path.
-	 * @param int Directory permissions to set for folders created.
-	 * @return boolean True if successful.
-	 * @since 1.5
+	 * @param   string   $path   A path to create from the base path.
+	 * @param   integer  $mode   Directory permissions to set for folders created. 0755 by default.
+	 *
+	 * @return  boolean  True if successful.
+	 * @since   11.1
 	 */
 	public static function create($path = '', $mode = 0755)
 	{
@@ -273,13 +273,14 @@ abstract class JFolder
 	/**
 	 * Delete a folder.
 	 *
-	 * @param string The path to the folder to delete.
-	 * @return boolean True on success.
-	 * @since 1.5
+	 * @param   string   $path  The path to the folder to delete.
+	 *
+	 * @return  boolean  True on success.
+	 * @since   11.1
 	 */
 	public static function delete($path)
 	{
-		set_time_limit(ini_get('max_execution_time'));
+		@set_time_limit(ini_get('max_execution_time'));
 
 		// Sanity check
 		if (!$path)
@@ -344,7 +345,7 @@ abstract class JFolder
 		}
 
 		// In case of restricted permissions we zap it one way or the other
-		// as long as the owner is either the webserver or the ftp
+		// as long as the owner is either the webserver or the ftp.
 		if (@rmdir($path))
 		{
 			$ret = true;
@@ -367,11 +368,13 @@ abstract class JFolder
 	/**
 	 * Moves a folder.
 	 *
-	 * @param string The path to the source folder.
-	 * @param string The path to the destination folder.
-	 * @param string An optional base path to prefix to the file names.
-	 * @return mixed Error message on false or boolean true on success.
-	 * @since 1.5
+	 * @param   string   $src          The path to the source folder.
+	 * @param   string   $dest         The path to the destination folder.
+	 * @param   string   $path         An optional base path to prefix to the file names.
+	 * @param   boolean  $use_streams
+	 *
+	 * @return  mixed  Error message on false or boolean true on success.
+	 * @since   11.1
 	 */
 	public static function move($src, $dest, $path = '', $use_streams=false)
 	{
@@ -381,8 +384,8 @@ abstract class JFolder
 
 		if ($path)
 		{
-			$src = JPath::clean($path . DS . $src);
-			$dest = JPath::clean($path . DS . $dest);
+			$src = JPath::clean($path . '/' . $src);
+			$dest = JPath::clean($path . '/' . $dest);
 		}
 
 		if (!self::exists($src)){
@@ -434,9 +437,10 @@ abstract class JFolder
 	/**
 	 * Wrapper for the standard file_exists function
 	 *
-	 * @param string Folder name relative to installation dir
-	 * @return boolean True if path is a folder
-	 * @since 1.5
+	 * @param   string  $path  Folder name relative to installation dir
+	 *
+	 * @return  boolean  True if path is a folder
+	 * @since   11.1
 	 */
 	public static function exists($path)
 	{
@@ -446,16 +450,17 @@ abstract class JFolder
 	/**
 	 * Utility function to read the files in a folder.
 	 *
-	 * @param	string	The path of the folder to read.
-	 * @param	string	A filter for file names.
-	 * @param	mixed	True to recursively search into sub-folders, or an
-	 * integer to specify the maximum depth.
-	 * @param	boolean	True to return the full path to the file.
-	 * @param	array	Array with names of files which should not be shown in
-	 * the result.
-	 * @param	array	Array of filter to exclude
-	 * @return	array	Files in the given folder.
-	 * @since 1.5
+	 * @param   string  The path of the folder to read.
+	 * @param   string  A filter for file names.
+	 * @param   mixed   True to recursively search into sub-folders, or an
+	 *                  integer to specify the maximum depth.
+	 * @param   boolean True to return the full path to the file.
+	 * @param   array   Array with names of files which should not be shown in
+	 *                  the result.
+	 * @param   array   Array of filter to exclude
+	 *
+	 * @return  array  Files in the given folder.
+	 * @since   11.1
 	 */
 	public static function files($path, $filter = '.', $recurse = false, $full = false, $exclude = array('.svn', 'CVS','.DS_Store','__MACOSX'), $excludefilter = array('^\..*','.*~'))
 	{
@@ -488,17 +493,18 @@ abstract class JFolder
 	/**
 	 * Utility function to read the folders in a folder.
 	 *
-	 * @param	string	The path of the folder to read.
-	 * @param	string	A filter for folder names.
-	 * @param	mixed	True to recursively search into sub-folders, or an
-	 * integer to specify the maximum depth.
-	 * @param	boolean	True to return the full path to the folders.
-	 * @param	array	Array with names of folders which should not be shown in
-	 * the result.
-	 * @param	array	Array with regular expressions matching folders which
-	 * should not be shown in the result.
-	 * @return	array	Folders in the given folder.
-	 * @since 1.5
+	 * @param   string   $path           The path of the folder to read.
+	 * @param   string   $filter         A filter for folder names.
+	 * @param   mixed    $recurse        True to recursively search into sub-folders, or an
+	 *                                   integer to specify the maximum depth.
+	 * @param   boolean  $full           True to return the full path to the folders.
+	 * @param   array    $exclude        Array with names of folders which should not be shown in
+	 *                                   the result.
+	 * @param   array    $excludefilter  Array with regular expressions matching folders which
+	 *                                   should not be shown in the result.
+	 *
+	 * @return  array  Folders in the given folder.
+	 * @since   11.1
 	 */
 	public static function folders($path, $filter = '.', $recurse = false, $full = false, $exclude = array('.svn', 'CVS','.DS_Store','__MACOSX'), $excludefilter = array('^\..*'))
 	{
@@ -531,33 +537,34 @@ abstract class JFolder
 	/**
 	 * Function to read the files/folders in a folder.
 	 *
-	 * @param	string	The path of the folder to read.
-	 * @param	string	A filter for file names.
-	 * @param	mixed	True to recursively search into sub-folders, or an
-	 * integer to specify the maximum depth.
-	 * @param	boolean	True to return the full path to the file.
-	 * @param	array	Array with names of files which should not be shown in
-	 * the result.
-	 * @param	string	Regexp of files to exclude
-	 * @param	boolean	true to read the files, false to read the folders
-	 * @return	array	Files.
-	 * @since 1.5
+	 * @param   string   $path                  The path of the folder to read.
+	 * @param   string   $filter                A filter for file names.
+	 * @param   mixed    $recurse               True to recursively search into sub-folders, or an
+	 *                                          integer to specify the maximum depth.
+	 * @param   boolean  $full                  True to return the full path to the file.
+	 * @param   array    $exclude               Array with names of files which should not be shown in
+	 *                                          the result.
+	 * @param   string   $excludefilter_string  Regexp of files to exclude
+	 * @param   boolean  $fndfiles              True to read the files, false to read the folders
+	 *
+	 * @return  array  Files.
+	 * @since   11.1
 	 */
-	private static function _items($path, $filter, $recurse, $full, $exclude, $excludefilter_string, $findfiles)
+	protected static function _items($path, $filter, $recurse, $full, $exclude, $excludefilter_string, $findfiles)
 	{
-		set_time_limit(ini_get('max_execution_time'));
+		@set_time_limit(ini_get('max_execution_time'));
 
 		// Initialise variables.
 		$arr = array();
 
-		// read the source directory
+		// Read the source directory
 		$handle = opendir($path);
 		while (($file = readdir($handle)) !== false)
 		{
 			if ($file != '.' && $file != '..' && !in_array($file, $exclude) && (empty($excludefilter_string) || !preg_match($excludefilter_string, $file)))
 			{
 				// Compute the fullpath
-				$fullpath = $path . DS . $file;
+				$fullpath = $path . '/' . $file;
 
 				// Compute the isDir flag
 				$isDir = is_dir($fullpath);
@@ -566,11 +573,11 @@ abstract class JFolder
 				{
 					// (fullpath is dir and folders are searched or fullpath is not dir and files are searched) and file matches the filter
 					if ($full) {
-						// full path is requested
+						// Full path is requested
 						$arr[] = $fullpath;
 					}
 					else {
-						// filename is requested
+						// Filename is requested
 						$arr[] = $file;
 					}
 				}
@@ -594,15 +601,15 @@ abstract class JFolder
 	/**
 	 * Lists folder in format suitable for tree display.
 	 *
-	 * @access	public
-	 * @param	string	The path of the folder to read.
-	 * @param	string	A filter for folder names.
-	 * @param	integer	The maximum number of levels to recursively read,
-	 * defaults to three.
-	 * @param	integer	The current level, optional.
-	 * @param	integer	Unique identifier of the parent folder, if any.
-	 * @return	array	Folders in the given folder.
-	 * @since	1.5
+	 * @param   string   $path      The path of the folder to read.
+	 * @param   string   $filter    A filter for folder names.
+	 * @param   integer  $maxLevel  The maximum number of levels to recursively read,
+	 *                              defaults to three.
+	 * @param   integer  $level     The current level, optional.
+	 * @param   integer  $parent    Unique identifier of the parent folder, if any.
+	 *
+	 * @return  array  Folders in the given folder.
+	 * @since   11.1
 	 */
 	public static function listFolderTree($path, $filter, $maxLevel = 3, $level = 0, $parent = 0)
 	{
@@ -613,11 +620,11 @@ abstract class JFolder
 		if ($level < $maxLevel)
 		{
 			$folders = self::folders($path, $filter);
-			// first path, index foldernames
+			// First path, index foldernames
 			foreach ($folders as $name)
 			{
 				$id = ++$GLOBALS['_JFolder_folder_tree_index'];
-				$fullName = JPath::clean($path . DS . $name);
+				$fullName = JPath::clean($path . '/' . $name);
 				$dirs[] = array(
 					'id' => $id,
 					'parent' => $parent,
@@ -635,14 +642,14 @@ abstract class JFolder
 	/**
 	 * Makes path name safe to use.
 	 *
-	 * @access	public
-	 * @param	string The full path to sanitise.
-	 * @return	string The sanitised string.
-	 * @since	1.5
+	 * @param   string  The full path to sanitise.
+	 *
+	 * @return  string  The sanitised string.
+	 * @since   11.1
 	 */
 	public static function makeSafe($path)
 	{
-		//$ds = (DS == '\\') ? '\\' . DS : DS;
+		//$ds = (DS == '\\') ? '\\/' : DS;
 		$regex = array('#[^A-Za-z0-9:_\\\/-]#');
 		return preg_replace($regex, '', $path);
 	}

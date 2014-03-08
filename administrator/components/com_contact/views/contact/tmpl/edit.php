@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		$Id: edit.php 20549 2011-02-04 15:01:51Z chdemko $
+ * @version		$Id: edit.php 21837 2011-07-12 18:12:35Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
+// no direct access
 defined('_JEXEC') or die;
 
 // Include the component HTML helpers.
@@ -15,7 +15,6 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 ?>
-
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
@@ -50,14 +49,14 @@ JHtml::_('behavior.formvalidation');
 				<?php echo $this->form->getInput('published'); ?></li>
 
 				<li><?php echo $this->form->getLabel('access'); ?>
-				<?php echo $this->form->getInput('access'); ?></li>					
+				<?php echo $this->form->getInput('access'); ?></li>
 
 				<li><?php echo $this->form->getLabel('ordering'); ?>
 				<?php echo $this->form->getInput('ordering'); ?></li>
 
 				<li><?php echo $this->form->getLabel('featured'); ?>
 				<?php echo $this->form->getInput('featured'); ?></li>
-				
+
 				<li><?php echo $this->form->getLabel('language'); ?>
 				<?php echo $this->form->getInput('language'); ?></li>
 
@@ -77,7 +76,7 @@ JHtml::_('behavior.formvalidation');
 
 			<fieldset class="panelform">
 				<ul class="adminformlist">
-				
+
 					<li><?php echo $this->form->getLabel('created_by'); ?>
 					<?php echo $this->form->getInput('created_by'); ?></li>
 
@@ -102,7 +101,7 @@ JHtml::_('behavior.formvalidation');
 					<?php endif; ?>
 
 				</ul>
-			</fieldset>		
+			</fieldset>
 			<?php echo JHtml::_('sliders.panel',JText::_('COM_CONTACT_CONTACT_DETAILS'), 'basic-options'); ?>
 
 
