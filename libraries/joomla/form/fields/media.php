@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: media.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: media.php 21033 2011-03-29 16:49:43Z dextercowley $
  * @package		Joomla.Framework
  * @subpackage	Form
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -47,7 +47,10 @@ class JFormFieldMedia extends JFormField
 		$assetField	= $this->element['asset_field'] ? (string) $this->element['asset_field'] : 'asset_id';
 		$authorField= $this->element['created_by_field'] ? (string) $this->element['created_by_field'] : 'created_by';
 		$asset		= $this->form->getValue($assetField) ? $this->form->getValue($assetField) : (string) $this->element['asset_id'] ;
-
+		if ($asset == "") {
+			 $asset = JRequest::getCmd('option');
+		}
+		
 		$link = (string) $this->element['link'];
 		if (!self::$initialised) {
 
@@ -59,7 +62,9 @@ class JFormFieldMedia extends JFormField
 			$script[] = '	function jInsertFieldValue(value,id) {';
 			$script[] = '		var old_id = document.getElementById(id).value;';
 			$script[] = '		if (old_id != id) {';
-			$script[] = '			document.getElementById(id).value = value;';
+			$script[] = '			var elem = document.getElementById(id)';
+			$script[] = '			elem.value = value;';
+			$script[] = '			elem.onchange();';
 			$script[] = '		}';
 			$script[] = '	}';
 
@@ -103,19 +108,19 @@ class JFormFieldMedia extends JFormField
 		// The button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '	<div class="blank">';
-		$html[] = '		<a class="modal" title="'.JText::_('JSELECT').'"' .
+		$html[] = '		<a class="modal" title="'.JText::_('JLIB_FORM_BUTTON_SELECT').'"' .
 					' href="'.($this->element['readonly'] ? '' : ($link ? $link : 'index.php?option=com_media&amp;view=images&amp;tmpl=component&amp;asset='.$asset.'&amp;author='.$this->form->getValue($authorField)) . '&amp;fieldid='.$this->id.'&amp;folder='.$folder).'"' .
 					' rel="{handler: \'iframe\', size: {x: 800, y: 500}}">';
-		$html[] = '			'.JText::_('JSELECT').'</a>';
+		$html[] = '			'.JText::_('JLIB_FORM_BUTTON_SELECT').'</a>';
 		$html[] = '	</div>';
 		$html[] = '</div>';
 		
 		$html[] = '<div class="button2-left">';
 		$html[] = '	<div class="blank">';
-		$html[] = '		<a title="'.JText::_('JCLEAR').'"' .
+		$html[] = '		<a title="'.JText::_('JLIB_FORM_BUTTON_CLEAR').'"' .
 					' href="#"'.
-					' onclick="javascript:document.getElementById(\''.$this->id.'\').value=\'\';">';
-		$html[] = '			'.JText::_('JCLEAR').'</a>';
+					' onclick="document.getElementById(\''.$this->id.'\').value=\'\'; document.getElementById(\''.$this->id.'\').onchange();">';
+		$html[] = '			'.JText::_('JLIB_FORM_BUTTON_CLEAR').'</a>';
 		$html[] = '	</div>';
 		$html[] = '</div>';
 

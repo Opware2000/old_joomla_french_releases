@@ -219,7 +219,7 @@ class JInstallationModelConfiguration extends JModel
 		$nullDate		= $db->getNullDate();
 		$query	= 'REPLACE INTO #__users SET'
 				. ' id = 42'
-				. ', name = '.$db->quote('Super User')
+				. ', name = '.$db->quote('Super Utilisateur')
 				. ', username = '.$db->quote($options->admin_user)
 				. ', email = '.$db->quote($options->admin_email)
 				. ', password = '.$db->quote($cryptpass)

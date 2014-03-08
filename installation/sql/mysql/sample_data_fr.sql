@@ -878,9 +878,9 @@ TRUNCATE `#__viewlevels`;
 
 INSERT IGNORE INTO `#__viewlevels` (`id`, `title`, `ordering`, `rules`) VALUES
 (1, 'Accès Public', 0, '[1]'),
-(2, 'Accès Enregistrés', 1, '[2,6,8]'),
-(3, 'Accès Membres à statut Spécial', 2, '[3,6,8]'),
-(4, 'Accès Clients', 3, '[3,12,6]');
+(2, 'Accès Enregistré', 1, '[2,6,8]'),
+(3, 'Accès Spécial', 2, '[3,6,8]'),
+(4, 'Accès Client', 3, '[3,12,6]');
 
 --
 -- Dumping data for table `#__weblinks`

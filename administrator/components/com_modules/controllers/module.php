@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: module.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: module.php 21032 2011-03-29 16:38:31Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -20,24 +20,6 @@ jimport('joomla.application.component.controllerform');
 class ModulesControllerModule extends JControllerForm
 {
 	/**
-	 * Override the execute method to clear the modules cache for non-display tasks.
-	 *
-	 * @param	string		The task to perform.
-	 * @return	mixed|false	The value returned by the called method, false in error case.
-	 * @since	1.6
-	 */
-	public function execute($task)
-	{
-		parent::execute($task);
-
-		// Clear the component's cache
-		if ($task != 'edit' && $task != 'cancel' && $task != 'add') {
-			$cache = JFactory::getCache('com_modules');
-			$cache->clean();
-		}
-	}
-
-	/**
 	 * Override parent add method.
 	 */
 	public function add()
@@ -55,7 +37,7 @@ class ModulesControllerModule extends JControllerForm
 		$extensionId = JRequest::getInt('eid');
 		if (empty($extensionId)) {
 			$this->setRedirect(JRoute::_('index.php?option='.$this->option.'&view='.$this->view_item.'&layout=edit', false));
-			return JError::raiseWarning(500, 'COM_MODULES_ERROR_INVALID_EXTENSION');
+			return JError::raiseWarning(500, JText::_('COM_MODULES_ERROR_INVALID_EXTENSION'));
 		}
 
 		$app->setUserState('com_modules.add.module.extension_id', $extensionId);
