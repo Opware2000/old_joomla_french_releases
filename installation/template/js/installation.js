@@ -1,8 +1,7 @@
 /**
- * @version		$Id: installation.js 22161 2011-09-26 15:44:26Z infograf768 $
  * @package		Joomla.Installation
  * @subpackage	JavaScript
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 

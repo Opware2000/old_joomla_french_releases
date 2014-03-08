@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: default.php 21960 2011-08-12 21:58:56Z dextercowley $
  * @package		Joomla.Installation
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 

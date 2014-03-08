@@ -1,7 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 22828 2012-02-02 00:18:06Z dextercowley $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -36,6 +35,8 @@ class TemplatesController extends JController
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
+		require_once JPATH_COMPONENT.'/helpers/templates.php';
+
 		// Load the submenu.
 		TemplatesHelper::addSubmenu(JRequest::getCmd('view', 'styles'));
 

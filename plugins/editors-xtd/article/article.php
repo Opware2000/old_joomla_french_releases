@@ -1,14 +1,11 @@
 <?php
 /**
- * @version		$Id: article.php 22795 2012-01-23 00:05:39Z dextercowley $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.plugin.plugin');
 
 /**
  * Editor Article buton
@@ -48,8 +45,8 @@ class plgButtonArticle extends JPlugin
 		 * and closes the select frame.
 		 */
 		$js = "
-		function jSelectArticle(id, title, catid, object) {
-			var tag = '<a href='+'\"index.php?option=com_content&amp;view=article&amp;catid='+catid+'&amp;id='+id+'\">'+title+'</a>';
+		function jSelectArticle(id, title, catid, object, link) {
+			var tag = '<a href=\"' + link + '\">' + title + '</a>';
 			jInsertEditorText(tag, '".$name."');
 			SqueezeBox.close();
 		}";

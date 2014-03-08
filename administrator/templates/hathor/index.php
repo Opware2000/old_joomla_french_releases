@@ -1,9 +1,8 @@
 <?php
 /**
- * @version		$Id: index.php 22795 2012-01-23 00:05:39Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  * @since		1.6
  */
@@ -102,7 +101,7 @@ $file = 'language/'.$lang->getTag().'/'.$lang->getTag().'.css';
 			if ($task == 'edit' || $task == 'editA' || JRequest::getInt('hidemainmenu')) {
 				$logoutLink = '';
 			} else {
-				$logoutLink = JRoute::_('index.php?option=com_login&task=logout&'. JUtility::getToken() .'=1');
+				$logoutLink = JRoute::_('index.php?option=com_login&task=logout&'. JSession::getFormToken() .'=1');
 			}
 			$hideLinks	= JRequest::getBool('hidemainmenu');
 			$output = array();

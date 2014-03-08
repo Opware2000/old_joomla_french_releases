@@ -1,14 +1,11 @@
 <?php
 /**
- * @version		$Id: prefix.php 21676 2011-06-25 07:43:49Z chdemko $
  * @package		Joomla.Installation
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('JPATH_BASE') or die;
-
-jimport('joomla.form.formrule');
 
 /**
  * Form Rule class for the prefix DB.

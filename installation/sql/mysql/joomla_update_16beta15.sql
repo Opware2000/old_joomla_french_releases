@@ -1,4 +1,3 @@
-# $Id: joomla_update_16beta15.sql 19600 2010-11-20 15:37:46Z chdemko $
 
 #
 # Database updates for 1.6 Beta 14 to 'next version'

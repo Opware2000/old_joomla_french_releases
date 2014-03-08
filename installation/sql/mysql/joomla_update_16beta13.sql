@@ -1,4 +1,3 @@
-# $Id: joomla_update_16beta13.sql 20746 2011-02-18 00:41:47Z dextercowley $
 
 #
 # Database updates for 1.6 Beta 12 to Beta 13
