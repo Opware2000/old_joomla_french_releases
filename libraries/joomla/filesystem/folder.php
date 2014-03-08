@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: folder.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: folder.php 21738 2011-07-05 13:52:51Z chdemko $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -34,6 +34,8 @@ abstract class JFolder
 	 */
 	public static function copy($src, $dest, $path = '', $force = false, $use_streams=false)
 	{
+		set_time_limit(ini_get('max_execution_time'));
+
 		// Initialise variables.
 		jimport('joomla.client.helper');
 		$FTPOptions = JClientHelper::getCredentials('ftp');
@@ -277,6 +279,8 @@ abstract class JFolder
 	 */
 	public static function delete($path)
 	{
+		set_time_limit(ini_get('max_execution_time'));
+
 		// Sanity check
 		if (!$path)
 		{
@@ -541,6 +545,8 @@ abstract class JFolder
 	 */
 	private static function _items($path, $filter, $recurse, $full, $exclude, $excludefilter_string, $findfiles)
 	{
+		set_time_limit(ini_get('max_execution_time'));
+
 		// Initialise variables.
 		$arr = array();
 

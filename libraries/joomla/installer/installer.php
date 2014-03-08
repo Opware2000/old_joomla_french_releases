@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: installer.php 21048 2011-04-01 00:39:19Z dextercowley $
+ * @version		$Id: installer.php 21749 2011-07-06 11:51:20Z chdemko $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -1361,7 +1361,7 @@ class JInstaller extends JAdapter
 					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_NO_FILE', $filesource));
 					return false;
 				}
-				elseif (file_exists($filedest) && !$overwrite)
+				elseif (($exists = file_exists($filedest)) && !$overwrite)
 				{
 					/*
 					 * It's okay if the manifest already exists
@@ -1405,7 +1405,9 @@ class JInstaller extends JAdapter
 					 * Since we copied a file/folder, we want to add it to the installation step stack so that
 					 * in case we have to roll back the installation we can remove the files copied.
 					 */
-					$this->_stepStack[] = $step;
+					if (!$exists) {
+						$this->_stepStack[] = $step;
+					}
 				}
 			}
 		}

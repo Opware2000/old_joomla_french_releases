@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: file.php 21687 2011-06-26 23:41:41Z dextercowley $
+ * @version		$Id: file.php 21738 2011-07-05 13:52:51Z chdemko $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -309,6 +309,7 @@ class JFile
 	 */
 	public static function write($file, &$buffer, $use_streams=false)
 	{
+		set_time_limit(ini_get('max_execution_time'));
 
 		// If the destination directory doesn't exist we need to create it
 		if (!file_exists(dirname($file))) {
