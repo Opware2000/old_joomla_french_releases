@@ -1,6 +1,6 @@
 0. Metadata
 -----------
-File version:	$Id: CHANGELOG 21148 2011-04-14 17:30:08Z ian $
+File version:	$Id: CHANGELOG 21171 2011-04-18 21:50:18Z dextercowley $
 Copyright:		Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
 License:		GNU General Public License version 2 or later; see LICENSE.txt
 
@@ -27,6 +27,19 @@ $ -> Language fix or change
 - -> Removed
 ! -> Note
 
+-------------------- 1.6.3 Stable Release [18-Apr-2011] ------------------
+
+18-Apr-2011 Mark Dexter
+ # [#25661] *Redirect not now fully editable
+ # [#25657] Mootools no longer loaded in backend
+ # [#25688] Updates sites never re-enabled after being disabled
+
+16-Apr-2011 Jean-Marie Simonet
+ $ Updating es-ES installation file
+ # [#25650] Can't insert image for menu item. Thanks Dennis and Rouven
+ 
+15-Apr-2011 Jean-Marie Simonet
+ # Removing install check
 
 -------------------- 1.6.2 Stable Release [14-Apr-2011] ------------------
 

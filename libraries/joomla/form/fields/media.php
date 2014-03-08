@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: media.php 21033 2011-03-29 16:49:43Z dextercowley $
+ * @version		$Id: media.php 21161 2011-04-16 09:58:08Z infograf768 $
  * @package		Joomla.Framework
  * @subpackage	Form
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -59,12 +59,12 @@ class JFormFieldMedia extends JFormField
 
 			// Build the script.
 			$script = array();
-			$script[] = '	function jInsertFieldValue(value,id) {';
-			$script[] = '		var old_id = document.getElementById(id).value;';
+			$script[] = '	function jInsertFieldValue(value, id) {';
+			$script[] = '		var old_id = document.id(id).value;';
 			$script[] = '		if (old_id != id) {';
-			$script[] = '			var elem = document.getElementById(id)';
+			$script[] = '			var elem = document.id(id)';
 			$script[] = '			elem.value = value;';
-			$script[] = '			elem.onchange();';
+			$script[] = '			elem.fireEvent("change");';
 			$script[] = '		}';
 			$script[] = '	}';
 

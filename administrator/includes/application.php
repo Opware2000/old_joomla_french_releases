@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21143 2011-04-11 17:27:05Z dextercowley $
+ * @version		$Id: application.php 21169 2011-04-18 19:52:28Z dextercowley $
  * @package		Joomla.Administrator
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -141,6 +141,7 @@ class JAdministrator extends JApplication
 			switch ($document->getType()) {
 				case 'html':
 					$document->setMetaData('keywords', $this->getCfg('MetaKeys'));
+					JHtml::_('behavior.framework', true);
 					break;
 
 				default:
