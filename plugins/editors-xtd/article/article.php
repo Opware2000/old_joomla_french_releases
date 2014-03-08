@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: article.php 22795 2012-01-23 00:05:39Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -63,7 +63,7 @@ class plgButtonArticle extends JPlugin
 		 * Use the built-in element view to select the article.
 		 * Currently uses blank class.
 		 */
-		$link = 'index.php?option=com_content&amp;view=articles&amp;layout=modal&amp;tmpl=component';
+		$link = 'index.php?option=com_content&amp;view=articles&amp;layout=modal&amp;tmpl=component&amp;'.JSession::getFormToken().'=1';
 
 		$button = new JObject();
 		$button->set('modal', true);

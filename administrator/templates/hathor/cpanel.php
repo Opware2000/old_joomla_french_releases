@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: cpanel.php 22198 2011-10-01 20:28:52Z chdemko $
+ * @version		$Id: cpanel.php 22795 2012-01-23 00:05:39Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -170,7 +170,6 @@ $file = 'language/'.$lang->getTag().'/'.$lang->getTag().'.css';
 		<p class="copyright">
 			<?php $joomla= '<a href="http://www.joomla.org">Joomla!&#174;</a>';
 			echo JText::sprintf('JGLOBAL_ISFREESOFTWARE', $joomla) ?>
-			<span class="version"><?php echo  JText::_('JVERSION') ?> <?php echo  JVERSION; ?></span>
 		</p>
 	</div>
 </body>
