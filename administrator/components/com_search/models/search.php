@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: search.php 10381 2008-06-01 03:35:53Z pasamio $
+ * @version		$Id: search.php 17299 2010-05-27 16:06:54Z ian $
  * @package		Joomla
  * @subpackage	Search
- * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -52,7 +52,10 @@ class SearchModelSearch extends JModel
 		$limit				= $mainframe->getUserStateFromRequest( 'global.list.limit',				'limit',			$mainframe->getCfg('list_limit'), 'int' );
 		$limitstart			= $mainframe->getUserStateFromRequest( 'com_search.limitstart',			'limitstart',		0,		'int' );
 		$search				= $mainframe->getUserStateFromRequest( 'com_search.search',				'search',			'',		'string' );
-		$search				= JString::strtolower( $search );
+		if (strpos($search, '"') !== false) {
+			$search = str_replace(array('=', '<'), '', $search);
+		}
+		$search = JString::strtolower($search);
 		$showResults		= JRequest::getInt('search_results');
 
 		// table ordering

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.sections.php 10381 2008-06-01 03:35:53Z pasamio $
+* @version		$Id: admin.sections.php 17299 2010-05-27 16:06:54Z ian $
 * @package		Joomla
 * @subpackage	Sections
-* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -110,7 +110,10 @@ function showSections( $scope, $option )
 	$filter_order_Dir	= $mainframe->getUserStateFromRequest( $option.'.filter_order_Dir',	'filter_order_Dir',	'',				'word' );
 	$filter_state		= $mainframe->getUserStateFromRequest( $option.'.filter_state',		'filter_state',		'',				'word' );
 	$search				= $mainframe->getUserStateFromRequest( $option.'.search',			'search',			'',				'string' );
-	$search				= JString::strtolower( $search );
+	if (strpos($search, '"') !== false) {
+		$search = str_replace(array('=', '<'), '', $search);
+	}
+	$search = JString::strtolower($search);
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
 	$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );

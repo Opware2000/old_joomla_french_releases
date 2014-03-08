@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.messages.html.php 10381 2008-06-01 03:35:53Z pasamio $
+* @version		$Id: admin.messages.html.php 17299 2010-05-27 16:06:54Z ian $
 * @package		Joomla
 * @subpackage	Messages
-* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -32,7 +32,7 @@ class HTML_messages
 		<tr>
 			<td align="left" width="100%">
 				<?php echo JText::_( 'Search' ); ?>:
-				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+				<input type="text" name="search" id="search" value="<?php echo htmlspecialchars($lists['search']);?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
 				<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>

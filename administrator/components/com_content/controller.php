@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 11633 2009-02-19 23:59:09Z willebil $
+ * @version		$Id: controller.php 17299 2010-05-27 16:06:54Z ian $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -61,7 +61,10 @@ class ContentController extends JController
 		$filter_authorid	= $mainframe->getUserStateFromRequest( $context.'filter_authorid',	'filter_authorid',	0,	'int' );
 		$filter_sectionid	= $mainframe->getUserStateFromRequest( $context.'filter_sectionid',	'filter_sectionid',	-1,	'int' );
 		$search				= $mainframe->getUserStateFromRequest( $context.'search',			'search',			'',	'string' );
-		$search				= JString::strtolower($search);
+		if (strpos($search, '"') !== false) {
+			$search = str_replace(array('=', '<'), '', $search);
+		}
+		$search = JString::strtolower($search);
 
 		$limit		= $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
 		$limitstart	= $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
@@ -221,7 +224,10 @@ class ContentController extends JController
 		$filter_authorid		= $mainframe->getUserStateFromRequest("$option.$sectionid.viewarchive.filter_authorid",		'filter_authorid',	0,			'int');
 		$filter_sectionid		= $mainframe->getUserStateFromRequest("$option.$sectionid.viewarchive.filter_sectionid",	'filter_sectionid',	0,			'int');
 		$search					= $mainframe->getUserStateFromRequest("$option.$sectionid.viewarchive.search",				'search',			'',			'string');
-		$search					= JString::strtolower($search);
+		if (strpos($search, '"') !== false) {
+			$search = str_replace(array('=', '<'), '', $search);
+		}
+		$search = JString::strtolower($search);
 		$redirect				= $sectionid;
 
 		// A section id of zero means view all articles [all sections]
