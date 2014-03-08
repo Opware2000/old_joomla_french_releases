@@ -1,9 +1,5 @@
-<?php
-/**
- * @version $Id: default_logout.php 8650 2007-08-30 20:53:58Z friesengeist $
- */
+<?php // @version $Id: default_logout.php 8944 2007-09-18 03:04:14Z friesengeist $
 defined( '_JEXEC' ) or die( 'Restricted access' );
-
 ?>
 
 <form action="index.php" method="post" name="login" id="login" class="logout_form<?php echo $this->params->get( 'pageclass_sfx' ); ?>">

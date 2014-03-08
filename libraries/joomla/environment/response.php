@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: response.php 8323 2007-08-02 23:57:35Z jinx $
+ * @version		$Id: response.php 9967 2008-01-28 08:21:02Z rmuilwijk $
  * @package		Joomla.Framework
  * @subpackage	Environment
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -198,8 +198,7 @@ class JResponse
 		{
 			JResponse::setHeader( 'Expires', 'Mon, 1 Jan 2001 00:00:00 GMT', true ); 				// Expires in the past
 			JResponse::setHeader( 'Last-Modified', gmdate("D, d M Y H:i:s") . ' GMT', true ); 		// Always modified
-			JResponse::setHeader( 'Cache-Control', 'no-store, no-cache, must-revalidate', true ); 	// Extra CYA
-			JResponse::setHeader( 'Cache-Control', 'post-check=0, pre-check=0', false ); 			// HTTP/1.1
+			JResponse::setHeader( 'Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0', false );
 			JResponse::setHeader( 'Pragma', 'no-cache' ); 											// HTTP 1.0
 		}
 

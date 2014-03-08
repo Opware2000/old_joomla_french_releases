@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: standard.php 7830 2007-07-02 10:31:15Z akede $
+* @version		$Id: standard.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -74,7 +74,7 @@ class JButtonStandard extends JButton
 	function _getCommand($name, $task, $list, $hide)
 	{
 		$mesg		= JText::_( 'Please make a selection from the list to', true );
-		$todo		= JText::_( strtolower($name), true );
+		$todo		= strtolower(JText::_( $name, true ));
 		$hidecode	= $hide ? 'hideMainMenu();' : '';
 
 		if ($list) {

@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: admin.categories.html.php 8577 2007-08-26 22:45:22Z eddieajau $
-* @package		Joomla
-* @subpackage	Categories
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: admin.categories.html.php 9807 2008-01-03 00:36:42Z eddieajau $
+ * @package		Joomla
+ * @subpackage	Categories
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -45,7 +45,7 @@ class categories_html
 					<?php echo JText::_( 'Filter' ); ?>:
 					<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 					<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-					<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+					<button onclick="document.getElementById('search').value='';this.form.getElementById('sectionid').value='-1';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 				</td>
 				<td nowrap="nowrap">
 					<?php
@@ -71,9 +71,6 @@ class categories_html
 				</th>
 				<th class="title">
 					<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="10%">
-					<?php echo JHTML::_('grid.sort',   'Alias', 'c.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 				<th width="5%">
 					<?php echo JHTML::_('grid.sort',   'Published', 'c.published', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -153,9 +150,6 @@ class categories_html
 					}
 					?></span>
 				</td>
-				<td>
-					<?php echo $row->alias;?>
-				</td>
 				<td align="center">
 					<?php echo $published;?>
 				</td>
@@ -173,8 +167,7 @@ class categories_html
 					?>
 					<td>
 						<a href="<?php echo $row->sect_link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
-							<?php echo $row->section_name; ?>
-						</a>
+							<?php echo $row->section_name; ?></a>
 					</td>
 					<?php
 				}
@@ -221,7 +214,8 @@ class categories_html
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="type" value="<?php echo $type; ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -251,8 +245,8 @@ class categories_html
 			}
 		}
 
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'description' );
+		$cparams = JComponentHelper::getParams ('com_media');
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton, section) {
@@ -287,7 +281,7 @@ class categories_html
 
 		<form action="index.php" method="post" name="adminForm">
 
-		<div class="col60">
+		<div class="col width-60">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -299,7 +293,7 @@ class categories_html
 							</label>
 						</td>
 						<td colspan="2">
-							<input class="text_area" type="text" name="title" id="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="<?php echo JText::_( 'A short name to appear in menus' ); ?>" />
+							<input class="text_area" type="text" name="title" id="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="<?php echo JText::_( 'A long name to be displayed in headings' ); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -309,7 +303,7 @@ class categories_html
 							</label>
 						</td>
 						<td colspan="2">
-							<input class="text_area" type="text" name="alias" id="alias" value="<?php echo $row->alias; ?>" size="50" maxlength="255" title="<?php echo JText::_( 'A long name to be displayed in headings' ); ?>" />
+							<input class="text_area" type="text" name="alias" id="alias" value="<?php echo $row->alias; ?>" size="50" maxlength="255" title="<?php echo JText::_( 'A short name to appear in menus' ); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -375,7 +369,7 @@ class categories_html
 						<td>
 						<script language="javascript" type="text/javascript">
 						if (document.forms.adminForm.image.options.value!=''){
-							jsimg='../images/stories/' + getSelectedValue( 'adminForm', 'image' );
+							jsimg='../<?echo $cparams->get('image_path'); ?>/' + getSelectedValue( 'adminForm', 'image' );
 						} else {
 							jsimg='../images/M_images/blank.png';
 						}
@@ -395,7 +389,7 @@ class categories_html
 						<td valign="top" colspan="3">
 							<?php
 							// parameters : areaname, content, width, height, cols, rows, show xtd buttons
-							echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', false ) ;
+							echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', array('pagebreak', 'readmore') ) ;
 							?>
 						</td>
 					</tr>
@@ -410,16 +404,33 @@ class categories_html
 		<input type="hidden" name="sectionid" value="<?php echo $row->section; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	/**
 	* Form to select Section to move Category to
 	*/
 	function moveCategorySelect( $option, $cid, $SectionList, $items, $sectionOld, $contents, $redirect ) {
 		?>
+		<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancel') {
+				submitform( pressbutton );
+				return;
+			}
+
+			// do field validation
+			if (!getSelectedValue( 'adminForm', 'sectionmove' )) {
+				alert( "<?php echo JText::_( 'Please select a section from the list', true ); ?>" );
+			} else {
+				submitform( pressbutton );
+			}
+		}
+		</script>
+
 		<form action="index.php" method="post" name="adminForm">
 
 		<br />
@@ -475,16 +486,33 @@ class categories_html
 			echo "\n <input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 
-
 	/**
-	* Form to select Section to copy Category to
-	*/
+	 * Form to select Section to copy Category to
+	 */
 	function copyCategorySelect( $option, $cid, $SectionList, $items, $sectionOld, $contents, $redirect ) {
 		?>
+		<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancel') {
+				submitform( pressbutton );
+				return;
+			}
+
+			// do field validation
+			if (!getSelectedValue( 'adminForm', 'sectionmove' )) {
+				alert( "<?php echo JText::_( 'Please select a section from the list', true ); ?>" );
+			} else {
+				submitform( pressbutton );
+			}
+		}
+		</script>
+
 		<form action="index.php" method="post" name="adminForm">
 
 		<br />
@@ -527,7 +555,7 @@ class categories_html
 			<br />
 			<?php echo JText::_( 'to the selected Section' ); ?>
 			<br />
-			<?php echo JText::_( 'NOTE: IF NO SECTION' ); ?>.
+			<?php echo JText::_( 'NOTE: IF SAME SECTION' ); ?>.
 			</td>.
 		</tr>
 		</table>
@@ -543,9 +571,8 @@ class categories_html
 			echo "\n <input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 }
-?>

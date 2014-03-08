@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: format.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: format.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	Registry
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -43,17 +43,21 @@ class JRegistryFormat extends JObject
 			$instances = array ();
 		}
 
-		if (empty ($instances[$format])) {
-			$adapter = 'JRegistryFormat'.$format;
-			$lformat = strtolower(JFilterInput::clean($format, 'word'));
-
-			if (file_exists(JPATH_LIBRARIES.DS.'joomla'.DS.'registry'.DS.'format'.DS.$lformat.'.php')) {
-				jimport('joomla.registry.format.'.$lformat);
-			} else {
-				JError::raiseError(500,JText::_('Unable to load format'));
+		$format = strtolower(JFilterInput::clean($format, 'word'));
+		if (empty ($instances[$format]))
+		{
+			$class = 'JRegistryFormat'.$format;
+			if(!class_exists($class))
+			{
+				$path    = dirname(__FILE__).DS.'format'.DS.$format.'.php';
+				if (file_exists($path)) {
+					require_once($path);
+				} else {
+					JError::raiseError(500,JText::_('Unable to load format class'));
+				}
 			}
 
-			$instances[$format] = new $adapter ();
+			$instances[$format] = new $class ();
 		}
 		return $instances[$format];
 	}

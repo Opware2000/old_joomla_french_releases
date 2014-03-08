@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: bannerclient.php 8180 2007-07-23 05:52:29Z eddieajau $
+ * @version		$Id: bannerclient.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -46,20 +46,20 @@ class TableBannerClient extends JTable
 	{
 		// check for valid client name
 		if (trim($this->name == '')) {
-			$this->_error = JText::_( 'BNR_CLIENT_NAME' );
+			$this->setError(JText::_( 'BNR_CLIENT_NAME' ));
 			return false;
 		}
 
 		// check for valid client contact
 		if (trim($this->contact == '')) {
-			$this->_error = JText::_( 'BNR_CONTACT' );
+			$this->setError(JText::_( 'BNR_CONTACT' ));
 			return false;
 		}
 
 		// check for valid client email
-		jimport( 'joomla.utilities.mail' );
+		jimport( 'joomla.mail.helper' );
 		if (!JMailHelper::isEmailAddress( $this->email )) {
-			$this->_error = JText::_( 'BNR_VALID_EMAIL' );
+			$this->setError(JText::_( 'BNR_VALID_EMAIL' ));
 			return false;
 		}
 

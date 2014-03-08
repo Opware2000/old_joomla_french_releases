@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: newsfeed.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: newsfeed.php 9936 2008-01-13 22:44:03Z ircmaxell $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -65,14 +65,15 @@ class TableNewsFeed extends JTable
 	 */
 	function check()
 	{
-		jimport('joomla.filter.output');
-		$alias = JFilterOutput::stringURLSafe($this->name);
-
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		if(empty($this->alias)) {
+			$this->alias = $this->name;
+		}
+		$this->alias = JFilterOutput::stringURLSafe($this->alias);
+		if(trim(str_replace('-','',$this->alias)) == '') {
+			$datenow = new JDate();
+			$this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
 		}
 
 		return true;
 	}
 }
-?>

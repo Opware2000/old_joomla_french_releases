@@ -1,8 +1,8 @@
 <?php
 /**
- * @version		$Id: tinymce.php 8503 2007-08-22 07:39:40Z jinx $
+ * @version		$Id: tinymce.php 9889 2008-01-05 20:13:15Z willebil $
  * @package		Joomla
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -14,7 +14,7 @@
 // Do not allow direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * TinyMCE WYSIWYG Editor Plugin
@@ -36,7 +36,8 @@ class plgEditorTinymce extends JPlugin
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgEditorTinymce(& $subject, $config) {
+	function plgEditorTinymce(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -51,10 +52,8 @@ class plgEditorTinymce extends JPlugin
 	function onInit()
 	{
 		global $mainframe;
-
 		$db			=& JFactory::getDBO();
 		$language	=& JFactory::getLanguage();
-		$url		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 
 		$theme = $this->params->get( 'theme', 'advanced' );
 		// handling for former default option
@@ -69,18 +68,19 @@ class plgEditorTinymce extends JPlugin
 		$content_css_custom	= $this->params->def( 'content_css_custom', '' );
 		$invalid_elements	= $this->params->def( 'invalid_elements', 'script,applet,iframe' );
 		$newlines			= $this->params->def( 'newlines', 0 );
-		$cleanup			= $this->params->def( 'cleanup', 1 );
 		$cleanup_startup	= $this->params->def( 'cleanup_startup', 0 );
+		$cleanup_save		= $this->params->def( 'cleanup_save', 2 );
 		$compressed			= $this->params->def( 'compressed', 0 );
 		$langPrefix			= $this->params->def( 'lang_code', 'en' );
 		$langMode			= $this->params->def( 'lang_mode', 0 );
 		$relative_urls		= $this->params->def( 'relative_urls', 		0 );
 		$clear_entities		= $this->params->def( 'clear_entities', 0 );
+		$extended_elements	= $this->params->def( 'extended_elements', '' );
 
 		$plugins 	= array();
 		$buttons2	= array();
 		$buttons3	= array();
-		$elements	= array();
+		$elements	= explode( ',', $extended_elements );
 
 		// search & replace
 		$searchreplace 		=  $this->params->def( 'searchreplace', 1 );
@@ -120,8 +120,10 @@ class plgEditorTinymce extends JPlugin
 		$hr 				=  $this->params->def( 'hr', 1 );
 		if ( $hr ) {
 			$plugins[]	= 'advhr';
-			$elements[] = 'hr[class|width|size|noshade]';
+			$elements[] = 'hr[id|title|alt|class|width|size|noshade]';
 			$buttons3[]	= 'advhr';
+		} else {
+			$elements[] = 'hr[id|class|title|alt]';
 		}
 
 		// table
@@ -139,7 +141,7 @@ class plgEditorTinymce extends JPlugin
 
 		// rtl/ltr buttons
 		$directionality		=  $this->params->def( 'directionality', 1 );
-		if ( $fullscreen ) {
+		if ( $directionality ) {
 			$plugins[] = 'directionality';
 			$buttons2[] = 'ltr,rtl';
 		}
@@ -211,9 +213,9 @@ class plgEditorTinymce extends JPlugin
 		// loading of css file for `styles` dropdown
 		if ( $content_css_custom ) {
 			$content_css = 'content_css : "'. $content_css_custom .'", ';
-		} 
+		}
 		else
-		{	
+		{
 			/*
 			 * Lets get the default template for the site application
 			 */
@@ -230,25 +232,32 @@ class plgEditorTinymce extends JPlugin
 				$file_path = JPATH_SITE .'/templates/'. $template .'/css/';
 				if ( !file_exists( $file_path .DS. 'editor.css' ) ) {
 					$template = 'system';
-				} 
-				
-				$content_css = 'content_css : "' . $url .'templates/'. $template . '/css/editor.css",';
+				}
+
+				$content_css = 'content_css : "' . JURI::root() .'templates/'. $template . '/css/editor.css",';
 			} else {
 				$content_css = '';
 			}
-		}
-
-
-		if ( $cleanup ) {
-			$cleanup	= 'true';
-		} else {
-			$cleanup	= 'false';
 		}
 
 		if ( $cleanup_startup ) {
 			$cleanup_startup = 'true';
 		} else {
 			$cleanup_startup = 'false';
+		}
+
+		switch ( $cleanup_save ) {
+		case '0': /* Never clean up on save */
+			$cleanup = 'false';
+			break;
+		case '1': /* Clean up front end edits only */
+			if ($mainframe->isadmin())
+				$cleanup = 'false';
+			else
+				$cleanup = 'true';
+			break;
+		default:  /* Always clean up on save */
+			$cleanup = 'true';
 		}
 
 		if ( $newlines ) {
@@ -261,15 +270,15 @@ class plgEditorTinymce extends JPlugin
 
 		// Tiny Compressed mode
 		if ( $compressed ) {
-			$load = "\t<script type=\"text/javascript\" src=\"".$url."plugins/editors/tinymce/jscripts/tiny_mce/tiny_mce_gzip.php\"></script>\n";
+			$load = "\t<script type=\"text/javascript\" src=\"".JURI::root()."plugins/editors/tinymce/jscripts/tiny_mce/tiny_mce_gzip.php\"></script>\n";
 		} else {
-			$load = "\t<script type=\"text/javascript\" src=\"".$url."plugins/editors/tinymce/jscripts/tiny_mce/tiny_mce.js\"></script>\n";
+			$load = "\t<script type=\"text/javascript\" src=\"".JURI::root()."plugins/editors/tinymce/jscripts/tiny_mce/tiny_mce.js\"></script>\n";
 		}
 
-		$buttons2 	= implode( ', ', $buttons2 );
-		$buttons3 	= implode( ', ', $buttons3 );
-		$plugins 	= implode( ', ', $plugins );
-		$elements 	= implode( ', ', $elements );
+		$buttons2 	= implode( ',', $buttons2 );
+		$buttons3 	= implode( ',', $buttons3 );
+		$plugins 	= implode( ',', $plugins );
+		$elements 	= implode( ',', $elements );
 
 		$return = $load .
 			"\t<script type=\"text/javascript\">
@@ -279,12 +288,13 @@ class plgEditorTinymce extends JPlugin
 			mode : \"textareas\",
 			gecko_spellcheck : \"true\",
 			editor_selector : \"mce_editable\",
-			document_base_url : \"". $url ."\",
+			document_base_url : \"". JURI::root() ."\",
 			entities : \"60,lt,62,gt\",
 			relative_urls : $relative_urls,
 			remove_script_host : false,
 			save_callback : \"TinyMCE_Save\",
 			invalid_elements : \"$invalid_elements\",
+			extended_valid_elements : \"a[class|name|href|target|title|onclick|rel],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],$elements\",
 			theme_advanced_toolbar_location : \"$toolbar\",
 			theme_advanced_source_editor_height : \"$html_height\",
 			theme_advanced_source_editor_width : \"$html_width\",
@@ -303,7 +313,6 @@ class plgEditorTinymce extends JPlugin
 			theme_advanced_disable : \"help\",
 			plugin_insertdate_dateFormat : \"$format_date\",
 			plugin_insertdate_timeFormat : \"$format_time\",
-			extended_valid_elements : \"hr[id|class|title], a[class|name|href|target|title|onclick], img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name], $elements\",
 			$entities
 			$element_path
 			fullscreen_settings : {
@@ -380,19 +389,19 @@ class plgEditorTinymce extends JPlugin
 
 		return $editor;
 	}
-	
+
 	function onGetInsertMethod($name)
 	{
 		$doc = & JFactory::getDocument();
 
-		$js= "function jInsertEditorText( text ) {
-			tinyMCE.execInstanceCommand('mce_editor_0', 'mceInsertContent',false,text);
+		$js= "function jInsertEditorText( text, editor ) {
+			tinyMCE.execInstanceCommand(editor, 'mceInsertContent',false,text);
 		}";
 		$doc->addScriptDeclaration($js);
 
 		return true;
 	}
-	
+
 	function _displayButtons($name, $buttons)
 	{
 		// Load modal popup behavior
@@ -422,18 +431,17 @@ class plgEditorTinymce extends JPlugin
 				/*
 				 * Results should be an object
 				 */
-				if ( $button->get('name') ) 
+				if ( $button->get('name') )
 				{
 					$modal		= ($button->get('modal')) ? 'class="modal-button"' : null;
-					$href		= ($button->get('link')) ? 'href="'.$button->get('link').'"' : null;
+					$href		= ($button->get('link')) ? 'href="'.JURI::base().$button->get('link').'"' : null;
 					$onclick	= ($button->get('onclick')) ? 'onclick="'.$button->get('onclick').'"' : null;
 					$return .= "<div class=\"button2-left\"><div class=\"".$button->get('name')."\"><a ".$modal." title=\"".$button->get('text')."\" ".$href." ".$onclick." rel=\"".$button->get('options')."\">".$button->get('text')."</a></div></div>\n";
 				}
 			}
 			$return .= "</div>\n";
 		}
-		
+
 		return $return;
 	}
 }
-?>

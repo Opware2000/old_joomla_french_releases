@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.html.php 8252 2007-07-30 22:45:55Z jinx $
+ * @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -35,12 +35,8 @@ class ContentViewSection extends ContentView
 		$user		=& JFactory::getUser();
 		$document	=& JFactory::getDocument();
 
-		// Get the menu item object
-		$menus = &JMenu::getInstance();
-		$menu  = $menus->getActive();
-
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters('com_content');
+		$params = &$mainframe->getParams();
 
 		// Request variables
 		$limit		= JRequest::getVar('limit', $params->get('display_num'), '', 'int');
@@ -69,15 +65,11 @@ class ContentViewSection extends ContentView
 		//add alternate feed link
 		if($params->get('show_feed_link', 1) == 1)
 		{
-			$link	= 'index.php?option=com_content&view=section&format=feed&id='.$section->id;
+			$link	= '&format=feed&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 			$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 			$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-		}
-		// Set the page title
-		if (!empty ($menu->name)) {
-			$document->setTitle($menu->name);
 		}
 
 		for($i = 0; $i < count($categories); $i++)
@@ -86,15 +78,12 @@ class ContentViewSection extends ContentView
 			$category->link = JRoute::_('index.php?view=category&id='.$category->slug);
 		}
 
-		$params->def('page_title', $menu->name);
-
 		if ($total == 0) {
 			$params->set('show_categories', false);
 		}
 
-
 		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new JPagination($total, $limitstart, $limit - $links);
 
 		$this->assign('total',			$total);
 
@@ -115,7 +104,7 @@ class ContentViewSection extends ContentView
 
 		// Initialize some variables
 		$user		=& JFactory::getUser();
-		$dispatcher	=& JEventDispatcher::getInstance();
+		$dispatcher	=& JDispatcher::getInstance();
 
 		$SiteName	= $mainframe->getCfg('sitename');
 
@@ -128,43 +117,41 @@ class ContentViewSection extends ContentView
 		$item->text = $item->introtext;
 
 		// Get the page/component configuration and article parameters
-		$params	 = clone($params);
+		$item->params = clone($params);
 		$aparams = new JParameter($item->attribs);
 
 		// Merge article parameters into the page configuration
-		$params->merge($aparams);
+		$item->params->merge($aparams);
 
 		// Process the content preparation plugins
 		JPluginHelper::importPlugin('content');
-		$results = $dispatcher->trigger('onPrepareContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onPrepareContent', array (& $item, & $item->params, 0));
 
 		// Build the link and text of the readmore button
-		if (($params->get('show_readmore') && @ $item->readmore) || $params->get('link_titles'))
+		if (($item->params->get('show_readmore') && @ $item->readmore) || $item->params->get('link_titles'))
 		{
 			// checks if the item is a public or registered/special item
 			if ($item->access <= $user->get('aid', 0))
 			{
-				$linkOn = JRoute::_("index.php?view=article&id=".$item->slug);
-				$linkText = JText::_('Read more...');
+				//$item->readmore_link = JRoute::_("index.php?view=article&id=".$item->slug);
+				$item->readmore_link = JRoute::_(ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid));
+				$item->readmore_register = false;
 			}
 			else
 			{
-				$linkOn = JRoute::_("index.php?option=com_user&task=register");
-				$linkText = JText::_('Register to read more...');
+				$item->readmore_link = JRoute::_("index.php?option=com_user&task=register");
+				$item->readmore_register = true;
 			}
 		}
 
-		$item->readmore_link = $linkOn;
-		$item->readmore_text = $linkText;
-
 		$item->event = new stdClass();
-		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $params,0));
+		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $item->params,0));
 		$item->event->afterDisplayTitle = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onBeforeDisplayContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onBeforeDisplayContent', array (& $item, & $item->params, 0));
 		$item->event->beforeDisplayContent = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onAfterDisplayContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onAfterDisplayContent', array (& $item, & $item->params, 0));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
 
 		return $item;

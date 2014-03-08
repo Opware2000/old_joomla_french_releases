@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: admin.config.php 7730 2007-06-12 22:50:12Z friesengeist $
+ * @version		$Id: admin.config.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Config
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -43,4 +43,3 @@ JResponse::setHeader( 'Expires', 'Mon, 26 Jul 1997 05:00:00 GMT', true );
 // Perform the Request task
 $controller->execute( JRequest::getCmd( 'task' ) );
 $controller->redirect();
-?>

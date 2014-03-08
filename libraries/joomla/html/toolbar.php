@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: toolbar.php 8284 2007-08-01 08:14:55Z eddieajau $
+ * @version		$Id: toolbar.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	HTML
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -14,6 +14,9 @@
 
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
+
+//Register the session storage class with the loader
+JLoader::register('JButton', dirname(__FILE__).DS.'toolbar'.DS.'button.php');
 
 /**
  * ToolBar handler
@@ -67,8 +70,6 @@ class JToolBar extends JObject
 	function __construct($name = 'toolbar')
 	{
 		$this->_name = $name;
-
-		jimport('joomla.html.toolbar.button');
 
 		// Set base path to find buttons
 		$this->_buttonPath[] = dirname(__FILE__).DS.'toolbar'.DS.'button';

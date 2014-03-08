@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: legacy.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: legacy.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,8 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla! Debug plugin
@@ -50,7 +52,35 @@ class  plgSystemLegacy extends JPlugin
 		// Import library dependencies
 		require_once(dirname(__FILE__).DS.'legacy'.DS.'classes.php');
 		require_once(dirname(__FILE__).DS.'legacy'.DS.'functions.php');
-		require_once(dirname(__FILE__).DS.'legacy'.DS.'toolbar.php');
+
+		// Register legacy classes for autoloading
+		JLoader::register('mosAdminMenus'   , dirname(__FILE__).DS.'legacy'.DS.'adminmenus.php');
+		JLoader::register('mosCache'        , dirname(__FILE__).DS.'legacy'.DS.'cache.php');
+		JLoader::register('mosCategory'     , dirname(__FILE__).DS.'legacy'.DS.'category.php');
+		JLoader::register('mosCommonHTML'   , dirname(__FILE__).DS.'legacy'.DS.'commonhtml.php');
+		JLoader::register('mosComponent'    , dirname(__FILE__).DS.'legacy'.DS.'component.php');
+		JLoader::register('mosContent'      , dirname(__FILE__).DS.'legacy'.DS.'content.php');
+		JLoader::register('mosDBTable'      , dirname(__FILE__).DS.'legacy'.DS.'dbtable.php');
+		JLoader::register('mosHTML'         , dirname(__FILE__).DS.'legacy'.DS.'html.php');
+		JLoader::register('mosInstaller'    , dirname(__FILE__).DS.'legacy'.DS.'installer.php');
+		JLoader::register('mosMainFrame'    , dirname(__FILE__).DS.'legacy'.DS.'mainframe.php');
+		JLoader::register('mosMambot'       , dirname(__FILE__).DS.'legacy'.DS.'mambot.php');
+		JLoader::register('mosMambotHandler', dirname(__FILE__).DS.'legacy'.DS.'mambothandler.php');
+		JLoader::register('mosMenu'         , dirname(__FILE__).DS.'legacy'.DS.'menu.php');
+		JLoader::register('mosMenuBar'      , dirname(__FILE__).DS.'legacy'.DS.'menubar.php');
+		JLoader::register('mosModule'       , dirname(__FILE__).DS.'legacy'.DS.'module.php');
+		//JLoader::register('mosPageNav'    , dirname(__FILE__).DS.'legacy'.DS.'pagination.php');
+		JLoader::register('mosParameters'   , dirname(__FILE__).DS.'legacy'.DS.'parameters.php');
+		JLoader::register('patFactory'      , dirname(__FILE__).DS.'legacy'.DS.'patfacory.php');
+		JLoader::register('mosProfiler'     , dirname(__FILE__).DS.'legacy'.DS.'profiler.php');
+		JLoader::register('mosSection'      , dirname(__FILE__).DS.'legacy'.DS.'section.php');
+		JLoader::register('mosSession'      , dirname(__FILE__).DS.'legacy'.DS.'session.php');
+		JLoader::register('mosToolbar'      , dirname(__FILE__).DS.'legacy'.DS.'toolbar.php');
+		JLoader::register('mosUser'         , dirname(__FILE__).DS.'legacy'.DS.'user.php');
+
+		// Register class for the database, depends on which db type has been selected for use
+		$dbtype	= $config->getValue('config.dbtype', 'mysql');
+		JLoader::register('database'        , dirname(__FILE__).DS.'legacy'.DS.$dbtype.'.php');
 
 		/**
 		 * Legacy define, _ISO define not used anymore. All output is forced as utf-8.
@@ -83,6 +113,24 @@ class  plgSystemLegacy extends JPlugin
 		DEFINE('_DATE_FORMAT_LC2', JText::_('DATE_FORMAT_LC2'));
 
 		/**
+		 * Legacy constant, use JFilterInput instead
+		 * @deprecated	As of version 1.5
+		 */
+		DEFINE( "_MOS_NOTRIM", 0x0001 );
+
+		/**
+		 * Legacy constant, use JFilterInput instead
+		 * @deprecated	As of version 1.5
+		 */
+		DEFINE( "_MOS_ALLOWHTML", 0x0002 );
+
+		/**
+		 * Legacy constant, use JFilterInput instead
+		 * @deprecated	As of version 1.5
+		 */
+		DEFINE( "_MOS_ALLOWRAW", 0x0004 );
+
+		/**
 		 * Legacy global, use JVersion->getLongVersion() instead
 		 * @name $_VERSION
 		 * @deprecated	As of version 1.5
@@ -104,8 +152,9 @@ class  plgSystemLegacy extends JPlugin
 		 * @name $my
 		 * @deprecated	As of version 1.5
 		 */
-		$user				=& JFactory::getUser();
-		$GLOBALS['my']		= clone($user->getTable());
+		$user	=& JFactory::getUser();
+
+		$GLOBALS['my']      = (object)$user->getProperties();
 		$GLOBALS['my']->gid	= $user->get('aid', 0);
 
 		/**
@@ -119,14 +168,15 @@ class  plgSystemLegacy extends JPlugin
 			$GLOBALS[$name] = $v;
 		}
 
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-		$GLOBALS['mosConfig_live_site']		= substr_replace($url, '', -1, 1);
+		$GLOBALS['mosConfig_live_site']		= substr_replace(JURI::root(), '', -1, 1);
 		$GLOBALS['mosConfig_absolute_path']	= JPATH_SITE;
-		$GLOBALS['mosConfig_cache_path']	= JPATH_BASE.DS.'cache';
+		$GLOBALS['mosConfig_cachepath']	= JPATH_BASE.DS.'cache';
+
+		$GLOBALS['mosConfig_offset_user']	= 0;
 
 		$lang =& JFactory::getLanguage();
 		$GLOBALS['mosConfig_lang']          = $lang->getBackwardLang();
-		
+
 		$config->setValue('config.live_site', 		$GLOBALS['mosConfig_live_site']);
 		$config->setValue('config.absolute_path', 	$GLOBALS['mosConfig_absolute_path']);
 		$config->setValue('config.lang', 			$GLOBALS['mosConfig_lang']);

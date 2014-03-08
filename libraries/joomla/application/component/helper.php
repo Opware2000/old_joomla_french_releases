@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: helper.php 8350 2007-08-07 16:28:34Z jinx $
+* @version		$Id: helper.php 9918 2008-01-10 01:41:37Z pasamio $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -92,8 +92,13 @@ class JComponentHelper
 		global $mainframe, $option;
 
 		if(empty($name)) {
+			// Throw 404 if no component
+			JError::raiseError(404, JText::_("Component Not Found"));
 			return;
 		}
+		
+		$scope = $mainframe->scope; //record the scope
+		$mainframe->scope = $name;  //set scope to component name
 
 		$task = JRequest::getString( 'task' );
 
@@ -168,6 +173,8 @@ class JComponentHelper
 			// Make the toolbar
 			include_once( $path );
 		}
+		
+		$mainframe->scope = $scope; //revert the scope
 
 		return $contents;
 	}

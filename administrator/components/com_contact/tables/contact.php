@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: contact.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: contact.php 9936 2008-01-13 22:44:03Z ircmaxell $
  * @package		Joomla
  * @subpackage	Contact
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -95,9 +95,8 @@ class TableContact extends JTable
 	{
 		$this->default_con = intval( $this->default_con );
 
-		jimport('joomla.filter.input');
 		if (JFilterInput::checkAttribute(array ('href', $this->webpage))) {
-			$this->_error = JText::_('Please provide a valid URL');
+			$this->setError(JText::_('Please provide a valid URL'));
 			return false;
 		}
 
@@ -106,14 +105,15 @@ class TableContact extends JTable
 			$this->webpage = 'http://'.$this->webpage;
 		}
 
-		jimport('joomla.filter.output');
-		$alias = JFilterOutput::stringURLSafe($this->name);
-
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		if(empty($this->alias)) {
+			$this->alias = $this->name;
+		}
+		$this->alias = JFilterOutput::stringURLSafe($this->alias);
+		if(trim(str_replace('-','',$this->alias)) == '') {
+			$datenow = new JDate();
+			$this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
 		}
 
 		return true;
 	}
 }
-?>

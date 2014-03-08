@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: media.php 8660 2007-08-30 23:53:21Z louis $
+ * @version		$Id: media.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Massmail
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -25,78 +25,18 @@ if (!$user->authorize( 'com_media', 'popup' )) {
 $params =& JComponentHelper::getParams('com_media');
 
 // Set the path definitions
-define('COM_MEDIA_BASE', JPATH_SITE.DS.$params->get('image_path', 'images'.DS.'stories'));
-define('COM_MEDIA_BASEURL', JURI::base().$params->get('image_path', 'images/stories'));
+define('COM_MEDIA_BASE',    JPATH_ROOT.DS.$params->get('image_path', 'images'.DS.'stories'));
+define('COM_MEDIA_BASEURL', JURI::root(true).'/'.$params->get('image_path', 'images/stories'));
 
 // Load the admin HTML view
 require_once( JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'media.php' );
 
-jimport( 'joomla.application.component.controller' );
-
-/**
- * Media Manager Component Controller
- *
- * @package		Joomla
- * @subpackage	Media
- * @version 1.5
- */
-class MediaController extends JController
-{
-	/**
-	 * Display the view
-	 */
-	function display()
-	{
-		global $mainframe;
-
-		$vName = JRequest::getCmd('view', 'images');
-		switch ($vName)
-		{
-			case 'imagesList':
-				$mName = 'list';
-				$vLayout = JRequest::getCmd( 'layout', 'default' );
-
-				break;
-
-			case 'images':
-			default:
-				$vLayout = JRequest::getCmd( 'layout', 'default' );
-				$mName = 'manager';
-				$vName = 'images';
-
-				break;
-		}
-
-		$document = &JFactory::getDocument();
-		$vType		= $document->getType();
-
-		// Get/Create the view
-		$view = &$this->getView( $vName, $vType);
-		$view->addTemplatePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.$vName.DS.'tmpl');
-
-		// Get/Create the model
-		if ($model = &$this->getModel($mName)) {
-			// Push the model into the view (as default)
-			$view->setModel($model, true);
-		}
-
-		// Set the layout
-		$view->setLayout($vLayout);
-
-		// Display the view
-		$view->display();
-	}
-
-	function ftpValidate()
-	{
-		// Set FTP credentials, if given
-		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
-	}
-}
+// Require the base controller
+require_once (JPATH_COMPONENT.DS.'controller.php');
 
 $cmd = JRequest::getCmd('task', null);
-if (strpos($cmd, '.') != false && false) {
+if (strpos($cmd, '.') != false)
+{
 	// We have a defined controller/task pair -- lets split them out
 	list($controllerName, $task) = explode('.', $cmd);
 
@@ -110,12 +50,13 @@ if (strpos($cmd, '.') != false && false) {
 	} else {
 		JError::raiseError(500, 'Invalid Controller');
 	}
-} else {
+}
+else
+{
 	// Base controller, just set the task :)
 	$controllerName = null;
 	$task = $cmd;
 }
-
 // Set the name for the controller and instantiate it
 $controllerClass = 'MediaController'.ucfirst($controllerName);
 if (class_exists($controllerClass)) {

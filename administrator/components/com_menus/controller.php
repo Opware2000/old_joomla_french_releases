@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8286 2007-08-01 08:27:44Z eddieajau $
+ * @version		$Id: controller.php 9816 2008-01-03 00:49:32Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -27,8 +26,25 @@ class MenusController extends JController
 	/**
 	 * New menu item wizard
 	 */
+
+	function newItem()
+	{
+		JRequest::setVar( 'edit', false );
+		$model	=& $this->getModel( 'Item' );
+		$view =& $this->getView( 'Item' );
+		$view->setModel( $model, true );
+
+		// Set the layout and display
+		$view->setLayout('type');
+		$view->type();
+	}
+	/**
+	 * Edit menu item wizard
+	 */
+
 	function type()
 	{
+		JRequest::setVar( 'edit', true );
 		$model	=& $this->getModel( 'Item' );
 		$view =& $this->getView( 'Item' );
 		$view->setModel( $model, true );
@@ -43,6 +59,7 @@ class MenusController extends JController
 	 */
 	function edit()
 	{
+		JRequest::setVar( 'edit', true );
 		$model	=& $this->getModel( 'Item' );
 		$model->checkout();
 
@@ -58,6 +75,9 @@ class MenusController extends JController
 	 */
 	function save()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$cache = & JFactory::getCache('com_content');
 		$cache->clean();
 
@@ -120,10 +140,23 @@ class MenusController extends JController
 	*/
 	function doCopy()
 	{
+		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
-		$menu	= JRequest::getVar( 'menu', '', 'post', 'string' );
-		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
+		$menu	 	= JRequest::getString( 'menu', '', 'post');
+		$cid		= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
+
+		//Check to see of a menu was selected to copy the items too
+		if (empty($menu))
+		{
+			$msg = JText::_('Please select a menu from the list');
+			$mainframe->enqueueMessage($msg, 'message');
+			return $this->execute('copy');
+		}
 
 		$model	=& $this->getModel( 'List' );
 
@@ -151,10 +184,23 @@ class MenusController extends JController
 	*/
 	function doMove()
 	{
+		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menu', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
+
+		//Check to see if a menu was selected to copy the items too
+		if (empty($menu))
+		{
+			$msg = JText::_('Please select a menu from the list');
+			$mainframe->enqueueMessage($msg, 'message');
+			return $this->execute('move');
+		}
 
 		$model	=& $this->getModel( 'List' );
 
@@ -171,6 +217,9 @@ class MenusController extends JController
 	*/
 	function publish()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -190,6 +239,9 @@ class MenusController extends JController
 	*/
 	function unpublish()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -209,6 +261,9 @@ class MenusController extends JController
 	*/
 	function orderup()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
@@ -234,6 +289,9 @@ class MenusController extends JController
 	*/
 	function orderdown()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
@@ -259,6 +317,9 @@ class MenusController extends JController
 	*/
 	function saveorder()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
 		JArrayHelper::toInteger($cid);
@@ -277,6 +338,9 @@ class MenusController extends JController
 	*/
 	function accesspublic()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -296,6 +360,9 @@ class MenusController extends JController
 	*/
 	function accessregistered()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -315,6 +382,9 @@ class MenusController extends JController
 	*/
 	function accessspecial()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -334,6 +404,9 @@ class MenusController extends JController
 	*/
 	function setdefault()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -357,6 +430,9 @@ class MenusController extends JController
 
 	function remove()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Get some variables from the request
 		$menu	= JRequest::getVar( 'menutype', '', 'post', 'string' );
 		$cid	= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -403,14 +479,26 @@ class MenusController extends JController
 
 
 	/**
-	 * Controller for view to create or edit a menu type
+	 * Controller for view to edit a menu type
 	 */
 	function editMenu()
 	{
 		$view =& $this->getView( 'Menus' );
 		$model	=& $this->getModel( 'Menutype' );
 		$view->setModel( $model, true );
-		$view->editForm();
+		$view->editForm(true,null);
+
+	}
+
+	/**
+	 * Controller for view to create a menu type
+	 */
+	function addMenu()
+	{
+		$view =& $this->getView( 'Menus' );
+		$model	=& $this->getModel( 'Menutype' );
+		$view->setModel( $model, true );
+		$view->editForm(false,null);
 	}
 
 	/**
@@ -419,6 +507,9 @@ class MenusController extends JController
 	function saveMenu()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		$db		=& JFactory::getDBO();
 		$id		= JRequest::getVar( 'id', 0, 'post', 'int' );
@@ -433,11 +524,15 @@ class MenusController extends JController
 		$isChanged	= ($oldType->menutype != $menuType->menutype);
 
 		if (!$menuType->check()) {
-			return JError::raiseWarning( 500, $row->getError() );
+			JError::raiseWarning( 500, $menuType->getError() );
+			$this->setRedirect( 'index.php?option=com_menus&task=editMenu', 'Please check your menu settings' );
+			return false;
 		}
 
 		if (!$menuType->store()) {
-			return JError::raiseWarning( 500, $row->getError() );
+			JError::raiseWarning( 500, $menuType->getError() );
+			$this->setRedirect( 'index.php?option=com_menus&task=editMenu', 'Please check your menu settings' );
+			return false;
 		}
 
 		if ($isNew)
@@ -454,10 +549,10 @@ class MenusController extends JController
 
 				// check then store data in db
 				if (!$module->check()) {
-					return JError::raiseWarning( 500, $row->getError() );
+					return JError::raiseWarning( 500, $module->getError() );
 				}
 				if (!$module->store()) {
-					return JError::raiseWarning( 500, $row->getError() );
+					return JError::raiseWarning( 500, $module->getError() );
 				}
 				$module->checkin();
 				$module->reorder( 'position='.$db->Quote($module->position) );
@@ -541,15 +636,20 @@ class MenusController extends JController
 	 */
 	function doDeleteMenu()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$id = JRequest::getVar( 'id', 0, '', 'int' );
 		if ($id <= 0) {
-			JError::raiseError( 500, JText::_( 'Invalid ID provided' ) );
+			JError::raiseWarning( 500, JText::_( 'Invalid ID provided' ) );
+			$this->setRedirect( 'index.php?option=com_menus' );
 			return false;
 		}
 
 		$model =& $this->getModel( 'Menutype' );
 		if (!$model->canDelete()) {
-			JError::raiseError( 500, $model->getError() );
+			JError::raiseWarning( 500, $model->getError() );
+			$this->setRedirect( 'index.php?option=com_menus' );
 			return false;
 		}
 		$err = null;
@@ -577,6 +677,9 @@ class MenusController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$db				=& JFactory::getDBO();
 		$type			= JRequest::getVar( 'type', '', 'post', 'string' );
 		$menu_name		= JRequest::getVar( 'menu_name', 'New Menu', 'post', 'string' );
@@ -593,8 +696,9 @@ class MenusController extends JController
 		{
 			$params = new JParameter( $menu );
 			if ( $params->get('menutype') == $menu_name ) {
-				JError::raiseError( 500, JText::_( 'ERRORMENUNAMEEXISTS' ) );
-				$mainframe->close();
+				JError::raiseWarning( 500, JText::_( 'ERRORMENUNAMEEXISTS' ) );
+				$this->setRedirect( 'index.php?option=com_menus' );
+				return;
 			}
 		}
 
@@ -616,12 +720,14 @@ class MenusController extends JController
 			$copy->menutype = $menu_name;
 
 			if ( !$copy->check() ) {
-				josErrorAlert( $copy->getError() );
-				$mainframe->close();
+				JError::raiseWarning( 500, $copy->getError() );
+				$this->setRedirect( 'index.php?option=com_menus' );
+				return;
 			}
 			if ( !$copy->store() ) {
-				josErrorAlert( $copy->getError() );
-				$mainframe->close();
+				JError::raiseWarning( 500, $copy->getError() );
+				$this->setRedirect( 'index.php?option=com_menus' );
+				return;
 			}
 			$a_ids[$original->id] = $copy->id;
 		}
@@ -637,12 +743,14 @@ class MenusController extends JController
 		$row->params 	= 'menutype='. $menu_name;
 
 		if (!$row->check()) {
-			josErrorAlert( $row->getError() );
-			$mainframe->close();
+			JError::raiseWarning( 500, $row->getError() );
+			$this->setRedirect( 'index.php?option=com_menus' );
+			return;
 		}
 		if (!$row->store()) {
-			josErrorAlert( $row->getError() );
-			$mainframe->close();
+			JError::raiseWarning( 500, $row->getError() );
+			$this->setRedirect( 'index.php?option=com_menus' );
+			return;
 		}
 		$row->checkin();
 		$row->reorder( 'position='.$db->Quote($row->position) );
@@ -652,17 +760,23 @@ class MenusController extends JController
 				' VALUES ( '.(int) $row->id.', 0 )';
 		$db->setQuery( $query );
 		if ( !$db->query() ) {
-			echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
-			$mainframe->close();
+			JError::raiseWarning( 500, $db->getErrorMsg(true) );
+			$this->setRedirect( 'index.php?option=com_menus' );
+			return;
+			//echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
+			//$mainframe->close();
 		}
 
 		// Insert the menu type
 		$query = 'INSERT INTO `#__menu_types`  ( `menutype` , `title` , `description` ) ' .
-				' VALUES ( '.$db->Quote($menu_name).', '.$db->Quote(JText::_('New Menu')).', "")';
+				' VALUES ( '.$db->Quote($menu_name).', '.$db->Quote($menu_name).', "")';
 		$db->setQuery( $query );
 		if ( !$db->query() ) {
-			echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
-			$mainframe->close();
+			JError::raiseWarning( 500, $db->getErrorMsg(true) );
+			$this->setRedirect( 'index.php?option=com_menus' );
+			return;
+			//echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
+			//$mainframe->close();
 		}
 
 		$msg = JText::sprintf( 'Copy of Menu created', $type, $total );

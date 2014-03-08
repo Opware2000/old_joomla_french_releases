@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.html.php 8502 2007-08-22 05:55:34Z jinx $
+ * @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	MailTo
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -37,7 +37,7 @@ class MailtoViewMailto extends JView
 		$data = new stdClass();
 
 		$data->link = urldecode( JRequest::getVar( 'link', '', 'method', 'base64' ) );
-		
+
 		if ($data->link == '') {
 			JError::raiseError( 403, 'Link is missing' );
 			$false = false;
@@ -66,4 +66,3 @@ class MailtoViewMailto extends JView
 		return $data;
 	}
 }
-?>

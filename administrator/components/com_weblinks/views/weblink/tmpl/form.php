@@ -1,5 +1,22 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
+
 <?php JHTML::_('behavior.tooltip'); ?>
+
+<?php
+	// Set toolbar items for the page
+	$edit		= JRequest::getVar('edit',true);
+	$text = !$edit ? JText::_( 'New' ) : JText::_( 'Edit' );
+	JToolBarHelper::title(   JText::_( 'Weblink' ).': <small><small>[ ' . $text.' ]</small></small>' );
+	JToolBarHelper::save();
+	if (!$edit)  {
+		JToolBarHelper::cancel();
+	} else {
+		// for existing items the button is renamed `close`
+		JToolBarHelper::cancel( 'cancel', 'Close' );
+	}
+	JToolBarHelper::help( 'screen.weblink.edit' );
+?>
+
 <script language="javascript" type="text/javascript">
 	function submitbutton(pressbutton) {
 		var form = document.adminForm;
@@ -28,8 +45,8 @@
 	}
 </style>
 
-<form action="<?php echo $this->request_url; ?>" method="post" name="adminForm" id="adminForm">
-<div class="col50">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
+<div class="col width-50">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -46,7 +63,7 @@
 		</tr>
 		<tr>
 			<td width="100" align="right" class="key">
-				<label for="alias"">
+				<label for="alias">
 					<?php echo JText::_( 'Alias' ); ?>:
 				</label>
 			</td>
@@ -95,7 +112,7 @@
 	</table>
 	</fieldset>
 </div>
-<div class="col50">
+<div class="col width-50">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'Parameters' ); ?></legend>
 
@@ -109,7 +126,7 @@
 	</fieldset>
 </div>
 
-<div class="col50">
+<div class="col width-50">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'Description' ); ?></legend>
 
@@ -124,7 +141,8 @@
 </div>
 <div class="clr"></div>
 
-<input type="hidden" name="cid[]" value="<?php echo $this->weblink->id; ?>" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="controller" value="weblink" />
+	<input type="hidden" name="option" value="com_weblinks" />
+	<input type="hidden" name="cid[]" value="<?php echo $this->weblink->id; ?>" />
+	<input type="hidden" name="task" value="" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

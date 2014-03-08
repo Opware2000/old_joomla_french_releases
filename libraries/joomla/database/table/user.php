@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: user.php 8373 2007-08-10 05:43:06Z tcp $
+* @version		$Id: user.php 9860 2008-01-04 20:46:05Z louis $
 * @package		Joomla.Framework
 * @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -135,8 +135,8 @@ class JTableUser extends JTable
 	 */
 	function check()
 	{
-		jimport('joomla.utilities.mail');
-		
+		jimport('joomla.mail.helper');
+
 		// Validate user information
 		if (trim( $this->name ) == '') {
 			$this->setError( JText::_( 'Please enter your name.' ) );
@@ -149,12 +149,12 @@ class JTableUser extends JTable
 		}
 
 
-		if (eregi( "[\<|\>|\"|\'|\%|\;|\(|\)|\&|\+|\-]", $this->username) || JString::strlen( $this->username ) < 2) {
+		if (eregi( "[\<|\>|\"|\'|\%|\;|\(|\)|\&|\+|\-]", $this->username) || strlen(utf8_decode($this->username )) < 2) {
 			$this->setError( JText::sprintf( 'VALID_AZ09', JText::_( 'Username' ), 2 ) );
 			return false;
 		}
 
-		if ((trim($this->email == "")) || ! JMailHelper::isEmailAddress($this->email) ) {
+		if ((trim($this->email) == "") || ! JMailHelper::isEmailAddress($this->email) ) {
 			$this->setError( JText::_( 'WARNREG_MAIL' ) );
 			return false;
 		}
@@ -168,7 +168,7 @@ class JTableUser extends JTable
 		$this->_db->setQuery( $query );
 		$xid = intval( $this->_db->loadResult() );
 		if ($xid && $xid != intval( $this->id )) {
-			$this->setError( JText::_( 'WARNREG_INUSE' ) );
+			$this->setError(  JText::_('WARNREG_INUSE'));
 			return false;
 		}
 
@@ -296,15 +296,11 @@ class JTableUser extends JTable
 		}
 
 		// if no timestamp value is passed to functon, than current time is used
-		if ( $timeStamp ) {
-			$dateTime = date( 'Y-m-d H:i:s', $timeStamp );
-		} else {
-			$dateTime = date( 'Y-m-d H:i:s' );
-		}
+		$date = new JDate($timeStamp);
 
 		// updates user lastvistdate field with date and time
 		$query = 'UPDATE '. $this->_tbl
-		. ' SET lastvisitDate = '.$this->_db->Quote($dateTime)
+		. ' SET lastvisitDate = '.$this->_db->Quote($date->toMySQL())
 		. ' WHERE id = '. (int) $id
 		;
 		$this->_db->setQuery( $query );

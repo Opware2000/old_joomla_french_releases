@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.newsfeeds.php 8030 2007-07-17 22:58:52Z friesengeist $
+* @version		$Id: admin.newsfeeds.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -33,8 +33,10 @@ $task 	= JRequest::getCmd('task');
 switch ($task) {
 
 	case 'add' :
+		editNewsFeed(false);
+		break;
 	case 'edit':
-		editNewsFeed( );
+		editNewsFeed(true);
 		break;
 
 	case 'save':
@@ -92,14 +94,14 @@ function showNewsFeeds(  )
 	$search				= JString::strtolower( $search );
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-	$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+	$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 	$where = array();
 	if ( $filter_catid ) {
 		$where[] = 'a.catid = '.(int) $filter_catid;
 	}
 	if ($search) {
-		$where[] = 'LOWER(a.name) LIKE '.$db->Quote('%'.$search.'%');
+		$where[] = 'LOWER(a.name) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 	if ( $filter_state ) {
 		if ( $filter_state == 'P' ) {
@@ -163,7 +165,7 @@ function showNewsFeeds(  )
 /**
 * Creates a new or edits and existing user record
 */
-function editNewsFeed(  )
+function editNewsFeed($edit)
 {
 	$db 		=& JFactory::getDBO();
 	$user 		=& JFactory::getUser();
@@ -175,9 +177,10 @@ function editNewsFeed(  )
 
 	$row =& JTable::getInstance( 'newsfeed', 'Table' );
 	// load the row from the db table
+	if($edit)
 	$row->load( $cid[0] );
 
-	if ($cid[0]) {
+	if ($edit) {
 		// do stuff for existing records
 		$row->checkout( $user->get('id') );
 	} else {
@@ -193,7 +196,11 @@ function editNewsFeed(  )
 	. ' FROM #__newsfeeds AS a'
 	. ' ORDER BY a.ordering'
 	;
-	$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query, 1 );
+
+	if($edit)
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query, 1 );
+	else
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, '', $query, 1 );
 
 	// build list of categories
 	$lists['category'] 			= JHTML::_('list.category',  'catid', $option, intval( $row->catid ) );
@@ -209,6 +216,9 @@ function editNewsFeed(  )
 function saveNewsFeed(  )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db 		=& JFactory::getDBO();
 	$task 		= JRequest::getVar( 'task');
@@ -280,6 +290,9 @@ function changePublishNewsFeeds( $publish )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db 		=& JFactory::getDBO();
 	$user 		=& JFactory::getUser();
 
@@ -319,6 +332,9 @@ function removeNewsFeeds( )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db 		=& JFactory::getDBO();
 	$cid 		= JRequest::getVar('cid', array(), '', 'array');
 	$option 	= JRequest::getCmd('option');
@@ -347,6 +363,9 @@ function removeNewsFeeds( )
 function cancelNewsFeed(  )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db 	=& JFactory::getDBO();
 	$option = JRequest::getCmd('option');
@@ -379,6 +398,9 @@ function orderNewsFeed( $inc )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db		=& JFactory::getDBO();
 	$cid	= JRequest::getVar('cid', array(0), '', 'array');
 	$option = JRequest::getCmd('option');
@@ -401,6 +423,9 @@ function orderNewsFeed( $inc )
 function saveOrder(  )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db			=& JFactory::getDBO();
 	$cid		= JRequest::getVar( 'cid', array(), 'post', 'array' );
@@ -436,4 +461,3 @@ function saveOrder(  )
 	$msg 	= 'New ordering saved';
 	$mainframe->redirect( 'index.php?option=com_newsfeeds', $msg );
 }
-?>

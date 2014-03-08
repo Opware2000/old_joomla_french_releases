@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: client.php 8242 2007-07-30 11:25:06Z humvee $
+ * @version		$Id: client.php 9805 2008-01-02 23:32:34Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -102,8 +102,10 @@ class BannersViewClients
 							echo $row->name;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Banner Client' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>'; ?>">
+								<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit' );?>::<?php echo $row->name; ?>">
+							<a href="<?php echo $link; ?>">
 								<?php echo $row->name; ?></a>
+								</span>
 							<?php
 						}
 						?>
@@ -130,7 +132,8 @@ class BannersViewClients
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -150,7 +153,6 @@ class BannersViewClients
 	{
 		BannersViewClients::setClientToolbar();
 		JRequest::setVar( 'hidemainmenu', 1 );
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'extrainfo' );
 		?>
 		<script language="javascript" type="text/javascript">
@@ -190,7 +192,7 @@ class BannersViewClients
 
 		<form action="index.php" method="post" name="adminForm">
 
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -229,7 +231,7 @@ class BannersViewClients
 			</fieldset>
 		</div>
 
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Extra Info' ); ?></legend>
 
@@ -249,6 +251,7 @@ class BannersViewClients
 		<input type="hidden" name="cid" value="<?php echo $row->cid; ?>" />
 		<input type="hidden" name="client_id" value="<?php echo $row->cid; ?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}

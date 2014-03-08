@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.content.html.php 8577 2007-08-26 22:45:22Z eddieajau $
+* @version		$Id: admin.content.html.php 9810 2008-01-03 00:41:12Z eddieajau $
 * @package		Joomla
 * @subpackage	Content
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -77,7 +77,6 @@ class ContentView
 					</th>
 					<th class="title">
 						<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
-						/ <?php echo JText::_( 'Alias' );?>
 					</th>
 					<th width="1%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Published', 'c.state', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -198,7 +197,7 @@ class ContentView
 						if (  JTable::isCheckedOut($user->get ('id'), $row->checked_out ) ) {
 							echo $row->title;
 						} else if ($row->state == -1) {
-							echo htmlspecialchars($row->title, ENT_QUOTES);
+							echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
 							echo ' [ '. JText::_( 'Archived' ) .' ]';
 						} else {
 							?>
@@ -206,7 +205,6 @@ class ContentView
 								<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?></a>
 							<?php
 						}
-						echo '<br />'.$row->alias;
 						?>
 					</td>
 					<?php
@@ -266,11 +264,11 @@ class ContentView
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	/**
 	* Writes a list of the articles
@@ -422,10 +420,10 @@ class ContentView
 		<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	/**
 	* Writes the edit form for new and existing article
@@ -440,7 +438,6 @@ class ContentView
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		jimport('joomla.html.pane');
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row );
 
 		$db		=& JFactory::getDBO();
@@ -551,6 +548,7 @@ class ContentView
 		<input type="hidden" name="mask" value="0" />
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 		echo JHTML::_('behavior.keepalive');
@@ -594,7 +592,7 @@ class ContentView
 			<br /><br />
 			</td>
 			<td  valign="top">
-			<strong><?php echo JText::_( 'Items being Moved' ); ?>:</strong>
+			<strong><?php echo JText::_( 'Articles being Moved' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -616,11 +614,10 @@ class ContentView
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
-
 
 	/**
 	* Form to select Section/Category to copys item(s) to
@@ -655,7 +652,7 @@ class ContentView
 			<br /><br />
 			</td>
 			<td  valign="top">
-			<strong><?php echo JText::_( 'Items being copied' ); ?>:</strong>
+			<strong><?php echo JText::_( 'Articles being copied' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -677,6 +674,7 @@ class ContentView
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -688,7 +686,7 @@ class ContentView
 		$editor		=& JFactory::getEditor();
 
 		$document	=& JFactory::getDocument();
-		$document->setLink($mainframe->getSiteURL());
+		$document->setLink(JURI::root());
 
 		JHTML::_('behavior.caption');
 
@@ -719,6 +717,8 @@ class ContentView
 	*/
 	function insertPagebreak()
 	{
+		$eName	= JRequest::getVar('e_name');
+		$eName	= preg_replace( '#[^A-Z0-9\-\_\[\]]#i', '', $eName );
 		?>
 		<script type="text/javascript">
 			function insertPagebreak()
@@ -738,7 +738,7 @@ class ContentView
 
 				var tag = "<hr class=\"system-pagebreak\" "+title+" "+alt+"/>";
 
-				window.parent.jInsertEditorText(tag);
+				window.parent.jInsertEditorText(tag, '<?php echo $eName; ?>');
 				window.parent.document.getElementById('sbox-window').close();
 				return false;
 			}
@@ -923,4 +923,3 @@ class ContentView
 		<?php
 	}
 }
-?>

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: helpsites.php 8288 2007-08-01 08:40:54Z eddieajau $
+* @version		$Id: helpsites.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Parameter
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -36,7 +36,7 @@ class JElementHelpsites extends JElement
 
 	function fetchElement($name, $value, &$node, $control_name)
 	{
-		jimport('joomla.i18n.help');
+		jimport('joomla.language.help');
 
 		$helpsites 				= JHelp::createSiteList(JPATH_ADMINISTRATOR.DS.'help'.DS.'helpsites-15.xml', $value);
 		array_unshift($helpsites, JHTML::_('select.option', '', JText::_('local')));

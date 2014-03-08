@@ -3,7 +3,7 @@
 * @version		$Id:template.php 6961 2007-03-15 16:06:53Z tcp $
 * @package		Joomla.Framework
 * @subpackage	Installer
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -57,7 +57,7 @@ class JInstallerTemplate extends JObject
 			jimport('joomla.application.helper');
 			$client =& JApplicationHelper::getClientInfo($cname, true);
 			if ($client === false) {
-				$this->parent->abort('Template Install: '.JText::_('Unknown client type').' ['.$cname.']');
+				$this->parent->abort(JText::_('Template').' '.JText::_('Install').': '.JText::_('Unknown client type').' ['.$cname.']');
 				return false;
 			}
 			$basePath = $client->path;
@@ -82,7 +82,7 @@ class JInstallerTemplate extends JObject
 		 * installed or another template is using that directory.
 		 */
 		if (file_exists($this->parent->getPath('extension_root')) && !$this->parent->getOverwrite()) {
-			JError::raiseWarning(100, 'Template Install: '.JText::_('Another template is already using directory').': "'.$this->parent->getPath('extension_root').'"');
+			JError::raiseWarning(100, JText::_('Template').' '.JText::_('Install').': '.JText::_('Another template is already using directory').': "'.$this->parent->getPath('extension_root').'"');
 			return false;
 		}
 
@@ -90,7 +90,7 @@ class JInstallerTemplate extends JObject
 		$created = false;
 		if (!file_exists($this->parent->getPath('extension_root'))) {
 			if (!$created = JFolder::create($this->parent->getPath('extension_root'))) {
-				$this->parent->abort('Template Install: '.JText::_('Failed to create directory').' "'.$this->parent->getPath('extension_root').'"');
+				$this->parent->abort(JText::_('Template').' '.JText::_('Install').': '.JText::_('Failed to create directory').' "'.$this->parent->getPath('extension_root').'"');
 				return false;
 			}
 		}
@@ -134,7 +134,7 @@ class JInstallerTemplate extends JObject
 		// Lastly, we will copy the manifest file to its appropriate place.
 		if (!$this->parent->copyManifest(-1)) {
 			// Install failed, rollback changes
-			$this->parent->abort('Template Install: '.JText::_('Could not copy setup file'));
+			$this->parent->abort(JText::_('Template').' '.JText::_('Install').': '.JText::_('Could not copy setup file'));
 			return false;
 		}
 		return true;
@@ -156,14 +156,14 @@ class JInstallerTemplate extends JObject
 
 		// For a template the id will be the template name which represents the subfolder of the templates folder that the template resides in.
 		if (!$name) {
-			JError::raiseWarning(100, 'Template Uninstall: '.JText::_('Template id is empty, cannot uninstall files'));
+			JError::raiseWarning(100, JText::_('Template').' '.JText::_('Uninstall').': '.JText::_('Template id is empty, cannot uninstall files'));
 			return false;
 		}
 
 		// Get the template root path
 		$client =& JApplicationHelper::getClientInfo( $clientId );
 		if (!$client) {
-			JError::raiseWarning(100, 'Template Uninstall: '.JText::_('Invalid application'));
+			JError::raiseWarning(100, JText::_('Template').' '.JText::_('Uninstall').': '.JText::_('Invalid application'));
 			return false;
 		}
 		$this->parent->setPath('extension_root', $client->path.DS.'templates'.DS.$name);
@@ -173,7 +173,7 @@ class JInstallerTemplate extends JObject
 		if (!is_a($manifest, 'JSimpleXML')) {
 			// Make sure we delete the folders
 			JFolder::delete($this->parent->getPath('extension_root'));
-			JError::raiseWarning(100, 'Template Uninstall: Package manifest file invalid or not found');
+			JError::raiseWarning(100, JTEXT::_('Template').' '.JTEXT::_('Uninstall').': '.JTEXT::_('Package manifest file invalid or not found'));
 			return false;
 		}
 		$root =& $manifest->document;
@@ -187,7 +187,7 @@ class JInstallerTemplate extends JObject
 		if (JFolder::exists($this->parent->getPath('extension_root'))) {
 			$retval = JFolder::delete($this->parent->getPath('extension_root'));
 		} else {
-			JError::raiseWarning(100, 'Template Uninstall: '.JText::_('Directory does not exist, cannot remove files'));
+			JError::raiseWarning(100, JText::_('Template').' '.JText::_('Uninstall').': '.JText::_('Directory does not exist, cannot remove files'));
 			$retval = false;
 		}
 		return $retval;

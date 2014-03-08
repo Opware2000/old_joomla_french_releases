@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
+* @version		$Id: view.feed.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -29,13 +29,13 @@ class WeblinksViewCategory extends JView
 {
 	function display($tpl = null)
 	{
-		global $mainframe, $option;
+		global $mainframe;
 
 		$document =& JFactory::getDocument();
 
 		$document->link = JRoute::_('index.php?option=com_weblinks&view=category&id='.JRequest::getVar('id',null, '', 'int'));
-		$limit = '10';
-		JRequest::setVar('limit', $limit);
+
+		JRequest::setVar('limit', $mainframe->getCfg('feed_limit'));
 
 		// Get some data from the model
 		$items		=& $this->get( 'data' );
@@ -44,7 +44,7 @@ class WeblinksViewCategory extends JView
 		foreach ( $items as $item )
 		{
 			// strip html from feed item title
-			$title = htmlspecialchars( $item->title );
+			$title = $this->escape( $item->title );
 			$title = html_entity_decode( $title );
 
 			// url link to article

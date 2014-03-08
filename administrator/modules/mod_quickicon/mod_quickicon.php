@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_quickicon.php 8295 2007-08-01 23:05:25Z eddieajau $
+* @version		$Id: mod_quickicon.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -29,8 +29,7 @@ if (!defined( '_JOS_QUICKICON_MODULE' ))
 			<div class="icon">
 				<a href="<?php echo $link; ?>">
 					<?php echo JHTML::_('image.site',  $image, '/templates/'. $template .'/images/header/', NULL, NULL, $text ); ?>
-					<span><?php echo $text; ?></span>
-				</a>
+					<span><?php echo $text; ?></span></a>
 			</div>
 		</div>
 		<?php

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblink.php 7873 2007-07-05 22:44:21Z friesengeist $
+ * @version		$Id: file.php 9827 2008-01-03 00:58:16Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -37,6 +37,9 @@ class MediaControllerFile extends MediaController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken( 'request' ) or die( 'Invalid Token' );
+
 		$file 		= JRequest::getVar( 'Filedata', '', 'files', 'array' );
 		$folder		= JRequest::getVar( 'folder', '', '', 'path' );
 		$format		= JRequest::getVar( 'format', 'html', '', 'cmd');
@@ -47,16 +50,20 @@ class MediaControllerFile extends MediaController
 		jimport('joomla.client.helper');
 		JClientHelper::setCredentialsFromRequest('ftp');
 
+		// Make the filename safe
+		jimport('joomla.filesystem.file');
+		$file['name']	= JFile::makeSafe($file['name']);
+
 		if (isset($file['name'])) {
 			$filepath = JPath::clean(COM_MEDIA_BASE.DS.$folder.DS.strtolower($file['name']));
 
 			if (!MediaHelper::canUpload( $file, $err )) {
 				if ($format == 'json') {
-					jimport('joomla.utilities.log');
+					jimport('joomla.error.log');
 					$log = &JLog::getInstance('upload.error.php');
 					$log->addEntry(array('comment' => 'Invalid: '.$filepath.': '.$err));
 					header('HTTP/1.0 415 Unsupported Media Type');
-					die('Error. Unsupported Media Type');
+					die('Error. Unsupported Media Type!');
 				} else {
 					JError::raiseNotice(100, JText::_($err));
 					// REDIRECT
@@ -69,7 +76,7 @@ class MediaControllerFile extends MediaController
 
 			if (JFile::exists($filepath)) {
 				if ($format == 'json') {
-					jimport('joomla.utilities.log');
+					jimport('joomla.error.log');
 					$log = &JLog::getInstance('upload.error.php');
 					$log->addEntry(array('comment' => 'File already exists: '.$filepath));
 					header('HTTP/1.0 409 Conflict');
@@ -86,7 +93,7 @@ class MediaControllerFile extends MediaController
 
 			if (!JFile::upload($file['tmp_name'], $filepath)) {
 				if ($format == 'json') {
-					jimport('joomla.utilities.log');
+					jimport('joomla.error.log');
 					$log = &JLog::getInstance('upload.error.php');
 					$log->addEntry(array('comment' => 'Cannot upload: '.$filepath));
 					header('HTTP/1.0 400 Bad Request');
@@ -101,7 +108,7 @@ class MediaControllerFile extends MediaController
 				}
 			} else {
 				if ($format == 'json') {
-					jimport('joomla.utilities.log');
+					jimport('joomla.error.log');
 					$log = &JLog::getInstance();
 					$log->addEntry(array('comment' => $folder));
 					die('Upload complete');
@@ -146,7 +153,7 @@ class MediaControllerFile extends MediaController
 			foreach ($paths as $path)
 			{
 				if ($path !== JFilterInput::clean($path, 'path')) {
-					JError::raiseWarning(100, JText::_('Unable to delete:').htmlspecialchars($path).' '.JText::_('WARNFILENAME'));
+					JError::raiseWarning(100, JText::_('Unable to delete:').htmlspecialchars($path, ENT_COMPAT, 'UTF-8').' '.JText::_('WARNFILENAME'));
 					continue;
 				}
 

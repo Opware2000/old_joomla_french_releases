@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: module.php 7367 2007-05-05 21:53:44Z jinx $
+* @version		$Id: module.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -78,7 +78,7 @@ class JTableModule extends JTable
 	{
 		// check for valid name
 		if (trim( $this->title ) == '') {
-			$this->_error = JText::sprintf( 'must contain a title', JText::_( 'Module') );
+			$this->setError(JText::sprintf( 'must contain a title', JText::_( 'Module') ));
 			return false;
 		}
 
@@ -96,12 +96,15 @@ class JTableModule extends JTable
 	*/
 	function bind($array, $ignore = '')
 	{
-		if (is_array( $array['params'] )) {
+		if (is_array( $array['params'] ))
+		{
 			$registry = new JRegistry();
 			$registry->loadArray($array['params']);
 			$array['params'] = $registry->toString();
 		}
-		if (isset( $array['control'] ) && is_array( $array['control'] )) {
+
+		if (isset( $array['control'] ) && is_array( $array['control'] ))
+		{
 			$registry = new JRegistry();
 			$registry->loadArray($array['control']);
 			$array['control'] = $registry->toString();

@@ -3,7 +3,7 @@
 * @version		$Id:helper.php 6961 2007-03-15 16:06:53Z tcp $
 * @package		Joomla.Framework
 * @subpackage	User
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -65,7 +65,7 @@ class JUserHelper
 		}
 		else
 		{
-			JError::raiseWarning( "SOME_ERROR_CODE", JText::_('Unable to find a user with given activation string.') );
+			JError::raiseWarning( "SOME_ERROR_CODE", JText::_('UNABLE TO FIND A USER WITH GIVEN ACTIVATION STRING') );
 			return false;
 		}
 

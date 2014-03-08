@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: pagebreak.php 8621 2007-08-29 18:04:55Z jinx $
+* @version		$Id: pagebreak.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -33,7 +33,7 @@ $mainframe->registerEvent( 'onPrepareContent', 'plgContentPagebreak' );
 function plgContentPagebreak( &$row, &$params, $page=0 )
 {
 	// expression to search for
-	$regex = '#<hr class=\"system-pagebreak\"(.*)\/>#iU';
+	$regex = '#<hr(.*)class=\"system-pagebreak\"(.*)\/>#iU';
 
 	// Get Plugin info
 	$plugin			=& JPluginHelper::getPlugin('content', 'pagebreak');
@@ -51,8 +51,8 @@ function plgContentPagebreak( &$row, &$params, $page=0 )
 		return true;
 	}
 
-	// simple performance check to determine whether bot should process further
-	if ( JString::strpos( $row->text, '<hr class="system-pagebreak' ) === false ) {
+	//simple performance check to determine whether bot should process further
+	if ( JString::strpos( $row->text, 'class="system-pagebreak' ) === false ) {
 		return true;
 	}
 
@@ -95,8 +95,8 @@ function plgContentPagebreak( &$row, &$params, $page=0 )
 	$n = count( $text );
 
 	// we have found at least one plugin, therefore at least 2 pages
-	if ($n > 1) {
-
+	if ($n > 1)
+	{
 		// Get plugin parameters
 		$pluginParams = new JParameter( $plugin->params );
 		$title	= $pluginParams->get( 'title', 1 );
@@ -105,25 +105,15 @@ function plgContentPagebreak( &$row, &$params, $page=0 )
 		// adds heading or title to <site> Title
 		if ( $title )
 		{
-			$page_text = $page + 1;
-			$row->page_title = JText::sprintf( 'Page #', $page_text );
-			if ( !$page )
-			{
-				// processing for first page
-				$attrs = JUtility::parseAttributes($matches[0][1]);
+			if ( $page ) {
+				$page_text = $page + 1;
+				if ( $page && @$matches[$page-1][2] )
+				{
+					$attrs = JUtility::parseAttributes($matches[$page-1][1]);
 
-				if ( @$attrs['alt'] ) {
-					$row->page_title = $attrs['alt'];
-				} else {
-					$row->page_title = '';
-				}
-			}
-			else if ( @$matches[$page-1][2] )
-			{
-				$attrs = JUtility::parseAttributes($matches[$page-1][1]);
-
-				if ( @$attrs['title'] ) {
-					$row->page_title = $attrs['title'];
+					if ( @$attrs['title'] ) {
+						$row->page_title = $attrs['title'];
+					}
 				}
 			}
 		}
@@ -172,17 +162,8 @@ function plgContentPagebreak( &$row, &$params, $page=0 )
 
 function plgContentCreateTOC( &$row, &$matches, &$page )
 {
-	$heading = $row->title;
 
-	// allows customization of first page title by checking for `heading` attribute in first bot
-	if ( @$matches[0][1] )
-	{
-		$attrs = JUtility::parseAttributes($matches[0][1]);
-		if ( @$attrs['alt'] ) {
-			$heading = $attrs['alt'];
-			$row->title .= ': '. $heading;
-		}
-	}
+	$heading = $row->title;
 
 	// TOC Header
 	$row->toc = '
@@ -211,47 +192,38 @@ function plgContentCreateTOC( &$row, &$matches, &$page )
 	{
 		$link = JRoute::_( '&showall=&limitstart='. ($i-1) );
 
-		if ( @$bot[1] )
-		{
-			$attrs2 = JUtility::parseAttributes($bot[1]);
 
-			if ( @$attrs2['title'] )
+		if ( @$bot[0] )
+		{
+			$attrs2 = JUtility::parseAttributes($bot[0]);
+
+			if ( @$attrs2['alt'] )
 			{
-				$row->toc .= '
-				<tr>
-					<td>
-					<a href="'. $link .'" class="toclink">'
-					. stripslashes( $attrs2['title'] ) .
-					'</a>
-					</td>
-				</tr>
-				';
+				$title	= stripslashes( $attrs2['alt'] );
+			}
+			elseif ( @$attrs2['title'] )
+			{
+				$title	= stripslashes( $attrs2['title'] );
 			}
 			else
 			{
-				$row->toc .= '
-				<tr>
-					<td>
-					<a href="'. $link .'" class="toclink">'
-					. JText::sprintf( 'Page #', $i ) .
-					'</a>
-					</td>
-				</tr>
-				';
+				$title	= JText::sprintf( 'Page #', $i );
 			}
 		}
 		else
 		{
-			$row->toc .= '
+			$title	= JText::sprintf( 'Page #', $i );
+		}
+
+		$row->toc .= '
 			<tr>
 				<td>
 				<a href="'. $link .'" class="toclink">'
-				. JText::sprintf( 'Page #', $i ) .
+				. $title .
 				'</a>
 				</td>
 			</tr>
 			';
-		}
 		$i++;
 	}
 
@@ -281,19 +253,29 @@ function plgContentCreateNavigation( &$row, $page, $n )
 	$pnSpace = "";
 	if (JText::_( '&lt' ) || JText::_( '&gt' )) $pnSpace = " ";
 
-	if ( $page < $n-1 ) {
-		$link_next = JRoute::_( '&limitstart='. ( $page + 1 ) );
+	if ( $page < $n-1 )
+	{
+		$page_next = $page + 1;
+
+		$link_next = JRoute::_( '&limitstart='. ( $page_next ) );
 		// Next >>
 		$next = '<a href="'. $link_next .'">' . JText::_( 'Next' ) . $pnSpace . JText::_( '&gt' ) . JText::_( '&gt' ) .'</a>';
-	} else {
+	}
+	else
+	{
 		$next = JText::_( 'Next' );
 	}
 
-	if ( $page > 0 ) {
-		$link_prev = JRoute::_(  '&limitstart='. ( $page - 1 ) );
+	if ( $page > 0 )
+	{
+		$page_prev = $page - 1 == 0 ? "" : $page - 1;
+
+		$link_prev = JRoute::_(  '&limitstart='. ( $page_prev) );
 		// << Prev
 		$prev = '<a href="'. $link_prev .'">'. JText::_( '&lt' ) . JText::_( '&lt' ) . $pnSpace . JText::_( 'Prev' ) .'</a>';
-	} else {
+	}
+	else
+	{
 		$prev = JText::_( 'Prev' );
 	}
 

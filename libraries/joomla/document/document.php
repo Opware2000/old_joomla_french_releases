@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: document.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: document.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,6 +14,9 @@
 
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
+
+//Register the renderer class with the loader
+JLoader::register('JDocumentRenderer', dirname(__FILE__).DS.'renderer.php');
 
 /**
  * Document class, provides an easy interface to parse and display a document
@@ -49,7 +52,7 @@ class JDocument extends JObject
 	 * @access  public
 	 */
 	var $link = '';
-	
+
 	/**
 	 * Document base URL
 	 *
@@ -64,7 +67,7 @@ class JDocument extends JObject
 	 * @var	 string
 	 * @access  public
 	 */
-	var $language = 'en';
+	var $language = 'en-gb';
 
 	/**
 	 * Contains the document direction setting
@@ -236,7 +239,7 @@ class JDocument extends JObject
 		if (array_key_exists('link', $options)) {
 			$this->setLink($options['link']);
 		}
-		
+
 		if (array_key_exists('base', $options)) {
 			$this->setBase($options['base']);
 		}
@@ -266,21 +269,29 @@ class JDocument extends JObject
 		if (empty($instances[$signature]))
 		{
 			$type	= preg_replace('/[^A-Z0-9_\.-]/i', '', $type);
-			$file	= JPATH_LIBRARIES.DS.'joomla'.DS.'document'.DS.$type.DS.$type.'.php';
+			$path	= dirname(__FILE__).DS.$type.DS.$type.'.php';
 			$ntype	= null;
 
 			// Check if the document type exists
-			if ( ! file_exists($file)) {
+			if ( ! file_exists($path))
+			{
 				// Default to the raw format
 				$ntype	= $type;
 				$type	= 'raw';
 			}
 
 			// Determine the path and class
-			$path	= "joomla.document.$type.$type";
 			$class = 'JDocument'.$type;
+			if(!class_exists($class))
+			{
+				$path	= dirname(__FILE__).DS.$type.DS.$type.'.php';
+				if (file_exists($path)) {
+					require_once($path);
+				} else {
+					JError::raiseError(500,JText::_('Unable to load document class'));
+				}
+			}
 
-			jimport($path);
 			$instance	= new $class($attributes);
 			$instances[$signature] =& $instance;
 
@@ -410,8 +421,13 @@ class JDocument extends JObject
 	 * @param	string  $type	Scripting mime (defaults to 'text/javascript')
 	 * @return   void
 	 */
-	function addScriptDeclaration($content, $type = 'text/javascript') {
-		$this->_script[][strtolower($type)] = $content;
+	function addScriptDeclaration($content, $type = 'text/javascript')
+	{
+		if (!isset($this->_script[strtolower($type)])) {
+			$this->_script[strtolower($type)] = $content;
+		} else {
+			$this->_script[strtolower($type)] .= chr(13).$content;
+		}
 	}
 
 	/**
@@ -437,8 +453,13 @@ class JDocument extends JObject
 	 * @access   public
 	 * @return   void
 	 */
-	function addStyleDeclaration($content, $type = 'text/css') {
-		$this->_style[][strtolower($type)] = $content;
+	function addStyleDeclaration($content, $type = 'text/css')
+	{
+		if (!isset($this->_style[strtolower($type)])) {
+			$this->_style[strtolower($type)] = $content;
+		} else {
+			$this->_style[strtolower($type)] .= chr(13).$content;
+		}
 	}
 
 	 /**
@@ -463,12 +484,12 @@ class JDocument extends JObject
 	}
 
 	/**
-	 * Sets the global document language declaration. Default is English (en).
+	 * Sets the global document language declaration. Default is English (en-gb).
 	 *
 	 * @access public
 	 * @param   string   $lang
 	 */
-	function setLanguage($lang = "en") {
+	function setLanguage($lang = "en-gb") {
 		$this->language = strtolower($lang);
 	}
 
@@ -521,7 +542,7 @@ class JDocument extends JObject
 	function getTitle() {
 		return $this->title;
 	}
-	
+
 	/**
 	 * Sets the base URI of the document
 	 *
@@ -707,28 +728,24 @@ class JDocument extends JObject
 	*/
 	function &loadRenderer( $type )
 	{
-		if( !class_exists( 'JDocumentRenderer' ) ) {
-			jimport('joomla.document.renderer');
-		}
-
 		$null	= null;
 		$class	= 'JDocumentRenderer'.$type;
 
 		if( !class_exists( $class ) )
 		{
-			if(!file_exists(dirname(__FILE__).DS.$this->_type.DS.'renderer'.DS.$type.'.php')) {
-				return $null;
+			$path = dirname(__FILE__).DS.$this->_type.DS.'renderer'.DS.$type.'.php';
+			if(file_exists($path)) {
+				require_once($path);
+			} else {
+				JError::raiseError(500,JText::_('Unable to load renderer class'));
 			}
-			//import renderer
-			jimport('joomla.document.'.$this->_type.'.renderer.'.$type);
 		}
 
-		if( !class_exists( $class ) ) {
+		if ( !class_exists( $class ) ) {
 			return $null;
 		}
 
 		$instance = new $class($this);
-
 		return $instance;
 	}
 

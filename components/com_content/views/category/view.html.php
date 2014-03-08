@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -32,31 +32,46 @@ class ContentViewCategory extends ContentView
 
 		// Initialize some variables
 		$user		=& JFactory::getUser();
-		$document	=& JFactory::getDocument();
 		$uri 		=& JFactory::getURI();
+		$document	=& JFactory::getDocument();
 		$pathway	=& $mainframe->getPathway();
 
 		// Get the menu item object
-		$menus = &JMenu::getInstance();
+		$menus = &JSite::getMenu();
 		$menu  = $menus->getActive();
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters('com_content');
+		$params = clone($mainframe->getParams('com_content'));
 
 		// Request variables
+		$layout     = JRequest::getCmd('layout');
 		$task		= JRequest::getCmd('task');
-		$limit		= $mainframe->getUserStateFromRequest('com_content.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit		= $mainframe->getUserStateFromRequest('com_content.'.$this->getLayout().'.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
 
-		// parameters
-		$intro		= $params->def('num_intro_articles', 	0);
-		$leading	= $params->def('num_leading_articles', 	0);
-		$links		= $params->def('num_links', 			0);
-		$headings	= $params->def('show_headings', 		1);
+		// Parameters
+		$params->def('num_leading_articles', 	1);
+		$params->def('num_intro_articles', 		4);
+		$params->def('num_columns',				2);
+		$params->def('num_links', 				4);
+		$params->def('show_headings', 			1);
+		$params->def('show_pagination',			2);
+		$params->def('show_pagination_results',	1);
+		$params->def('show_pagination_limit',	1);
+		$params->def('filter',					1);
+
+		$intro		= $params->get('num_intro_articles');
+		$leading	= $params->get('num_leading_articles');
+		$links		= $params->get('num_links');
 
 		//In case we are in a blog view set the limit
-		if($limit ==  0) $limit = $intro + $leading + $links;
+		if ($layout == 'blog') {
+		    if($limit ==  0) $limit = $intro + $leading + $links;
+        }
 		JRequest::setVar('limit', (int) $limit);
+
+		$contentConfig = &JComponentHelper::getParams('com_content');
+		$params->def('show_page_title', 	$contentConfig->get('show_title'));
 
 		// Get some data from the model
 		$items		= & $this->get( 'Data' );
@@ -66,7 +81,7 @@ class ContentViewCategory extends ContentView
 		//add alternate feed link
 		if($params->get('show_feed_link', 1) == 1)
 		{
-			$link	= 'index.php?option=com_content&view=category&format=feed&id='.$category->id;
+			$link	= '&format=feed&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 			$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -80,23 +95,30 @@ class ContentViewCategory extends ContentView
 		$access->canPublish		= $user->authorize('com_content', 'publish', 'content', 'all');
 
 		//set breadcrumbs
-		if($menu->query['view'] != 'category') {
+		if(is_object($menu) && $menu->query['view'] != 'category') {
 			$pathway->addItem($category->title, '');
 		}
 
-		$document->setTitle($menu->name);
-
 		$params->def('date_format',	JText::_('DATE_FORMAT_LC1'));
-		$params->def('page_title', $menu->name);
+
+		// Keep a copy for safe keeping this is soooooo dirty -- must deal with in a later version
+		// @todo -- oh my god we need to find this reference issue in 1.6 :)
+		$this->_params = $params->toArray();
 
 		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		//In case we are in a blog view set the limit
+		if ($layout == 'blog') {
+		    $pagination = new JPagination($total, $limitstart, $limit - $links);
+        } else {
+		    $pagination = new JPagination($total, $limitstart, $limit);
+		}
 
 		$this->assign('total',		$total);
+		$this->assign('action', 	$uri->toString());
 
 		$this->assignRef('items',		$items);
-		$this->assignRef('category',	$category);
 		$this->assignRef('params',		$params);
+		$this->assignRef('category',	$category);
 		$this->assignRef('user',		$user);
 		$this->assignRef('access',		$access);
 		$this->assignRef('pagination',	$pagination);
@@ -122,16 +144,18 @@ class ContentViewCategory extends ContentView
 		}
 
 		$k = 0;
-		for($i = 0; $i <  count($this->items); $i++)
+		$i = 0;
+		foreach($this->items as $key => $item)
 		{
-			$item =& $this->items[$i];
-
 			$item->link		= JRoute::_('index.php?view=article&catid='.$this->category->slug.'&id='.$item->slug);
 			$item->created	= JHTML::_('date', $item->created, $this->params->get('date_format'));
 
 			$item->odd		= $k;
-			$item->count	= $i;
+			$item->count    = $i;
+
+			$this->items[$key] = $item;
 			$k = 1 - $k;
+			$i++;
 		}
 
 		$this->assign('lists',	$lists);
@@ -145,14 +169,9 @@ class ContentViewCategory extends ContentView
 
 		// Initialize some variables
 		$user		=& JFactory::getUser();
-		$dispatcher	=& JEventDispatcher::getInstance();
+		$dispatcher	=& JDispatcher::getInstance();
 
 		$SiteName	= $mainframe->getCfg('sitename');
-
-		$task		= JRequest::getCmd('task');
-
-		$linkOn		= null;
-		$linkText	= null;
 
 		$item 		=& $this->items[$index];
 		$item->text = $item->introtext;
@@ -162,43 +181,41 @@ class ContentViewCategory extends ContentView
 		$item->section  = $category->sectiontitle;
 
 		// Get the page/component configuration and article parameters
-		$params	 = clone($params);
+		$item->params = clone($params);
 		$aparams = new JParameter($item->attribs);
 
 		// Merge article parameters into the page configuration
-		$params->merge($aparams);
+		$item->params->merge($aparams);
 
 		// Process the content preparation plugins
 		JPluginHelper::importPlugin('content');
-		$results = $dispatcher->trigger('onPrepareContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onPrepareContent', array (& $item, & $item->params, 0));
 
 		// Build the link and text of the readmore button
-		if (($params->get('show_readmore') && @ $item->readmore) || $params->get('link_titles'))
+		if (($item->params->get('show_readmore') && @ $item->readmore) || $item->params->get('link_titles'))
 		{
 			// checks if the item is a public or registered/special item
 			if ($item->access <= $user->get('aid', 0))
 			{
-				$linkOn = JRoute::_('index.php?view=article&catid='.$this->category->slug.'&id='.$item->slug);
-				$linkText = JText::_('Read more...');
+				//$item->readmore_link = JRoute::_('index.php?view=article&catid='.$this->category->slug.'&id='.$item->slug);
+				$item->readmore_link = JRoute::_(ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid));
+				$item->readmore_register = false;
 			}
 			else
 			{
-				$linkOn = JRoute::_("index.php?option=com_user&task=register");
-				$linkText = JText::_('Register to read more...');
+				$item->readmore_link = JRoute::_("index.php?option=com_user&task=register");
+				$item->readmore_register = true;
 			}
 		}
 
-		$item->readmore_link = $linkOn;
-		$item->readmore_text = $linkText;
-
 		$item->event = new stdClass();
-		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $params,0));
+		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $item->params,0));
 		$item->event->afterDisplayTitle = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onBeforeDisplayContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onBeforeDisplayContent', array (& $item, & $item->params, 0));
 		$item->event->beforeDisplayContent = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onAfterDisplayContent', array (& $item, & $params, 0));
+		$results = $dispatcher->trigger('onAfterDisplayContent', array (& $item, & $item->params, 0));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
 
 		return $item;

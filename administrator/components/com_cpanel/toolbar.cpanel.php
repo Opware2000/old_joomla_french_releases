@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.cpanel.php 7753 2007-06-16 14:25:07Z friesengeist $
+* @version		$Id: toolbar.cpanel.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Admin
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -23,4 +23,3 @@ switch (JRequest::getCmd('task'))
 		TOOLBAR_cpanel::_DEFAULT();
 		break;
 }
-?>

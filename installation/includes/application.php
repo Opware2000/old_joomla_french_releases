@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: application.php 8684 2007-08-31 20:02:53Z jinx $
+* @version		$Id: application.php 9787 2008-01-01 21:42:50Z willebil $
 * @package		Joomla
 * @subpackage	Installation
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -44,9 +44,12 @@ class JInstallation extends JApplication
 	{
 		$config['clientId'] = 3;
 		parent::__construct($config);
-	
+
 		JError::setErrorHandling(E_ALL, 'Ignore');
 		$this->_createConfiguration();
+
+		//Set the root in the URI based on the application name
+		JURI::root(null, str_replace('/'.$this->getName(), '', JURI::base(true)));
 	}
 
 	/**
@@ -56,7 +59,6 @@ class JInstallation extends JApplication
 	 */
 	function render()
 	{
-
 		$document	=& JFactory::getDocument();
 		$config		=& JFactory::getConfig();
 		$user		=& JFactory::getUser();
@@ -90,7 +92,8 @@ class JInstallation extends JApplication
 
 		$document->setBuffer( $contents, 'installation');
 		$document->setTitle(JText::_('PAGE_TITLE'));
-		JResponse::setBody($document->render( false, $params));
+		$data = $document->render(false, $params);
+		JResponse::setBody($data);
 	}
 
 	/**
@@ -127,6 +130,7 @@ class JInstallation extends JApplication
 		if(empty($options['language']))
 		{
 			if ( empty($forced['lang'])) {
+				jimport('joomla.language.helper');
 				$options['language'] = JLanguageHelper::detectLanguage();
 			} else {
 				$options['language'] = $forced['lang'];
@@ -205,7 +209,6 @@ class JInstallation extends JApplication
 	 */
 	function getLocalise()
 	{
-		jimport('joomla.factory');
 		$xml = & JFactory::getXMLParser('Simple');
 
 		if (!$xml->loadFile(JPATH_SITE.DS.'installation'.DS.'localise.xml')) {
@@ -227,21 +230,24 @@ class JInstallation extends JApplication
 	}
 
 	/**
-	* Get the url of the site
-	*
-	* @return string The site URL
-	* @since 1.5
-	*/
-	function getSiteURL()
+	 * Returns the installed admin language files in the administrative and
+	 * front-end area.
+	 *
+	 * @access private
+	 * @return	array 		Array with installed language packs in admin area
+	 */
+	function getLocaliseAdmin()
 	{
-		if(isset($this->_siteURL)) {
-			return $this->_siteURL;
-		}
+		jimport('joomla.filesystem.folder');
 
-		$url = JURI::base();
-		$url = str_replace('installation/', '', $url);
-		$this->_siteURL = $url;
-		return $url;
+		// Read the files in the admin area
+		$path = JLanguage::getLanguagePath(JPATH_SITE.DS.'administrator');
+		$langfiles['admin'] = JFolder::folders( $path );
+
+		$path = JLanguage::getLanguagePath(JPATH_SITE);
+		$langfiles['site'] = JFolder::folders( $path );
+
+		return $langfiles;
 	}
 }
 

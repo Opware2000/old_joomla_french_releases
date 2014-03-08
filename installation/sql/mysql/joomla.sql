@@ -1,4 +1,4 @@
-# $Id: joomla.sql 6311 2007-01-18 23:18:53Z hackwar $
+# $Id: joomla.sql 9898 2008-01-05 23:34:41Z louis $
 
 # --------------------------------------------------------
 
@@ -92,7 +92,6 @@ CREATE TABLE `#__categories` (
   `params` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `cat_idx` (`section`,`published`,`access`),
-  KEY `idx_section` (`section`),
   KEY `idx_access` (`access`),
   KEY `idx_checkout` (`checked_out`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
@@ -117,7 +116,8 @@ CREATE TABLE `#__components` (
   `iscore` tinyint(4) NOT NULL default '0',
   `params` text NOT NULL,
   `enabled` tinyint(4) NOT NULL default '1',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `parent_option` (`parent`, `option`(32))
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 #
@@ -142,14 +142,13 @@ INSERT INTO `#__components` VALUES (15, 'Search', 'option=com_search', 0, 0, 'op
 INSERT INTO `#__components` VALUES (16, 'Categories', '', 0, 1, 'option=com_categories&section=com_banner', 'Categories', '', 3, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (17, 'Wrapper', 'option=com_wrapper', 0, 0, '', 'Wrapper', 'com_wrapper', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (18, 'Mail To', '', 0, 0, '', '', 'com_mailto', 0, '', 1, '', 1);
-INSERT INTO `#__components` VALUES (19, 'Media Manager', '', 0, 0, 'option=com_media', 'Media Manager', 'com_media', 0, '', 1, 'upload_extensions=bmp,csv,doc,epg,gif,ico,jpg,odg,odp,ods,odt,pdf,png,ppt,swf,txt,xcf,xls,BMP,CSV,DOC,EPG,GIF,ICO,JPG,ODG,ODP,ODS,ODT,PDF,PNG,PPT,SWF,TXT,XCF,XLS\nupload_maxsize=10000000\n\n', 1);
-INSERT INTO `#__components` VALUES (20, 'Articles', 'option=com_content', 0, 0, '', '', 'com_content', 0, '', 1, 'show_noauth=0\nlink_titles=0\nshow_intro=1\nshow_section=0\nlink_section=0\nshow_category=0\nlink_category=0\nshow_author=1\nshow_create_date=1\nshow_modify_date=1\nshow_item_navigation=0\nshow_readmore=1\nshow_vote=0\nshow_icons=1\nshow_pdf_icon=1\nshow_print_icon=1\nshow_email_icon=1\nshow_hits=1\n\n', 1);
+INSERT INTO `#__components` VALUES (19, 'Media Manager', '', 0, 0, 'option=com_media', 'Media Manager', 'com_media', 0, '', 1, 'upload_extensions=bmp,csv,doc,epg,gif,ico,jpg,odg,odp,ods,odt,pdf,png,ppt,swf,txt,xcf,xls,BMP,CSV,DOC,EPG,GIF,ICO,JPG,ODG,ODP,ODS,ODT,PDF,PNG,PPT,SWF,TXT,XCF,XLS\nupload_maxsize=10000000\nfile_path=images\nimage_path=images/stories\nrestrict_uploads=1\ncheck_mime=1\nimage_extensions=bmp,gif,jpg,png\nignore_extensions=\nupload_mime=image/jpeg,image/gif,image/png,image/bmp,application/x-shockwave-flash,application/msword,application/excel,application/pdf,application/powerpoint,text/plain,application/x-zip\nupload_mime_illegal=text/html', 1);
+INSERT INTO `#__components` VALUES (20, 'Articles', 'option=com_content', 0, 0, '', '', 'com_content', 0, '', 1, 'show_noauth=0\nshow_title=1\nlink_titles=0\nshow_intro=1\nshow_section=0\nlink_section=0\nshow_category=0\nlink_category=0\nshow_author=1\nshow_create_date=1\nshow_modify_date=1\nshow_item_navigation=0\nshow_readmore=1\nshow_vote=0\nshow_icons=1\nshow_pdf_icon=1\nshow_print_icon=1\nshow_email_icon=1\nshow_hits=1\nfeed_summary=0\n\n', 1);
 INSERT INTO `#__components` VALUES (21, 'Configuration Manager', '', 0, 0, '', 'Configuration', 'com_config', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (22, 'Installation Manager', '', 0, 0, '', 'Installer', 'com_installer', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (23, 'Language Manager', '', 0, 0, '', 'Languages', 'com_languages', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (24, 'Mass mail', '', 0, 0, '', 'Mass Mail', 'com_massmail', 0, '', 1, 'mailSubjectPrefix=\nmailBodySuffix=\n\n', 1);
 INSERT INTO `#__components` VALUES (25, 'Menu Editor', '', 0, 0, '', 'Menu Editor', 'com_menus', 0, '', 1, '', 1);
-INSERT INTO `#__components` VALUES (26, 'Menu Manager', '', 0, 0, '', 'Menu Manager', 'com_menumanager', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (27, 'Messaging', '', 0, 0, '', 'Messages', 'com_messages', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (28, 'Modules Manager', '', 0, 0, '', 'Modules', 'com_modules', 0, '', 1, '', 1);
 INSERT INTO `#__components` VALUES (29, 'Plugin Manager', '', 0, 0, '', 'Plugins', 'com_plugins', 0, '', 1, '', 1);
@@ -191,7 +190,8 @@ CREATE TABLE `#__contact_details` (
   `access` tinyint(3) unsigned NOT NULL default '0',
   `mobile` varchar(255) NOT NULL default '',
   `webpage` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `catid` (`catid`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
@@ -237,7 +237,7 @@ CREATE TABLE `#__content` (
   KEY `idx_checkout` (`checked_out`),
   KEY `idx_state` (`state`),
   KEY `idx_catid` (`catid`),
-  KEY `idx_mask` (`mask`)
+  KEY `idx_createdby` (`created_by`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
@@ -341,26 +341,27 @@ INSERT INTO `#__plugins` VALUES (9, 'Search - Sections', 'sections', 'search', 0
 INSERT INTO `#__plugins` VALUES (10, 'Search - Newsfeeds', 'newsfeeds', 'search', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', 'search_limit=50\n\n');
 INSERT INTO `#__plugins` VALUES (11, 'Search - Weblinks','weblinks','search',0,2,1,1,0,0,'0000-00-00 00:00:00','search_limit=50\n\n');
 INSERT INTO `#__plugins` VALUES (12, 'Content - Pagebreak','pagebreak','content',0,10000,1,1,0,0,'0000-00-00 00:00:00','enabled=1\ntitle=1\nmultipage_toc=1\nshowall=1\n\n');
-INSERT INTO `#__plugins` VALUES (13, 'Content - SEF','sef','content',0,3,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (14, 'Content - Rating','vote','content',0,4,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (15, 'Content - Email Cloaking', 'emailcloak', 'content', 0, 5, 1, 0, 0, 0, '0000-00-00 00:00:00', 'mode=1\n\n');
-INSERT INTO `#__plugins` VALUES (16, 'Content - Code Hightlighter (GeSHi)', 'geshi', 'content', 0, 5, 0, 0, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__plugins` VALUES (17, 'Content - Load Module', 'loadmodule', 'content', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', 'enabled=1\nstyle=0\n\n');
-INSERT INTO `#__plugins` VALUES (18, 'Content - Page Navigation','pagenavigation','content',0,2,1,1,0,0,'0000-00-00 00:00:00','position=1\n\n');
-INSERT INTO `#__plugins` VALUES (19, 'Editor - No Editor','none','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (20, 'Editor - TinyMCE 2.0', 'tinymce', 'editors', 0, 0, 1, 1, 0, 0, '0000-00-00 00:00:00', 'theme=advanced\ncleanup=1\ncleanup_startup=0\nautosave=0\ncompressed=0\nrelative_urls=1\ntext_direction=ltr\nlang_mode=0\nlang_code=en\ninvalid_elements=applet\ncontent_css=1\ncontent_css_custom=\nnewlines=0\ntoolbar=top\nhr=1\nsmilies=1\ntable=1\nstyle=1\nlayer=1\nxhtmlxtras=0\ntemplate=0\ndirectionality=1\nfullscreen=1\nhtml_height=550\nhtml_width=750\npreview=1\ninsertdate=1\nformat_date=%Y-%m-%d\ninserttime=1\nformat_time=%H:%M:%S\n\n');
-INSERT INTO `#__plugins` VALUES (21, 'Editor - XStandard Lite 2.0', 'xstandard', 'editors', 0, 0, 1, 1, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__plugins` VALUES (22, 'Editor Button - Image','image','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (23, 'Editor Button - Pagebreak','pagebreak','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (24, 'Editor Button - Readmore','readmore','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (25, 'XML-RPC - Joomla', 'joomla', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__plugins` VALUES (26, 'XML-RPC - Blogger API', 'blogger', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', 'catid=1\nsectionid=0\n\n');
-#INSERT INTO `#__plugins` VALUES (27, 'XML-RPC - MetaWeblog API', 'metaweblog', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__plugins` VALUES (28, 'System - Debug', 'debug', 'system', 0, 1, 1, 0, 0, 0, '0000-00-00 00:00:00', 'queries=1\nmemory=1\nlangauge=1\n\n');
-INSERT INTO `#__plugins` VALUES (29, 'System - Legacy', 'legacy', 'system', 0, 2, 0, 1, 0, 0, '0000-00-00 00:00:00', 'route=0\n\n');
-INSERT INTO `#__plugins` VALUES (30, 'System - Cache', 'cache', 'system', 0, 3, 0, 1, 0, 0, '0000-00-00 00:00:00', 'browsercache=0\ncachetime=15\n\n');
-INSERT INTO `#__plugins` VALUES (31, 'System - Log', 'log', 'system', 0, 4, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
-INSERT INTO `#__plugins` VALUES (32, 'System - Remember Me', 'remember', 'system', 0, 5, 1, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (13, 'Content - Rating','vote','content',0,4,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (14, 'Content - Email Cloaking', 'emailcloak', 'content', 0, 5, 1, 0, 0, 0, '0000-00-00 00:00:00', 'mode=1\n\n');
+INSERT INTO `#__plugins` VALUES (15, 'Content - Code Hightlighter (GeSHi)', 'geshi', 'content', 0, 5, 0, 0, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (16, 'Content - Load Module', 'loadmodule', 'content', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', 'enabled=1\nstyle=0\n\n');
+INSERT INTO `#__plugins` VALUES (17, 'Content - Page Navigation','pagenavigation','content',0,2,1,1,0,0,'0000-00-00 00:00:00','position=1\n\n');
+INSERT INTO `#__plugins` VALUES (18, 'Editor - No Editor','none','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (19, 'Editor - TinyMCE 2.0', 'tinymce', 'editors', 0, 0, 1, 1, 0, 0, '0000-00-00 00:00:00', 'theme=advanced\ncleanup=1\ncleanup_startup=0\nautosave=0\ncompressed=0\nrelative_urls=1\ntext_direction=ltr\nlang_mode=0\nlang_code=en\ninvalid_elements=applet\ncontent_css=1\ncontent_css_custom=\nnewlines=0\ntoolbar=top\nhr=1\nsmilies=1\ntable=1\nstyle=1\nlayer=1\nxhtmlxtras=0\ntemplate=0\ndirectionality=1\nfullscreen=1\nhtml_height=550\nhtml_width=750\npreview=1\ninsertdate=1\nformat_date=%Y-%m-%d\ninserttime=1\nformat_time=%H:%M:%S\n\n');
+INSERT INTO `#__plugins` VALUES (20, 'Editor - XStandard Lite 2.0', 'xstandard', 'editors', 0, 0, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (21, 'Editor Button - Image','image','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (22, 'Editor Button - Pagebreak','pagebreak','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (23, 'Editor Button - Readmore','readmore','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (24, 'XML-RPC - Joomla', 'joomla', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (25, 'XML-RPC - Blogger API', 'blogger', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', 'catid=1\nsectionid=0\n\n');
+#INSERT INTO `#__plugins` VALUES (26, 'XML-RPC - MetaWeblog API', 'metaweblog', 'xmlrpc', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (27, 'System - SEF','sef','system',0,1,1,0,0,0,'0000-00-00 00:00:00','');
+INSERT INTO `#__plugins` VALUES (28, 'System - Debug', 'debug', 'system', 0, 2, 1, 0, 0, 0, '0000-00-00 00:00:00', 'queries=1\nmemory=1\nlangauge=1\n\n');
+INSERT INTO `#__plugins` VALUES (29, 'System - Legacy', 'legacy', 'system', 0, 3, 0, 1, 0, 0, '0000-00-00 00:00:00', 'route=0\n\n');
+INSERT INTO `#__plugins` VALUES (30, 'System - Cache', 'cache', 'system', 0, 4, 0, 1, 0, 0, '0000-00-00 00:00:00', 'browsercache=0\ncachetime=15\n\n');
+INSERT INTO `#__plugins` VALUES (31, 'System - Log', 'log', 'system', 0, 5, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (32, 'System - Remember Me', 'remember', 'system', 0, 6, 1, 1, 0, 0, '0000-00-00 00:00:00', '');
+INSERT INTO `#__plugins` VALUES (33, 'System - Backlink', 'backlink', 'system', 0, 7, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
 
 # --------------------------------------------------------
 
@@ -430,7 +431,8 @@ CREATE TABLE `#__messages` (
   `priority` int(1) unsigned NOT NULL default '0',
   `subject` text NOT NULL default '',
   `message` text NOT NULL,
-  PRIMARY KEY  (`message_id`)
+  PRIMARY KEY  (`message_id`),
+  KEY `useridto_state` (`user_id_to`, `state`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 # --------------------------------------------------------
 
@@ -472,9 +474,6 @@ CREATE TABLE `#__modules` (
   KEY `newsfeeds` (`module`,`published`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
-#
-# Dumping data for table `#__modules`
-#
 INSERT INTO `#__modules` VALUES (1, 'Main Menu', '', 1, 'left', 0, '0000-00-00 00:00:00', 1, 'mod_mainmenu', 0, 0, 1, 'menutype=mainmenu\nmoduleclass_sfx=_menu\n', 1, 0, '');
 INSERT INTO `#__modules` VALUES (2, 'Login', '', 1, 'login', 0, '0000-00-00 00:00:00', 1, 'mod_login', 0, 0, 1, '', 1, 1, '');
 INSERT INTO `#__modules` VALUES (3, 'Popular','',3,'cpanel',0,'0000-00-00 00:00:00',1,'mod_popular',0,2,1,'',0, 1, '');
@@ -530,7 +529,8 @@ CREATE TABLE `#__newsfeeds` (
   `ordering` int(11) NOT NULL default '0',
   `rtl` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `published` (`published`)
+  KEY `published` (`published`),
+  KEY `catid` (`catid`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
@@ -637,8 +637,10 @@ CREATE TABLE `#__session` (
   `gid` tinyint(3) unsigned NOT NULL default '0',
   `client_id` tinyint(3) unsigned NOT NULL default '0',
   `data` longtext,
-  PRIMARY KEY  (`session_id`),
-  KEY `whosonline` (`guest`,`usertype`)
+  PRIMARY KEY  (`session_id`(64)),
+  KEY `whosonline` (`guest`,`usertype`),
+  KEY `userid` (`userid`),
+  KEY `time` (`time`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
@@ -663,7 +665,7 @@ CREATE TABLE `#__templates_menu` (
   `template` varchar(255) NOT NULL default '',
   `menuid` int(11) NOT NULL default '0',
   `client_id` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`template`,`menuid`)
+  PRIMARY KEY (`menuid`, `client_id`, `template`(255))
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # Dumping data for table `#__templates_menu`
@@ -693,7 +695,10 @@ CREATE TABLE `#__users` (
   `params` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `usertype` (`usertype`),
-  KEY `idx_name` (`name`)
+  KEY `idx_name` (`name`),
+  KEY `gid_block` (`gid`, `block`),
+  KEY `username` (`username`),
+  KEY `email` (`email`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
@@ -737,7 +742,7 @@ CREATE TABLE `#__core_acl_aro` (
   `name` varchar(255) NOT NULL default '',
   `hidden` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `__section_value_value_aro` (`section_value`(100),`value`(100)),
+  UNIQUE KEY `#__section_value_value_aro` (`section_value`(100),`value`(100)),
   KEY `#__gacl_hidden_aro` (`hidden`)
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
@@ -816,5 +821,19 @@ CREATE TABLE `#__core_acl_aro_sections` (
 ) TYPE=MyISAM CHARACTER SET `utf8`;
 
 INSERT INTO `#__core_acl_aro_sections` VALUES (10,'users',1,'Users',0);
+
+# --------------------------------------------------------
+
+#
+# Table structure for table `#__migration_backlinks`
+#
+CREATE TABLE #__migration_backlinks (
+	`itemid` INT(11) NOT NULL,
+	`name` VARCHAR(100) NOT NULL,
+	`url` TEXT NOT NULL,
+	`sefurl` TEXT NOT NULL,
+	`newurl` TEXT NOT NULL,
+	PRIMARY KEY(`itemid`)
+) TYPE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------

@@ -1,22 +1,21 @@
 <?php
-
 /**
-* @version		$Id: openid.php 8503 2007-08-22 07:39:40Z jinx $
-* @package		Joomla
-* @subpackage	JFramework
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: openid.php 9764 2007-12-30 07:48:11Z ircmaxell $
+ * @package		Joomla
+ * @subpackage	JFramework
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * OpenID Authentication Plugin
@@ -40,7 +39,8 @@ class plgAuthenticationOpenID extends JPlugin
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationOpenID(& $subject, $config) {
+	function plgAuthenticationOpenID(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -49,7 +49,7 @@ class plgAuthenticationOpenID extends JPlugin
 	 *
 	 * @access	public
 	 * @param   array 	$credentials Array holding the user credentials
-	 * @param 	array   $options     Array of extra options
+	 * @param 	array   $options     Array of extra options (return, entry_url)
 	 * @param	object	$response	Authentication response object
 	 * @return	boolean
 	 * @since 1.5
@@ -58,10 +58,11 @@ class plgAuthenticationOpenID extends JPlugin
 	{
 		global $mainframe;
 
-		define ("Auth_OpenID_RAND_SOURCE", null);
+		if ( !defined('Auth_OpenID_RAND_SOURCE') ) {
+			define ("Auth_OpenID_RAND_SOURCE", null);
+		}
 
-		 // Require the OpenID consumer.
-		jimport ('openid.consumer');
+		require_once(JPATH_LIBRARIES.DS.'openid'.DS.'consumer.php');
 
 		// Access the session data
 		$session =& JFactory::getSession();
@@ -77,7 +78,8 @@ class plgAuthenticationOpenID extends JPlugin
 
 		// Create and/or start using the data store
 		$store_path = JPATH_ROOT . '/tmp/_joomla_openid_store';
-		if (!file_exists($store_path) && !mkdir($store_path)) {
+		if (!file_exists($store_path) && !mkdir($store_path))
+		{
 			print "Could not create the FileStore directory '$store_path'. " . " Please check the effective permissions.";
 			exit (0);
 		}
@@ -102,14 +104,22 @@ class plgAuthenticationOpenID extends JPlugin
 			$request->addExtensionArg('sreg', 'required' , 'email');
 			$request->addExtensionArg('sreg', 'optional', 'fullname, language, timezone');
 
+			//Create the entry url
+			$entry_url  = isset($options['entry_url'])  ? $options['entry_url'] : JURI::base();
+			$entry_url  = JURI::getInstance($entry_url);
+
+			unset($options['entry_url']); //We don't need this anymore
+
+			//Create the url query information
 			$options['return'] = isset($options['return']) ? base64_encode($options['return']) : base64_encode(JURI::base());
-			$option       = $mainframe->isAdmin() ? 'com_login' : 'com_user';
-			$process_url  = sprintf("index.php?option=%s&task=login&username=%s", $option, $credentials['username']);
-			$process_url .= '&'.JURI::_buildQuery($options);
 
-			$redirect_url = $request->redirectURL(JURI::base(), JURI::base().$process_url);
+			$process_url  = sprintf($entry_url->toString()."&username=%s", $credentials['username']);
+			$process_url .= '&'.JURI::buildQuery($options);
 
-			$session->set('trust_url', JURI::base());
+			$trust_url    = $entry_url->toString(array('path', 'host', 'port', 'scheme'));
+			$redirect_url = $request->redirectURL($trust_url, $process_url);
+
+			$session->set('trust_url', $trust_url);
 
 			// Redirect the user to the OpenID server for authentication.  Store
 			// the token for this authentication so we can verify the response.
@@ -149,4 +159,3 @@ class plgAuthenticationOpenID extends JPlugin
 		}
 	}
 }
-?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: section.php 8171 2007-07-23 00:28:29Z eddieajau $
+ * @version		$Id: section.php 9918 2008-01-10 01:41:37Z pasamio $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -259,7 +259,7 @@ class ContentModelSection extends JModel
 		{
 			$user	=& JFactory::getUser();
 
-			$params = &$mainframe->getPageParameters();
+			$params = &$mainframe->getParams();
 
 			$noauth	= !$params->get('show_noauth');
 			$gid		= $user->get('aid', 0);
@@ -267,7 +267,7 @@ class ContentModelSection extends JModel
 			$nullDate	= $this->_db->getNullDate();
 
 			// Get the parameters of the active menu item
-			$menu	=& JMenu::getInstance();
+			$menu	=& JSite::getMenu();
 			$item    = $menu->getActive();
 			$params	=& $menu->getParams($item->id);
 
@@ -284,14 +284,17 @@ class ContentModelSection extends JModel
 				$xwhere2 = ' AND b.state = 1' .
 						' AND ( b.publish_up = '.$this->_db->Quote($nullDate).' OR b.publish_up <= '.$this->_db->Quote($now).' )' .
 						' AND ( b.publish_down = '.$this->_db->Quote($nullDate).' OR b.publish_down >= '.$this->_db->Quote($now).' )';
-			}
+				if ($noauth) {
+					$xwhere2 .= ' AND b.access <= '.(int) $gid;
+				}
+ 			}
 
 			// Determine whether to show/hide the empty categories and sections
 			$empty = null;
 			$empty_sec = null;
 
 			// show/hide empty categories in section
-			if (!$params->get('empty_cat_section')) {
+			if (!$params->get('show_empty_categories')) {
 				$empty_sec = ' HAVING numitems > 0';
 			}
 
@@ -299,6 +302,7 @@ class ContentModelSection extends JModel
 			$access_check = null;
 			if ($noauth) {
 				$access_check = ' AND a.access <= '.(int) $gid;
+				//$access_check .= ' AND b.access <= '.(int) $gid;
 			}
 
 			// Query of categories within section
@@ -340,7 +344,18 @@ class ContentModelSection extends JModel
 			$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
 
 			$query = $this->_buildQuery();
-			$this->_data[$state] = $this->_getList($query, $limitstart, $limit);
+			$Arows = $this->_getList($query, $limitstart, $limit);
+
+			// special handling required as Uncategorized content does not have a section / category id linkage
+			$i = $limitstart;
+			$rows = array();
+			foreach ($Arows as $row)
+			{
+				// check to determine if section or category has proper access rights
+				$rows[$i] = $row;
+				$i ++;
+			}
+			$this->_data[$state] = $rows;
 		}
 		return true;
 	}
@@ -392,7 +407,7 @@ class ContentModelSection extends JModel
 		global $mainframe;
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		// If voting is turned on, get voting data as well for the content items
 		$voting	= ContentHelperQuery::buildVotingQuery($params);
@@ -401,9 +416,10 @@ class ContentModelSection extends JModel
 		$where		= $this->_buildContentWhere($state);
 		$orderby	= $this->_buildContentOrderBy($state);
 
-		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
+		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.fulltext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
 				' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.attribs, a.hits, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,' .
 				' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'.
+				' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug,'.
 				' CHAR_LENGTH( a.`fulltext` ) AS readmore, u.name AS author, u.usertype, cc.title AS category, g.name AS groups'.$voting['select'] .
 				' FROM #__content AS a' .
 				' INNER JOIN #__categories AS cc ON cc.id = a.catid' .
@@ -428,7 +444,7 @@ class ContentModelSection extends JModel
 		}
 
 		// Get the parameters of the active menu item
-		$menu	=& JMenu::getInstance();
+		$menu	=& JSite::getMenu();
 		$item    = $menu->getActive();
 		$params	=& $menu->getParams($item->id);
 
@@ -466,7 +482,7 @@ class ContentModelSection extends JModel
 		$now		= $jnow->toMySQL();
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		$noauth		= !$params->get('show_noauth');
 		$nullDate	= $this->_db->getNullDate();
@@ -521,19 +537,20 @@ class ContentModelSection extends JModel
 			if ($filter) {
 				// clean filter variable
 				$filter = JString::strtolower($filter);
+				$filter	= $this->_db->Quote( '%'.$this->_db->getEscaped( $filter, true ).'%', false );
 
 				switch ($params->get('filter_type'))
 				{
 					case 'title' :
-						$where .= ' AND LOWER( a.title ) LIKE "%'.$this->_db->getEscaped($filter).'%"';
+						$where .= ' AND LOWER( a.title ) LIKE '.$filter;
 						break;
 
 					case 'author' :
-						$where .= ' AND ( ( LOWER( u.name ) LIKE "%'.$this->_db->getEscaped($filter).'%" ) OR ( LOWER( a.created_by_alias ) LIKE "%'.$this->_db->getEscaped($filter).'%" ) )';
+						$where .= ' AND ( ( LOWER( u.name ) LIKE '.$filter.' ) OR ( LOWER( a.created_by_alias ) LIKE '.$filter.' ) )';
 						break;
 
 					case 'hits' :
-						$where .= ' AND a.hits LIKE "%'.$this->_db->getEscaped($filter).'%"';
+						$where .= ' AND a.hits LIKE '.$filter;
 						break;
 				}
 			}

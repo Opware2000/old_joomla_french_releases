@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblink.php 7758 2007-06-19 22:27:49Z rmdstudio $
+ * @version		$Id: weblink.php 9831 2008-01-03 01:10:35Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -59,13 +59,8 @@ class WeblinksControllerWeblink extends WeblinksController
 	*/
 	function save()
 	{
-		global $mainframe;
-
-		//check the token before we do anything else
-		$token	= JUtility::getToken();
-		if(!JRequest::getInt($token, 0, 'post')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get some objects from the JApplication
 		$db		=& JFactory::getDBO();
@@ -108,10 +103,10 @@ class WeblinksControllerWeblink extends WeblinksController
 
 		// send email notification to admins
 		foreach ($adminRows as $adminRow) {
-			JUtility::sendAdminMail($adminRow->name, $adminRow->email, '', 'Weblink', $post['title'], $user->get('username'), JURI::base());
+			JUtility::sendAdminMail($adminRow->name, $adminRow->email, '', 'Weblink', $post['title']." URL link ".$post[url], $user->get('username'), JURI::base());
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=com_weblinks&view=weblink', false), $msg);
+		$this->setRedirect(JRoute::_('index.php?option=com_weblinks&view=category&id='.$post['catid'], false), $msg);
 	}
 
 	/**

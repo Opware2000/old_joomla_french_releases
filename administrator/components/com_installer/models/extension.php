@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: extension.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: extension.php 9770 2007-12-30 10:16:40Z mtk $
  * @package		Joomla
  * @subpackage	Installer
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -22,7 +21,6 @@ jimport( 'joomla.application.component.model' );
  * Extension Manager Abstract Extension Model
  *
  * @abstract
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -120,11 +118,11 @@ class InstallerModel extends JModel
 
 		if (count($failed)) {
 			// There was an error in uninstalling the package
-			$msg = JText::sprintf('UNINSTALLEXT', $this->_type, JText::_('Error'));
+			$msg = JText::sprintf('UNINSTALLEXT', JText::_($this->_type), JText::_('Error'));
 			$result = false;
 		} else {
 			// Package uninstalled sucessfully
-			$msg = JText::sprintf('UNINSTALLEXT', $this->_type, JText::_('Success'));
+			$msg = JText::sprintf('UNINSTALLEXT', JText::_($this->_type), JText::_('Success'));
 			$result = true;
 		}
 

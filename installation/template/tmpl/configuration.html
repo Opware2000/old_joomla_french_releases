@@ -1,8 +1,8 @@
 <jtmpl:comment>
-@version	$Id: configuration.html 8563 2007-08-25 20:50:33Z jinx $
+@version	$Id: configuration.html 9991 2008-02-05 22:13:22Z ircmaxell $
 @package	Joomla
 @subpackage	Installation
-@copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+@copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 @license	GNU/GPL
 </jtmpl:comment>
 
@@ -17,7 +17,6 @@ var $list_limit = '20';
 var $legacy = '0';
 /* Debug Settings */
 var $debug = '0';
-var $debug_db = '0';
 var $debug_lang = '0';
 /* Database Settings */
 var $dbtype = '{VAR_DBTYPE|addslashes}';
@@ -27,11 +26,12 @@ var $password = '{VAR_DBPASSWORD|addslashes}';
 var $db = '{VAR_DBNAME|addslashes}';
 var $dbprefix = '{VAR_DBPREFIX|addslashes}';
 /* Server Settings */
+var $live_site = '';
 var $secret = '{VAR_SECRET|addslashes}';
 var $gzip = '0';
 var $error_reporting = '-1';
 var $helpurl = '{VAR_HELPURL|addslashes}';
-var $xmlrpc_server = '1';
+var $xmlrpc_server = '0';
 var $ftp_host = '{VAR_FTPHOST|addslashes}';
 var $ftp_port = '{VAR_FTPPORT|addslashes}';
 var $ftp_user = '{VAR_FTPUSER|addslashes}';
@@ -62,9 +62,9 @@ var $MetaAuthor = '1';
 /* SEO Settings */
 var $sef           = '0';
 var $sef_rewrite   = '0';
+var $sef_suffix    = '0';
 /* Feed Settings */
 var $feed_limit   = 10;
-var $feed_summary = 0;
 var $log_path = '{VAR_LOG_PATH|addslashes}';
 var $tmp_path = '{VAR_TMP_PATH|addslashes}';
 /* Session Setting */

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: model.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: model.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -62,9 +62,6 @@ class JModel extends JObject
 	 */
 	function __construct($config = array())
 	{
-		$this->_db	  = &JFactory::getDBO();
-		$this->_state = new JObject();
-
 		//set the view name
 		if (empty( $this->_name ))
 		{
@@ -73,6 +70,20 @@ class JModel extends JObject
 			} else {
 				$this->_name = $this->getName();
 			}
+		}
+
+		//set the model state
+		if (array_key_exists('state', $config))  {
+			$this->_state = $config['state'];
+		} else {
+			$this->_state = new JObject();
+		}
+
+		//set the model dbo
+		if (array_key_exists('dbo', $config))  {
+			$this->_db = $config['dbo'];
+		} else {
+			$this->_db = &JFactory::getDBO();
 		}
 
 		// set the default view search path
@@ -87,11 +98,12 @@ class JModel extends JObject
 	 * Returns a reference to the a Model object, always creating it
 	 *
 	 * @param	string	The model type to instantiate
-	 * @param	string	Prefix for the model class name
+	 * @param	string	Prefix for the model class name. Optional.
+	 * @param	array	Configuration array for model. Optional.
 	 * @return	mixed	A model object, or false on failure
 	 * @since	1.5
 	*/
-	function &getInstance( $type, $prefix='' )
+	function &getInstance( $type, $prefix = '', $config = array() )
 	{
 		$type		= preg_replace('/[^A-Z0-9_\.-]/i', '', $type);
 		$modelClass	= $prefix.ucfirst($type);
@@ -100,7 +112,11 @@ class JModel extends JObject
 		if (!class_exists( $modelClass ))
 		{
 			jimport('joomla.filesystem.path');
-			if ($path = JPath::find(JModel::addIncludePath(), strtolower($type).'.php'))
+			$path = JPath::find(
+				JModel::addIncludePath(),
+				JModel::_createFileName( 'model', array( 'name' => $type))
+			);
+			if ($path)
 			{
 				require_once $path;
 
@@ -110,14 +126,10 @@ class JModel extends JObject
 					return $result;
 				}
 			}
-			else
-			{
-				JError::raiseWarning( 0, 'Model ' . $type . ' not supported. File not found.' );
-				return $result;
-			}
+			else return $result;
 		}
 
-		$result = new $modelClass();
+		$result = new $modelClass($config);
 		return $result;
 	}
 
@@ -202,23 +214,25 @@ class JModel extends JObject
 	 * Method to get a table object, load it if necessary.
 	 *
 	 * @access	public
-	 * @param	string The table name
-	 * @param	string The class prefix
+	 * @param	string The table name. Optional.
+	 * @param	string The class prefix. Optional.
+	 * @param	array	Configuration array for model. Optional.
 	 * @return	object	The table
 	 * @since	1.5
 	 */
-	function &getTable($name='', $prefix='Table')
+	function &getTable($name='', $prefix='Table', $options = array())
 	{
 		if (empty($name)) {
-			$name = $this->_name;
+			$name = $this->getName();
 		}
 
-		if($table = &$this->_createTable( $name, $prefix )) {
+		if($table = &$this->_createTable( $name, $prefix, $options ))  {
 			return $table;
-		} else {
-			JError::raiseError( 0, 'Table ' . $name . ' not supported. File not found.' );
-			return null;
 		}
+
+		JError::raiseError( 0, 'Table ' . $name . ' not supported. File not found.' );
+		$null = null;
+        return $null;
 	}
 
 	/**
@@ -238,6 +252,7 @@ class JModel extends JObject
 			$paths = array();
 		}
 		if (!empty( $path ) && !in_array( $path, $paths )) {
+			jimport('joomla.filesystem.path');
 			array_unshift($paths, JPath::clean( $path ));
 		}
 		return $paths;
@@ -252,6 +267,7 @@ class JModel extends JObject
 	 */
 	function addTablePath($path)
 	{
+		jimport('joomla.database.table');
 		JTable::addIncludePath($path);
 	}
 
@@ -293,43 +309,26 @@ class JModel extends JObject
 	 * Method to load and return a model object.
 	 *
 	 * @access	private
-	 * @param	string	$modelName	The name of the view
+	 * @param	string	The name of the view
+	 * @param   string  The class prefix. Optional.
 	 * @return	mixed	Model object or boolean false if failed
 	 * @since	1.5
 	 */
-	function &_createTable( $name, $prefix = 'Table')
+	function &_createTable( $name, $prefix = 'Table', $config = array())
 	{
 		$result = null;
 
 		// Clean the model name
-		$tableName	= preg_replace( '/[^A-Z0-9_]/i', '', $name );
-		$classPrefix	= preg_replace( '/[^A-Z0-9_]/i', '', $prefix );
+		$name	= preg_replace( '/[^A-Z0-9_]/i', '', $name );
+		$prefix = preg_replace( '/[^A-Z0-9_]/i', '', $prefix );
 
-		// Build the model class name
-		$tableClass = $classPrefix.$tableName;
-
-		if (!class_exists( $tableClass ))
-		{
-			jimport('joomla.filesystem.path');
-			if($path = JPath::find(JTable::addIncludePath(), $this->_createFileName('table', array('name' => $tableName))))
-			{
-				require_once $path;
-
-				if (!class_exists( $tableClass ))
-				{
-					$result = JError::raiseError( 500, 'Table class ' . $tableClass . ' not found in file.' );
-					return $result;
-				}
-			}
-			else {
-				return $result;
-			}
+		//Make sure we are returning a DBO object
+		if (!array_key_exists('dbo', $config))  {
+			$config['dbo'] =& $this->getDBO();;
 		}
 
-		$db =& $this->getDBO();
-		$result = new $tableClass($db);
-
-		return $result;
+		$instance =& JTable::getInstance($name, $prefix, $config );
+		return $instance;
 	}
 
 	/**
@@ -347,7 +346,7 @@ class JModel extends JObject
 
 		switch($type)
 		{
-			case 'table' :
+			case 'model':
 				$filename = strtolower($parts['name']).'.php';
 				break;
 

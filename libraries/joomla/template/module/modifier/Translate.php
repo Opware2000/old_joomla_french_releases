@@ -1,10 +1,10 @@
 <?php
 /**
 * patTemplate modfifier for Search Engine Friendly URL's
-* @version		$Id: Translate.php 8288 2007-08-01 08:40:54Z eddieajau $
+* @version		$Id: Translate.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Template
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software and parts of it may contain or be derived from the
 * GNU General Public License or other free or open source software licenses.

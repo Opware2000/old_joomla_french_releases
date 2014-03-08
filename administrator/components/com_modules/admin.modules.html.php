@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.modules.html.php 8577 2007-08-26 22:45:22Z eddieajau $
+* @version		$Id: admin.modules.html.php 9818 2008-01-03 00:51:35Z eddieajau $
 * @package		Joomla
 * @subpackage	Modules
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -131,9 +131,10 @@ class HTML_modules
 						echo $row->title;
 					} else {
 						?>
+						<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Module' );?>::<?php echo $row->title; ?>">
 						<a href="<?php echo $link; ?>">
-							<?php echo $row->title; ?>
-						</a>
+							<?php echo $row->title; ?></a>
+						</span>
 						<?php
 					}
 					?>
@@ -189,7 +190,8 @@ class HTML_modules
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -213,7 +215,6 @@ class HTML_modules
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		// clean item data
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'content' );
 
 		// Check for component metadata.xml file
@@ -235,7 +236,7 @@ class HTML_modules
 				alert("<?php echo JText::_( 'Module must have a title', true ); ?>");
 			} else {
 				<?php
-				if ($row->module == '' || $row->module == 'custom') {
+				if ($row->module == '' || $row->module == 'mod_custom') {
 					echo $editor->save( 'content' );
 				}
 				?>
@@ -256,7 +257,7 @@ class HTML_modules
 		//-->
 		</script>
 		<form action="index.php" method="post" name="adminForm">
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -431,7 +432,7 @@ class HTML_modules
 			</fieldset>
 		</div>
 
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Parameters' ); ?></legend>
 
@@ -494,6 +495,7 @@ class HTML_modules
 		<input type="hidden" name="module" value="<?php echo $row->module; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="client" value="<?php echo $client->id ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 	<?php
 	}
@@ -563,7 +565,7 @@ class HTML_modules
 			}
 			?>
 				<td width="50%">
-					<span class="editlinktip hasTip" title="<?php echo JText::_(stripslashes( $row->name)).' :: '.JText::_(stripslashes( $row->descrip )); ?>" name="module" value="<?php echo $row->module; ?>" onclick="isChecked(this.checked);" /><input type="radio" name="module" value="<?php echo $row->module; ?>" id="cb<?php echo $i; ?>"><a href="<?php echo $link .'">'. JText::_($row->name); ?></a></span>
+					<span class="editlinktip hasTip" title="<?php echo JText::_(stripslashes( $row->name)).' :: '.JText::_(stripslashes( $row->descrip )); ?>" name="module" value="<?php echo $row->module; ?>" onclick="isChecked(this.checked);" /><input type="radio" name="module" value="<?php echo $row->module; ?>" id="cb<?php echo $i; ?>"><a href="<?php echo $link;?>"><?php echo JText::_($row->name); ?></a></span>
 				</td>
 			<?php
 			if ( $k ) {
@@ -584,6 +586,7 @@ class HTML_modules
 		<input type="hidden" name="created" value="1" />
 		<input type="hidden" name="task" value="edit" />
 		<input type="hidden" name="boxchecked" value="0" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}

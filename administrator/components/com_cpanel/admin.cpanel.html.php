@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.cpanel.html.php 6318 2007-01-19 07:01:56Z eddiea $
+* @version		$Id: admin.cpanel.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Admin
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -37,7 +37,7 @@ class HTML_cpanel
 
 		foreach ($modules as $module) {
 			$title = $module->title ;
-			echo $pane->startPanel( $title, "cpanel-panel" );
+			echo $pane->startPanel( $title, 'cpanel-panel-'.$module->name );
 			echo JModuleHelper::renderModule($module);
 			echo $pane->endPanel();
 		}
@@ -45,5 +45,3 @@ class HTML_cpanel
 		echo $pane->endPane();
 	}
 }
-
-?>

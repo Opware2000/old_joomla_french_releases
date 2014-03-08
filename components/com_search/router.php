@@ -1,15 +1,15 @@
 <?php
 /**
-* @version		$Id: router.php 8338 2007-08-07 05:30:34Z eddieajau $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: router.php 9928 2008-01-12 02:29:03Z ian $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 /**
  * @param	array
@@ -19,9 +19,13 @@ function SearchBuildRoute( &$query )
 {
 	$segments = array();
 
-	if(isset($query['searchword'])) {
+	if (isset($query['searchword'])) {
 		$segments[] = $query['searchword'];
 		unset($query['searchword']);
+	}
+	
+	if (isset($query['view'])) {
+		unset($query['view']);
 	}
 
 	return $segments;
@@ -37,6 +41,7 @@ function SearchParseRoute( $segments )
 
 	$searchword	= array_shift($segments);
 	$vars['searchword'] = $searchword;
+	$vars['view'] = 'search';
 
 	return $vars;
 }

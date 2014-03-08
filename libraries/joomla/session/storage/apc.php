@@ -3,7 +3,7 @@
 * @version		$Id:apc.php 6961 2007-03-15 16:06:53Z tcp $
 * @package		Joomla.Framework
 * @subpackage	Session
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -35,7 +35,7 @@ class JSessionStorageApc extends JSessionStorage
 	function __construct( $options = array() )
 	{
 		if (!$this->test()) {
-            return JError::raiseError(404, "The apc extension isn't available");
+            return JError::raiseError(404, "The apc extension is not available");
         }
 
 		parent::__construct($options);

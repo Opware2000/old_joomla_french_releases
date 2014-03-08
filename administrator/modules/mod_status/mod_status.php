@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_status.php 8295 2007-08-01 23:05:25Z eddieajau $
+* @version		$Id: mod_status.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,7 +14,7 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-global $task, $hidemainmenu;
+global $task;
 
 // Initialize some variables
 $config		=& JFactory::getConfig();
@@ -32,7 +32,7 @@ if (defined('_JLEGACY')) {
 }
 
 // Print the preview button
-$output[] = "<span class=\"preview\"><a href=\"".$mainframe->getSiteURL()."\" target=\"_blank\">".JText::_('Preview')."</a></span>";
+$output[] = "<span class=\"preview\"><a href=\"".JURI::root()."\" target=\"_blank\">".JText::_('Preview')."</a></span>";
 
 // Get the number of unread messages in your inbox
 $query = 'SELECT COUNT(*)'
@@ -66,12 +66,12 @@ $online_num = intval( $db->loadResult() );
 //Print the logged in users message
 $output[] = "<span class=\"loggedin-users\">".$online_num."</span>";
 
-if ($task == 'edit' || $task == 'editA' || $hidemainmenu ) {
+if ($task == 'edit' || $task == 'editA' || JRequest::getInt('hidemainmenu') ) {
 	 // Print the logout message
 	 $output[] = "<span class=\"logout\">".JText::_('Logout')."</span>";
 } else {
 	// Print the logout message
-	$output[] = "<span class=\"logout\"><a href=\"index.php?option=com_login&task=logout\">".JText::_('Logout')."</a></span>";
+	$output[] = "<span class=\"logout\"><a href=\"index.php?option=com_login&amp;task=logout\">".JText::_('Logout')."</a></span>";
 }
 
 // reverse rendering order for rtl display

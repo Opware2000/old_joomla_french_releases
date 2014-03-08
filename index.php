@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: index.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: index.php 9987 2008-02-05 17:43:24Z ian $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -28,7 +28,7 @@ JDEBUG ? $_PROFILER->mark( 'afterLoad' ) : null;
  *
  * NOTE :
  */
-$mainframe =& JApplication::getInstance('site');
+$mainframe =& JFactory::getApplication('site');
 
 /**
  * INITIALISE THE APPLICATION
@@ -55,7 +55,7 @@ $mainframe->route();
 $Itemid = JRequest::getInt( 'Itemid');
 $mainframe->authorize($Itemid);
 
-// trigger the onAfterDisplay events
+// trigger the onAfterRoute events
 JDEBUG ? $_PROFILER->mark('afterRoute') : null;
 $mainframe->triggerEvent('onAfterRoute');
 
@@ -67,7 +67,7 @@ $mainframe->triggerEvent('onAfterRoute');
 $option = JRequest::getCmd('option');
 $mainframe->dispatch($option);
 
-// trigger the onAfterDisplay events
+// trigger the onAfterDispatch events
 JDEBUG ? $_PROFILER->mark('afterDispatch') : null;
 $mainframe->triggerEvent('onAfterDispatch');
 
@@ -78,7 +78,7 @@ $mainframe->triggerEvent('onAfterDispatch');
  */
 $mainframe->render();
 
-// trigger the onAfterDisplay events
+// trigger the onAfterRender events
 JDEBUG ? $_PROFILER->mark('afterRender') : null;
 $mainframe->triggerEvent('onAfterRender');
 

@@ -1,21 +1,16 @@
-<?php
+<?php // @version $Id: default_links.php 9781 2007-12-31 11:13:48Z mtk $
 defined('_JEXEC') or die('Restricted access');
-
-// temporary fix
-$hlevel = 2;
-
-echo '<h' . $hlevel . '>';
-echo JText :: _('Read more...');
-echo '</h' . $hlevel . '>';
-echo '<ul>';
-foreach ($this->links as $link) {
-	echo '<li>';
-	echo '<a class="blogsection" href="';
-	echo JRoute::_('index.php?view=article&id='.$link->slug);
-	echo ' ">';
-	echo $link->title;
-	echo '</a>';
-	echo '</li>';
-}
-echo '</ul>';
 ?>
+
+<h2>
+	<?php echo JText::_('More Articles...'); ?>
+</h2>
+
+<ul>
+	<?php foreach ($this->links as $link) : ?>
+	<li>
+		<a class="blogsection" href="<?php echo JRoute::_(ContentHelperRoute::getArticleRoute($link->slug, $link->catslug, $link->sectionid)); ?>">
+			<?php echo $link->title; ?></a>
+	</li>
+	<?php endforeach; ?>
+</ul>

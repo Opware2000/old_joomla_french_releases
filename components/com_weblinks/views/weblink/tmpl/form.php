@@ -21,7 +21,7 @@ function submitbutton(pressbutton)
 }
 </script>
 
-<form action="<?php echo JRoute::_('index.php') ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo $this->action ?>" method="post" name="adminForm" id="adminForm">
 <div class="componentheading">
 	<?php echo JText::_( 'Submit A Web Link' );?>
 </div>
@@ -58,12 +58,32 @@ function submitbutton(pressbutton)
 </tr>
 <tr>
 	<td valign="top">
+		<label for="jformpublished">
+			<?php echo JText::_( 'Published' ); ?>:
+		</label>
+	</td>
+	<td>
+			<?php echo $this->lists['published']; ?>
+	</td>
+</tr>
+<tr>
+	<td valign="top">
 		<label for="jformdescription">
 			<?php echo JText::_( 'Description' ); ?>:
 		</label>
 	</td>
 	<td>
-		<textarea class="inputbox" cols="30" rows="6" id="jformdescription" name="jform[description]" style="width:300px"><?php echo htmlspecialchars( $this->weblink->description, ENT_QUOTES );?></textarea>
+		<textarea class="inputbox" cols="30" rows="6" id="jformdescription" name="jform[description]" style="width:300px"><?php echo $this->escape( $this->weblink->description);?></textarea>
+	</td>
+</tr>
+<tr>
+	<td class="key">
+		<label for="jformordering">
+			<?php echo JText::_( 'Ordering' ); ?>:
+		</label>
+	</td>
+	<td>
+		<?php echo $this->lists['ordering']; ?>
 	</td>
 </tr>
 </table>
@@ -77,12 +97,11 @@ function submitbutton(pressbutton)
 	</button>
 </div>
 
-<input type="hidden" name="jform[id]" value="<?php echo $this->weblink->id; ?>" />
-<input type="hidden" name="jform[ordering]" value="<?php echo $this->weblink->ordering; ?>" />
-<input type="hidden" name="jform[approved]" value="<?php echo $this->weblink->approved; ?>" />
-<input type="hidden" name="option" value="<?php echo $option;?>" />
-<input type="hidden" name="controller" value="weblink" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="Returnid" value="<?php echo $this->returnid; ?>" />
-<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
+	<input type="hidden" name="jform[id]" value="<?php echo $this->weblink->id; ?>" />
+	<input type="hidden" name="jform[ordering]" value="<?php echo $this->weblink->ordering; ?>" />
+	<input type="hidden" name="jform[approved]" value="<?php echo $this->weblink->approved; ?>" />
+	<input type="hidden" name="option" value="com_weblinks" />
+	<input type="hidden" name="controller" value="weblink" />
+	<input type="hidden" name="task" value="" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

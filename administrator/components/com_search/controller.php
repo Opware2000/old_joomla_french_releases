@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8554 2007-08-25 13:59:27Z jinx $
+ * @version		$Id: controller.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Search
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -12,7 +11,6 @@
  * source software licenses. See COPYRIGHT.php for copyright notices and
  * details.
  */
- 
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
@@ -25,14 +23,13 @@ jimport('joomla.application.component.controller');
  */
 class SearchController extends JController
 {
-
 	/**
 	 * Show Search Statistics
 	 */
 	function display()
 	{
 		$model	=& $this->getModel( 'Search' );
-		$view =& $this->getView( 'Search' );
+		$view   =& $this->getView( 'Search' );
 		$view->setModel( $model, true );
 		$view->display();
 	}
@@ -47,4 +44,3 @@ class SearchController extends JController
 		$this->setRedirect('index.php?option=com_search');
 	}
 }
-?>

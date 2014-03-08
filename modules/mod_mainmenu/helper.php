@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 8379 2007-08-10 23:20:01Z eddieajau $
+* @version		$Id: helper.php 9877 2008-01-05 12:37:25Z mtk $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -22,7 +22,6 @@ jimport('joomla.utilities.simplexml');
  * mod_mainmenu Helper class
  *
  * @static
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Menus
  * @since		1.5
@@ -32,27 +31,38 @@ class modMainMenuHelper
 	function buildXML(&$params)
 	{
 		$menu = new JMenuTree($params);
-		$items = &JMenu::getInstance();
+		$items = &JSite::getMenu();
 
 		// Get Menu Items
 		$rows = $items->getItems('menutype', $params->get('menutype'));
+		$maxdepth = $params->get('maxdepth',10);
 
 		// Build Menu Tree root down (orphan proof - child might have lower id than parent)
 		$user =& JFactory::getUser();
 		$ids = array();
 		$ids[0] = true;
-
-		// pop the first item until the array is empty
-		while ( !is_null($row = array_shift($rows)))
-		{
-			if (array_key_exists($row->parent, $ids)) {
-				$menu->addNode($row);
-				// record loaded parents
-				$ids[$row->id] = true;
-			} else {
-				// no parent yet so push item to back of list
-				array_push($rows, $row);
-			}
+		$last = null;
+		$unresolved = array();
+		// pop the first item until the array is empty if there is any item
+		if ( is_array($rows)) {
+		    while (count($rows) && !is_null($row = array_shift($rows)))
+		    {
+			    if (array_key_exists($row->parent, $ids)) {
+				    $menu->addNode($row);
+				    // record loaded parents
+				    $ids[$row->id] = true;
+			    } else {
+				    // no parent yet so push item to back of list
+					// SAM: But if the key isn't in the list and we dont _add_ this is infinite, so check the unresolved queue
+					if(!array_key_exists($row->id, $unresolved) || $unresolved[$row->id] < $maxdepth) {
+						array_push($rows, $row);
+						// so let us do max $maxdepth passes
+						// TODO: Put a time check in this loop in case we get too close to the PHP timeout
+						if(!isset($unresolved[$row->id])) $unresolved[$row->id] = 1;
+						else $unresolved[$row->id]++;
+					}
+			    }
+		    }
 		}
 		return $menu->toXML();
 	}
@@ -72,7 +82,7 @@ class modMainMenuHelper
 		$xml->loadString($xmls[$type]);
 		$doc = &$xml->document;
 
-		$menu	= &JMenu::getInstance();
+		$menu	= &JSite::getMenu();
 		$active	= $menu->getActive();
 		$start	= $params->get('startLevel');
 		$end	= $params->get('endLevel');
@@ -84,24 +94,30 @@ class modMainMenuHelper
 		{
 			$found = false;
 			$root = true;
-			$path = $active->tree;
-			for ($i=0,$n=count($path);$i<$n;$i++)
-			{
-				foreach ($doc->children() as $child)
+			if(!isset($active)){
+				$doc = false;
+			}
+			else{
+				$path = $active->tree;
+				for ($i=0,$n=count($path);$i<$n;$i++)
 				{
-					if ($child->attributes('id') == $path[$i]) {
-						$doc = &$child->ul[0];
-						$root = false;
+					foreach ($doc->children() as $child)
+					{
+						if ($child->attributes('id') == $path[$i]) {
+							$doc = &$child->ul[0];
+							$root = false;
+							break;
+						}
+					}
+	
+					if ($i == $start-1) {
+						$found = true;
 						break;
 					}
 				}
-				if (( $i?$i:1 ) == $start) {
-					$found = true;
-					break;
+				if ((!is_a($doc, 'JSimpleXMLElement')) || (!$found) || ($root)) {
+					$doc = false;
 				}
-			}
-			if ((!is_a($doc, 'JSimpleXMLElement')) || (!$found) || ($root)) {
-				$doc = false;
 			}
 		}
 
@@ -153,7 +169,6 @@ class modMainMenuHelper
 /**
  * Main Menu Tree Class.
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Menus
  * @since		1.5
@@ -260,7 +275,7 @@ class JMenuTree extends JTree
 		// Menu Link is a special type that is a link to another item
 		if ($item->type == 'menulink')
 		{
-			$menu = &JMenu::getInstance();
+			$menu = &JSite::getMenu();
 			if ($tmp = clone($menu->getItem($item->query['Itemid']))) {
 				$tmp->name	 = '<span><![CDATA['.$item->name.']]></span>';
 				$tmp->mid	 = $item->id;
@@ -269,13 +284,13 @@ class JMenuTree extends JTree
 				return false;
 			}
 		} else {
-			$tmp = $item;
+			$tmp = clone($item);
 			$tmp->name = '<span><![CDATA['.$item->name.']]></span>';
 		}
 
 		$iParams = new JParameter($tmp->params);
 		if ($iParams->get('menu_image') && $iParams->get('menu_image') != -1) {
-			$image = '<img src="images/stories/'.$iParams->get('menu_image').'" alt="" />';
+			$image = '<img src="'.JURI::base(true).'/images/stories/'.$iParams->get('menu_image').'" alt="" />';
 		} else {
 			$image = null;
 		}
@@ -294,7 +309,8 @@ class JMenuTree extends JTree
 				break;
 
 			default :
-				$tmp->url = 'index.php?Itemid='.$tmp->id;
+				$router = JSite::getRouter();
+				$tmp->url = $router->getMode() == JROUTER_MODE_SEF ? 'index.php?Itemid='.$tmp->id : $tmp->link.'&Itemid='.$tmp->id;
 				break;
 		}
 
@@ -303,7 +319,9 @@ class JMenuTree extends JTree
 		{
 			// Handle SSL links
 			$iSecure = $iParams->def('secure', 0);
-			if (strcasecmp(substr($tmp->url, 0, 4), 'http') && (strpos($tmp->link, 'index.php?') !== false)) {
+			if ($tmp->home == 1) {
+				$tmp->url = JURI::base();
+			} elseif (strcasecmp(substr($tmp->url, 0, 4), 'http') && (strpos($tmp->link, 'index.php?') !== false)) {
 				$tmp->url = JRoute::_($tmp->url, true, $iSecure);
 			} else {
 				$tmp->url = str_replace('&', '&amp;', $tmp->url);
@@ -340,7 +358,6 @@ class JMenuTree extends JTree
 /**
  * Main Menu Tree Node Class.
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Menus
  * @since		1.5

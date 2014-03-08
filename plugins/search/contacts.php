@@ -1,15 +1,15 @@
 <?php
 /**
-* @version		$Id: contacts.php 8627 2007-08-29 21:55:02Z jinx $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: contacts.php 9975 2008-01-30 17:02:11Z ircmaxell $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -22,7 +22,8 @@ JPlugin::loadLanguage( 'plg_search_contacts' );
 /**
  * @return array An array of search areas
  */
-function &plgSearchContactAreas() {
+function &plgSearchContactAreas()
+{
 	static $areas = array(
 		'contacts' => 'Contacts'
 	);
@@ -78,24 +79,25 @@ function plgSearchContacts( $text, $phrase='', $ordering='', $areas=null )
 			$order = 'a.name DESC';
 	}
 
-	$text = $db->getEscaped($text);
-	$query = 'SELECT a.name AS title, "" AS created,' 
+	$text	= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
+	$query	= 'SELECT a.name AS title, "" AS created,'
 	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
+	. ' CASE WHEN CHAR_LENGTH(b.alias) THEN CONCAT_WS(\':\', b.id, b.alias) ELSE b.id END AS catslug, '
 	. ' CONCAT_WS( ", ", a.name, a.con_position, a.misc ) AS text,'
 	. ' CONCAT_WS( " / ", '.$db->Quote($section).', b.title ) AS section,'
 	. ' "2" AS browsernav'
 	. ' FROM #__contact_details AS a'
 	. ' INNER JOIN #__categories AS b ON b.id = a.catid'
-	. ' WHERE ( a.name LIKE "%'.$text.'%"'
-	. ' OR a.misc LIKE "%'.$text.'%"'
-	. ' OR a.con_position LIKE "%'.$text.'%"'
-	. ' OR a.address LIKE "%'.$text.'%"'
-	. ' OR a.suburb LIKE "%'.$text.'%"'
-	. ' OR a.state LIKE "%'.$text.'%"'
-	. ' OR a.country LIKE "%'.$text.'%"'
-	. ' OR a.postcode LIKE "%'.$text.'%"'
-	. ' OR a.telephone LIKE "%'.$text.'%"'
-	. ' OR a.fax LIKE "%'.$text.'%" )'
+	. ' WHERE ( a.name LIKE '.$text
+	. ' OR a.misc LIKE '.$text
+	. ' OR a.con_position LIKE '.$text
+	. ' OR a.address LIKE '.$text
+	. ' OR a.suburb LIKE '.$text
+	. ' OR a.state LIKE '.$text
+	. ' OR a.country LIKE '.$text
+	. ' OR a.postcode LIKE '.$text
+	. ' OR a.telephone LIKE '.$text
+	. ' OR a.fax LIKE '.$text.' )'
 	. ' AND a.published = 1'
 	. ' AND b.published = 1'
 	. ' AND a.access <= '.(int) $user->get( 'aid' )
@@ -105,11 +107,10 @@ function plgSearchContacts( $text, $phrase='', $ordering='', $areas=null )
 	;
 	$db->setQuery( $query, 0, $limit );
 	$rows = $db->loadObjectList();
-	
+
 	foreach($rows as $key => $row) {
-		$rows[$key]->href = 'index.php?option=com_contact&view=contact&id='.$row->slug;
+		$rows[$key]->href = 'index.php?option=com_contact&view=contact&id='.$row->slug.'&catid='.$row->catslug;
 	}
 
 	return $rows;
 }
-?>

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_related_items.php 8546 2007-08-25 05:16:52Z rmdstudio $
+* @version		$Id: mod_related_items.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -23,6 +23,6 @@ if (!count($list)) {
 	return;
 }
 
-$showDate			= $params->get('showDate', 0);
+$showDate = $params->get('showDate', 0);
 
 require(JModuleHelper::getLayoutPath('mod_related_items'));

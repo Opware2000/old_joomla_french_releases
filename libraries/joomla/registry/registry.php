@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: registry.php 7486 2007-05-25 15:34:01Z friesengeist $
+ * @version		$Id: registry.php 9783 2007-12-31 14:56:55Z pasamio $
  * @package		Joomla.Framework
  * @subpackage	Registry
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -15,7 +15,8 @@
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
-jimport( 'joomla.registry.format' );
+//Register the session storage class with the loader
+JLoader::register('JRegistryFormat', dirname(__FILE__).DS.'format.php');
 
 /**
  * JRegistry class
@@ -139,7 +140,7 @@ class JRegistry extends JObject
 
 				//for ($i = 0; $i < $pathNodes; $i ++) {
 				for ($i = 1; $i < $pathNodes; $i ++) {
-					$ns =& $ns->$nodes[$i];
+					if((isset($ns->$nodes[$i]))) $ns =& $ns->$nodes[$i];
 				}
 
 				if(isset($ns->$nodes[$i])) {
@@ -193,10 +194,9 @@ class JRegistry extends JObject
 		}
 
 		// Get the old value if exists so we can return it
-		@$retval =& $ns->$nodes[$i];
 		$ns->$nodes[$i] =& $value;
 
-		return $retval;
+		return $ns->$nodes[$i];
 	}
 
 	/**
@@ -405,17 +405,20 @@ class JRegistry extends JObject
 	 */
 	function merge(&$source)
 	{
-		if (is_a($source, 'JRegistry')) {
+		if (is_a($source, 'JRegistry'))
+		{
 			$sns = $source->getNameSpaces();
 			foreach ($sns as $ns)
 			{
-				if (!isset($this->_registry[$ns])) {
+				if (!isset($this->_registry[$ns]))
+				{
 					// If namespace does not exist, make it and load the data
 					$this->makeNameSpace($ns);
 				}
 
 				// Load the variables into the registry's default namespace.
-				foreach ($source->toArray($ns) as $k => $v) {
+				foreach ($source->toArray($ns) as $k => $v)
+				{
 					if ($v != null) {
 						$this->_registry[$ns]['data']->$k = $v;
 					}
@@ -497,5 +500,10 @@ class JRegistry extends JObject
 		$ns = & $this->_registry[$namespace]['data'];
 
 		return $ns;
+	}
+
+	function __clone()
+	{
+		$this->_registry = unserialize(serialize($this->_registry));
 	}
 }

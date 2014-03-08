@@ -1,9 +1,5 @@
-<?php
-/**
- * @version $Id: default_items.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
-defined( '_JEXEC' ) or die( 'Restricted access' );
-
+<?php // @version $Id: default_items.php 9718 2007-12-20 22:35:36Z eddieajau $
+defined('_JEXEC') or die('Restricted access');
 ?>
 
 <?php if ( $this->params->get( 'show_limit' ) ) : ?>
@@ -47,13 +43,10 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 			<?php echo $item->count + 1; ?>
 		</td>
 
-		<?php if ( $this->params->get( 'show_name' ) ) : ?>
 		<td width="90%" headers="name">
 			<a href="<?php echo $item->link; ?>" class="category<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-				<?php echo $item->name; ?>
-			</a>
+				<?php echo $item->name; ?></a>
 		</td>
-		<?php endif; ?>
 
 		<?php if ( $this->params->get( 'show_articles' ) ) : ?>
 		<td width="10%" headers="num_a"><?php echo $item->numarticles; ?></td>

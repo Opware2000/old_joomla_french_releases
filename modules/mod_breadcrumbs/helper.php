@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -28,14 +28,14 @@ class modBreadCrumbsHelper
 		for ($i = 0; $i < $count; $i ++)
 		{
 			$items[$i]->name = stripslashes(htmlspecialchars($items[$i]->name));
-			$items[$i]->link = '<a href="'.JRoute::_($items[$i]->link).'" class="pathway">'.$items[$i]->name.'</a>';
+			$items[$i]->link = JRoute::_($items[$i]->link);
 		}
 
 		if ($params->get('showHome'))
 		{
 			$item = new stdClass();
 			$item->name = $params->get('homeText', JText::_('Home'));
-			$item->link = '<a href="'.JURI::base().'" class="pathway">'.$item->name.'</a>';
+			$item->link = JURI::base();
 			array_unshift($items, $item);
 		}
 
@@ -54,36 +54,20 @@ class modBreadCrumbsHelper
 	{
 		global $mainframe;
 
+		$lang =& JFactory::getLanguage();
+
 		/**
 	 	* If a custom separator has not been provided we try to load a template
 	 	* specific one first, and if that is not present we load the default separator
 	 	*/
-		if ($custom == null)
-		{
-			// Set path for what would be a template specific separator
-			$tSepPath = 'templates/'.$mainframe->getTemplate().'/images/arrow.png';
-
-			// Check to see if the template specific separator exists and if so, set it
-			if (is_file(JPATH_SITE."/$tSepPath")) {
-				$_separator = '<img src="'.$tSepPath.'" border="0" alt="arrow" />';
+		if ($custom == null) {
+			if($lang->isRTL()){
+				$_separator = JHTML::_('image.site', 'arrow_rtl.png');
 			}
-			else
-			{
-				// Template specific separator does not exist, use the default separator
-				$dSepPath = '/images/M_images/arrow.png';
-
-				// Check to make sure the default separator exists
-				if (is_file(JPATH_SITE.$dSepPath)) {
-					$_separator = '<img src="images/M_images/arrow.png" alt="arrow" />';
-				}
-				else {
-					// The default separator does not exist either ... just use a bracket
-					$_separator = '&gt;';
-				}
+			else{
+				$_separator = JHTML::_('image.site', 'arrow.png');
 			}
-		}
-		else
-		{
+		} else {
 			$_separator = $custom;
 		}
 		return $_separator;

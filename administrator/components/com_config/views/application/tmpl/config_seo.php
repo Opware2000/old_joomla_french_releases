@@ -26,6 +26,16 @@
 				</span>
 			</td>
 		</tr>
+		<tr>
+			<td width="185" class="key">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'URL Suffix' ); ?>::<?php echo JText::_('TIPURLSUFFIX'); ?>">
+					<?php echo JText::_( 'Add suffix to URLs' ); ?>
+				</span>
+			</td>
+			<td>
+				<?php echo $lists['sef_suffix']; ?>
+			</td>
+		</tr>
 		</tbody>
 	</table>
 </fieldset>

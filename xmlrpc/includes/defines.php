@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: defines.php 7258 2007-05-02 10:50:50Z jinx $
+* @version		$Id: defines.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Installation
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -22,6 +22,7 @@ array_pop( $parts );
 define( 'JPATH_ROOT',			implode( DS, $parts ) );
 define( 'JPATH_SITE',			JPATH_ROOT );
 define( 'JPATH_CONFIGURATION',	JPATH_ROOT );
+define( 'JPATH_INSTALLATION',	JPATH_ROOT . DS . 'installation' );
 define( 'JPATH_ADMINISTRATOR',	JPATH_ROOT . DS . 'administrator' );
 define( 'JPATH_XMLRPC', 		JPATH_ROOT . DS . 'xmlrpc' );
 define( 'JPATH_LIBRARIES',		JPATH_ROOT . DS . 'libraries' );

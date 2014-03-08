@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -56,18 +56,13 @@ class WeblinksViewWeblink extends JView
 		$document	=& JFactory::getDocument();
 		$model		=& $this->getModel();
 		$user		=& JFactory::getUser();
+		$uri     	=& JFactory::getURI();
 
 		// Make sure you are logged in and have the necessary access rights
 		if ($user->get('gid') < 19) {
 			JError::raiseError( 403, JText::_('ALERTNOTAUTH') );
 			return;
 		}
-
-		/*
-		 * Disabled until ACL system is implemented.  When enabled the $id variable
-		 * will be used instead of a 0
-		 */
-		$returnid = JRequest::getVar( 'Returnid', 0, '', 'int' );
 
 		//get the weblink
 		$weblink	=& $this->get('data');
@@ -120,10 +115,20 @@ class WeblinksViewWeblink extends JView
 		// build list of categories
 		$lists['catid'] = JHTML::_('list.category', 'jform[catid]', 'com_weblinks', intval($weblink->catid));
 
-		jimport('joomla.filter.output');
+		// build the html select list for ordering
+		$query = 'SELECT ordering AS value, title AS text'
+			. ' FROM #__weblinks'
+			. ' WHERE catid = ' . (int) $weblink->catid
+			. ' ORDER BY ordering';
+
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  'jform[ordering]', $weblink->id, $query, 1 );
+
+		// Radio Buttons: Should the article be published
+		$lists['published'] 		= JHTML::_('select.booleanlist',  'jform[published]', 'class="inputbox"', $weblink->published );
+
 		JFilterOutput::objectHTMLSafe( $weblink, ENT_QUOTES, 'description' );
 
-		$this->assign('returnid', $returnid);
+		$this->assign('action', 	$uri->toString());
 
 		$this->assignRef('lists'   , $lists);
 		$this->assignRef('weblink' , $weblink);

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: joomla.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: joomla.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,12 +14,11 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.event.plugin');
+jimport('joomla.plugin.plugin');
 
 /**
  * Joomla! Base XML-RPC Plugin
  *
- * @author Louis Landry <louis.landry@joomla.org>
  * @package XML-RPC
  * @since 1.5
  */
@@ -37,7 +36,8 @@ class plgXMLRPCJoomla extends JPlugin
 	 * @param object $params  The object that holds the plugin parameters
 	 * @since 1.5
 	 */
-	function plgXMLRPCJoomla(& $subject, $config) {
+	function plgXMLRPCJoomla(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -86,7 +86,6 @@ class plgXMLRPCJoomlaServices
 
 		// Initialize variables
 		$db		=& JFactory::getDBO();
-		$url	= $mainframe->getSiteURL();
 
 		// Prepare arguments
 		$searchword	= $db->getEscaped( trim( $searchword ) );
@@ -103,12 +102,10 @@ class plgXMLRPCJoomlaServices
 		foreach ($results as $i=>$rows)
 		{
 			foreach ($rows as $j=>$row) {
-				$results[$i][$j]->href = eregi('^(http|https)://', $row->href) ? $row->href : $url.'/'.$row->href;
+				$results[$i][$j]->href = eregi('^(http|https)://', $row->href) ? $row->href : JURI::root().'/'.$row->href;
 				$results[$i][$j]->text = SearchHelper::prepareSearchContent( $row->text, 200, $searchword);
 			}
 		}
 		return $results;
 	}
 }
-
-?>

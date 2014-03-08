@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -17,23 +17,21 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <head>
 <jdoc:include type="head" />
 
-<link rel="stylesheet" href="templates/system/css/system.css" type="text/css" />
-<link rel="stylesheet" href="templates/system/css/general.css" type="text/css" />
-<link rel="stylesheet" href="templates/<?php echo $this->template ?>/css/template.css" type="text/css" />
-<link rel="stylesheet" href="templates/<?php echo $this->template ?>/css/<?php echo $this->params->get('colorVariation'); ?>.css" type="text/css" />
-<link rel="stylesheet" href="templates/<?php echo $this->template ?>/css/<?php echo $this->params->get('backgroundVariation'); ?>_bg.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/system.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/general.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/rhuk_milkyway/css/template.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/rhuk_milkyway/css/<?php echo $this->params->get('colorVariation'); ?>.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/rhuk_milkyway/css/<?php echo $this->params->get('backgroundVariation'); ?>_bg.css" type="text/css" />
 <!--[if lte IE 6]>
-<link href="templates/<?php echo $this->template ?>/css/ieonly.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template ?>/css/ieonly.css" rel="stylesheet" type="text/css" />
 <![endif]-->
-
 <?php if($this->direction == 'rtl') : ?>
-	<link href="templates/<?php echo $this->template ?>/css/template_rtl.css" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $this->baseurl ?>/templates/rhuk_milkyway/css/template_rtl.css" rel="stylesheet" type="text/css" />
 <?php endif; ?>
 
 </head>
 <body id="page_bg" class="color_<?php echo $this->params->get('colorVariation'); ?> bg_<?php echo $this->params->get('backgroundVariation'); ?> width_<?php echo $this->params->get('widthStyle'); ?>">
 <a name="up" id="up"></a>
-<jdoc:include type="message" />
 <div class="center" align="center">
 	<div id="wrapper">
 		<div id="wrapper_r">
@@ -71,7 +69,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 			</div>
 
 			<div id="pathway">
-				<jdoc:include type="module" name="breadcrumbs" />
+				<jdoc:include type="modules" name="breadcrumb" />
 			</div>
 
 			<div class="clr"></div>
@@ -85,6 +83,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 				<div id="whitebox_m">
 					<div id="area">
+									<jdoc:include type="message" />
+
 						<div id="leftcolumn">
 						<?php if($this->countModules('left')) : ?>
 							<jdoc:include type="modules" name="left" style="rounded" />
@@ -121,9 +121,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 							<table class="nopad">
 								<tr valign="top">
 									<td>
-										<?php if($this->params->get('showComponent')) : ?>
-											<jdoc:include type="component" />
-										<?php endif; ?>
+										<jdoc:include type="component" />
+										<jdoc:include type="modules" name="footer" style="xhtml"/>
 									</td>
 									<?php if($this->countModules('right') and JRequest::getCmd('layout') != 'form') : ?>
 										<td class="greyline">&nbsp;</td>
@@ -153,12 +152,12 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 		<div id="footer">
 			<div id="footer_l">
 				<div id="footer_r">
-					<p style="float:left; padding-left: 25px;">
+					<p id="syndicate">
 						<jdoc:include type="modules" name="syndicate" />
 					</p>
-					<p style="float:right; padding-right: 25px;">
-	 				 	Powered by <a href="http://www.joomla.org">Joomla!</a>.
-						Valid <a href="http://validator.w3.org/check/referer">XHTML</a> and <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.
+					<p id="power_by">
+	 				 	<?php echo JText::_('Powered by') ?> <a href="http://www.joomla.org">Joomla!</a>.
+						<?php echo JText::_('Valid') ?> <a href="http://validator.w3.org/check/referer">XHTML</a> <?php echo JText::_('and') ?> <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.
 					</p>
 				</div>
 			</div>
@@ -166,5 +165,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 	</div>
 </div>
 <jdoc:include type="modules" name="debug" />
+
 </body>
 </html>

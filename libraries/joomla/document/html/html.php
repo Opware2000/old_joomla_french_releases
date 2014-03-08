@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: html.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -125,7 +125,7 @@ class JDocumentHTML extends JDocument
 	function addHeadLink($href, $relation, $relType = 'rel', $attribs = array())
 	{
 		$attribs = JArrayHelper::toString($attribs);
-		$generatedTag = "<link href=\"$href\" $relType=\"$relation\" ". $attribs;
+		$generatedTag = '<link href="'.$href.'" '.$relType.'="'.$relation.'" '.$attribs;
 		$this->_links[] = $generatedTag;
 	}
 
@@ -169,19 +169,29 @@ class JDocumentHTML extends JDocument
 	 * @param array   	$attribs Associative array of remaining attributes.
 	 * @return 	The output of the renderer
 	 */
-	function getBuffer($type, $name = null, $attribs = array())
+	function getBuffer($type = null, $name = null, $attribs = array())
 	{
 		$result = null;
+
+		// If no type is specified, return the whole buffer
+		if ($type === null) {
+			return $this->_buffer;
+		}
+
 		if(isset($this->_buffer[$type][$name])) {
 			$result = $this->_buffer[$type][$name];
 		}
 
-		if( @ $renderer =& $this->loadRenderer( $type )) {
+		// If the buffer has been explicitly turned off don't display or attempt to render
+		if ($result === false) {
+			return null;
+		}
+
+		if( $renderer =& $this->loadRenderer( $type )) {
 			$result = $renderer->render($name, $attribs, $result);
-		};
+		}
 
 		return $result;
-
 	}
 
 	/**
@@ -215,27 +225,30 @@ class JDocumentHTML extends JDocument
 		if ( !file_exists( $directory.DS.$template.DS.$file) ) {
 			$template = 'system';
 		}
-		
+
 		// Parse the template INI file if it exists for parameters and insert
 		// them into the template.
 		if (is_readable( $directory.DS.$template.DS.'params.ini' ) )
 		{
 			$content = file_get_contents($directory.DS.$template.DS.'params.ini');
-			$this->params = new JParameter($content);
+			$params = new JParameter($content);
 		}
-		
+
 		// Load the language file for the template
 		$lang =& JFactory::getLanguage();
 		$lang->load( 'tpl_'.$template );
 
-		$this->template =& $template;
+		// Assign the variables
+		$this->template = $template;
+		$this->baseurl  = JURI::base(true);
+		$this->params   = $params;
 
 		// load
 		$data = $this->_loadTemplate($directory.DS.$template, $file);
-		
+
 		// parse
 		$data = $this->_parseTemplate($data);
-		
+
 		//output
 		parent::render();
 		return $data;
@@ -257,7 +270,7 @@ class JDocumentHTML extends JDocument
 		{
 			// odd parts (modules)
 			$name		= strtolower($words[$i]);
-			$words[$i]	= count(JModuleHelper::getModules($name));
+			$words[$i]	= ((isset($this->_buffer['modules'][$name])) && ($this->_buffer['modules'][$name] === false)) ? 0 : count(JModuleHelper::getModules($name));
 		}
 
 		$str = 'return '.implode(' ', $words).';';
@@ -313,7 +326,7 @@ class JDocumentHTML extends JDocument
 			{
 				$path = str_replace( JPATH_BASE . DS, '', $dir );
 				$path = str_replace( '\\', '/', $path );
-				$this->addFavicon( $path . 'favicon.ico' );
+				$this->addFavicon( JURI::base(true).'/'.$path . 'favicon.ico' );
 				break;
 			}
 		}

@@ -3,7 +3,7 @@
 * @version		$Id:php50x.php 6961 2007-03-15 16:06:53Z tcp $
 * @package		Joomla.Framework
 * @subpackage	Compatibility
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -98,5 +98,5 @@ if (!function_exists('file_put_contents')) {
  * Ported PHP5 function to PHP4 for forward compatibility
  */
 function clone($object) {
-	return $object;
+	return unserialize(serialize($object));
 }

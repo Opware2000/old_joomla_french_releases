@@ -1,5 +1,22 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
 
+<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancelItem') {
+				submitform( pressbutton );
+				return;
+			}
+
+			// do field validation
+			if (!getSelectedValue( 'adminForm', 'menu' )) {
+				alert( "<?php echo JText::_( 'Please select a menu from the list', true ); ?>" );
+			} else {
+				submitform( pressbutton );
+			}
+		}
+		</script>
+
 <form action="index.php" method="post" name="adminForm">
 	<table class="adminform">
 		<tr>
@@ -31,4 +48,5 @@
 <?php foreach ( $this->items as $item ) : ?>
 	<input type="hidden" name="cid[]" value="<?php echo $item->id; ?>" />
 <?php endforeach; ?>
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

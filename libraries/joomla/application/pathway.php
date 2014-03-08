@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: pathway.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: pathway.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,8 +14,6 @@
 
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
-
-jimport('joomla.filter.output');
 
 /**
  * Class to maintain a pathway.
@@ -51,7 +49,7 @@ class JPathway extends JObject
 		//Initialise the array
 		$this->_pathway = array();
 	}
-	
+
 	/**
 	 * Returns a reference a JPathway object
 	 *
@@ -66,25 +64,36 @@ class JPathway extends JObject
 	 */
 	function &getInstance($client, $options = array())
 	{
-		//Load the router object
-		$info =& JApplicationHelper::getClientInfo($client, true);
-			
-		$path = $info->path.DS.'includes'.DS.'pathway.php';
-		if(file_exists($path)) 
-		{
-			require_once $path;
-				
-			// Create a JPathway object
-			$classname = 'JPathway'.ucfirst($client);
-			$instance = new $classname($options);
-		} 
-		else 
-		{
-			$error = new JException( E_ERROR, 500, 'Unable to load pathway: '.$classname);
-			return $error;
+		static $instances;
+
+		if (!isset( $instances )) {
+			$instances = array();
 		}
-			
-		return $instance;
+
+		if (empty($instances[$client]))
+		{
+			//Load the router object
+			$info =& JApplicationHelper::getClientInfo($client, true);
+
+			$path = $info->path.DS.'includes'.DS.'pathway.php';
+			if(file_exists($path))
+			{
+				require_once $path;
+
+				// Create a JPathway object
+				$classname = 'JPathway'.ucfirst($client);
+				$instance = new $classname($options);
+			}
+			else
+			{
+				$error = JError::raiseError( 500, 'Unable to load pathway: '.$client);
+				return $error;
+			}
+
+			$instances[$client] = & $instance;
+		}
+
+		return $instances[$client];
 	}
 
 	/**

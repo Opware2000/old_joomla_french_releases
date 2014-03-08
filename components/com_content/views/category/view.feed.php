@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
+ * @version		$Id: view.feed.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -30,30 +30,28 @@ class ContentViewCategory extends JView
 	{
 		global $mainframe;
 
-		$doc =& JFactory::getDocument();
+		$doc     =& JFactory::getDocument();
+		$params =& $mainframe->getParams();
 		$doc->link = JRoute::_('index.php?option=com_content&view=category&id='.JRequest::getVar('id',null, '', 'int'));
 
 		// Get some data from the model
-		$limit = '10';
-
-		JRequest::setVar('limit', $limit);
+		JRequest::setVar('limit', $mainframe->getCfg('feed_limit'));
 		$rows 		= & $this->get( 'Data' );
-
 
 		foreach ( $rows as $row )
 		{
 			// strip html from feed item title
-			$title = htmlspecialchars( $row->title );
+			$title = $this->escape( $row->title );
 			$title = html_entity_decode( $title );
 
 			// url link to article
 			// & used instead of &amp; as this is converted by feed creator
-			$link = JRoute::_('index.php?option=com_content&view=article&id='. $row->id );
+			$link = JRoute::_('index.php?option=com_content&view=article&id='. $row->slug .'&catid='.$row->catslug );
 
 			// strip html from feed item description text
-			$description	= $row->introtext;
+			$description	= ($params->get('feed_summary', 0) ? $row->introtext.$row->fulltext : $row->introtext);
 			$author			= $row->created_by_alias ? $row->created_by_alias : $row->author;
-			@$date = ( $row->created ? date( 'r', strtotime($row->created) ) : '' );
+			@$date 			= ( $row->created ? date( 'r', strtotime($row->created) ) : '' );
 
 			// load individual item creator class
 			$item = new JFeedItem();
@@ -61,7 +59,6 @@ class ContentViewCategory extends JView
 			$item->link 		= $link;
 			$item->description 	= $description;
 			$item->date			= $date;
-			$item->author		= $author;
 			$item->category   	= $row->category;
 
 			// loads item info into rss array

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8502 2007-08-22 05:55:34Z jinx $
+ * @version		$Id: controller.php 9831 2008-01-03 01:10:35Z eddieajau $
  * @package		Joomla
  * @subpackage	MailTo
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -46,15 +46,12 @@ class MailtoController extends JController
 	{
 		global $mainframe;
 
-		//check the token before we do anything else
-		$token	= JUtility::getToken();
-		if(!JRequest::getInt($token, 0, 'post')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		$db	=& JFactory::getDBO();
 
-		jimport( 'joomla.utilities.mail' );
+		jimport( 'joomla.mail.helper' );
 
 		$SiteName 	= $mainframe->getCfg('sitename');
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
@@ -143,4 +140,3 @@ class MailtoController extends JController
 		$this->display();
 	}
 }
-?>

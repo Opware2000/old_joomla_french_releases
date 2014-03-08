@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: banner.php 8577 2007-08-26 22:45:22Z eddieajau $
+ * @version		$Id: banner.php 9805 2008-01-02 23:32:34Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -47,7 +47,7 @@ class BannersViewBanner
 				<?php echo JText::_( 'Filter' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_catid').value='0';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Filter Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 				<?php
@@ -71,13 +71,10 @@ class BannersViewBanner
 						<?php echo JHTML::_('grid.sort',  'Name', 'b.name', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="10%" nowrap="nowrap">
-						<?php echo JHTML::_('grid.sort',   'Alias', 'b.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
-					</th>
-					<th width="10%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Client', 'c.name', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="10%" nowrap="nowrap">
-						<?php echo JHTML::_('grid.sort',   'Category', 'cc.name', @$lists['order_Dir'], @$lists['order'] ); ?>
+						<?php echo JHTML::_('grid.sort',   'Category', 'cc.title', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="5%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Published', 'b.showBanner', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -141,19 +138,19 @@ class BannersViewBanner
 						<?php echo $checked; ?>
 					</td>
 					<td>
+					<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit' );?>::<?php echo $row->name; ?>">
 						<?php
 						if ( JTable::isCheckedOut($user->get ('id'), $row->checked_out ) ) {
 							echo $row->name;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Banner' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>'; ?>">
+
+							<a href="<?php echo $link; ?>">
 								<?php echo $row->name; ?></a>
 							<?php
 						}
 						?>
-					</td>
-					<td>
-						<?php echo $row->alias;?>
+						</span>
 					</td>
 					<td align="center">
 						<?php echo $row->client_name;?>
@@ -168,7 +165,7 @@ class BannersViewBanner
 						<input type="text" name="order[]" size="5" value="<?php echo $row->ordering;?>" class="text_area" style="text-align: center" />
 					</td>
 					<td align="center">
-						<?php echo $row->sticky ? JText::_( 'Yes' ) : 'No';?>
+						<?php echo $row->sticky ? JText::_( 'Yes' ) : JText::_( 'No' );?>
 					</td>
 					<td align="center">
 						<?php echo $row->impmade.' '.JText::_('of').' '.$row->imptotal?>
@@ -196,7 +193,8 @@ class BannersViewBanner
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -216,7 +214,6 @@ class BannersViewBanner
 	{
 		BannersViewBanner::setBannerToolbar();
 		JRequest::setVar( 'hidemainmenu', 1 );
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'custombannercode' );
 		?>
 		<script language="javascript" type="text/javascript">
@@ -271,7 +268,7 @@ class BannersViewBanner
 					</tr>
 					<tr>
 						<td width="20%" class="key">
-							<label for="name">
+							<label for="alias">
 								<?php echo JText::_( 'Alias' ); ?>:
 							</label>
 						</td>
@@ -445,6 +442,7 @@ class BannersViewBanner
 		<input type="hidden" name="clicks" value="<?php echo $row->clicks; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="impmade" value="<?php echo $row->impmade; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}

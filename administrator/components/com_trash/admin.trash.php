@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.trash.php 8112 2007-07-20 10:19:54Z friesengeist $
+* @version		$Id: admin.trash.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Trash
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -82,12 +82,12 @@ function viewTrashContent( $option )
 	$search				= JString::strtolower( $search );
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-	$limitstart = $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+	$limitstart = $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 	$where[] = 'c.state = -2';
 
 	if ($search) {
-		$where[] = 'LOWER(c.title) LIKE '.$db->Quote('%'.$search.'%');
+		$where[] = 'LOWER(c.title) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 
 	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -109,7 +109,7 @@ function viewTrashContent( $option )
 	$pageNav = new JPagination( $total, $limitstart, $limit );
 
 	// Query articles
-	$query = 'SELECT c.title, c.id, c.sectionid, c.catid, g.name AS groupname, cc.name AS catname, s.name AS sectname'
+	$query = 'SELECT c.title, c.id, c.sectionid, c.catid, g.name AS groupname, cc.title AS catname, s.title AS sectname'
 	. ' FROM #__content AS c'
 	. ' LEFT JOIN #__categories AS cc ON cc.id = c.catid'
 	. ' LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope="content"'
@@ -155,7 +155,7 @@ function viewTrashMenu( $option )
 	$where[] = 'm.published = -2';
 
 	if ($search) {
-		$where[] = 'LOWER(m.name) LIKE '.$db->Quote('%'.$search.'%');
+		$where[] = 'LOWER(m.name) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 
 	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -246,6 +246,9 @@ function deleteTrash( $cid, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db		=& JFactory::getDBO();
 	$return	= JRequest::getCmd( 'return', 'viewContent', 'post' );
 	$type	= JRequest::getCmd( 'type', '', 'post' );
@@ -323,8 +326,12 @@ function viewrestoreTrash( $cid, $mid, $option ) {
 /**
 * Restores items selected to normal - restores to an unpublished state
 */
-function restoreTrash( $cid, $option ) {
+function restoreTrash( $cid, $option )
+{
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db		= & JFactory::getDBO();
 	$type	= JRequest::getCmd( 'type', '', 'post' );
@@ -368,7 +375,8 @@ function restoreTrash( $cid, $option ) {
 	$mainframe->redirect( 'index.php?option='.$option.'&task='.$return, $msg );
 }
 
-function ReadMenuXML( $type, $component=-1 ) {
+function ReadMenuXML( $type, $component=-1 )
+{
 	// xml file for module
 	$xmlfile = JPATH_ADMINISTRATOR .'/components/com_menus/'. $type .'/'. $type .'.xml';
 
@@ -385,4 +393,3 @@ function ReadMenuXML( $type, $component=-1 ) {
 
 	return $row;
 }
-?>

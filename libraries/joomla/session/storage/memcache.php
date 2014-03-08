@@ -3,7 +3,7 @@
 * @version		$Id:eaccelerator.php 6961 2007-03-15 16:06:53Z tcp $
 * @package		Joomla.Framework
 * @subpackage	Session
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -65,8 +65,14 @@ class JSessionStorageMemcache extends JSessionStorage
 		parent::__construct($options);
 
 		$config =& JFactory::getConfig();
-		$params	= unserialize(stripslashes($config->getValue('config.memcache_settings')));
-		if (!$params) {
+		$params = $config->getValue('config.memcache_settings');
+		if (!is_array($params)) 
+		{
+			$params = unserialize(stripslashes($params));
+		}
+
+		if (!$params) 
+		{
 			$params = array();
 		}
 

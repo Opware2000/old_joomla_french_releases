@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: module.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: module.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Modules
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -85,7 +85,6 @@ class ModulesModelModule extends JModel
 	function getPositions()
 	{
 		jimport('joomla.filesystem.folder');
-		jimport('joomla.application.helper');
 
 		$client =& JApplicationHelper::getClientInfo($this->getState('clientId'));
 		if ($client === false) {
@@ -102,8 +101,15 @@ class ModulesModelModule extends JModel
 		$db->setQuery( $query );
 		$templates = $db->loadObjectList();
 
+		// Get a list of all module positions as set in the database
+		$query = 'SELECT DISTINCT(position)'.
+				' FROM #__modules' .
+				' WHERE client_id = '.(int) $client->id;
+		$db->setQuery( $query );
+		$positions = $db->loadResultArray();
+		$positions = (is_array($positions)) ? $positions : array();
+
 		// Get a list of all template xml files for a given application
-		$positions = array();
 
 		// Get the xml parser first
 		for ($i = 0, $n = count($templates); $i < $n; $i++ )

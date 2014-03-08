@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: debug.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: debug.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,8 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla! Debug plugin
@@ -64,7 +66,10 @@ class  plgSystemDebug extends JPlugin
 
 		ob_start();
 		echo '<div id="system-debug" class="profiler">';
-		echo implode( '', $profiler->getBuffer() );
+		echo '<h4>'.JText::_( 'Profile Information' ).'</h4>';
+		foreach ( $profiler->getBuffer() as $mark ) {
+			echo '<div>'.$mark.'</div>';
+		}
 
 		if ($this->params->get('memory', 1)) {
 			echo '<h4>'.JText::_( 'Memory Usage' ).'</h4>';
@@ -86,12 +91,12 @@ class  plgSystemDebug extends JPlugin
 
 			$db	=& JFactory::getDBO();
 
-			echo '<h4>'.JText::sprintf( 'Queries logged',  $db->_ticker ).'</h4>';
-			
-			if ($db->_log)
+			echo '<h4>'.JText::sprintf( 'Queries logged',  $db->getTicker() ).'</h4>';
+
+			if ($log = $db->getLog())
 			{
 				echo '<ol>';
-				foreach ($db->_log as $k=>$sql)
+				foreach ($log as $k=>$sql)
 				{
 					$geshi->set_source($sql);
 					$text = $geshi->parse_code();
@@ -100,13 +105,13 @@ class  plgSystemDebug extends JPlugin
 				}
 				echo '</ol>';
 			}
-			
+
 			if(isset($database))
 			{
-				echo '<h4>'.JText::sprintf( 'Legacy Queries logged',  $db->_ticker ).'</h4>';
+				echo '<h4>'.JText::sprintf( 'Legacy Queries logged',  $database->getTicker() ).'</h4>';
 				echo '<ol>';
 
-					foreach ($database->_log as $k=>$sql)
+					foreach ($database->getLog() as $k=>$sql)
 					{
 						$geshi->set_source($sql);
 						$text = $geshi->parse_code();

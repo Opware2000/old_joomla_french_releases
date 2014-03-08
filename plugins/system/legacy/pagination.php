@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: pagination.php 8487 2007-08-21 06:17:47Z jinx $
+* @version		$Id: pagination.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,7 +14,8 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.html.pagination');
+// Register legacy classes for autoloading
+JLoader::register('JPagination', JPATH_LIBRARIES.DS.'joomla'.DS.'html'.DS.'pagination.php');
 
 /**
 * Legacy class, derive from JPagination instead

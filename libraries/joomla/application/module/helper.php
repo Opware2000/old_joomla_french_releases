@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: helper.php 8337 2007-08-07 03:33:35Z jinx $
+* @version		$Id: helper.php 9779 2007-12-31 01:44:42Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -108,7 +108,10 @@ class JModuleHelper
 	{
 		static $chrome;
 		global $mainframe, $option;
-
+		
+		$scope = $mainframe->scope; //record the scope
+		$mainframe->scope = $module->module;  //set scope to component name
+		
 		// Handle legacy globals if enabled
 		if ($mainframe->getCfg('legacy'))
 		{
@@ -151,9 +154,10 @@ class JModuleHelper
 			$lang =& JFactory::getLanguage();
 			$lang->load($module->module);
 
+			$content = '';
 			ob_start();
 			require $path;
-			$module->content = ob_get_contents();
+			$module->content = ob_get_contents().$content;
 			ob_end_clean();
 		}
 
@@ -197,7 +201,9 @@ class JModuleHelper
 				ob_end_clean();
 			}
 		}
-
+		
+		$mainframe->scope = $scope; //revert the scope
+		
 		return $module->content;
 	}
 
@@ -282,4 +288,6 @@ class JModuleHelper
 
 		return $modules;
 	}
+
 }
+

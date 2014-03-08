@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: item.php 8578 2007-08-26 23:09:01Z jinx $
+ * @version		$Id: item.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -61,9 +60,10 @@ class MenusModelItem extends JModel
 		$table =& $this->_getTable();
 
 		// Load the current item if it has been defined
+		$edit	= JRequest::getVar('edit',true);
 		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 		JArrayHelper::toInteger($cid, array(0));
-		if ($cid[0]) {
+		if ($edit) {
 			$table->load($cid[0]);
 		}
 
@@ -112,7 +112,7 @@ class MenusModelItem extends JModel
 				break;
 		}
 
-		$item = clone($table);
+		$item = $table;
 		return $item;
 	}
 
@@ -194,21 +194,29 @@ class MenusModelItem extends JModel
 		$params	= null;
 		$item	= &$this->getItem();
 
-		if ($item->type == 'component') 
+		if ($item->type == 'component')
 		{
 			$comp	= &$this->getComponent();
 			$option	= preg_replace( '#\W#', '', $comp->option );
 			$path	= JPATH_ADMINISTRATOR.DS.'components'.DS.$option.DS.'config.xml';
 
 			$params = new JParameter( $item->params );
-			if (file_exists( $path )) 
+			if (file_exists( $path ))
 			{
 				$xml =& JFactory::getXMLParser('Simple');
-				if ($xml->loadFile($path)) 
+				if ($xml->loadFile($path))
 				{
 					$document =& $xml->document;
 
-					if (isset($document->params[0]->param)) 
+					// if hide is set, don't show the component configuration while editing menu item
+					$menu = $document->attributes('menu');
+					if ( isset($menu) && $menu == 'hide' )
+					{
+						$params = null;
+						return $params;
+					}
+
+					if (isset($document->params[0]->param))
 					{
 						for ($i=0,$n=count($document->params[0]->param); $i<$n; $i++)
 						{
@@ -247,35 +255,54 @@ class MenusModelItem extends JModel
 		return $params;
 	}
 
+	/**
+	 * Get the name of the current menu item
+	 *
+	 * @return	string
+	 * @access	public
+	 * @since	1.5
+	 */
 	function getStateName()
 	{
-		$name = null;
-		if ($state =& $this->_getStateXML())
+		$state =& $this->_getStateXML();
+
+		if ( ! is_a($state, 'JSimpleXMLElement'))
 		{
-			if (is_a($state, 'JSimpleXMLElement'))
-			{
-				$sn =& $state->getElementByPath('name');
-				if ($sn) {
-					$name = $sn->data();
-				}
-			}
+			return null;
 		}
+
+		$name = null;
+		$sn =& $state->getElementByPath('name');
+		if ($sn) {
+			$name = $sn->data();
+		}
+
 		return JText::_($name);
 	}
 
+	/**
+	 * Get the description of the current menu item
+	 *
+	 * @return	string
+	 * @access	public
+	 * @since	1.5
+	 */
 	function getStateDescription()
 	{
-		$description = null;
-		if ($state =& $this->_getStateXML())
+		$state =& $this->_getStateXML();
+
+
+		if ( ! is_a($state, 'JSimpleXMLElement'))
 		{
-			if (is_a($state, 'JSimpleXMLElement'))
-			{
-				$sd =& $state->getElementByPath('description');
-				if ($sd) {
-					$description = $sd->data();
-				}
-			}
+			return null;
 		}
+
+		$description = null;
+		$sd =& $state->getElementByPath('description');
+		if ($sd) {
+			$description = $sd->data();
+		}
+
 		return JText::_($description);
 	}
 
@@ -301,6 +328,7 @@ class MenusModelItem extends JModel
 			$user	=& JFactory::getUser();
 			$uid	= $user->get('id');
 		}
+
 		// Lets get to it and checkout the thing...
 		$item	=& $this->getItem();
 		if(!$item->checkout($uid, $id[0])) {
@@ -373,9 +401,6 @@ class MenusModelItem extends JModel
 				$row->sublevel = $this->_db->loadResult() + 1;
 			}
 		}
-
-		jimport('joomla.filter.output');
-		$row->name = JFilterOutput::ampReplace( $row->name );
 
 		if (isset($post['urlparams']) && is_array($post['urlparams']))
 		{

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: select.php 7656 2007-06-06 05:54:58Z tcp $
+* @version		$Id: select.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -125,6 +125,10 @@ class JHTMLSelect
 				if ($translate) {
 					$t = JText::_( $t );
 				}
+
+				// ensure ampersands are encoded
+				$k = JFilterOutput::ampReplace($k);
+				$t = JFilterOutput::ampReplace($t);
 
 				$html .= '<option value="'. $k .'" '. $extra .'>' . $t . '</option>';
 			}

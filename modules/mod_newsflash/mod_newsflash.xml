@@ -3,7 +3,7 @@
 	<name>Newsflash</name>
 	<author>Joomla! Project</author>
 	<creationDate>July 2006</creationDate>
-	<copyright>(C) 2005 - 2007 Open Source Matters. All rights reserved.</copyright>
+	<copyright>Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
@@ -19,7 +19,7 @@
 			<option value="horiz">Horizontal</option>
 			<option value="vert">Vertical</option>
 		</param>
-		<param name="image" type="radio" default="0" label="Show images" description="Display content item images">
+		<param name="image" type="radio" default="0" label="Show images" description="Display Article images">
 			<option value="1">Yes</option>
 			<option value="0">No</option>
 		</param>

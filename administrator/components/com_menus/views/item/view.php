@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.php 8578 2007-08-26 23:09:01Z jinx $
+* @version		$Id: view.php 9783 2007-12-31 14:56:55Z pasamio $
 * @package		Joomla
 * @subpackage	Menus
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -39,7 +39,6 @@ class MenusViewItem extends JView
 		$item = &$this->get('Item');
 
 		// clean item data
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $item, ENT_QUOTES, '' );
 
 		// Set toolbar items for the page
@@ -94,7 +93,7 @@ class MenusViewItem extends JView
 		if ($item->type != 'url') {
 			$lists->disabled = 'readonly="true"';
 			$item->linkfield = '<input type="hidden" name="link" value="'.$item->link.'" />';
-			if (($item->id) && ($item->type == 'component')) {
+			if (($item->id) && ($item->type == 'component') && (isset($item->linkparts['option']))) {
 				$item->expansion = '&amp;expand='.trim(str_replace('com_', '', $item->linkparts['option']));
 			}
 		} else {
@@ -144,8 +143,6 @@ class MenusViewItem extends JView
 
 		// Add scripts and stylesheets to the document
 		$document	= & JFactory::getDocument();
-		$url		= $mainframe->getSiteURL();
-		$document->addScript($url.'includes/js/joomla/cookie.js');
 
 		if($lang->isRTL()){
 			$document->addStyleSheet('components/com_menus/assets/type_rtl.css');
@@ -183,6 +180,7 @@ class MenusViewItem extends JView
 		$this->assignRef('item',		$item);
 		$this->assignRef('components',	$components);
 		$this->assignRef('expansion',	$expansion);
+
 		parent::display($tpl);
 	}
 }

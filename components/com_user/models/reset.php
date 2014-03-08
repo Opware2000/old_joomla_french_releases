@@ -3,7 +3,7 @@
  * @version		$Id: reset.php 7399 2007-05-14 04:10:09Z eddieajau $
  * @package		Joomla
  * @subpackage	User
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -47,7 +47,7 @@ class UserModelReset extends JModel
 	 */
 	function requestReset($email)
 	{
-		jimport('joomla.utilities.mail');
+		jimport('joomla.mail.helper');
 		jimport('joomla.user.helper');
 
 		$db = &JFactory::getDBO();
@@ -145,6 +145,13 @@ class UserModelReset extends JModel
 
 		global $mainframe;
 
+		// Make sure that we have a pasword
+		if ( ! $password1 )
+		{
+			$this->setError(JText::_('MUST_SUPPLY_PASSWORD'));
+			return false;
+		}
+
 		// Verify that the passwords match
 		if ($password1 != $password2)
 		{
@@ -160,6 +167,14 @@ class UserModelReset extends JModel
 		$crypt		= JUserHelper::getCryptedPassword($password1, $salt);
 		$password	= $crypt.':'.$salt;
 
+		// Get the user object
+		$user = new JUser($id);
+
+		// Fire the onBeforeStoreUser trigger
+		JPluginHelper::importPlugin('user');
+		$dispatcher =& JDispatcher::getInstance();
+		$dispatcher->trigger('onBeforeStoreUser', array($user->getProperties(), false));
+
 		// Build the query
 		$query 	= 'UPDATE #__users'
 				. ' SET password = '.$db->Quote($password)
@@ -171,11 +186,19 @@ class UserModelReset extends JModel
 		$db->setQuery($query);
 
 		// Save the password
-		if (!$db->query())
+		if (!$result = $db->query())
 		{
 			$this->setError(JText::_('DATABASE_ERROR'));
 			return false;
 		}
+
+		// Update the user object with the new values.
+		$user->password			= $password;
+		$user->activation		= '';
+		$user->password_clear	= $password1;
+
+		// Fire the onAfterStoreUser trigger
+		$dispatcher->trigger('onAfterStoreUser', array($user->getProperties(), false, $result, $this->getError()));
 
 		// Flush the variables from the session
 		$mainframe->setUserState($this->_namespace.'id',	null);

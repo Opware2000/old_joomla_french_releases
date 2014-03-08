@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 		document.adminForm.submit( task );
 	}
 </script>
-<form action="<?php echo JRoute::_('index.php?option=com_content&view=category&id='.$this->category->slug) ?>" method="post" name="adminForm">
+<form action="<?php echo $this->action; ?>" method="post" name="adminForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <?php if ($this->params->get('filter') || $this->params->get('show_pagination_limit')) : ?>
 <tr>
@@ -79,12 +79,11 @@ defined('_JEXEC') or die('Restricted access'); ?>
 	<?php else : ?>
 	<td>
 		<?php
-			echo $item->title.' : ';
+			echo $this->escape($item->title).' : ';
 			$link = JRoute::_('index.php?option=com_user&task=register');
 		?>
 		<a href="<?php echo $link; ?>">
-			<?php echo JText::_( 'Register to read more...' ); ?>
-		</a>
+			<?php echo JText::_( 'Register to read more...' ); ?></a>
 	</td>
 	<?php endif; ?>
 	<?php endif; ?>

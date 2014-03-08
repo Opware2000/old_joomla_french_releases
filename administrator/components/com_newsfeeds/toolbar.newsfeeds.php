@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.newsfeeds.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.newsfeeds.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -20,12 +20,13 @@ require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 switch ($task)
 {
 	case 'add' :
+		TOOLBAR_newsfeeds::_EDIT(false);
+		break;
 	case 'edit':
-		TOOLBAR_newsfeeds::_EDIT();
+		TOOLBAR_newsfeeds::_EDIT(true);
 		break;
 
 	default:
 		TOOLBAR_newsfeeds::_DEFAULT();
 		break;
 }
-?>

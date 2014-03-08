@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: ldap.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: ldap.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	JFramework
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,8 +15,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-jimport('joomla.event.plugin');
-jimport('joomla.client.ldap');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * LDAP Authentication Plugin
@@ -40,7 +39,8 @@ class plgAuthenticationLdap extends JPlugin
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationLdap(& $subject, $config) {
+	function plgAuthenticationLdap(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -60,6 +60,8 @@ class plgAuthenticationLdap extends JPlugin
 		$userdetails = null;
 		$success = 0;
 
+		// For JLog
+		$response->type = 'LDAP';
 		// LDAP does not like Blank passwords (tries to Anon Bind which is bad)
 		if (empty($credentials['password']))
 		{
@@ -74,6 +76,7 @@ class plgAuthenticationLdap extends JPlugin
 		$ldap_uid		= $this->params->get('ldap_uid');
 		$auth_method	= $this->params->get('auth_method');
 
+		jimport('joomla.client.ldap');
 		$ldap = new JLDAP($this->params);
 
 		if (!$ldap->connect())
@@ -88,7 +91,10 @@ class plgAuthenticationLdap extends JPlugin
 			case 'search':
 			{
 				// Bind using Connect Username/password
-				$bindtest = $ldap->bind();
+				// Force anon bind to mitigate misconfiguration like [#7119]
+				if(strlen($this->params->get('username'))) $bindtest = $ldap->bind();
+				else $bindtest = $ldap->anonymous_bind();
+
 
 				if($bindtest)
 				{
@@ -144,4 +150,3 @@ class plgAuthenticationLdap extends JPlugin
 		$ldap->close();
 	}
 }
-?>

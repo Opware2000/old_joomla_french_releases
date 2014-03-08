@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: admin.cache.php 8682 2007-08-31 18:36:45Z jinx $
-* @package		Joomla
-* @subpackage	Cache
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: admin.cache.php 9806 2008-01-03 00:35:03Z eddieajau $
+ * @package		Joomla
+ * @subpackage	Cache
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -50,7 +50,6 @@ switch ( JRequest::getVar( 'task' ) )
  * Static class to hold controller functions for the Cache component
  *
  * @static
- * @author		Johan Janssens <johan.janssens@joomla.org>
  * @package		Joomla
  * @subpackage	Weblinks
  * @since		1.5
@@ -76,7 +75,7 @@ class CacheController
 		}
 
 		$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'));
-		$limitstart = $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0 );
+		$limitstart = $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0 );
 
 		$cmData = new CacheData($client->path.DS.'cache');
 
@@ -88,6 +87,9 @@ class CacheController
 
 	function deleteCache($cid)
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		$cmData = new CacheData($client->path.DS.'cache');

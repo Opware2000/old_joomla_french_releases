@@ -1,6 +1,6 @@
 /**
  * CSS Document for media manager thumbnail view
- * @version $Id: medialist-thumbs.css 8665 2007-08-31 03:21:50Z rhuk $
+ * @version $Id: medialist-thumbs.css 9885 2008-01-05 17:33:12Z ircmaxell $
  * @package Joomla
  * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
  * @license GNU/GPL, see LICENSE.php
@@ -12,9 +12,10 @@
 div.imgOutline {
 	float: left;
 	border: 1px;
+
 	border-right: 1px solid #f0f0f0;
 	border-bottom: 1px solid #ccc;
-}
+	width:90px; }
 
 div.imgTotal { }
 

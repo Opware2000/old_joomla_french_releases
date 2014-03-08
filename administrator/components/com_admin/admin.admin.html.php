@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: admin.admin.html.php 8180 2007-07-23 05:52:29Z eddieajau $
-* @package		Joomla
-* @subpackage	Admin
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: admin.admin.html.php 9965 2008-01-27 01:23:44Z willebil $
+ * @package		Joomla
+ * @subpackage	Admin
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -117,8 +117,8 @@ class HTML_admin_misc
 	/**
 	 * Display Help Page
 	 *
-	 * For this method the important two scenarios are locale or remote help files.
-	 * In the case of locale help files the language tag will be added in order to
+	 * For this method the important two scenarios are local or remote help files.
+	 * In the case of local help files the language tag will be added in order to
 	 * allow different languages of help.<br />
 	 * In case of the remote server it is assumed that this server provide one specific
 	 * help set of files in one particular language.
@@ -127,13 +127,14 @@ class HTML_admin_misc
 	{
 		global $mainframe;
 		jimport( 'joomla.filesystem.folder' );
+		jimport( 'joomla.language.help' );
 
-		// Get Help URL - an empty helpurl is interpreted as locale help files!
+		// Get Help URL - an empty helpurl is interpreted as local help files!
 		$helpurl	= $mainframe->getCfg('helpurl');
 		if ( $helpurl == 'http://help.mamboserver.com' ) {
 			$helpurl = 'http://help.joomla.org';
 		}
-		$fullhelpurl = $helpurl . '/index.php?option=com_content&amp;task=findkey&amp;pop=1&amp;keyref=';
+		$fullhelpurl = $helpurl . '/index2.php?option=com_content&amp;task=findkey&amp;pop=1&amp;keyref=';
 
 		$helpsearch = JRequest::getString('helpsearch');
 		$page		= JRequest::getCmd('page', 'joomla.whatsnew15.html');
@@ -162,34 +163,34 @@ class HTML_admin_misc
 							<input type="submit" value="<?php echo JText::_( 'Go' ); ?>" class="button" />
 							<input type="button" value="<?php echo JText::_( 'Clear Results' ); ?>" class="button" onclick="f=document.adminForm;f.helpsearch.value='';f.submit()" />
 						</td>
-						<td style="text-align:right">
+						<td class="helpMenu">
 							<?php
 							if ($helpurl) {
 							?>
-							<?php echo JHTML::_('link', $fullhelpurl.'joomla.glossary', JText::_( 'Glossary' ), array('target' => '"helpFrame"')) ?>
+							<?php echo JHTML::_('link', JHelp::createUrl( 'joomla.glossary' ), JText::_( 'Glossary' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', $fullhelpurl.'joomla.credits', JText::_( 'Credits' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', JHelp::createUrl( 'joomla.credits' ), JText::_( 'Credits' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', $fullhelpurl.'joomla.support', JText::_( 'Support' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', JHelp::createUrl( 'joomla.support' ), JText::_( 'Support' ), array('target' => 'helpFrame')) ?>
 							<?php
 							} else {
 							?>
-							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.glossary.html', JText::_( 'Glossary' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.glossary.html', JText::_( 'Glossary' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.credits.html', JText::_( 'Credits' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.credits.html', JText::_( 'Credits' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.support.html', JText::_( 'Support' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/joomla.support.html', JText::_( 'Support' ), array('target' => 'helpFrame')) ?>
 							<?php
 							}
 							?>
 							|
-							<?php echo JHTML::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'License' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'License' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', 'http://help.joomla.org', 'help.joomla.org', array('target' => '"_blank"')) ?>
+							<?php echo JHTML::_('link', 'http://help.joomla.org', 'help.joomla.org', array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', 'index.php?option=com_admin&amp;task=changelog&amp;tmpl=component', JText::_( 'Changelog' ), array('target' => "'helpFrame'")) ?>
+							<?php echo JHTML::_('link', 'index.php?option=com_admin&amp;task=changelog&amp;tmpl=component', JText::_( 'Changelog' ), array('target' => 'helpFrame')) ?>
 							|
-							<?php echo JHTML::_('link', 'http://www.joomla.org/content/blogcategory/32/66/', JText::_( 'Latest Version Check' ), array('target' => '"_blank"')) ?>
+							<?php echo JHTML::_('link', 'http://www.joomla.org/content/blogcategory/57/111/', JText::_( 'Latest Version Check' ), array('target' => 'helpFrame')) ?>
 						</td>
 					</tr>
 				</table>
@@ -209,11 +210,11 @@ class HTML_admin_misc
 						foreach ($toc as $k=>$v) {
 							if ($helpurl) {
 								echo '<li>';
-								echo JHTML::_('link', $fullhelpurl . urlencode( $k ), $v, array('target' => "'helpFrame'"));
+								echo JHTML::_('link', JHelp::createUrl( $k ), $v, array('target' => 'helpFrame'));
 								echo '</li>';
 							} else {
 								echo '<li>';
-								echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/'.$k, $v, array('target' => "'helpFrame'"));
+								echo JHTML::_('link', JURI::base() .'help/'.$langTag.'/'.$k, $v, array('target' => 'helpFrame'));
 								echo '</li>';
 							}
 						}
@@ -235,7 +236,7 @@ class HTML_admin_misc
 					<?php
 				} else {
 					?>
-					<iframe name="helpFrame" src="<?php echo JURI::base() .'/help/' .$lang->getTag(). '/' . $page;?>" class="helpFrame" frameborder="0"></iframe>
+					<iframe name="helpFrame" src="<?php echo JURI::base() .'help/' .$langTag. '/' . $page;?>" class="helpFrame" frameborder="0"></iframe>
 					<?php
 				}
 				?>
@@ -327,4 +328,3 @@ function getHelpTOC( $helpsearch )
 	asort( $toc );
 	return $toc;
 }
-?>

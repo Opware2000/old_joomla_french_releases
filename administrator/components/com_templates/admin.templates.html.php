@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.templates.html.php 8345 2007-08-07 09:20:52Z eddieajau $
+* @version		$Id: admin.templates.html.php 9823 2008-01-03 00:55:17Z eddieajau $
 * @package		Joomla
 * @subpackage	Templates
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -119,7 +119,7 @@ class TemplatesView
 			}
 ?>
 					</td>
-					<td><?php $img_path = ($client->id == 1 ? $mainframe->getSiteURL().'/administrator' : $mainframe->getSiteURL() ).'/templates/'.$row->directory.'/template_thumbnail.png'; ?>
+					<td><?php $img_path = ($client->id == 1 ? JURI::root().'administrator' : $mainframe->getSiteURL() ).'/templates/'.$row->directory.'/template_thumbnail.png'; ?>
 						<span class="editlinktip hasTip" title="<?php echo $row->name;?>::
 <img border=&quot;1&quot; src=&quot;<?php echo $img_path; ?>&quot; name=&quot;imagelib&quot; alt=&quot;<?php echo JText::_( 'No preview available' ); ?>&quot; width=&quot;206&quot; height=&quot;145&quot; />"><a href="index.php?option=com_templates&amp;task=edit&amp;cid[]=<?php echo $row->directory;?>&amp;client=<?php echo $client->id;?>">
 							<?php echo $row->name;?></a></span>
@@ -207,6 +207,7 @@ class TemplatesView
 	<input type="hidden" name="client" value="<?php echo $client->id;?>" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 	</form>
 	<?php
 
@@ -252,7 +253,7 @@ class TemplatesView
 	* @param string Source code
 	* @param string The option
 	*/
-	function editTemplate($row, $lists, & $params, $option, & $client, & $ftp)
+	function editTemplate($row, $lists, & $params, $option, & $client, & $ftp, & $template)
 	{
 		JRequest::setVar( 'hidemainmenu', 1 );
 
@@ -293,7 +294,7 @@ class TemplatesView
 		</fieldset>
 		<?php endif; ?>
 
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -389,10 +390,11 @@ class TemplatesView
 			</fieldset>
 		</div>
 
-		<div class="col50">
+		<div class="col width-50">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Parameters' ); ?></legend>
-
+				<?php $templatefile = DS.'templates'.DS.$template.DS.'params.ini';
+				echo is_writable($client->path.$templatefile) ? JText::sprintf('PARAMSWRITABLE', $templatefile):JText::sprintf('PARAMSUNWRITABLE', $templatefile); ?>
 				<table class="admintable">
 				<tr>
 					<td>
@@ -415,6 +417,7 @@ class TemplatesView
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -480,6 +483,7 @@ class TemplatesView
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -517,7 +521,7 @@ class TemplatesView
 ?>
 			<tr class="<?php echo 'row'. $k; ?>">
 				<td width="5%">
-					<input type="radio" id="cb<?php echo $i;?>" name="filename" value="<?php echo htmlspecialchars( $file ); ?>" onClick="isChecked(this.checked);" />
+					<input type="radio" id="cb<?php echo $i;?>" name="filename" value="<?php echo htmlspecialchars( $file, ENT_COMPAT, 'UTF-8' ); ?>" onClick="isChecked(this.checked);" />
 				</td>
 				<td width="85%">
 					<?php echo $file; ?>
@@ -603,15 +607,14 @@ class TemplatesView
 		</tr>
 		</table>
 
-
 		<input type="hidden" name="id" value="<?php echo $template; ?>" />
 		<input type="hidden" name="cid[]" value="<?php echo $template; ?>" />
 		<input type="hidden" name="filename" value="<?php echo $filename; ?>" />
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 }
-?>

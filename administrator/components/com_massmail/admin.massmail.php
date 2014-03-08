@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.massmail.php 8525 2007-08-23 08:18:56Z tcp $
+* @version		$Id: admin.massmail.php 9980 2008-02-01 18:02:34Z ircmaxell $
 * @package		Joomla
 * @subpackage	Massmail
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -25,7 +25,8 @@ if (!$user->authorize( 'com_massmail', 'manage' )) {
 
 require_once( JApplicationHelper::getPath( 'admin_html' ) );
 
-switch ($task) {
+switch ($task)
+{
 	case 'send':
 		sendMail();
 		break;
@@ -59,6 +60,9 @@ function sendMail()
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db					=& JFactory::getDBO();
 	$user 				=& JFactory::getUser();
 	$acl 				=& JFactory::getACL();
@@ -67,7 +71,8 @@ function sendMail()
 	$subject			= JRequest::getVar( 'mm_subject', '', 'post', 'string' );
 	$gou				= JRequest::getVar( 'mm_group', '0', 'post', 'int' );
 	$recurse			= JRequest::getVar( 'mm_recurse', 'NO_RECURSE', 'post', 'word' );
-	
+	$bcc				= JRequest::getVar( 'mm_bcc', 0, 'post', 'int' );
+
 	// pulls message inoformation either in text or html format
 	if ( $mode ) {
 		$message_body	= JRequest::getVar( 'mm_message', '', 'post', 'string', JREQUEST_ALLOWRAW );
@@ -84,7 +89,7 @@ function sendMail()
 	// get users in the group out of the acl
 	$to = $acl->get_group_objects( $gou, 'ARO', $recurse );
 	JArrayHelper::toInteger($to['users']);
-	
+
 	// Get sending email address
 	/*
 	$query = 'SELECT email'
@@ -94,14 +99,14 @@ function sendMail()
 	$db->setQuery( $query );
 	$user->set( 'email', $db->loadResult() );
 	*/
-	
+
 	// Get all users email and group except for senders
 	$query = 'SELECT email'
 	. ' FROM #__users'
 	. ' WHERE id != '.(int) $user->get('id')
 	. ( $gou !== 0 ? ' AND id IN (' . implode( ',', $to['users'] ) . ')' : '' )
 	;
-	
+
 	$db->setQuery( $query );
 	$rows = $db->loadObjectList();
 
@@ -110,10 +115,10 @@ function sendMail()
 		$msg	= JText::_('No users could be found in this group.');
 		$mainframe->redirect( 'index.php?option=com_massmail', $msg );
 	}
-	
+
 	$mailer =& JFactory::getMailer();
 	$params =& JComponentHelper::getParams( 'com_massmail' );
-	
+
 	// Build e-mail message format
 	$mailer->setSender(array($mainframe->getCfg('mailfrom'), $mainframe->getCfg('fromname')));
 	$mailer->setSubject($params->get('mailSubjectPrefix') . stripslashes( $subject));
@@ -121,21 +126,29 @@ function sendMail()
 	$mailer->IsHTML($mode);
 
 	// Add recipients
-	foreach ($rows as $row) {
-		$mailer->addRecipient($row->email);
+
+	if ( $bcc ) {
+		foreach ($rows as $row) {
+			$mailer->addBCC($row->email);
+		}
+		$mailer->addRecipient($mainframe->getCfg('mailfrom'));
+	}else {
+		foreach ($rows as $row) {
+ 			$mailer->addRecipient($row->email);
+ 		}
 	}
 
 	// Send the Mail
 	$rs	= $mailer->Send();
-	
+
 	// Check for an error
 	if ( JError::isError($rs) ) {
 		$msg	= $rs->getError();
 	} else {
 		$msg = $rs ? JText::sprintf( 'E-mail sent to', count( $rows ) ) : JText::_('The mail could not be sent');
 	}
-	
+
 	// Redirect with the message
 	$mainframe->redirect( 'index.php?option=com_massmail', $msg );
-	
+
 }

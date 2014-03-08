@@ -47,7 +47,7 @@ function submitbutton(pressbutton) {
 }
 //-->
 </script>
-<form action="index.php" method="post" name="adminForm" onSubmit="setgood();">
+<form action="<?php echo $this->action ?>" method="post" name="adminForm" onSubmit="setgood();">
 <fieldset>
 <legend><?php echo JText::_('Editor'); ?></legend>
 <table class="adminform" width="100%">
@@ -57,13 +57,13 @@ function submitbutton(pressbutton) {
 			<label for="title">
 				<?php echo JText::_( 'Title' ); ?>:
 			</label>
-			<input class="inputbox" type="text" id="title" name="title" size="50" maxlength="100" value="<?php echo $this->article->title; ?>" />
+			<input class="inputbox" type="text" id="title" name="title" size="50" maxlength="100" value="<?php echo $this->escape($this->article->title); ?>" />
 		</div>
 		<div style="float: right;">
 			<button type="button" onclick="submitbutton('save')">
 				<?php echo JText::_('Save') ?>
 			</button>
-			<button type="button" onclick="submitbutton('cancel')" />
+			<button type="button" onclick="submitbutton('cancel')">
 				<?php echo JText::_('Cancel') ?>
 			</button>
 		</div>
@@ -137,8 +137,7 @@ echo $this->editor->display('text', $this->article->text, '100%', '400', '70', '
 		</label>
 	</td>
 	<td>
-		<input class="inputbox" type="text" name="publish_up" id="publish_up" size="25" maxlength="19" value="<?php echo $this->article->publish_up; ?>" />
-		<a href="#" onclick="return showCalendar('publish_up', 'y-mm-dd');"><img class="calendar" src="images/blank.png" alt="calendar" /></a>
+	    <?php echo JHTML::_('calendar', $this->article->publish_up, 'publish_up', 'publish_up', '%Y-%m-%d %H:%M:%S', array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19')); ?>
 	</td>
 </tr>
 <tr>
@@ -148,8 +147,7 @@ echo $this->editor->display('text', $this->article->text, '100%', '400', '70', '
 		</label>
 	</td>
 	<td>
-		<input class="inputbox" type="text" name="publish_down" id="publish_down" size="25" maxlength="19" value="<?php echo $this->article->publish_down; ?>" />
-		<a href="#" onclick="return showCalendar('publish_down', 'y-mm-dd');"><img class="calendar" src="images/blank.png" alt="calendar" /></a>
+	    <?php echo JHTML::_('calendar', $this->article->publish_down, 'publish_down', 'publish_down', '%Y-%m-%d %H:%M:%S', array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19')); ?>
 	</td>
 </tr>
 <tr>
@@ -202,11 +200,11 @@ echo $this->editor->display('text', $this->article->text, '100%', '400', '70', '
 </fieldset>
 
 <input type="hidden" name="option" value="com_content" />
-<input type="hidden" name="Returnid" value="<?php echo $this->returnid; ?>" />
 <input type="hidden" name="id" value="<?php echo $this->article->id; ?>" />
 <input type="hidden" name="version" value="<?php echo $this->article->version; ?>" />
 <input type="hidden" name="created_by" value="<?php echo $this->article->created_by; ?>" />
 <input type="hidden" name="referer" value="<?php echo @$_SERVER['HTTP_REFERER']; ?>" />
+<?php echo JHTML::_( 'form.token' ); ?>
 <input type="hidden" name="task" value="" />
 </form>
 <?php echo JHTML::_('behavior.keepalive'); ?>

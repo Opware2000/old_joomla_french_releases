@@ -1,47 +1,48 @@
 <?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
-<?php if ($this->user->authorize('com_content', 'edit', 'content', 'all') && !$this->print) : ?>
-	<div class="contentpaneopen_edit<?php echo $this->params->get( 'pageclass_sfx' ); ?>" style="float: left;">
-		<?php echo JHTML::_('icon.edit', $this->article, $this->params, $this->access); ?>
-	</div>
-<?php endif; ?>
+defined('_JEXEC') or die('Restricted access');
 
-<?php if ($this->params->get('show_title') || $this->params->get('show_pdf_icon') || $this->params->get('show_print_icon') || $this->params->get('show_email_icon')) : ?>
+$canEdit	= ($this->user->authorize('com_content', 'edit', 'content', 'all') || $this->user->authorize('com_content', 'edit', 'content', 'own'));
+?>
+<?php if ($canEdit || $this->params->get('show_title') || $this->params->get('show_pdf_icon') || $this->params->get('show_print_icon') || $this->params->get('show_email_icon')) : ?>
 <table class="contentpaneopen<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 <tr>
 	<?php if ($this->params->get('show_title')) : ?>
 	<td class="contentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>" width="100%">
 		<?php if ($this->params->get('link_titles') && $this->article->readmore_link != '') : ?>
 		<a href="<?php echo $this->article->readmore_link; ?>" class="contentpagetitle<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-			<?php echo $this->article->title; ?>
-		</a>
+			<?php echo $this->escape($this->article->title); ?></a>
 		<?php else : ?>
-			<?php echo $this->article->title; ?>
+			<?php echo $this->escape($this->article->title); ?>
 		<?php endif; ?>
 	</td>
 	<?php endif; ?>
 	<?php if (!$this->print) : ?>
-	<?php if ($this->params->get('show_pdf_icon')) : ?>
-	<td align="right" width="100%" class="buttonheading">
-	<?php echo JHTML::_('icon.pdf',  $this->article, $this->params, $this->access); ?>
-	</td>
-	<?php endif; ?>
+		<?php if ($this->params->get('show_pdf_icon')) : ?>
+		<td align="right" width="100%" class="buttonheading">
+		<?php echo JHTML::_('icon.pdf',  $this->article, $this->params, $this->access); ?>
+		</td>
+		<?php endif; ?>
 
-	<?php if ( $this->params->get( 'show_print_icon' )) : ?>
-	<td align="right" width="100%" class="buttonheading">
-	<?php echo JHTML::_('icon.print_popup',  $this->article, $this->params, $this->access); ?>
-	</td>
-	<?php endif; ?>
+		<?php if ( $this->params->get( 'show_print_icon' )) : ?>
+		<td align="right" width="100%" class="buttonheading">
+		<?php echo JHTML::_('icon.print_popup',  $this->article, $this->params, $this->access); ?>
+		</td>
+		<?php endif; ?>
 
-	<?php if ($this->params->get('show_email_icon')) : ?>
-	<td align="right" width="100%" class="buttonheading">
-	<?php echo JHTML::_('icon.email',  $this->article, $this->params, $this->access); ?>
-	</td>
-	<?php endif; ?>
+		<?php if ($this->params->get('show_email_icon')) : ?>
+		<td align="right" width="100%" class="buttonheading">
+		<?php echo JHTML::_('icon.email',  $this->article, $this->params, $this->access); ?>
+		</td>
+		<?php endif; ?>
+		<?php if ($canEdit) : ?>
+		<td align="right" width="100%" class="buttonheading">
+			<?php echo JHTML::_('icon.edit', $this->article, $this->params, $this->access); ?>
+		</td>
+		<?php endif; ?>
 	<?php else : ?>
-	<td align="right" width="100%" class="buttonheading">
-	<?php echo JHTML::_('icon.print_screen',  $this->article, $this->params, $this->access); ?>
-	</td>
+		<td align="right" width="100%" class="buttonheading">
+		<?php echo JHTML::_('icon.print_screen',  $this->article, $this->params, $this->access); ?>
+		</td>
 	<?php endif; ?>
 </tr>
 </table>
@@ -58,7 +59,7 @@ endif; ?>
 		<?php if ($this->params->get('show_section') && $this->article->sectionid && isset($this->article->section)) : ?>
 		<span>
 			<?php if ($this->params->get('link_section')) : ?>
-				<?php echo '<a href="'.ContentHelperRoute::getSectionRoute($this->article).'">'; ?>
+				<?php echo '<a href="'.JRoute::_(ContentHelperRoute::getSectionRoute($this->article->sectionid)).'">'; ?>
 			<?php endif; ?>
 			<?php echo $this->article->section; ?>
 			<?php if ($this->params->get('link_section')) : ?>
@@ -72,10 +73,10 @@ endif; ?>
 		<?php if ($this->params->get('show_category') && $this->article->catid) : ?>
 		<span>
 			<?php if ($this->params->get('link_category')) : ?>
-				<?php echo '<a href="'.ContentHelperRoute::getCategoryRoute($this->article).'">'; ?>
+				<?php echo '<a href="'.JRoute::_(ContentHelperRoute::getCategoryRoute($this->article->catslug, $this->article->sectionid)).'">'; ?>
 			<?php endif; ?>
 			<?php echo $this->article->category; ?>
-			<?php if ($this->params->get('link_section')) : ?>
+			<?php if ($this->params->get('link_category')) : ?>
 				<?php echo '</a>'; ?>
 			<?php endif; ?>
 		</span>
@@ -127,17 +128,6 @@ endif; ?>
 	</td>
 </tr>
 <?php endif; ?>
-
-<?php if ($this->params->get('show_readmore') && $this->params->get('show_intro') && $this->article->readmore_text) : ?>
-<tr>
-	<td  colspan="2">
-		<a href="<?php echo $this->article->readmore_link; ?>" class="readon<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-			<?php echo $this->article->readmore_text; ?>
-		</a>
-	</td>
-</tr>
-<?php endif; ?>
-
 </table>
 <span class="article_separator">&nbsp;</span>
 <?php echo $this->article->event->afterDisplayContent; ?>

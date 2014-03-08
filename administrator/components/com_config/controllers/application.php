@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: application.php 8563 2007-08-25 20:50:33Z jinx $
+ * @version		$Id: application.php 9991 2008-02-05 22:13:22Z ircmaxell $
  * @package		Joomla
  * @subpackage	Config
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -87,7 +87,7 @@ class ConfigControllerApplication extends ConfigController
 		$listLimit 				= array (JHTML::_('select.option', 5, 5), JHTML::_('select.option', 10, 10), JHTML::_('select.option', 15, 15), JHTML::_('select.option', 20, 20), JHTML::_('select.option', 25, 25), JHTML::_('select.option', 30, 30), JHTML::_('select.option', 50, 50), JHTML::_('select.option', 100, 100),);
 		$lists['list_limit'] 	= JHTML::_('select.genericlist',  $listLimit, 'list_limit', 'class="inputbox" size="1"', 'value', 'text', ($row->list_limit ? $row->list_limit : 50));
 
-		jimport('joomla.i18n.help');
+		jimport('joomla.language.help');
 		$helpsites 				= array ();
 		$helpsites 				= JHelp::createSiteList(JPATH_BASE.DS.'help'.DS.'helpsites-15.xml', $row->helpurl);
 		array_unshift($helpsites, JHTML::_('select.option', '', JText::_('local')));
@@ -95,7 +95,6 @@ class ConfigControllerApplication extends ConfigController
 
 		// DEBUG
 		$lists['debug'] 		= JHTML::_('select.booleanlist', 'debug', 'class="inputbox"', $row->debug);
-		$lists['debug_db'] 		= JHTML::_('select.booleanlist', 'debug_db', 'class="inputbox"', $row->debug_db);
 		$lists['debug_lang'] 	= JHTML::_('select.booleanlist', 'debug_lang', 'class="inputbox"', $row->debug_lang);
 
 		// DATABASE SETTINGS
@@ -124,7 +123,7 @@ class ConfigControllerApplication extends ConfigController
 								JHTML::_('select.option', -1, JText::_('(UTC -01:00) Azores, Cape Verde Islands')),
 								JHTML::_('select.option', 0, JText::_('(UTC 00:00) Western Europe Time, London, Lisbon, Casablanca')),
 								JHTML::_('select.option', 1, JText::_('(UTC +01:00) Amsterdam, Berlin, Brussels, Copenhagen, Madrid, Paris')),
-								JHTML::_('select.option', 2, JText::_('(UTC +02:00) Jerusalem, Kaliningrad, South Africa')),
+								JHTML::_('select.option', 2, JText::_('(UTC +02:00) Istanbul, Jerusalem, Kaliningrad, South Africa')),
 								JHTML::_('select.option', 3, JText::_('(UTC +03:00) Baghdad, Riyadh, Moscow, St. Petersburg')),
 								JHTML::_('select.option', 3.5, JText::_('(UTC +03:30) Tehran')),
 								JHTML::_('select.option', 4, JText::_('(UTC +04:00) Abu Dhabi, Muscat, Baku, Tbilisi')),
@@ -178,12 +177,12 @@ class ConfigControllerApplication extends ConfigController
 		// SEO SETTINGS
 		$lists['sef'] 			= JHTML::_('select.booleanlist', 'sef', 'class="inputbox"', $row->sef);
 		$lists['sef_rewrite'] 	= JHTML::_('select.booleanlist', 'sef_rewrite', 'class="inputbox"', $row->sef_rewrite);
+		$lists['sef_suffix'] 	= JHTML::_('select.booleanlist', 'sef_suffix', 'class="inputbox"', $row->sef_suffix);
 
 		// FEED SETTINGS
 		$formats	= array (JHTML::_('select.option', 'RSS2.0', JText::_('RSS')), JHTML::_('select.option', 'Atom', JText::_('Atom')));
 		$summary	= array (JHTML::_('select.option', 1, JText::_('Full Text')), JHTML::_('select.option', 0, JText::_('Intro Text')),);
 		$lists['feed_limit']	= JHTML::_('select.genericlist',  $listLimit, 'feed_limit', 'class="inputbox" size="1"', 'value', 'text', ($row->feed_limit ? $row->feed_limit : 10));
-		$lists['feed_summary']	= JHTML::_('select.radiolist', $summary, 'feed_summary', 'class="inputbox"', 'value', 'text', $row->feed_summary);
 
 		// SESSION SETTINGS
 		$stores = JSession::getStores();
@@ -203,6 +202,9 @@ class ConfigControllerApplication extends ConfigController
 	function save()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -257,16 +259,15 @@ class ConfigControllerApplication extends ConfigController
 
 		// DEBUG
 		$config_array['debug']		= JRequest::getVar('debug', 0, 'post', 'int');
-		$config_array['debug_db']	= JRequest::getVar('debug_db', 0, 'post', 'int');
 		$config_array['debug_lang']	= JRequest::getVar('debug_lang', 0, 'post', 'int');
 
 		// SEO SETTINGS
 		$config_array['sef']			= JRequest::getVar('sef', 0, 'post', 'int');
 		$config_array['sef_rewrite']	= JRequest::getVar('sef_rewrite', 0, 'post', 'int');
+		$config_array['sef_suffix']		= JRequest::getVar('sef_suffix', 0, 'post', 'int');
 
 		// FEED SETTINGS
 		$config_array['feed_limit']		= JRequest::getVar('feed_limit', 10, 'post', 'int');
-		$config_array['feed_summary']	= JRequest::getVar('feed_summary', 0, 'post', 'int');
 
 		// SERVER SETTINGS
 		$config_array['secret']				= JRequest::getVar('secret', 0, 'post', 'string');
@@ -275,7 +276,8 @@ class ConfigControllerApplication extends ConfigController
 		$config_array['xmlrpc_server']		= JRequest::getVar('xmlrpc_server', 0, 'post', 'int');
 		$config_array['log_path']			= JRequest::getVar('log_path', JPATH_ROOT.DS.'logs', 'post', 'string');
 		$config_array['tmp_path']			= JRequest::getVar('tmp_path', JPATH_ROOT.DS.'tmp', 'post', 'string');
-
+		$config_array['live_site'] 			= rtrim(JRequest::getVar('live_site','','post','string'), '/\\');
+		
 		// LOCALE SETTINGS
 		$config_array['offset']				= JRequest::getVar('offset', 0, 'post', 'float');
 
@@ -328,18 +330,17 @@ class ConfigControllerApplication extends ConfigController
 		$config->setValue('config.password', $mainframe->getCfg('password'));
 
 		// handling of special characters
-		$sitename			= htmlspecialchars( JRequest::getVar( 'sitename', '', 'post', 'string' ) );
+		$sitename			= htmlspecialchars( JRequest::getVar( 'sitename', '', 'post', 'string' ), ENT_COMPAT, 'UTF-8' );
 		$config->setValue('config.sitename', $sitename);
 
-		$MetaDesc			= htmlspecialchars( JRequest::getVar( 'MetaDesc', '', 'post', 'string' ) );
+		$MetaDesc			= htmlspecialchars( JRequest::getVar( 'MetaDesc', '', 'post', 'string' ),  ENT_COMPAT, 'UTF-8' );
 		$config->setValue('config.MetaDesc', $MetaDesc);
 
-		$MetaKeys			= htmlspecialchars( JRequest::getVar( 'MetaKeys', '', 'post', 'string' ) );
+		$MetaKeys			= htmlspecialchars( JRequest::getVar( 'MetaKeys', '', 'post', 'string' ),  ENT_COMPAT, 'UTF-8' );
 		$config->setValue('config.MetaKeys', $MetaKeys);
 
 		// handling of quotes (double and single) and amp characters
 		// htmlspecialchars not used to preserve ability to insert other html characters
-		jimport('joomla.filter.output');
 		$offline_message	= JRequest::getVar( 'offline_message', '', 'post', 'string' );
 		$offline_message	= JFilterOutput::ampReplace( $offline_message );
 		$offline_message	= str_replace( '"', '&quot;', $offline_message );
@@ -357,6 +358,13 @@ class ConfigControllerApplication extends ConfigController
 		$fname = JPATH_CONFIGURATION.DS.'configuration.php';
 
 		// Update the credentials with the new settings
+		$oldconfig =& JFactory::getConfig();
+		$oldconfig->setValue('config.ftp_enable', $config_array['ftp_enable']);
+		$oldconfig->setValue('config.ftp_host', $config_array['ftp_host']);
+		$oldconfig->setValue('config.ftp_port', $config_array['ftp_port']);
+		$oldconfig->setValue('config.ftp_user', $config_array['ftp_user']);
+		$oldconfig->setValue('config.ftp_pass', $config_array['ftp_pass']);
+		$oldconfig->setValue('config.ftp_root', $config_array['ftp_root']);
 		JClientHelper::getCredentials('ftp', true);
 
 		// Try to make configuration.php writeable
@@ -388,7 +396,7 @@ class ConfigControllerApplication extends ConfigController
 
 		// Try to make configuration.php unwriteable
 		//if (!$ftp['enabled'] && JPath::isOwner($fname) && !JPath::setPermissions($fname, '0444')) {
-		if (!$ftp['enabled'] && JPath::isOwner($fname) && !JPath::setPermissions($fname, '0444')) {
+		if ($config_array['ftp_enable']==0 && !$ftp['enabled'] && JPath::isOwner($fname) && !JPath::setPermissions($fname, '0444')) {
 			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make configuration.php unwritable');
 		}
 	}
@@ -422,4 +430,3 @@ class ConfigControllerApplication extends ConfigController
 		}
 	}
 }
-?>

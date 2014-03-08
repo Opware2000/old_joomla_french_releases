@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: view.html.php 9934 2008-01-13 22:40:54Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -37,7 +37,7 @@ class WeblinksViewCategory extends JView
 		$pathway	= &$mainframe->getPathway();
 
 		// Get the parameters of the active menu item
-		$menus = &JMenu::getInstance();
+		$menus = &JSite::getMenu();
 		$menu  = $menus->getActive();
 
 		// Get some data from the model
@@ -48,14 +48,14 @@ class WeblinksViewCategory extends JView
 		$state		= &$this->get('state');
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		$category->total = $total;
 
 		// Add alternate feed link
 		if($params->get('show_feed_link', 1) == 1)
 		{
-			$link	= 'index.php?view=category&format=feed&id='.$category->id;
+			$link	= '&view=category&id='.$category->slug.'&format=feed&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 			$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -66,23 +66,16 @@ class WeblinksViewCategory extends JView
 		$document->setTitle( $category->title. ' - '. $params->get( 'page_title'));
 
 		//set breadcrumbs
-		if($menu->query['view'] != 'category') {
+		if(is_object($menu) && $menu->query['view'] != 'category') {
 			$pathway->addItem($category->title, '');
 		}
 
 		// table ordering
-		if ($state->get('filter_order_dir') == 'DESC') {
-			$lists['order_Dir'] = 'ASC';
-		} else {
-			$lists['order_Dir'] = 'DESC';
-		}
-
+		$lists['order_Dir'] = $state->get('filter_order_dir');
 		$lists['order'] = $state->get('filter_order');
 
 		// Set some defaults if not set for params
-		$params->def('page_title', $menu->name);
 		$params->def('com_description', JText::_('WEBLINKS_DESC'));
-
 		// Define image tag attributes
 		if (isset( $category->image ) && $category->image != '')
 		{
@@ -95,7 +88,7 @@ class WeblinksViewCategory extends JView
 
 		// icon in table display
 		if ( $params->get( 'link_icons' ) <> -1 ) {
-			$image = JHTML::_('image.site',  'weblink.png', '/images/M_images/', $params->get( 'weblink_icons' ), '/images/M_images/', 'Link', 'Link' );
+			$image = JHTML::_('image.site',  'weblink.png', '/images/M_images/', $params->get( 'weblink_icons' ), '/images/M_images/', 'Link' );
 		}
 
 		$k = 0;
@@ -141,7 +134,7 @@ class WeblinksViewCategory extends JView
 		$this->assignRef('category',	$category);
 		$this->assignRef('items',		$items);
 		$this->assignRef('pagination',	$pagination);
-		
+
 		$this->assign('action',	$uri->toString());
 
 		parent::display($tpl);

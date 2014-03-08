@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: pdf.php 8563 2007-08-25 20:50:33Z jinx $
+* @version		$Id: pdf.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -217,7 +217,7 @@ class JDocumentPDF extends JDocument
 		// Set PDF Header and Footer fonts
 		$lang = &JFactory::getLanguage();
 		$font = $lang->getPdfFontName();
-		$font = ($font) ? $font : 'vera';
+		$font = ($font) ? $font : 'freesans';
 
 		$pdf->setHeaderFont(array($font, '', 10));
 		$pdf->setFooterFont(array($font, '', 8));
@@ -232,9 +232,9 @@ class JDocumentPDF extends JDocument
 
 		// Set document type headers
 		parent::render();
-		
+
 		//JResponse::setHeader('Content-Length', strlen($data), true);
-	
+
 		JResponse::setHeader('Content-disposition', 'inline; filename="'.$this->getName().'.pdf"', true);
 
 		//Close and output PDF document

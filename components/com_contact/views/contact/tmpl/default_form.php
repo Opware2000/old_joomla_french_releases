@@ -1,4 +1,4 @@
-<?php /** $Id: default_form.php 8499 2007-08-21 20:23:38Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
+<?php /** $Id: default_form.php 9831 2008-01-03 01:10:35Z eddieajau $ */ defined( '_JEXEC' ) or die(); ?>
 <script type="text/javascript">
 <!--
 	function validateForm( frm ) {
@@ -66,7 +66,7 @@
 	<input type="hidden" name="view" value="contact" />
 	<input type="hidden" name="id" value="<?php echo $this->contact->id; ?>" />
 	<input type="hidden" name="task" value="submit" />
-	<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 	</form>
 	<br />
 	</td>

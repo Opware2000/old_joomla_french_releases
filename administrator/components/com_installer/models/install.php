@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: install.php 8553 2007-08-25 07:26:32Z tcp $
+ * @version		$Id: install.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -18,11 +17,11 @@ defined('_JEXEC') or die();
 
 jimport( 'joomla.application.component.model' );
 jimport( 'joomla.installer.installer' );
+jimport('joomla.installer.helper');
 
 /**
  * Extension Manager Install Model
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -66,14 +65,14 @@ class InstallerModelInstall extends JModel
 				break;
 
 			default:
-				$this->setState('message', JText::_('No Install Type Found'));
+				$this->setState('message', 'No Install Type Found');
 				return false;
 				break;
 		}
 
 		// Was the package unpacked?
 		if (!$package) {
-			$this->setState('message', JText::_('Unable to find install package'));
+			$this->setState('message', 'Unable to find install package');
 			return false;
 		}
 
@@ -106,6 +105,7 @@ class InstallerModelInstall extends JModel
 			$config =& JFactory::getConfig();
 			$package['packagefile'] = $config->getValue('config.tmp_path').DS.$package['packagefile'];
 		}
+
 		JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
 
 		return $result;

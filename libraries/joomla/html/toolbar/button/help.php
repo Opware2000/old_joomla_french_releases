@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: help.php 7074 2007-03-31 15:37:23Z jinx $
+* @version		$Id: help.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -73,10 +73,8 @@ class JButtonHelp extends JButton
 	 */
 	function _getCommand($ref, $com)
 	{
-		global $mainframe;
-
 		// Get Help URL
-		jimport('joomla.i18n.help');
+		jimport('joomla.language.help');
 		$url = JHelp::createURL($ref, $com);
 
 		$cmd = "popupWindow('$url', '".JText::_('Help', true)."', 640, 480, 1)";

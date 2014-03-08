@@ -8,7 +8,7 @@
 				<?php echo JText::_( 'Filter' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.getElementById('levellimit').value='10';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 				<?php
@@ -32,9 +32,6 @@
 			<th class="title">
 				<?php echo JHTML::_('grid.sort',   'Menu Item', 'm.name', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
-			<th class="title" width="10%">
-				<?php echo JHTML::_('grid.sort',   'Alias', 'm.alias', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
 			<th width="5%">
 				<?php echo JText::_( 'Default' ); ?>
 			</th>
@@ -48,7 +45,7 @@
 			<th width="10%">
 				<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
-			<th width="10%" class="title">
+			<th width="20%" class="title">
 				<?php echo JHTML::_('grid.sort',   'Type', 'm.type', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 			<th width="1%" nowrap="nowrap">
@@ -85,11 +82,9 @@
 				<?php if (  JTable::isCheckedOut($this->user->get('id'), $row->checked_out ) ) : ?>
 				<?php echo $row->treename; ?>
 				<?php else : ?>
-				<a href="<?php echo JRoute::_( 'index.php?option=com_menus&menutype='.$row->menutype.'&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->treename; ?></a>
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Menu' );?>::<?php echo $row->treename; ?>">
+				<a href="<?php echo JRoute::_( 'index.php?option=com_menus&menutype='.$row->menutype.'&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->treename; ?></a></span>
 				<?php endif; ?>
-			</td>
-			<td>
-				<?php echo $row->alias;?>
 			</td>
 			<td align="center">
 				<?php if ( $row->home == 1 ) : ?>
@@ -111,7 +106,7 @@
 				<?php echo $access;?>
 			</td>
 			<td>
-				<span class="editlinktip" style="text-transform:capitalize"><?php echo ($row->type == 'component') ? $row->com_name : $row->type; ?></span>
+				<span class="editlinktip" style="text-transform:capitalize"><?php echo ($row->type == 'component') ? $row->view : $row->type; ?></span>
 			</td>
 			<td align="center">
 				<?php echo $row->id; ?>
@@ -130,5 +125,6 @@
 	<input type="hidden" name="task" value="view" />
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

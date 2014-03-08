@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: router.php 8180 2007-07-23 05:52:29Z eddieajau $
+* @version		$Id: router.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -22,16 +22,16 @@ defined('JPATH_BASE') or die();
  * @package 	Joomla
  * @since		1.5
  */
-class JRouterAdministrator extends JObject
+class JRouterAdministrator extends JRouter
 {
 	/**
 	 * Function to convert a route to an internal URI
 	 *
 	 * @access public
 	 */
-	function parse($url)
+	function parse($uri)
 	{
-		return true;
+		return array();
 	}
 
 	/**
@@ -41,10 +41,11 @@ class JRouterAdministrator extends JObject
 	 * @return	string	The absolute search engine friendly URL
 	 * @since	1.5
 	 */
-	function build($url)
+	function &build($url)
 	{
-		$url = str_replace('&amp;', '&', $url);
-		
-		return $url;
+		//Create the URI object
+		$uri =& $this->_createURI($url);
+
+		return $uri;
 	}
 }

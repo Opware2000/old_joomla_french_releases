@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 8184 2007-07-23 15:43:09Z hackwar $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@ class modFeedHelper
 	function getFeed($params)
 	{
 		// module params
-		$rssurl				= $params->get('rssurl', '');
+		$rssurl	= $params->get('rssurl', '');
 
 		//  get RSS parsed object
 		$options = array();
@@ -33,15 +33,13 @@ class modFeedHelper
 		if ($rssDoc != false)
 		{
 			// channel header and link
-			$feed->title = $rssDoc->get_feed_title();
-			$feed->link = $rssDoc->get_feed_link();
-			$feed->description = $rssDoc->get_feed_description();
+			$feed->title = $rssDoc->get_title();
+			$feed->link = $rssDoc->get_link();
+			$feed->description = $rssDoc->get_description();
 
 			// channel image if exists
-			if ($rssDoc->get_image_exist()) {
-				$feed->image->url = $rssDoc->get_image_url();
-				$feed->image->title = $rssDoc->get_image_title();
-			}
+			$feed->image->url = $rssDoc->get_image_url();
+			$feed->image->title = $rssDoc->get_image_title();
 
 			// items
 			$items = $rssDoc->get_items();

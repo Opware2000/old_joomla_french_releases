@@ -1,13 +1,11 @@
-<?php
-/**
- * @version $Id: default.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
+<?php // @version $Id: default.php 9718 2007-12-20 22:35:36Z eddieajau $
 defined('_JEXEC') or die('Restricted access');
+$cparams = JComponentHelper::getParams ('com_media');
 ?>
 
 <?php if ($this->params->get('show_page_title')) : ?>
 <h1 class="componentheading<?php echo $this->params->get('pageclass_sfx'); ?>">
-	<?php echo $this->params->get('page_title'); ?>
+	<?php echo $this->escape($this->params->get('page_title')); ?>
 </h1>
 <?php endif; ?>
 
@@ -18,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 	<div class="contentdescription<?php echo $this->params->get('pageclass_sfx'); ?>">
 
 		<?php if ($this->params->def('image', -1) != -1) : ?>
-		<img src="images/stories/<?php echo $this->params->get('image'); ?>" alt="" class="image_<?php echo $this->params->get('image_align'); ?>" />
+		<img src="<?php echo $this->baseurl . $cparams->get('image_path').'/'.$this->params->get('image'); ?>" alt="" class="image_<?php echo $this->params->get('image_align'); ?>" />
 		<?php endif; ?>
 
 		<?php if ($this->params->get('show_comp_description')) :
@@ -40,8 +38,7 @@ defined('_JEXEC') or die('Restricted access');
 	<?php foreach ($this->categories as $category) : ?>
 	<li>
 		<a href="<?php echo $category->link; ?>" class="category<?php echo $this->params->get('pageclass_sfx'); ?>">
-			<?php echo $category->title; ?>
-		</a>
+			<?php echo $category->title; ?></a>
 		&nbsp;<span class="small">(<?php echo $category->numlinks ?>)</span>
 	</li>
 	<?php endforeach; ?>

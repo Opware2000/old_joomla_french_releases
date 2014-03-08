@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>">
 <head>
 	<jdoc:include type="head" />
-	<link rel="stylesheet" href="templates/system/css/offline.css" type="text/css" />
-	<link rel="stylesheet" href="templates/system/css/general.css" type="text/css" />
+	<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/offline.css" type="text/css" />
+	<link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/general.css" type="text/css" />
 </head>
 <body>
 <jdoc:include type="message" />
@@ -30,7 +30,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 		<?php echo $mainframe->getCfg('offline_message'); ?>
 	</p>
 	<?php if(JPluginHelper::isEnabled('authentication', 'openid')) : ?>
-	<?php JHTML::_('script', 'openid'); ?>
+	<?php JHTML::_('script', 'openid.js'); ?>
 <?php endif; ?>
 	<form action="index.php" method="post" name="login" id="form-login">
 	<fieldset class="input">
@@ -51,6 +51,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 	<input type="hidden" name="option" value="com_user" />
 	<input type="hidden" name="task" value="login" />
 	<input type="hidden" name="return" value="<?php echo base64_encode(JURI::base()) ?>" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 	</form>
 	</div>
 </body>

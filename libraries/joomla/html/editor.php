@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: editor.php 8515 2007-08-22 21:28:39Z jinx $
+ * @version		$Id: editor.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	HTML
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -116,10 +116,11 @@ class JEditor extends JObservable
 	 * @param	int		The number of columns for the textarea
 	 * @param	int		The number of rows for the textarea
 	 * @param	boolean	True and the editor buttons will be displayed
+	 * @param	array	Associative array of editor parameters
 	 */
-	function display($name, $html, $width, $height, $col, $row, $buttons = true)
+	function display($name, $html, $width, $height, $col, $row, $buttons = true, $params = array())
 	{
-		$this->_loadEditor();
+		$this->_loadEditor($params);
 
 		//check if editor is already loaded
 		if(is_null(($this->_editor))) {
@@ -250,7 +251,7 @@ class JEditor extends JObservable
 			if(is_array($buttons) &&  in_array($plugin->name, $buttons)) {
 				continue;
 			}
-			
+
 			$isLoaded = JPluginHelper::importPlugin('editors-xtd', $plugin->name, false);
 
 			$className = 'plgButton'.$plugin->name;
@@ -269,9 +270,10 @@ class JEditor extends JObservable
 	 * Load the editor
 	 *
 	 * @access	private
+	 * @param	array	Associative array of editor config paramaters
 	 * @since	1.5
 	 */
-	function _loadEditor()
+	function _loadEditor($config = array())
 	{
 		//check if editor is already loaded
 		if(!is_null(($this->_editor))) {
@@ -293,10 +295,13 @@ class JEditor extends JObservable
 
 		// Require plugin file
 		require_once $path;
-		
+
 		// Get the plugin
-		$plugin =& JPluginHelper::getPlugin('editors', $this->_name);
-		
+		$plugin   =& JPluginHelper::getPlugin('editors', $this->_name);
+		$params   = new JParameter($plugin->params);
+		$params->loadArray($config);
+		$plugin->params = $params;
+
 		// Build editor plugin classname
 		$name = 'plgEditor'.$this->_name;
 		if($this->_editor = new $name ($this, (array)$plugin))

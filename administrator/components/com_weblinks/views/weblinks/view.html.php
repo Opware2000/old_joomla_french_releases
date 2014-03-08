@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8117 2007-07-20 13:37:22Z friesengeist $
+* @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -30,16 +30,6 @@ class WeblinksViewWeblinks extends JView
 	function display($tpl = null)
 	{
 		global $mainframe, $option;
-
-		// Set toolbar items for the page
-		JToolBarHelper::title(   JText::_( 'Weblink Manager' ), 'generic.png' );
-		JToolBarHelper::publishList();
-		JToolBarHelper::unpublishList();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::editListX();
-		JToolBarHelper::addNewX();
-		JToolBarHelper::preferences('com_weblinks', '360');
-		JToolBarHelper::help( 'screen.weblink' );
 
 		$db		=& JFactory::getDBO();
 		$uri	=& JFactory::getURI();
@@ -74,9 +64,7 @@ class WeblinksViewWeblinks extends JView
 		$this->assignRef('lists',		$lists);
 		$this->assignRef('items',		$items);
 		$this->assignRef('pagination',	$pagination);
-		$this->assignRef('request_url',	$uri->toString());
 
 		parent::display($tpl);
 	}
 }
-?>

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version		$Id: menu.php 7692 2007-06-08 20:41:29Z tcp $
+ * @version		$Id: menu.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -111,7 +111,8 @@ class JAdminCSSMenu extends JTree
 		while ($this->_current->hasChildren())
 		{
 			if ($this->_current->class) {
-				echo '<ul id="menu-'.strtolower($this->_current->class).'">'."\n";
+				echo '<ul id="menu-'.strtolower($this->_current->id).'"'.
+					' class="menu-component">'."\n";
 			} else {
 				echo '<ul>'."\n";
 			}
@@ -188,6 +189,12 @@ class JMenuNode extends JNode
 	var $title = null;
 
 	/**
+	 * Node Id
+	 */
+	var $id = null;
+
+
+	/**
 	 * Node Link
 	 */
 	var $link = null;
@@ -202,12 +209,14 @@ class JMenuNode extends JNode
 	 */
 	var $active = false;
 
+
 	function __construct($title, $link = null, $class = null, $active = false)
 	{
 		$this->title	= $title;
-		$this->link		= $link;
+		$this->link		= JFilterOutput::ampReplace($link);
 		$this->class	= $class;
 		$this->active	= $active;
+		$this->id		= str_replace(" ","-",$title);
+
 	}
 }
-?>

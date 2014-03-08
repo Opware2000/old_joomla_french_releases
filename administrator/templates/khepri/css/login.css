@@ -1,6 +1,6 @@
 /**
-* @version $Id: login.css 8412 2007-08-15 19:34:16Z jinx $
-* @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
+* @version $Id: login.css 9768 2007-12-30 09:15:49Z ircmaxell $
+* @copyright Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -80,3 +80,15 @@ p {
 	font-weight: bold;
 }
 
+#form-login .button_holder {
+	float: left;
+	padding-left: 180px;
+}
+
+#form-login div.button1{
+ 	float: left;
+}
+
+#form-login div.button1 div.next {
+	float: left;
+}

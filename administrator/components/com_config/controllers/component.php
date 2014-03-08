@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: component.php 7730 2007-06-12 22:50:12Z friesengeist $
+ * @version		$Id: component.php 9808 2008-01-03 00:37:34Z eddieajau $
  * @package		Joomla
  * @subpackage	Config
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -71,6 +71,9 @@ class ConfigControllerComponent extends JController
 	 */
 	function save()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$component = JRequest::getCmd( 'component' );
 
 		$table =& JTable::getInstance('component');

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.sections.html.php 8577 2007-08-26 22:45:22Z eddieajau $
+* @version		$Id: admin.sections.html.php 9822 2008-01-03 00:54:38Z eddieajau $
 * @package		Joomla
 * @subpackage	Sections
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -66,9 +66,6 @@ class sections_html
 				</th>
 				<th class="title">
 					<?php echo JHTML::_('grid.sort',   'Title', 's.title', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="15%">
-					<?php echo JHTML::_('grid.sort',   'Alias', 's.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 				<th width="5%">
 					<?php echo JHTML::_('grid.sort',   'Published', 's.published', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -133,9 +130,6 @@ class sections_html
 					}
 					?></span>
 				</td>
-				<td>
-					<?php echo $row->alias;?>
-				</td>
 				<td align="center">
 					<?php echo $published;?>
 				</td>
@@ -177,7 +171,8 @@ class sections_html
 		<input type="hidden" name="act" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -211,7 +206,6 @@ class sections_html
 			$row->image = 'blank.png';
 		}
 
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'description' );
 		?>
 		<script language="javascript" type="text/javascript">
@@ -234,7 +228,7 @@ class sections_html
 
 		<form action="index.php" method="post" name="adminForm">
 
-		<div class="col60">
+		<div class="col width-60">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -298,9 +292,9 @@ class sections_html
 					</td>
 					<td rowspan="4" width="50%">
 						<?php
-							$path = $mainframe->getSiteURL() . "/images/";
-							if ($row->image != "blank.png") {
-								$path.= "stories/";
+							$path = JURI::root() . 'images/';
+							if ($row->image != 'blank.png') {
+								$path.= 'stories/';
 							}
 						?>
 						<img src="<?php echo $path;?><?php echo $row->image;?>" name="imagelib" width="80" height="80" border="2" alt="<?php echo JText::_( 'Preview' ); ?>" />
@@ -337,7 +331,7 @@ class sections_html
 					<td valign="top" colspan="3">
 						<?php
 						// parameters : areaname, content, width, height, cols, rows
-						echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', false ) ;
+						echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', array('pagebreak', 'readmore') ) ;
 						?>
 					</td>
 				</tr>
@@ -351,6 +345,7 @@ class sections_html
 		<input type="hidden" name="id" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="oldtitle" value="<?php echo $row->title ; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -362,6 +357,21 @@ class sections_html
 	function copySectionSelect( $option, $cid, $categories, $contents, $section )
 	{
 		?>
+		<script language="javascript" type="text/javascript">
+		function submitbutton(pressbutton) {
+			var form = document.adminForm;
+			if (pressbutton == 'cancel') {
+				submitform( pressbutton );
+				return;
+			}
+
+			if ( form.title.value == '' ){
+				alert("<?php echo JText::_( 'Section must have a title', true ); ?>");
+			} else {
+				submitform(pressbutton);
+			}
+		}
+		</script>
 		<form action="index.php" method="post" name="adminForm">
 
 		<table class="adminform">
@@ -418,9 +428,8 @@ class sections_html
 			echo "\n <input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 }
-?>

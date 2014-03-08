@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.installer.php 7753 2007-06-16 14:25:07Z friesengeist $
+* @version		$Id: admin.installer.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Installer
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -40,6 +40,6 @@ foreach ($subMenus as $name => $extension) {
 require_once( JPATH_COMPONENT.DS.'controller.php' );
 
 $controller = new InstallerController( array('default_task' => 'installform') );
+//die(JRequest::getCmd('task'));
 $controller->execute( JRequest::getCmd('task') );
 $controller->redirect();
-?>

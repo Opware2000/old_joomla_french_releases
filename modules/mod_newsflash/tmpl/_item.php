@@ -6,8 +6,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 	<td class="contentheading<?php echo $params->get( 'moduleclass_sfx' ); ?>" width="100%">
 	<?php if ($params->get('link_titles') && $item->linkOn != '') : ?>
 		<a href="<?php echo $item->linkOn;?>" class="contentpagetitle<?php echo $params->get( 'moduleclass_sfx' ); ?>">
-			<?php echo $item->title;?>
-		</a>
+			<?php echo $item->title;?></a>
 	<?php else : ?>
 		<?php echo $item->title; ?>
 	<?php endif; ?>
@@ -27,6 +26,6 @@ endif; ?>
 		<td valign="top" colspan="2"><?php echo $item->text; ?></td>
 	</tr>
 </table>
-<?php if (isset($item->linkOn) && $item->readmore) :
+<?php if (isset($item->linkOn) && $item->readmore && $params->get('readmore')) :
 	echo '<a href="'.$item->linkOn.'">'.JText::_('Read more').'</a>';
 endif; ?>

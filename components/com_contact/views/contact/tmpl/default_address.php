@@ -1,4 +1,4 @@
-<?php /** $Id: default_address.php 8178 2007-07-23 05:39:47Z eddieajau $ */ defined( '_JEXEC' ) or die(); ?>
+<?php /** $Id: default_address.php 9718 2007-12-20 22:35:36Z eddieajau $ */ defined( '_JEXEC' ) or die(); ?>
 <?php if ( ( $this->contact->params->get( 'address_check' ) > 0 ) &&  ( $this->contact->address || $this->contact->suburb  || $this->contact->state || $this->contact->country || $this->contact->postcode ) ) : ?>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <?php if ( $this->contact->params->get( 'address_check' ) > 0 ) : ?>
@@ -46,7 +46,7 @@
 </table>
 <br />
 <?php endif; ?>
-<?php if ( ($this->contact->email_to && $this->contact->params->get( 'show_email' )) || $this->contact->telephone  || $this->contact->fax ) : ?>
+<?php if ( ($this->contact->email_to && $this->contact->params->get( 'show_email' )) || $this->contact->telephone  || $this->contact->fax || $this->contact->mobile || $this->contact->webpage ) : ?>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <?php if ( $this->contact->email_to && $this->contact->params->get( 'show_email' ) ) : ?>
 <tr>
@@ -81,6 +81,7 @@
 <?php if ( $this->contact->mobile && $this->contact->params->get( 'show_mobile' ) ) :?>
 <tr>
 	<td width="<?php echo $this->contact->params->get( 'column_width' ); ?>" >
+	<?php echo $this->contact->params->get( 'marker_mobile' ); ?>
 	</td>
 	<td>
 		<?php echo nl2br($this->contact->mobile); ?>
@@ -93,8 +94,7 @@
 	</td>
 	<td>
 		<a href="<?php echo $this->contact->webpage; ?>" target="_blank">
-			<?php echo $this->contact->webpage; ?>
-		</a>
+			<?php echo $this->contact->webpage; ?></a>
 	</td>
 </tr>
 <?php endif; ?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: article.php 8631 2007-08-30 09:07:41Z hackwar $
+ * @version		$Id: article.php 9912 2008-01-09 21:14:31Z hackwar $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -114,7 +114,7 @@ class ContentModelArticle extends JModel
 			if (!$this->_article->cat_pub && $this->_article->catid) {
 				JError::raiseError( 404, JText::_("Article category not published") );
 			}
-			
+
 			// Is the section published?
 			if ($this->_article->sectionid)
 			{
@@ -134,7 +134,7 @@ class ContentModelArticle extends JModel
 					JError::raiseError( 404, JText::_("Article section not published") );
 				}
 			}
-			
+
 			// Do we have access to the category?
 			if (($this->_article->cat_access > $user->get('aid', 0)) && $this->_article->catid) {
 				JError::raiseError( 403, JText::_("ALERTNOTAUTH") );
@@ -159,6 +159,7 @@ class ContentModelArticle extends JModel
 		}
 		else
 		{
+			$user =& JFactory::getUser();
 			$article =& JTable::getInstance('content');
 			$article->state			= 1;
 			$article->cat_pub		= null;
@@ -166,6 +167,7 @@ class ContentModelArticle extends JModel
 			$article->cat_access	= null;
 			$article->sec_access	= null;
 			$article->author		= null;
+			$article->created_by	= $user->get('id');
 			$article->parameters	= new JParameter( '' );
 			$article->text			= '';
 			$this->_article			= $article;
@@ -211,6 +213,8 @@ class ContentModelArticle extends JModel
 			} else {
 				return $this->_article->checked_out;
 			}
+		} elseif ($this->_id < 1) {
+			return false;
 		} else {
 			JError::raiseWarning( 0, 'Unable to Load Data');
 			return false;
@@ -299,8 +303,7 @@ class ContentModelArticle extends JModel
 		}
 
 		jimport( 'joomla.utilities.date' );
-		$date = new JDate($article->publish_up);
-		$date->setOffset( -$mainframe->getCfg('offset'));
+		$date = new JDate($article->publish_up, $mainframe->getCfg('offset'));
 		$article->publish_up = $date->toMySQL();
 
 		// Handle never unpublish date
@@ -314,12 +317,10 @@ class ContentModelArticle extends JModel
 				$article->publish_down .= ' 00:00:00';
 			}
 
-			$date = new JDate($article->publish_down);
-			$date->setOffset( -$mainframe->getCfg('offset'));
+			$date = new JDate($article->publish_down, $mainframe->getCfg('offset'));
 			$article->publish_down = $date->toMySQL();
 		}
 
-		jimport('joomla.filter.output');
 		$article->title = trim( JFilterOutput::ampReplace($article->title) );
 
 		// Publishing state hardening for Authors
@@ -335,7 +336,8 @@ class ContentModelArticle extends JModel
 				// For existing items keep existing state - author is not allowed to change status
 				$query = 'SELECT state' .
 						' FROM #__content' .
-						' WHERE id = '.(int) $row->id;
+						' WHERE id = '.(int) $article->id;
+
 				$this->_db->setQuery($query);
 				$state = $this->_db->loadResult();
 
@@ -380,6 +382,8 @@ class ContentModelArticle extends JModel
 		}
 
 		$article->reorder("catid = " . (int) $data['catid']);
+
+		$this->_article	=& $article;
 
 		return true;
 	}
@@ -448,11 +452,17 @@ class ContentModelArticle extends JModel
 	function _loadArticle()
 	{
 		global $mainframe;
+
+		if($this->_id == '0')
+		{
+			return false;
+		}
+
 		// Load the content if it doesn't already exist
 		if (empty($this->_article))
 		{
 			// Get the page/component configuration
-			$params = &$mainframe->getPageParameters();
+			$params = &$mainframe->getParams();
 
 			// If voting is turned on, get voting data as well for the article
 			$voting	= ContentHelperQuery::buildVotingQuery($params);
@@ -473,7 +483,7 @@ class ContentModelArticle extends JModel
 					$where;
 			$this->_db->setQuery($query);
 			$this->_article = $this->_db->loadObject();
-			
+
 			if ( ! $this->_article ) {
 				return false;
 			}
@@ -504,16 +514,8 @@ class ContentModelArticle extends JModel
 	{
 		global $mainframe;
 
-		// Set some metatag information if needed
-		if ($mainframe->getCfg('MetaTitle') == '1') {
-			$mainframe->addMetaTag('title', $this->_article->title);
-		}
-		if ($mainframe->getCfg('MetaAuthor') == '1') {
-			$mainframe->addMetaTag('author', $this->_article->author);
-		}
-
 		// Get the page/component configuration
-		$params = clone($mainframe->getPageParameters('com_content'));
+		$params = clone($mainframe->getParams('com_content'));
 
 		// Merge article parameters into the page configuration
 		$aparams = new JParameter($this->_article->attribs);
@@ -523,21 +525,11 @@ class ContentModelArticle extends JModel
 		$pop = JRequest::getVar('pop', 0, '', 'int');
 		$params->set('popup', $pop);
 
-		// Set the Section name as a link if needed
-		if ($params->get('link_section') && $this->_article->sectionid) {
-			$this->_article->section = ContentHelperRoute::getSectionRoute($this->_article);
-		}
-
-		// Set the Category name as a link if needed
-		if ($params->get('link_category') && $this->_article->catid) {
-			$this->_article->category = ContentHelperRoute::getCategoryRoute($this->_article);
-		}
-
 		// Are we showing introtext with the article
-		if ($params->get('show_intro')) {
-			$this->_article->text = $this->_article->introtext . chr(13).chr(13) . $this->_article->fulltext;
-		} else {
+		if (!$params->get('show_intro') && !empty($this->_article->fulltext)) {
 			$this->_article->text = $this->_article->fulltext;
+		} else {
+			$this->_article->text = $this->_article->introtext . chr(13).chr(13) . $this->_article->fulltext;
 		}
 
 		// Set the article object's parameters
@@ -574,9 +566,13 @@ class ContentModelArticle extends JModel
 
 		if (!$user->authorize('com_content', 'edit', 'content', 'all'))
 		{
-			$where .= ' AND ( a.state = 1 OR a.state = -1)' .
+			$where .= ' AND ( ';
+			$where .= ' ( a.created_by = ' . (int) $user->id . ' ) ';
+			$where .= '   OR ';
+			$where .= ' ( a.state = 1 OR a.state = -1)' .
 					' AND ( a.publish_up = '.$this->_db->Quote($nullDate).' OR a.publish_up <= '.$this->_db->Quote($now).' )' .
 					' AND ( a.publish_down = '.$this->_db->Quote($nullDate).' OR a.publish_down >= '.$this->_db->Quote($now).' )';
+			$where .= ' ) ';
 		}
 
 		return $where;

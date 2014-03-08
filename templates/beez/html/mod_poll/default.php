@@ -1,16 +1,9 @@
 <?php
-/**
- * @version $Id: default.php 8637 2007-08-30 16:25:06Z friesengeist $
- */
-
+// @version $Id: default.php 9830 2008-01-03 01:09:39Z eddieajau $
 defined('_JEXEC') or die('Restricted access');
-
 ?>
 
-<h4>
-	<?php echo $item->title; ?>
-</h4>
-
+<h4><?php echo $poll->title; ?></h4>
 <form name="form2" method="post" action="index.php" class="poll">
 	<fieldset>
 		<?php for ($i = 0, $n = count($options); $i < $n; $i++) : ?>
@@ -23,13 +16,11 @@ defined('_JEXEC') or die('Restricted access');
 	</fieldset>
 
 	<input type="submit" name="task_button" class="button" value="<?php echo JText::_('Vote'); ?>" />
-	<a href="<?php echo JRoute::_('index.php?option=com_poll&id='.$item->id.'#content'); ?>">
-		<?php echo JText::_('Results'); ?>
-	</a>
+	<a href="<?php echo JRoute::_('index.php?option=com_poll&id='.$poll->slug.$itemid.'#content'); ?>">
+		<?php echo JText::_('Results'); ?></a>
 
 	<input type="hidden" name="option" value="com_poll" />
-	<input type="hidden" name="Itemid" value="<?php echo $itemid; ?>" />
-	<input type="hidden" name="id" value="<?php echo $item->id; ?>" />
+	<input type="hidden" name="id" value="<?php echo $poll->id; ?>" />
 	<input type="hidden" name="task" value="vote" />
-	<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

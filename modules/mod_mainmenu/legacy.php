@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: legacy.php 8339 2007-08-07 08:04:25Z eddieajau $
+* @version		$Id: legacy.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -25,7 +25,7 @@ function mosGetMenuLink($mitem, $level = 0, & $params, $open = null)
 	// Menu Link is a special type that is a link to another item
 	if ($mitem->type == 'menulink')
 	{
-		$menu = &JMenu::getInstance();
+		$menu = &JSite::getMenu();
 		if ($tmp = $menu->getItem($mitem->query['Itemid'])) {
 			$name = $mitem->name;
 			$mid = $mitem->id;
@@ -142,7 +142,7 @@ function mosGetMenuLink($mitem, $level = 0, & $params, $open = null)
 
 		$menu_image = $menu_params->def('menu_image', -1);
 		if (($menu_image <> '-1') && $menu_image) {
-			$image = '<img src="images/stories/' . $menu_image . '" border="0" alt="' . $mitem->name . '"/>';
+			$image = '<img src="'.JURI::base(true).'/images/stories/' . $menu_image . '" border="0" alt="' . $mitem->name . '"/>';
 			if ($params->get('menu_images_align')) {
 				$txt = $txt . ' ' . $image;
 			} else {
@@ -162,7 +162,7 @@ function mosShowVIMenu(& $params)
 	global $mainframe, $Itemid;
 
 	$template = $mainframe->getTemplate();
-	$menu = JMenu :: getInstance();
+	$menu =& JSite::getMenu();
 	$user =& JFactory::getUser();
 
 	// indent icons
@@ -170,7 +170,7 @@ function mosShowVIMenu(& $params)
 		case '1' :
 			{
 				// Default images
-				$imgpath = 'images/M_images';
+				$imgpath = JURI::base(true).'/images/M_images';
 				for ($i = 1; $i < 7; $i++) {
 					$img[$i] = '<img src="' . $imgpath . '/indent' . $i . '.png" alt="" />';
 				}
@@ -180,7 +180,7 @@ function mosShowVIMenu(& $params)
 		case '2' :
 			{
 				// Use Params
-				$imgpath = 'images/M_images';
+				$imgpath = JURI::base(true).'/images/M_images';
 				for ($i = 1; $i < 7; $i++) {
 					if ($params->get('indent_image' . $i) == '-1') {
 						$img[$i] = NULL;
@@ -203,7 +203,7 @@ function mosShowVIMenu(& $params)
 		default :
 			{
 				// Template
-				$imgpath = 'templates/' . $template . '/images';
+				$imgpath = JURI::base(true).'/templates/' . $template . '/images';
 				for ($i = 1; $i < 7; $i++) {
 					$img[$i] = '<img src="' . $imgpath . '/indent' . $i . '.png" alt="" />';
 				}
@@ -265,14 +265,16 @@ function mosShowVIMenu(& $params)
 
 	// first pass - collect children
 	$cacheIndex = array();
-	foreach ($rows as $index => $v) {
-		if ($v->access <= $user->get('gid')) {
-			$pt = $v->parent;
-			$list = @ $children[$pt] ? $children[$pt] : array ();
-			array_push($list, $v);
-			$children[$pt] = $list;
-		}
-		$cacheIndex[$v->id] = $index;
+	if(is_array($rows) && count($rows)) {
+	    foreach ($rows as $index => $v) {
+		    if ($v->access <= $user->get('gid')) {
+			    $pt = $v->parent;
+			    $list = @ $children[$pt] ? $children[$pt] : array ();
+			    array_push($list, $v);
+			    $children[$pt] = $list;
+		    }
+		    $cacheIndex[$v->id] = $index;
+	    }
 	}
 
 	// second pass - collect 'open' menus
@@ -333,17 +335,19 @@ function mosRecurseVIMenu($id, $level, & $children, & $open, & $indents, & $para
 */
 function mosShowHFMenu(& $params, $style = 0)
 {
-	$menu = & JMenu::getInstance();
+	$menu = & JSite::getMenu();
 	$user = & JFactory::getUser();
 
 	//get menu items
 	$rows = $menu->getItems('menutype', $params->get('menutype'));
 
 	$links = array ();
-	foreach ($rows as $row)
-	{
-		if ($row->access <= $user->get('aid', 0)) {
-			$links[] = mosGetMenuLink($row, 0, $params);
+	if(is_array($rows) && count($rows)) {
+		foreach ($rows as $row)
+		{
+			if ($row->access <= $user->get('aid', 0)) {
+				$links[] = mosGetMenuLink($row, 0, $params);
+			}
 		}
 	}
 
@@ -355,9 +359,6 @@ function mosShowHFMenu(& $params, $style = 0)
 		switch ($style)
 		{
 			case 1 :
-				if ($lang->isRTL()) {
-					$links = array_reverse($links);
-				}
 				echo '<ul id="' . $menuclass . '">';
 				foreach ($links as $link) {
 					echo '<li>' . $link . '</li>';

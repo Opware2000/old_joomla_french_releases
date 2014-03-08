@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: controller.php 9823 2008-01-03 00:55:17Z eddieajau $
  * @package		Joomla
  * @subpackage	Templates
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -90,6 +90,9 @@ class TemplatesController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize some variables
 		$db		= & JFactory::getDBO();
 		$cid	= JRequest::getVar('cid', array(), 'method', 'array');
@@ -174,12 +177,15 @@ class TemplatesController
 		$ftp =& JClientHelper::setCredentialsFromRequest('ftp');
 
 		require_once (JPATH_COMPONENT.DS.'admin.templates.html.php');
-		TemplatesView::editTemplate($row, $lists, $params, $option, $client, $ftp);
+		TemplatesView::editTemplate($row, $lists, $params, $option, $client, $ftp, $template);
 	}
 
 	function saveTemplate()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$db			 = & JFactory::getDBO();
@@ -301,7 +307,7 @@ class TemplatesController
 			jimport('joomla.client.helper');
 			$ftp =& JClientHelper::setCredentialsFromRequest('ftp');
 
-			$content = htmlspecialchars($content);
+			$content = htmlspecialchars($content, ENT_COMPAT, 'UTF-8');
 			require_once (JPATH_COMPONENT.DS.'admin.templates.html.php');
 			TemplatesView::editTemplateSource($template, $content, $option, $client, $ftp);
 		} else {
@@ -313,6 +319,9 @@ class TemplatesController
 	function saveTemplateSource()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$option			= JRequest::getCmd('option');
@@ -417,7 +426,7 @@ class TemplatesController
 			jimport('joomla.client.helper');
 			$ftp =& JClientHelper::setCredentialsFromRequest('ftp');
 
-			$content = htmlspecialchars($content);
+			$content = htmlspecialchars($content, ENT_COMPAT, 'UTF-8');
 			require_once (JPATH_COMPONENT.DS.'admin.templates.html.php');
 			TemplatesView::editCSSSource($template, $filename, $content, $option, $client, $ftp);
 		}
@@ -431,6 +440,9 @@ class TemplatesController
 	function saveTemplateCSS()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$option			= JRequest::getCmd('option');
@@ -487,4 +499,3 @@ class TemplatesController
 		}
 	}
 }
-?>

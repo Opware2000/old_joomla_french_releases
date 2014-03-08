@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8631 2007-08-30 09:07:41Z hackwar $
+ * @version		$Id: controller.php 9968 2008-01-28 08:28:16Z rmuilwijk $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -36,12 +36,18 @@ class ContentController extends JController
 	{
 		JHTML::_('behavior.caption');
 
+		// Set a default view if none exists
+		if ( ! JRequest::getCmd( 'view' ) ) {
+			$default	= JRequest::getInt('id') ? 'article' : 'frontpage';
+			JRequest::setVar('view', $default );
+		}
+
 		// View caching logic -- simple... are we logged in?
 		$user = &JFactory::getUser();
-		if (!$user->get('gid')) {
+		if ($user->get('id')) {
 			parent::display(false);
 		} else {
-			parent::display();
+			parent::display(true);
 		}
 	}
 
@@ -54,7 +60,7 @@ class ContentController extends JController
 	function edit()
 	{
 		$user	=& JFactory::getUser();
-		
+
 		// Create a user access object for the user
 		$access					= new stdClass();
 		$access->canEdit		= $user->authorize('com_content', 'edit', 'content', 'all');
@@ -75,8 +81,8 @@ class ContentController extends JController
 		if( $model->get('id') > 1 && $user->get('gid') <= 19 && $model->get('created_by') != $user->id ) {
 			JError::raiseError( 403, JText::_("ALERTNOTAUTH") );
 		}
-		
-		if ( $model->isCheckedOut($user->get ('id')))
+
+		if ( $model->isCheckedOut($user->get('id')))
 		{
 			$msg = JText::sprintf('DESCBEINGEDITTED', JText::_('The item'), $model->get('title'));
 			$this->setRedirect(JRoute::_('index.php?view=article&id='.$model->get('id'), false), $msg);
@@ -103,7 +109,8 @@ class ContentController extends JController
 	*/
 	function save()
 	{
-		global $mainframe;
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize variables
 		$db			= & JFactory::getDBO();
@@ -206,7 +213,7 @@ class ContentController extends JController
 			foreach ($users as $user_id)
 			{
 				$msg = new TableMessage($db);
-				$msg->send($user->get('id'), $user_id, "New Item", JText::sprintf('ON_NEW_CONTENT', $user->get('username'), $post['title'], $section, $category));
+				$msg->send($user->get('id'), $user_id, JText::_('New Item'), JText::sprintf('ON_NEW_CONTENT', $user->get('username'), $post['title'], $section, $category));
 			}
 		} else {
 			// If the article isn't new, then we need to clean the cache so that our changes appear realtime :)
@@ -224,21 +231,8 @@ class ContentController extends JController
 			$msg = $isNew ? JText::_('THANK_SUB') : JText::_('Item successfully saved.');
 		}
 
-		switch ($task)
-		{
-			case 'apply' :
-				$link = $_SERVER['HTTP_REFERER'];
-				break;
 
-			case 'apply_new' :
-				$link = JRoute::_('index.php?task=edit&id='.$post['id'], false);
-				break;
-
-			case 'save' :
-			default :
-				$link = JRoute::_('index.php?view=article&id='.$post['id'], false);
-				break;
-		}
+		$link = JRequest::getString('referer', JURI::base(), 'post');
 		$this->setRedirect($link, $msg);
 	}
 
@@ -254,9 +248,6 @@ class ContentController extends JController
 		$db		= & JFactory::getDBO();
 		$user	= & JFactory::getUser();
 
-		// At some point in the future these will be in a request object
-		$Itemid	= JRequest::getVar('Returnid', '0', 'post', 'int');
-
 		// Get an article table object and bind post variabes to it [We don't need a full model here]
 		$article = & JTable::getInstance('content');
 		$article->bind(JRequest::get('post'));
@@ -266,7 +257,7 @@ class ContentController extends JController
 		}
 
 		// If the task was edit or cancel, we go back to the content item
-		$referer = JRequest::getVar('referer', JURI::Base() .'index.php', 'post', 'string');
+		$referer = JRequest::getString('referer', JURI::base(), 'post');
 		$this->setRedirect($referer);
 	}
 
@@ -311,9 +302,10 @@ class ContentController extends JController
 			JError::raiseError( 404, JText::_("Key Not Found") );
 		}
 
-		$query =	'SELECT id' .
+		$keyref	= $db->Quote( '%keyref='.$db->getEscaped( $keyref, true ).'%', false );
+		$query	= 'SELECT id' .
 				' FROM #__content' .
-				' WHERE attribs LIKE "%keyref='.$db->getEscaped($keyref).'%"';
+				' WHERE attribs LIKE '.$keyref;
 		$db->setQuery($query);
 		$id = (int) $db->loadResult();
 
@@ -335,7 +327,7 @@ class ContentController extends JController
 			$view->display();
 		}
 		else {
-			JError::raiseError( 404, JText::_("Key Not Found") );
+			JError::raiseError( 404, JText::_( 'Key Not Found' ) );
 		}
 	}
 
@@ -357,4 +349,3 @@ class ContentController extends JController
 		$view->display();
 	}
 }
-?>

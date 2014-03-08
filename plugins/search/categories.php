@@ -1,15 +1,15 @@
 <?php
 /**
-* @version		$Id: categories.php 8627 2007-08-29 21:55:02Z jinx $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: categories.php 9875 2008-01-05 11:33:51Z eddieajau $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -22,7 +22,8 @@ JPlugin::loadLanguage( 'plg_search_categories' );
 /**
  * @return array An array of search areas
  */
-function &plgSearchCategoryAreas() {
+function &plgSearchCategoryAreas()
+{
 	static $areas = array(
 		'categories' => 'Categories'
 	);
@@ -44,6 +45,8 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 {
 	$db		=& JFactory::getDBO();
 	$user	=& JFactory::getUser();
+
+	require_once(JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'route.php');
 
 	if (is_array( $areas )) {
 		if (!array_intersect( $areas, array_keys( plgSearchCategoryAreas() ) )) {
@@ -75,16 +78,16 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 			$order = 'a.name DESC';
 	}
 
-	$text = $db->getEscaped($text);
-	$query = 'SELECT a.title, a.description AS text, "" AS created,'
+	$text	= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
+	$query	= 'SELECT a.title, a.description AS text, "" AS created,'
 	. ' "2" AS browsernav,'
 	. ' s.id AS secid, a.id AS catid,'
 	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug'
 	. ' FROM #__categories AS a'
 	. ' INNER JOIN #__sections AS s ON s.id = a.section'
-	. ' WHERE ( a.name LIKE "%'.$text.'%"'
-	. ' OR a.title LIKE "%'.$text.'%"'
-	. ' OR a.description LIKE "%'.$text.'%" )'
+	. ' WHERE ( a.name LIKE '.$text
+	. ' OR a.title LIKE '.$text
+	. ' OR a.description LIKE '.$text.' )'
 	. ' AND a.published = 1'
 	. ' AND s.published = 1'
 	. ' AND a.access <= '.(int) $user->get('aid')
@@ -97,10 +100,9 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 
 	$count = count( $rows );
 	for ( $i = 0; $i < $count; $i++ ) {
-		$rows[$i]->href = 'index.php?option=com_content&view=category&id='. $rows[$i]->catid;
+		$rows[$i]->href = ContentHelperRoute::getCategoryRoute($rows[$i]->slug, $rows[$i]->secid);
 		$rows[$i]->section 	= JText::_( 'Category' );
 	}
 
 	return $rows;
 }
-?>

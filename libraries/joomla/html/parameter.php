@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: parameter.php 8284 2007-08-01 08:14:55Z eddieajau $
+ * @version		$Id: parameter.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	Parameter
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -16,6 +16,9 @@
 defined('JPATH_BASE') or die();
 
 jimport( 'joomla.registry.registry' );
+
+//Register the element class with the loader
+JLoader::register('JElement', dirname(__FILE__).DS.'parameter'.DS.'element.php');
 
 /**
  * Parameter handler
@@ -95,14 +98,12 @@ class JParameter extends JRegistry
 	 * @access	public
 	 * @param	string The name of the param
 	 * @param	string The value of the parameter
-	 * @return	string The previous value
+	 * @return	string The set value
 	 * @since	1.5
 	 */
 	function set($key, $value = '', $group = '_default')
 	{
-		$oldValue	= $this->getValue($group.'.'.$key);
-		$this->setValue($group.'.'.$key, (string) $value);
-		return $oldValue;
+		return $this->setValue($group.'.'.$key, (string) $value);
 	}
 
 	/**
@@ -131,8 +132,9 @@ class JParameter extends JRegistry
 	 * @return	string	The set value
 	 * @since	1.5
 	 */
-	function def($key, $value = '', $group = '_default') {
-		return $this->set($key, $this->get($key, (string) $value, $group));
+	function def($key, $default = '', $group = '_default') {
+		$value = $this->get($key, (string) $default, $group);
+		return $this->set($key, $value);
 	}
 
 	/**
@@ -191,7 +193,6 @@ class JParameter extends JRegistry
 		}
 
 		$params = $this->getParams($name, $group);
-
 		$html = array ();
 		$html[] = '<table width="100%" class="paramlist admintable" cellspacing="1">';
 
@@ -386,10 +387,6 @@ class JParameter extends JRegistry
 			return	$this->_elements[$signature];
 		}
 
-		if( !class_exists( 'JElement' ) ) {
-			jimport('joomla.html.parameter.element');
-		}
-
 		$elementClass	=	'JElement'.$type;
 		if( !class_exists( $elementClass ) )
 		{
@@ -434,10 +431,25 @@ class JParameter extends JRegistry
 	 */
 	function addElementPath( $path )
 	{
-		if( is_array( $path ) ) {
-			$this->_elementPath = array_merge( $this->_elementPath, $path );
-		} else {
-			array_push( $this->_elementPath, $path );
+		// just force path to array
+		settype( $path, 'array' );
+
+		// loop through the path directories
+		foreach ( $path as $dir )
+		{
+			// no surrounding spaces allowed!
+			$dir = trim( $dir );
+
+			// add trailing separators as needed
+			if ( substr( $dir, -1 ) != DIRECTORY_SEPARATOR ) {
+				// directory
+				$dir .= DIRECTORY_SEPARATOR;
+			}
+
+			// add to the top of the search dirs
+			array_unshift( $this->_elementPath, $dir );
 		}
+
+
 	}
 }

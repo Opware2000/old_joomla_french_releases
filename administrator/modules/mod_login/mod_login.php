@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_login.php 8412 2007-08-15 19:34:16Z jinx $
+* @version		$Id: mod_login.php 9828 2008-01-03 00:59:43Z eddieajau $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,6 +14,7 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
+jimport('joomla.language.helper');
 //$browserLang = JLanguageHelper::detectLanguage();
 // forced to default
 $browserLang = null;
@@ -25,9 +26,9 @@ array_unshift( $languages, JHTML::_('select.option',  '', JText::_( 'Default' ) 
 $langs = JHTML::_('select.genericlist',   $languages, 'lang', ' class="inputbox"', 'value', 'text', $browserLang );
 ?>
 <?php if(JPluginHelper::isEnabled('authentication', 'openid')) : ?>
-	<?php JHTML::_('script', 'openid'); ?>
+	<?php JHTML::_('script', 'openid.js'); ?>
 <?php endif; ?>
-<form action="index.php" method="post" name="login" id="form-login" style="clear: both;">
+<form action="<?php echo JRoute::_( 'index.php', true, $params->get('usesecure')); ?>" method="post" name="login" id="form-login" style="clear: both;">
 	<p id="form-login-username">
 		<label for="username"><?php echo JText::_('Username'); ?></label>
 		<input name="username" id="username" type="text" class="inputbox" size="15" />
@@ -39,7 +40,7 @@ $langs = JHTML::_('select.genericlist',   $languages, 'lang', ' class="inputbox"
 	</p>
 	<?php
 	if($error = JError::getError(true)) {
-		echo '<p>';
+		echo '<p id="login-error-message">';
 		echo $error->get('message');
 		echo '<p>';
 	}
@@ -48,18 +49,18 @@ $langs = JHTML::_('select.genericlist',   $languages, 'lang', ' class="inputbox"
 		<label for="lang"><?php echo JText::_('Language'); ?></label>
 		<?php echo $langs; ?>
 	</p>
-	<div style="padding-left: 180px;">
-	<div class="<?php echo $lang->isRTL() ? 'button1-right' : 'button1-left'; ?>">
-		<div class="<?php echo $lang->isRTL() ? 'prev' : 'next'; ?>">
+	<div class="button_holder">
+	<div class="button1">
+		<div class="next">
 			<a onclick="login.submit();">
-				<?php echo JText::_( 'Login' ); ?>
-			</a>
-			<input type="submit" style="border: 0; padding: 0; margin: 0; width: 0px; height: 0px;" value="<?php echo JText::_( 'Login' ); ?>" />
+				<?php echo JText::_( 'Login' ); ?></a>
+
 		</div>
 	</div>
 	</div>
 	<div class="clr"></div>
+	<input type="submit" style="border: 0; padding: 0; margin: 0; width: 0px; height: 0px;" value="<?php echo JText::_( 'Login' ); ?>" />
 	<input type="hidden" name="option" value="com_login" />
 	<input type="hidden" name="task" value="login" />
-	<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

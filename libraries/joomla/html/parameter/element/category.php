@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: category.php 8288 2007-08-01 08:40:54Z eddieajau $
+* @version		$Id: category.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Parameter
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -59,7 +59,7 @@ class JElementCategory extends JElement
 				' LEFT JOIN #__sections AS s ON s.id=c.section' .
 				' WHERE c.published = 1' .
 				' AND s.scope = '.$db->Quote($section).
-				' ORDER BY c.title';
+				' ORDER BY s.title, c.title';
 		} else {
 			$query = 'SELECT c.id, c.title' .
 				' FROM #__categories AS c' .

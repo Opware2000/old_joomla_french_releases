@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: log.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: log.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,8 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla! System Logging Plugin
@@ -41,7 +43,7 @@ class  plgSystemLog extends JPlugin
 
 	function onLoginFailure($response)
 	{
-		jimport('joomla.utilities.log');
+		jimport('joomla.error.log');
 
 		$log = JLog::getInstance();
 		$errorlog = array();
@@ -50,22 +52,22 @@ class  plgSystemLog extends JPlugin
 	    {
 			case JAUTHENTICATE_STATUS_CANCEL :
 			{
-				$errorlog['status']  = $response->type . " CANCELED: ";
-				$errorlog['comment'] = $response->error_message;
+				$errorlog['status']  = $response['type'] . " CANCELED: ";
+				$errorlog['comment'] = $response['error_message'];
 				$log->addEntry($errorlog);
 			} break;
 
 			case JAUTHENTICATE_STATUS_FAILURE :
 			{
-				$errorlog['status']  = $response->type . " FAILURE: ";
-				$errorlog['comment'] = $response->error_message;
+				$errorlog['status']  = $response['type'] . " FAILURE: ";
+				$errorlog['comment'] = $response['error_message'];
 				$log->addEntry($errorlog);
 			}	break;
 
 			default :
 			{
-				$errorlog['status']  = $response->type . " UNKNOWN ERROR: ";
-				$errorlog['comment'] = $response->error_message;
+				$errorlog['status']  = $response['type'] . " UNKNOWN ERROR: ";
+				$errorlog['comment'] = $response['error_message'];
 				$log->addEntry($errorlog);
 			}	break;
 		}

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install PUBLIC "-//Joomla! 1.5//DTD template 1.0//EN" "http://dev.joomla.org/xml/1.5/template-install.dtd">
 <install version="1.5" type="template">
 	<name>beez</name>
-	<version>1.0.0</version>
 	<creationDate>19 February 2007</creationDate>
 	<author>Angie Radtke/Robert Deutz</author>
 	<authorEmail>joomla@run-digital.com</authorEmail>
 	<authorUrl>http://www.run-digital.com</authorUrl>
 	<copyright></copyright>
 	<license>GNU/GPL</license>
+	<version>1.0.0</version>
 	<description>Accessible template for Joomla 1.5</description>
 	<files>
 		<filename>css/layout.css</filename>
@@ -18,6 +19,7 @@
 		<filename>css/print.css</filename>
 		<filename>css/general.css</filename>
 		<filename>css/index.html</filename>
+		<filename>css/template_rtl.css</filename>		
 		<filename>html/com_contact/category/default.php</filename>
 		<filename>html/com_contact/category/default_items.php</filename>
 		<filename>html/com_contact/category/index.html</filename>
@@ -115,11 +117,14 @@
 		<filename>images_general/j_button2_readmore.png</filename>
 		<filename>images_general/selector-arrow.png</filename>
 		<filename>images/arrow.png</filename>
+		<filename>images/arrow_rtl.png</filename>
 		<filename>images/pfeil.gif</filename>
+		<filename>images/pfeil_rtl.gif</filename>		
 		<filename>images/trans.gif</filename>
 		<filename>images/logo.gif</filename>
 		<filename>images/arrow.gif</filename>
 		<filename>images/biene.gif</filename>
+		<filename>images/biene_rtl.gif</filename>
 		<filename>images/index.html</filename>
 		<filename>images/con_address.png</filename>
 		<filename>images/lupe_larger.gif</filename>
@@ -142,10 +147,10 @@
 		<language tag="en-GB">en-GB.tpl_beez.ini</language>
 	</languages>
 	<administration>
-    	<languages folder="admin">
+		<languages folder="admin">
 			<language tag="en-GB">en-GB.tpl_beez.ini</language>
 		</languages>
-    </administration>
+	</administration>
 	<positions>
 		<position>left</position>
 		<position>right</position>

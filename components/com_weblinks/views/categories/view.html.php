@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8283 2007-08-01 07:49:09Z eddieajau $
+* @version		$Id: view.html.php 9934 2008-01-13 22:40:54Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -33,28 +33,24 @@ class WeblinksViewCategories extends JView
 
 		$document =& JFactory::getDocument();
 
-		$menu = &JMenu::getInstance();
-		$item = $menu->getActive();
-
 		$categories	=& $this->get('data');
 		$total		=& $this->get('total');
 		$state		=& $this->get('state');
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		// Set some defaults if not set for params
-		$params->def('page_title', $item->name);
 		$params->def('comp_description', JText::_('WEBLINKS_DESC'));
-
-		// Set the page title
-		$document->setTitle($params->get('page_title'));
 
 		// Define image tag attributes
 		if ($params->get('image') != -1)
 		{
-			$attribs['align'] = '"'. $params->get('image_align').'"';
-			$attribs['hspace'] = '"6"';
+			if($params->get('image_align')!="")
+				$attribs['align'] = '"'. $params->get('image_align').'"';
+			else
+				$attribs['align'] = '';
+			$attribs['hspace'] = 6;
 
 			// Use the static HTML library to build the image tag
 			$image = JHTML::_('image', 'images/stories/'.$params->get('image'), JText::_('Web Links'), $attribs);

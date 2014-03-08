@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8465 2007-08-20 09:57:45Z tcp $
+ * @version		$Id: controller.php 9831 2008-01-03 01:10:35Z eddieajau $
  * @package		Joomla
  * @subpackage	Contact
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -82,11 +82,8 @@ class ContactController extends JController
 	{
 		global $mainframe;
 
-		//check the token before we do anything else
-		$token	= JUtility::getToken();
-		if (!JRequest::getInt( $token, 0, 'post' )) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$db			= & JFactory::getDBO();
@@ -117,7 +114,7 @@ class ContactController extends JController
 		 * If there is no valid email address or message body then we throw an
 		 * error and return false.
 		 */
-		jimport('joomla.utilities.mail');
+		jimport('joomla.mail.helper');
 		if (!$email || !$body || (JMailHelper::isEmailAddress($email) == false))
 		{
 			$this->setError(JText::_('CONTACT_FORM_NC'));
@@ -127,7 +124,7 @@ class ContactController extends JController
 
 		// Contact plugins
 		JPluginHelper::importPlugin( 'contact' );
-		$dispatcher	=& JEventDispatcher::getInstance();
+		$dispatcher	=& JDispatcher::getInstance();
 
 		// Input validation
 		if  (!$this->_validateInputs( $contact, $email, $subject, $body ) ) {
@@ -149,7 +146,7 @@ class ContactController extends JController
 		// Passed Validation: Process the contact plugins to integrate with other applications
 		$results	= $dispatcher->trigger( 'onSubmitContact', array( &$contact, &$post ) );
 
-		$pparams = &$mainframe->getPageParameters('com_contact');
+		$pparams = &$mainframe->getParams('com_contact');
 		if (!$pparams->get( 'custom_reply' ))
 		{
 			$MailFrom 	= $mainframe->getCfg('mailfrom');
@@ -193,8 +190,9 @@ class ContactController extends JController
 			}
 		}
 
-		$this->setError( JText::_( 'Thank you for your e-mail'));
-		$this->display();
+		$msg = JText::_( 'Thank you for your e-mail');
+		$link = JRoute::_('index.php?option=com_contact&view=contact&id='.$contactId);
+		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -218,7 +216,7 @@ class ContactController extends JController
 		$contact->load($contactId);
 
 		// Get the contact detail parameters
-		$pparams = &$mainframe->getPageParameters('com_contact');
+		$pparams = &$mainframe->getParams('com_contact');
 
 		// Should we show the vcard?
 		if ($pparams->get('allow_vcard', 0))
@@ -317,7 +315,7 @@ class ContactController extends JController
 
 		// Get params and component configurations
 		$params		= new JParameter($contact->params);
-		$pparams	= &$mainframe->getPageParameters('com_contact');
+		$pparams	= &$mainframe->getParams('com_contact');
 
 		// check for session cookie
 		$sessionCheck 	= $pparams->get( 'validate_session', 1 );

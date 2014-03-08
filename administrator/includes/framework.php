@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: framework.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: framework.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -34,14 +34,10 @@ if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize(
  */
 
 // System includes
-require_once( JPATH_LIBRARIES		. DS . 'loader.php' );
-require_once( JPATH_CONFIGURATION	. DS . 'configuration.php' );
+require_once( JPATH_LIBRARIES		.DS.'joomla'.DS.'import.php');
 
-jimport( 'joomla.base.object' );
-jimport( 'joomla.environment.request' );
-
-// ALERT! DO NOT CALL JRequest::clean ANY LATER IN EXECUTION!
-JRequest::clean();
+// Pre-Load configuration
+require_once( JPATH_CONFIGURATION	.DS.'configuration.php' );
 
 // System configuration
 $CONFIG = new JConfig();
@@ -50,6 +46,7 @@ if (@$CONFIG->error_reporting === 0) {
 	error_reporting( 0 );
 } else if (@$CONFIG->error_reporting > 0) {
 	error_reporting( $CONFIG->error_reporting );
+	ini_set( 'display_errors', 1 );
 }
 
 define( 'JDEBUG', $CONFIG->debug );
@@ -65,26 +62,20 @@ jimport( 'joomla.utilities.compat.compat' );
 
 // System profiler
 if (JDEBUG) {
-	jimport( 'joomla.utilities.profiler' );
+	jimport( 'joomla.error.profiler' );
 	$_PROFILER =& JProfiler::getInstance( 'Application' );
 }
 
 // Joomla! library imports
-jimport( 'joomla.environment.response'   );
-jimport( 'joomla.application.application' );
-jimport( 'joomla.application.helper' );
 jimport( 'joomla.application.menu' );
 jimport( 'joomla.user.user');
 jimport( 'joomla.environment.uri' );
-jimport( 'joomla.factory' );
-jimport( 'joomla.methods' );
 jimport( 'joomla.html.html' );
 jimport( 'joomla.html.parameter' );
-jimport( 'joomla.utilities.array' );
-jimport( 'joomla.utilities.error' );
 jimport( 'joomla.utilities.utility' );
+jimport( 'joomla.event.event');
+jimport( 'joomla.event.dispatcher');
+jimport( 'joomla.language.language');
 jimport( 'joomla.utilities.string' );
-jimport( 'joomla.version' );
-jimport( 'joomla.event.*');
 
 ?>

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: component.php 7074 2007-03-31 15:37:23Z jinx $
+* @version		$Id: component.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -60,6 +60,7 @@ class JTableComponent extends JTable
 
 	/**
 	 * Loads a data row by option
+	 *
 	 * @param string The component option value
 	 * @return boolean
 	 */
@@ -73,19 +74,18 @@ class JTableComponent extends JTable
 		$db->setQuery( $query, 0, 1 );
 		$id = $db->loadResult();
 
-		if ($id === null)
-		{
+		if ($id === null) {
 			return false;
-		}
-		else
-		{
+		} else {
 			return $this->load( $id );
 		}
 	}
+
 	/**
 	 * Validate and filter fields
 	 */
-	function check() {
+	function check()
+	{
 		$this->parent = intval( $this->parent );
 		$this->ordering = intval( $this->ordering );
 		return true;
@@ -102,7 +102,8 @@ class JTableComponent extends JTable
 	*/
 	function bind($array, $ignore = '')
 	{
-		if (is_array( $array['params'] )) {
+		if (is_array( $array['params'] ))
+		{
 			$registry = new JRegistry();
 			$registry->loadArray($array['params']);
 			$array['params'] = $registry->toString();

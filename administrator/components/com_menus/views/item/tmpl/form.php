@@ -13,7 +13,7 @@ function submitbutton(pressbutton) {
 	if ( (type != "separator") && (trim( form.name.value ) == "") ){
 		alert( "<?php echo JText::_( 'Item must have a title', true ); ?>" );
 	}
-	<?php if( $this->name == "Standard Article Layout" ){ ?>
+	<?php if( $this->name == "Article Layout" ){ ?>
 	else if( document.getElementById('a_id').value == 0 ){
 		alert( "<?php echo JText::_('Please select an Article', true ); ?>" );
 	} <?php } ?> else {
@@ -176,4 +176,5 @@ function submitbutton(pressbutton) {
 	<input type="hidden" name="componentid" value="<?php echo $this->item->componentid; ?>" />
 	<input type="hidden" name="type" value="<?php echo $this->item->type; ?>" />
 	<input type="hidden" name="task" value="" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

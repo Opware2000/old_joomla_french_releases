@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: behavior.php 8672 2007-08-31 15:48:46Z louis $
+* @version		$Id: behavior.php 9767 2007-12-30 09:10:41Z mtk $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -51,28 +51,28 @@ class JHTMLBehavior
 		$konkcheck = strpos (strtolower($_SERVER['HTTP_USER_AGENT']), "konqueror");
 
 		if ($debug || $konkcheck) {
-			JHTML::script('mootools-uncompressed', 'media/system/js/', false);
+			JHTML::script('mootools-uncompressed.js', 'media/system/js/', false);
 		} else {
-			JHTML::script('mootools', 'media/system/js/', false);
+			JHTML::script('mootools.js', 'media/system/js/', false);
 		}
 		$loaded = true;
 		return;
 	}
 
 		function caption() {
-		JHTML::script('caption');
+		JHTML::script('caption.js');
 	}
 
 	function formvalidation() {
-		JHTML::script('validate' );
+		JHTML::script('validate.js' );
 	}
 
 	function switcher() {
-		JHTML::script('switcher' );
+		JHTML::script('switcher.js' );
 	}
 
 	function combobox() {
-		JHTML::script('combobox' );
+		JHTML::script('combobox.js' );
 	}
 
 	function tooltip($selector='.hasTip', $params = array())
@@ -124,8 +124,8 @@ class JHTMLBehavior
 		if (!isset($included)) {
 
 			// Load the javascript and css
-			JHTML::script('modal');
-			JHTML::stylesheet('modal');
+			JHTML::script('modal.js');
+			JHTML::stylesheet('modal.css');
 
 			$included = true;
 		}
@@ -173,8 +173,8 @@ class JHTMLBehavior
 
 	function uploader($id='file-upload', $params = array())
 	{
-		JHTML::script('swf' );
-		JHTML::script('uploader' );
+		JHTML::script('swf.js' );
+		JHTML::script('uploader.js' );
 
 		static $uploaders;
 
@@ -186,12 +186,9 @@ class JHTMLBehavior
 			return;
 		}
 
-		global $mainframe;
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
 		// Setup options object
 		$opt['url']					= (isset($params['targetURL'])) ? $params['targetURL'] : null ;
-		$opt['swf']					= (isset($params['swf'])) ? $params['swf'] : $base.'media/system/swf/uploader.swf';
+		$opt['swf']					= (isset($params['swf'])) ? $params['swf'] : JURI::root(true).'/media/system/swf/uploader.swf';
 		$opt['multiple']			= (isset($params['multiple']) && !($params['multiple'])) ? '\\false' : '\\true';
 		$opt['queued']				= (isset($params['queued']) && !($params['queued'])) ? '\\false' : '\\true';
 		$opt['queueList']			= (isset($params['queueList'])) ? $params['queueList'] : 'upload-queue';
@@ -216,7 +213,9 @@ class JHTMLBehavior
 
 		// Attach tooltips to document
 		$document =& JFactory::getDocument();
-		$uploaderInit = '		window.addEvent(\'load\', function(){
+		$uploaderInit = 'sBrowseCaption=\''.JText::_('Browse Files', true).'\';
+				sRemoveToolTip=\''.JText::_('Remove from queue', true).'\';
+				window.addEvent(\'load\', function(){
 				var Uploader = new FancyUpload($(\''.$id.'\'), '.$options.');
 				$(\'upload-clear\').adopt(new Element(\'input\', { type: \'button\', events: { click: Uploader.clearList.bind(Uploader, [false])}, value: \''.JText::_('Clear Completed').'\' }));				});';
 		$document->addScriptDeclaration($uploaderInit);
@@ -236,21 +235,18 @@ class JHTMLBehavior
 
 		// Include mootools framework
 		JHTMLBehavior::mootools();
-		JHTML::script('mootree');
-		JHTML::stylesheet('mootree');
+		JHTML::script('mootree.js');
+		JHTML::stylesheet('mootree.css');
 
 		if (isset($trees[$id]) && ($trees[$id])) {
 			return;
 		}
 
-		global $mainframe;
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
 		// Setup options object
 		$opt['div']		= (array_key_exists('div', $params)) ? $params['div'] : $id.'_tree';
 		$opt['mode']	= (array_key_exists('mode', $params)) ? $params['mode'] : 'folders';
 		$opt['grid']	= (array_key_exists('grid', $params)) ? '\\'.$params['grid'] : '\\true';
-		$opt['theme']	= (array_key_exists('theme', $params)) ? $params['theme'] : $base.'media/system/images/mootree.gif';
+		$opt['theme']	= (array_key_exists('theme', $params)) ? $params['theme'] : JURI::root(true).'/media/system/images/mootree.gif';
 
 		// Event handlers
 		$opt['onExpand']	= (array_key_exists('onExpand', $params)) ? '\\'.$params['onExpand'] : null;
@@ -283,15 +279,14 @@ class JHTMLBehavior
 
 	function calendar()
 	{
-		$lang =& JFactory::getLanguage();
+		$document =& JFactory::getDocument();
+		JHTML::stylesheet('calendar-jos.css', 'media/system/css/', array(' title' => JText::_( 'green' ) ,' media' => 'all' ));
+		JHTML::script( 'calendar.js', 'media/system/js/' );
+		JHTML::script( 'calendar-setup.js', 'media/system/js/' );
 
-		JHTML::stylesheet('calendar-mos', 'includes/js/calendar/', array(' title' => JText::_( 'green' ) ,' media' => 'all' ));
-		JHTML::script( 'calendar_mini', 'includes/js/calendar/' );
-		$langScript = JPATH_SITE.DS.'includes'.DS.'js'.DS.'calendar'.DS.'lang'.DS.'calendar-'.$lang->getTag().'.js';
-		if( file_exists( $langScript ) ){
-			JHTML::script( 'calendar-'.$lang->getTag(), 'includes/js/calendar/lang/' );
-		} else {
-			JHTML::script( 'calendar-en-GB', 'includes/js/calendar/lang/' );
+		$translation = JHTMLBehavior::_calendartranslation();
+		if($translation) {
+			$document->addScriptDeclaration($translation);
 		}
 	}
 
@@ -303,21 +298,22 @@ class JHTMLBehavior
 		// Include mootools framework
 		JHTMLBehavior::mootools();
 
-		$config 		=& JFactory::getConfig();
-		$lifetime 	= ( $config->getValue('lifetime') * 60000 );
+		$config 	 =& JFactory::getConfig();
+		$lifetime 	 = ( $config->getValue('lifetime') * 60000 );
 		$refreshTime =  ( $lifetime <= 60000 ) ? 30000 : $lifetime - 60000;
 		//refresh time is 1 minute less than the liftime assined in the configuration.php file
-		?>
-		<script language="javascript">
-		function keepAlive( ) {
-			var myAjax = new Ajax( "index.php", { method: "get" } ).request();
-		}
 
-		window.addEvent('domready', function()
-			{ keepAlive.periodical( <?php echo $refreshTime; ?> ); }
-		);
-		</script>
-		<?php
+		$document =& JFactory::getDocument();
+		$script  = '';
+		$script .= 'function keepAlive( ) {';
+		$script .=  '	var myAjax = new Ajax( "index.php", { method: "get" } ).request();';
+		$script .=  '}';
+		$script .= 	' window.addEvent("domready", function()';
+		$script .= 	'{ keepAlive.periodical('.$refreshTime.' ); }';
+		$script .=  ');';
+
+		$document->addScriptDeclaration($script);
+
 		return;
 	}
 
@@ -353,6 +349,43 @@ class JHTMLBehavior
 		$object .= '}';
 
 		return $object;
+	}
+
+	/**
+	 * Internal method to translate the JavaScript Calendar
+	 *
+	 * @return	string	JavaScript that translates the object
+	 * @since	1.5
+	 */
+	function _calendartranslation()
+	{
+		static $jsscript = 0;
+
+		if($jsscript == 0)
+		{
+			$return = 'Calendar._DN = new Array ("'.JText::_('Sunday').'", "'.JText::_('Monday').'", "'.JText::_('Tuesday').'", "'.JText::_('Wednesday').'", "'.JText::_('Thursday').'", "'.JText::_('Friday').'", "'.JText::_('Saturday').'", "'.JText::_('Sunday').'");Calendar._SDN = new Array ("'.JText::_('Sun').'", "'.JText::_('Mon').'", "'.JText::_('Tue').'", "'.JText::_('Wed').'", "'.JText::_('Thu').'", "'.JText::_('Fri').'", "'.JText::_('Sat').'", "'.JText::_('Sun').'"); Calendar._FD = 0;	Calendar._MN = new Array ("'.JText::_('January').'", "'.JText::_('February').'", "'.JText::_('March').'", "'.JText::_('April').'", "'.JText::_('May').'", "'.JText::_('June').'", "'.JText::_('July').'", "'.JText::_('August').'", "'.JText::_('September').'", "'.JText::_('October').'", "'.JText::_('November').'", "'.JText::_('December').'");	Calendar._SMN = new Array ("'.JText::_('January_short').'", "'.JText::_('February_short').'", "'.JText::_('March_short').'", "'.JText::_('April_short').'", "'.JText::_('May_short').'", "'.JText::_('June_short').'", "'.JText::_('July_short').'", "'.JText::_('August_short').'", "'.JText::_('September_short').'", "'.JText::_('October_short').'", "'.JText::_('November_short').'", "'.JText::_('December_short').'");Calendar._TT = {};Calendar._TT["INFO"] = "'.JText::_('About the calendar').'";
+ 		Calendar._TT["ABOUT"] =
+ "DHTML Date/Time Selector\n" +
+ "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" +
+"For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
+"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
+"\n\n" +
+"Date selection:\n" +
+"- Use the \xab, \xbb buttons to select year\n" +
+"- Use the " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " buttons to select month\n" +
+"- Hold mouse button on any of the above buttons for faster selection.";
+Calendar._TT["ABOUT_TIME"] = "\n\n" +
+"Time selection:\n" +
+"- Click on any of the time parts to increase it\n" +
+"- or Shift-click to decrease it\n" +
+"- or click and drag for faster selection.";
+
+		Calendar._TT["PREV_YEAR"] = "'.JText::_('Prev. year (hold for menu)').'";Calendar._TT["PREV_MONTH"] = "'.JText::_('Prev. month (hold for menu)').'";	Calendar._TT["GO_TODAY"] = "'.JText::_('Go Today').'";Calendar._TT["NEXT_MONTH"] = "'.JText::_('Next month (hold for menu)').'";Calendar._TT["NEXT_YEAR"] = "'.JText::_('Next year (hold for menu)').'";Calendar._TT["SEL_DATE"] = "'.JText::_('Select date').'";Calendar._TT["DRAG_TO_MOVE"] = "'.JText::_('Drag to move').'";Calendar._TT["PART_TODAY"] = "'.JText::_('(Today)').'";Calendar._TT["DAY_FIRST"] = "'.JText::_('Display %s first').'";Calendar._TT["WEEKEND"] = "0,6";Calendar._TT["CLOSE"] = "'.JText::_('Close').'";Calendar._TT["TODAY"] = "'.JText::_('Today').'";Calendar._TT["TIME_PART"] = "'.JText::_('(Shift-)Click or drag to change value').'";Calendar._TT["DEF_DATE_FORMAT"] = "'.JText::_('%Y-%m-%d').'"; Calendar._TT["TT_DATE_FORMAT"] = "'.JText::_('%a, %b %e').'";Calendar._TT["WK"] = "wk";Calendar._TT["TIME"] = "'.JText::_('Time:').'";';
+			$jsscript = 1;
+			return $return;
+		} else {
+			return false;
+		}
 	}
 }
 

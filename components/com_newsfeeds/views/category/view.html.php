@@ -1,9 +1,9 @@
 <?php
 /**
-* version $Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+* version $Id: view.html.php 9934 2008-01-13 22:40:54Z ircmaxell $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 *
 * Joomla! is free software. This version may have been modified pursuant
@@ -36,26 +36,20 @@ class NewsfeedsViewCategory extends JView
 		$document	= & JFactory::getDocument();
 
 		// Get the parameters of the active menu item
-		$menus	= &JMenu::getInstance();
+		$menus	= &JSite::getMenu();
 		$menu	= $menus->getActive();
-		$params	= &$mainframe->getPageParameters();
+		$params	= &$mainframe->getParams();
 
 		$category	= $this->get('category');
 		$items		= $this->get('data');
 		$total		= $this->get('total');
 		$pagination	= &$this->get('pagination');
 
-		// Parameters
-		$params->def( 'page_title', $menu->name );
-
 		// Set page title per category
 		$document->setTitle( $category->title. ' - '. $params->get( 'page_title'));
 
 		//set breadcrumbs
-		if($menu->query['view'] != 'category')
-		{
-			$pathway->addItem($category->title, '');
-		}
+		$pathway->addItem($category->title, '');
 
 		$k = 0;
 		for($i = 0; $i <  count($items); $i++)

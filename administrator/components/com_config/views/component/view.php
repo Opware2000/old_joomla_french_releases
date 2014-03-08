@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.php 8537 2007-08-24 02:53:09Z tcp $
+ * @version		$Id: view.php 9808 2008-01-03 00:37:34Z eddieajau $
  * @package		Joomla
  * @subpackage	Config
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -63,6 +63,7 @@ class ConfigViewComponent extends JView
 		<input type="hidden" name="option" value="com_config" />
 		<input type="hidden" name="tmpl" value="component" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 	</form>
 <?php
 	}

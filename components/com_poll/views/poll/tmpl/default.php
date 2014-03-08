@@ -1,19 +1,13 @@
 <?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
-<script type = "text/javascript">
-<!--
-	var link = document.createElement('link');
-	link.setAttribute('href', 'components/com_poll/assets/poll_bars.css');
-	link.setAttribute('rel', 'stylesheet');
-	link.setAttribute('type', 'text/css');
-	var head = document.getElementsByTagName('head').item(0);
-	head.appendChild(link);
-//-->
-</script>
+defined('_JEXEC') or die('Restricted access'); 
+?>
+
+<?php JHTML::_('stylesheet', 'poll_bars.css', 'components/com_poll/assets/'); ?>
+
 <form action="index.php" method="post" name="poll" id="poll">
 <?php if ($this->params->get( 'show_page_title')) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ) ?>">
-	<?php echo $this->poll->title ? $this->poll->title : $this->params->get('page_title'); ?>
+	<?php echo $this->poll->title ? $this->escape($this->poll->title) : $this->escape($this->params->get('page_title')); ?>
 </div>
 <?php endif; ?>
 <div class="contentpane<?php echo $this->params->get( 'pageclass_sfx' ) ?>">

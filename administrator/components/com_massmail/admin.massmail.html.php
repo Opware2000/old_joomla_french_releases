@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.massmail.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: admin.massmail.html.php 9980 2008-02-01 18:02:34Z ircmaxell $
 * @package		Joomla
 * @subpackage	Massmail
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 * @package		Joomla
 * @subpackage	Massmail
 */
-class HTML_massmail {
+class HTML_massmail
+{
 	function messageForm( &$lists, $option ) {
 		?>
 		<script language="javascript" type="text/javascript">
@@ -44,7 +45,7 @@ class HTML_massmail {
 
 		<form action="index.php" name="adminForm" method="post">
 
-		<div class="col30">
+		<div class="col width-30">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -83,11 +84,23 @@ class HTML_massmail {
 						<?php echo $lists['gid']; ?>
 					</td>
 				</tr>
+
+				<tr>
+			       <td class="key">
+							<label for="mm_bcc" title="<?php echo JText::_( 'Send as Blind Carbon Copy' ); ?>">
+									<?php echo JText::_( 'Recipients as BCC' ); ?>:
+							</label>
+					</td>
+					<td>
+							<input type="checkbox" name="mm_bcc" id="mm_bcc" value="1" />
+					</td>
+				</tr>
+
 				</table>
 			</fieldset>
 		</div>
 
-		<div class="col70">
+		<div class="col width-70">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Message' ); ?></legend>
 
@@ -119,8 +132,8 @@ class HTML_massmail {
 
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 }
-?>

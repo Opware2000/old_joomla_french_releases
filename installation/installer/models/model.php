@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @version		$Id: model.php 8524 2007-08-23 04:52:30Z humvee $
+ * @version		$Id: model.php 9981 2008-02-04 14:19:13Z willebil $
  * @package		Joomla
  * @subpackage	Installation
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -79,6 +79,7 @@ class JInstallationModel extends JModel
 
 		$vars	=& $this->getVars();
 
+		jimport('joomla.language.helper');
 		$native = JLanguageHelper::detectLanguage();
 		$forced = $mainframe->getLocalise();
 
@@ -145,7 +146,7 @@ class JInstallationModel extends JModel
 
 		$vars	=& $this->getVars();
 
-		$vars['siteurl']	= $mainframe->getSiteURL();
+		$vars['siteurl']	= JURI::root();
 		$vars['adminurl']	= $vars['siteurl'].'administrator/';
 
 		return true;
@@ -274,24 +275,23 @@ class JInstallationModel extends JModel
 	 */
 	function makeDB($vars = false)
 	{
+		global $mainframe;
+
 		// Initialize variables
 		if ($vars === false) {
 			$vars	= $this->getVars();
 		}
-		$errors 	= null;
 
+		$errors 	= null;
 		$lang 		= JArrayHelper::getValue($vars, 'lang', 'en-GB');
 		$DBcreated	= JArrayHelper::getValue($vars, 'DBcreated', '0');
-
 		$DBtype 	= JArrayHelper::getValue($vars, 'DBtype', 'mysql');
 		$DBhostname = JArrayHelper::getValue($vars, 'DBhostname', '');
 		$DBuserName = JArrayHelper::getValue($vars, 'DBuserName', '');
 		$DBpassword = JArrayHelper::getValue($vars, 'DBpassword', '');
 		$DBname 	= JArrayHelper::getValue($vars, 'DBname', '');
 		$DBPrefix 	= JArrayHelper::getValue($vars, 'DBPrefix', 'jos_');
-		$DBOld 		= JArrayHelper::getValue($vars, 'DBOld', 'bu');
-		//		$DBSample = mosGetParam($vars, 'DBSample', 1);
-		$DButfSupport 	= intval(JArrayHelper::getValue($vars, 'DButfSupport', 0));
+		$DBOld 		= JArrayHelper::getValue($vars, 'DBOld', 'bu');	
 		$DBversion 		= JArrayHelper::getValue($vars, 'DBversion', '');
 
 		// these 3 errors should be caught by the javascript in dbConfig
@@ -340,7 +340,10 @@ class JInstallationModel extends JModel
 				$this->setData('errors', $db->getErrorMsg());
 				return false;
 			}
-
+			
+			//Check utf8 support of database
+			$DButfSupport = $db->hasUTF();
+			
 			// Try to select the database
 			if ( ! $db->select($DBname) )
 			{
@@ -413,6 +416,35 @@ class JInstallationModel extends JModel
 				//return JInstallationView::error($vars, JText::_('WARNPOPULATINGDB'), 'dbconfig', JInstallationHelper::errors2string($errors));
 			}
 
+			// Handle default backend language setting. This feature is available for
+			// localized versions of Joomla! 1.5.
+			$langfiles = $mainframe->getLocaliseAdmin();
+			if (in_array($lang, $langfiles['admin']) || in_array($lang, $langfiles['site'])) {
+				// Determine the language settings
+				$param[] = Array();
+				if (in_array($lang, $langfiles['admin'])) {
+					$langparam[] = "administrator=$lang";
+				}
+
+				if (in_array($lang, $langfiles['site'])) {
+					$langparam[] = "site=$lang";
+				}
+				$langparams = implode("\n", $langparam);
+
+				// Because database config has not yet been set we just
+				// do the trick by a plain update of the proper record.
+				$where[] = "`option`='com_languages'";
+				$where = (count($where) ? ' WHERE '.implode(' AND ', $where) : '');
+
+				$query = "UPDATE #__components " .
+						"SET params='$langparams'" .
+						$where;
+
+				$db->setQuery($query);
+				if (!$db->query()) {
+					return false;
+				}
+			}
 		}
 
 		return true;
@@ -435,7 +467,7 @@ class JInstallationModel extends JModel
 		if($vars['ftpEnable']) {
 			JInstallationHelper::setFTPCfg( $vars );
 		}
-		
+
 		// Check a few directories are writeable as this may cause issues
 		if(!is_writeable(JPATH_SITE.DS.'tmp') || !is_writeable(JPATH_SITE.DS.'installation'.DS.'sql'.DS.'migration')) {
 			$vars['dircheck'] = JText::_('Some paths may be unwritable');
@@ -528,8 +560,8 @@ class JInstallationModel extends JModel
 		$lists	= array ();
 
 		$phpOptions[] = array (
-			'label' => JText::_('PHP version').' >= 4.3.0',
-			'state' => phpversion() < '4.3' ? 'No' : 'Yes'
+			'label' => JText::_('PHP version').' >= 4.3.10',
+			'state' => phpversion() < '4.3.10' ? 'No' : 'Yes'
 		);
 		$phpOptions[] = array (
 			'label' => '- '.JText::_('zlib compression support'),
@@ -567,7 +599,7 @@ class JInstallationModel extends JModel
 			'label' => JText::_('Session path writable'),
 			'state' => is_writable($sp) ? 'Yes' : 'No'
 			);*/
-		$cW = (@ file_exists('../configuration.php') && @ is_writable('../configuration.php')) || is_writable('..');
+		$cW = (@ file_exists('../configuration.php') && @ is_writable('../configuration.php')) || is_writable('../');
 		$phpOptions[] = array (
 			'label' => 'configuration.php '.JText::_('writable'),
 			'state' => $cW ? 'Yes' : 'No',
@@ -658,7 +690,7 @@ class JInstallationModel extends JModel
 		jimport( 'joomla.user.helper' );
 
 		// Set some needed variables
-		$vars['siteUrl']		= $mainframe->getSiteURL();
+		$vars['siteUrl']		= JURI::root();
 		$vars['secret']			= JUserHelper::genRandomPassword(16);
 
 		$vars['offline']		= JText::_( 'STDOFFLINEMSG' );
@@ -736,7 +768,7 @@ class JInstallationModel extends JModel
 		if (file_exists($path)) {
 			$canWrite = is_writable($path);
 		} else {
-			$canWrite = is_writable(JPATH_CONFIGURATION);
+			$canWrite = is_writable(JPATH_CONFIGURATION.DS);
 		}
 
 		/*
@@ -744,7 +776,7 @@ class JInstallationModel extends JModel
 		 * is not writable we need to use FTP
 		 */
 		$ftpFlag = false;
-		if ((file_exists($path) && !is_writable($path)) || (!file_exists($path) && !is_writable(dirname($path)))) {
+		if ((file_exists($path) && !is_writable($path)) || (!file_exists($path) && !is_writable(dirname($path).'/'))) {
 			$ftpFlag = true;
 		}
 
@@ -881,7 +913,7 @@ class JInstallationModel extends JModel
 		$args =& $this->getVars();
 		$db = & JInstallationHelper::getDBO($args['DBtype'], $args['DBhostname'], $args['DBuserName'], $args['DBpassword'], $args['DBname'], $args['DBPrefix']);
 		$migResult = JInstallationHelper::postMigrate( $db, $migErrors, $args );
-		if(!$migResult) echo "Migration Successful, press next to continue";
+		if(!$migResult) echo JText::_("Migration Successful");
 			else {
 				echo '<div id="installer">';
 				echo '<p>'.JText::_('Migration failed').':</p>';

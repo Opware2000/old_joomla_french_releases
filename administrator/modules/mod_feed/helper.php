@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -120,8 +120,7 @@ class modFeedHelper
 					if ( !is_null( $currItem->get_link() ) ) {
 					?>
 						<a href="<?php echo $currItem->get_link(); ?>" target="_child">
-						<?php echo $currItem->get_title(); ?>
-						</a>
+						<?php echo $currItem->get_title(); ?></a>
 					<?php
 					}
 

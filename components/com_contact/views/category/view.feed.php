@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
+ * @version		$Id: view.feed.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Contact
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -31,7 +31,7 @@ class ContactViewCategory extends JView
 		$document	=& JFactory::getDocument();
 		$document->link = JRoute::_('index.php?option=com_contact&view=category&catid='.JRequest::getVar('catid',null, '', 'int'));
 
-		$limit 		= JRequest::getVar('limit', 0, '', 'int');
+		$limit 		= JRequest::getVar('limit', $mainframe->getCfg('feed_limit'), '', 'int');
 		$limitstart = JRequest::getVar('limitstart', 0, '', 'int');
 		$catid  	= JRequest::getVar('catid', 0, '', 'int');
 
@@ -46,7 +46,8 @@ class ContactViewCategory extends JView
 		. ' CONCAT( a.con_position, \' - \', a.misc ) AS description,'
 		. ' "" AS date,'
 		. ' c.title AS category,'
-		. ' a.id AS id'
+		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug,'
+		. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(":", c.id, c.alias) ELSE c.id END as catslug'
 		. ' FROM #__contact_details AS a'
 		. ' LEFT JOIN #__categories AS c ON c.id = a.catid'
 		. $where
@@ -58,11 +59,11 @@ class ContactViewCategory extends JView
 		foreach ( $rows as $row )
 		{
 			// strip html from feed item title
-			$title = htmlspecialchars( $row->title );
+			$title = $this->escape( $row->title );
 			$title = html_entity_decode( $title );
 
 			// url link to article
-			$link = JRoute::_('index.php?option=com_contact&view=contact&id='. $row->id .'&catid='.$row->catid );
+			$link = JRoute::_('index.php?option=com_contact&view=contact&id='. $row->slug .'&catid='.$row->catslug );
 
 			// strip html from feed item description text
 			$description = $row->description;

@@ -1,11 +1,12 @@
 <?php
 /**
- * @version		$Id: sysinfo_directory.php 8630 2007-08-30 04:30:51Z robs $
+ * @version		$Id: sysinfo_directory.php 9506 2007-12-08 21:00:27Z willebil $
  */
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.filesystem.folder');
+$cparams = JComponentHelper::getParams ('com_media');
 ?>
 <fieldset class="adminform">
 	<legend><?php echo JText::_( 'Directory Permissions' ); ?></legend>
@@ -45,14 +46,14 @@ jimport('joomla.filesystem.folder');
 			writableCell( 'components' );
 			writableCell( 'images' );
 			writableCell( 'images/banners' );
-			writableCell( 'images/stories' );
+			writableCell( $cparams->get('image_path'));
 			writableCell( 'language' );
 
 			// List all site languages
 			$site_langs	= JFolder::folders(JPATH_SITE.DS.'language');
 			foreach ($site_langs as $slang)
 			{
-				writableCell( 'administrator/language/'.$slang );
+				writableCell( 'language/'.$slang );
 			}
 
 			writableCell( 'modules' );

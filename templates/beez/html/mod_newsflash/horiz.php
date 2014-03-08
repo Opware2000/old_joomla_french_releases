@@ -1,11 +1,8 @@
-<?php
-/**
- * @version $Id: horiz.php 8637 2007-08-30 16:25:06Z friesengeist $
- */
-
+<?php // @version $Id: horiz.php 8796 2007-09-09 15:46:34Z jinx $
 defined('_JEXEC') or die('Restricted access');
+?>
 
-if (count($list) == 1) :
+<?php if (count($list) == 1) :
 	$item = $list[0];
 	modNewsFlashHelper::renderItem($item, $params, $access);
 elseif (count($list) > 1) : ?>

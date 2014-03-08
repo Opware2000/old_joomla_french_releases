@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: functions.php 8563 2007-08-25 20:50:33Z jinx $
+ * @version		$Id: functions.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Legacy
  * @subpackage	1.5
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -369,7 +369,7 @@ function mosArrayToInts( &$array, $default=null ) {
 }
 
 /**
- * Legacy function, use {@link JError::getBackTrace() JError->getBackTrace()} instead
+ * Legacy function, use {@link JException::getTrace() JException->getTrace()} instead
  *
  * @deprecated	As of version 1.5
  */
@@ -503,14 +503,14 @@ function mosGetParam( &$arr, $name, $def=null, $mask=0 )
 
 	// Now we handle input filtering
 	if ($mask & 2) {
-		// If the allow raw flag is set, do not modify the variable
-		$var = $var;
-	} elseif ($mask & 4) {
 		// If the allow html flag is set, apply a safe html filter to the variable
 		if (is_null($safeHtmlFilter)) {
 			$safeHtmlFilter = & JFilterInput::getInstance(null, null, 1, 1);
 		}
 		$var = $safeHtmlFilter->clean($var, 'none');
+	} elseif ($mask & 4) {
+		// If the allow raw flag is set, do not modify the variable
+		$var = $var;
 	} else {
 		// Since no allow flags were set, we will apply the most strict filter to the variable
 		if (is_null($noHtmlFilter)) {
@@ -602,7 +602,7 @@ function editorArea($name, $content, $hiddenField, $width, $height, $col, $row)
 function mosMenuCheck( $Itemid, $menu_option, $task, $gid )
 {
 	$user =& JFactory::getUser();
-	$menus =& JMenu::getInstance();
+	$menus =& JSite::getMenu();
 	$menus->authorize($Itemid, $user->get('aid'));
 }
 
@@ -652,7 +652,6 @@ function mosCurrentDate( $format="" )
  * @deprecated	As of version 1.5
  */
 function mosMakeHtmlSafe( &$mixed, $quote_style=ENT_QUOTES, $exclude_keys='' ) {
-	jimport('joomla.filter.output');
 	JFilterOutput::objectHTMLSafe( $mixed, $quote_style, $exclude_keys );
 }
 
@@ -774,9 +773,9 @@ function SortArrayObjects( &$a, $k, $sort_direction=1 )
  * @deprecated	As of version 1.5
  */
 function josGetArrayInts( $name, $type=NULL ) {
-	
+
 	$array	=  JRequest::getVar($name, array(), 'default', 'array' );
-	
+
 	return $array;
 }
 
@@ -852,7 +851,16 @@ function loadOverlib() {
 *
 * @deprecated	As of version 1.5
 */
-function mosToolTip( $tooltip, $title='', $width='', $image='tooltip.png', $text='', $href='', $link=1 ) {
+function mosToolTip( $tooltip, $title='', $width='', $image='tooltip.png', $text='', $href='', $link=1 )
+{
+	// Initialize the toolips if required
+	static $init;
+	if ( ! $init )
+	{
+		JHTML::_('behavior.tooltip');
+		$init = true;
+	}
+
 	return JHTML::_('tooltip', $tooltip, $title, $image, $text, $href, $link);
 }
 
@@ -861,8 +869,14 @@ function mosToolTip( $tooltip, $title='', $width='', $image='tooltip.png', $text
  *
  * @deprecated	As of version 1.5
  */
-function sefRelToAbs($value) {
-	return JRoute::_($value);
+function sefRelToAbs($value)
+{
+	// Replace all &amp; with & as the router doesn't understand &amp;
+	$url = str_replace('&amp;', '&', $value);
+
+	$uri    = JURI::getInstance();
+	$prefix = $uri->toString(array('scheme', 'host', 'port'));
+	return $prefix.JRoute::_($url);
 }
 
 
@@ -871,9 +885,7 @@ function sefRelToAbs($value) {
  *
  * @deprecated	As of version 1.5
  */
-function ampReplace( $text )
-{
-	jimport('joomla.filter.output');
+function ampReplace( $text ) {
 	return JFilterOutput::ampReplace($text);
 }
 
@@ -894,5 +906,5 @@ function mosTreeRecurse( $id, $indent, $list, &$children, $maxlevel=9999, $level
  * @deprecated	As of version 1.5
  */
 function mosWarning($warning, $title='Joomla! Warning') {
-	return JHTML::tooltip('blah', $title, 'warning.png', null, null, null);
+	return JHTML::tooltip($warning, $title, 'warning.png', null, null, null);
 }

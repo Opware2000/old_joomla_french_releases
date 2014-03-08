@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: controller.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -80,13 +80,12 @@ class JController extends JObject
 	var $_doTask 	= null;
 
 	/**
-	 * The set of search directories for resources (views or models).
+	 * The set of search directories for resources (views).
 	 *
 	 * @var array
 	 * @access	protected
 	 */
 	var $_path = array(
-		'model'	=> array(),
 		'view'	=> array()
 	);
 
@@ -194,9 +193,9 @@ class JController extends JObject
 		// set the default model search path
 		if ( array_key_exists( 'model_path', $config ) ) {
 			// user-defined dirs
-			$this->_setPath( 'model', $config['model_path'] );
+			$this->addModelPath($config['model_path']);
 		} else {
-			$this->_setPath( 'model', $this->_basePath.DS.'models' );
+			$this->addModelPath($this->_basePath.DS.'models');
 		}
 
 		// set the default view search path
@@ -291,10 +290,10 @@ class JController extends JObject
 		$document =& JFactory::getDocument();
 
 		$viewType	= $document->getType();
-		$viewName	= JRequest::getCmd( 'view', $this->_name );
+		$viewName	= JRequest::getCmd( 'view', $this->getName() );
 		$viewLayout	= JRequest::getCmd( 'layout', 'default' );
 
-		$view = & $this->getView( $viewName, $viewType);
+		$view = & $this->getView( $viewName, $viewType, '', array( 'base_path'=>$this->_basePath));
 
 		// Get/Create the model
 		if ($model = & $this->getModel($viewName)) {
@@ -335,24 +334,30 @@ class JController extends JObject
 	 * Method to get a model object, loading it if required.
 	 *
 	 * @access	public
-	 * @param	string	The model name.
+	 * @param	string	The model name. Optional.
 	 * @param	string	The class prefix. Optional.
+	 * @param	array	Configuration array for model. Optional.
 	 * @return	object	The model.
 	 * @since	1.5
 	 */
-	function &getModel( $name, $prefix = '' )
+	function &getModel( $name = '', $prefix = '', $config = array() )
 	{
-		if ( empty( $prefix ) ) {
-			$prefix = $this->_name . 'Model';
+		if ( empty( $name ) ) {
+			$name = $this->getName();
 		}
 
-		if ( $model = & $this->_createModel( $name, $prefix ) )
+		if ( empty( $prefix ) ) {
+			$prefix = $this->getName() . 'Model';
+		}
+
+		if ( $model = & $this->_createModel( $name, $prefix, $config ) )
 		{
 			// task is a reserved state
 			$model->setState( 'task', $this->_task );
 
-			// Get menu item information if Itemid exists
-			$menu	=& JMenu::getInstance();
+			// Lets get the application object and set menu information if its available
+			$app	= &JFactory::getApplication();
+			$menu	= &$app->getMenu();
 			if (is_object( $menu ))
 			{
 				if ($item = $menu->getActive())
@@ -367,16 +372,17 @@ class JController extends JObject
 	}
 
 	/**
-	 * Adds to the stack of controller model paths in LIFO order.
+	 * Adds to the stack of model paths in LIFO order.
 	 *
 	 * @static
 	 * @param	string|array The directory (string), or list of directories
-	 * (array) to add.
+	 *                       (array) to add.
 	 * @return	void
 	 */
 	function addModelPath( $path )
 	{
-		$this->_addPath( 'model', $path );
+		jimport('joomla.application.component.model');
+		JModel::addIncludePath($path);
 	}
 
 	/**
@@ -449,11 +455,11 @@ class JController extends JObject
 		}
 
 		if ( empty( $name ) ) {
-			$name = $this->_name;
+			$name = $this->getName();
 		}
 
 		if ( empty( $prefix ) ) {
-			$prefix = $this->_name . 'View';
+			$prefix = $this->getName() . 'View';
 		}
 
 		if ( empty( $views[$name] ) )
@@ -491,7 +497,7 @@ class JController extends JObject
 	 * @access	public
 	 * @param	string	The task.
 	 * @param	string	The name of the method in the derived class to perform
-	 * for this task.
+	 *                  for this task.
 	 * @return	void
 	 * @since	1.5
 	 */
@@ -499,8 +505,6 @@ class JController extends JObject
 	{
 		if ( in_array( strtolower( $method ), $this->_methods ) ) {
 			$this->_taskMap[strtolower( $task )] = $method;
-		} else {
-			JError::raiseError( 404, JText::_( 'Method not found:' ) . $method );
 		}
 	}
 
@@ -575,45 +579,20 @@ class JController extends JObject
 	 * @access	private
 	 * @param	string  The name of the model.
 	 * @param	string	Optional model prefix.
+	 * @param	array	Configuration array for the model. Optional.
 	 * @return	mixed	Model object on success; otherwise null
 	 * failure.
 	 * @since	1.5
 	 */
-	function &_createModel( $name, $prefix = '')
+	function &_createModel( $name, $prefix = '', $config = array())
 	{
 		$result = null;
 
 		// Clean the model name
-		$modelName	= preg_replace( '/[^A-Z0-9_]/i', '', $name );
-		$classPrefix	= preg_replace( '/[^A-Z0-9_]/i', '', $prefix );
+		$modelName	 = preg_replace( '/[^A-Z0-9_]/i', '', $name );
+		$classPrefix = preg_replace( '/[^A-Z0-9_]/i', '', $prefix );
 
-		// Build the model class name
-		$modelClass = $classPrefix . $modelName;
-
-		if ( !class_exists( $modelClass ) )
-		{
-			jimport( 'joomla.filesystem.path' );
-			$path = JPath::find(
-				$this->_path['model'],
-				$this->_createFileName( 'model', array( 'name' => $modelName ) )
-			);
-			if ( $path )
-			{
-				require $path;
-				if ( !class_exists( $modelClass ) ) {
-					JError::raiseWarning(
-						0,
-						JText::_( 'Model class not found [class, file]:' )
-						. ' ' . $modelClass . ', ' . $path
-					);
-					return $result;
-				}
-			} else {
-				return $result;
-			}
-		}
-
-		$result = new $modelClass();
+		$result =& JModel::getInstance($modelName, $classPrefix, $config);
 		return $result;
 	}
 
@@ -738,10 +717,7 @@ class JController extends JObject
 				}
 
 				$filename = strtolower($parts['name']).DS.'view'.$parts['type'].'.php';
-				break;
-			case 'model':
-				 $filename = strtolower($parts['name']).'.php';
-				break;
+			break;
 		}
 		return $filename;
 	}

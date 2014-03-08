@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8445 2007-08-18 21:03:25Z hackwar $
+ * @version		$Id: controller.php 9912 2008-01-09 21:14:31Z hackwar $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -67,6 +66,9 @@ class ContentController extends JController
 		$limit		= $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
 		$limitstart	= $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
+		// In case limit has been changed, adjust limitstart accordingly
+		$limitstart = ( $limit != 0 ? (floor($limitstart / $limit) * $limit) : 0 );
+
 		//$where[] = "c.state >= 0";
 		$where[] = 'c.state != -2';
 
@@ -113,7 +115,7 @@ class ContentController extends JController
 		}
 		// Keyword filter
 		if ($search) {
-			$where[] = '(LOWER( c.title ) LIKE ' . $db->Quote( "%$search%" ) .
+			$where[] = '(LOWER( c.title ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false ) .
 				' OR c.id = ' . (int) $search . ')';
 		}
 
@@ -251,7 +253,7 @@ class ContentController extends JController
 		// Keyword filter
 		if ($search)
 		{
-			$where[] = 'LOWER( c.title ) LIKE '.$db->Quote('%'.$search.'%');
+			$where[] = 'LOWER( c.title ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 
 		// TODO: Sanitise $filter_order
@@ -333,7 +335,7 @@ class ContentController extends JController
 	* @param integer The unique id of the record to edit (0 if new)
 	* @param integer The id of the content section
 	*/
-	function editContent()
+	function editContent($edit)
 	{
 		global $mainframe;
 
@@ -351,7 +353,8 @@ class ContentController extends JController
 
 		// Create and load the content table row
 		$row = & JTable::getInstance('content');
-		$row->load($id);
+		if($edit)
+			$row->load($id);
 
 		if ($id) {
 			$sectionid = $row->sectionid;
@@ -387,8 +390,6 @@ class ContentController extends JController
 			} else {
 				$row->images = array ();
 			}
-
-			$row->publish_down 	= ContentController::_validateDate($row->publish_down);
 
 			$query = 'SELECT name' .
 					' FROM #__users'.
@@ -523,7 +524,10 @@ class ContentController extends JController
 				' WHERE catid = ' . (int) $row->catid .
 				' AND state >= 0' .
 				' ORDER BY ordering';
-		$lists['ordering'] = JHTML::_('list.specificordering', $row, $id, $query, 1);
+		if($edit)
+			$lists['ordering'] = JHTML::_('list.specificordering', $row, $id, $query, 1);
+		else
+			$lists['ordering'] = JHTML::_('list.specificordering', $row, '', $query, 1);
 
 		// build the html radio buttons for frontpage
 		$lists['frontpage'] = JHTML::_('select.booleanlist', 'frontpage', '', $row->frontpage);
@@ -552,7 +556,11 @@ class ContentController extends JController
 
 		$form->set('created', JHTML::_('date', $row->created, '%Y-%m-%d %H:%M:%S'));
 		$form->set('publish_up', JHTML::_('date', $row->publish_up, '%Y-%m-%d %H:%M:%S'));
-		$form->set('publish_down', $row->publish_down);
+		if (JHTML::_('date', $row->publish_down, '%Y') <= 1969 || $row->publish_down == $db->getNullDate()) {
+			$form->set('publish_down', JText::_('Never'));
+		} else {
+			$form->set('publish_down', JHTML::_('date', $row->publish_down, '%Y-%m-%d %H:%M:%S'));
+		}
 
 		// Advanced Group
 		$form->loadINI($row->attribs);
@@ -572,6 +580,9 @@ class ContentController extends JController
 	function saveContent()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		jimport('joomla.utilities.date');
 
@@ -601,7 +612,7 @@ class ContentController extends JController
 		// Are we saving from an item edit?
 		if ($row->id) {
 			$datenow = new JDate();
-			$row->modified 		= $datenow->toFormat();
+			$row->modified 		= $datenow->toMySQL();
 			$row->modified_by 	= $user->get('id');
 		}
 
@@ -774,6 +785,9 @@ class ContentController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db		= & JFactory::getDBO();
 		$user	= & JFactory::getUser();
@@ -850,6 +864,9 @@ class ContentController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db		=& JFactory::getDBO();
 
@@ -905,6 +922,9 @@ class ContentController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db			= & JFactory::getDBO();
 
@@ -954,6 +974,9 @@ class ContentController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db	= & JFactory::getDBO();
 
@@ -972,6 +995,9 @@ class ContentController extends JController
 	function orderContent($direction)
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize variables
 		$db		= & JFactory::getDBO();
@@ -996,6 +1022,9 @@ class ContentController extends JController
 	*/
 	function moveSection()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db			=& JFactory::getDBO();
 
@@ -1039,6 +1068,9 @@ class ContentController extends JController
 	function moveSectionSave()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize variables
 		$db			= & JFactory::getDBO();
@@ -1120,6 +1152,9 @@ class ContentController extends JController
 	**/
 	function copyItem()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db			= & JFactory::getDBO();
 
@@ -1168,6 +1203,9 @@ class ContentController extends JController
 	function copyItemSave()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize variables
 		$db			= & JFactory::getDBO();
@@ -1275,6 +1313,9 @@ class ContentController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize variables
 		$db		= & JFactory::getDBO();
 
@@ -1308,6 +1349,9 @@ class ContentController extends JController
 	function saveOrder()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize variables
 		$db			= & JFactory::getDBO();
@@ -1387,9 +1431,15 @@ class ContentController extends JController
 		$db->setQuery($query);
 		$template = $db->loadResult();
 
+		// check if template editor stylesheet exists
+		if (!file_exists( JPATH_SITE.DS.'templates'.DS.$template.DS.'css'.DS.'editor.css' )) {
+			$template = 'system';
+		}
+
 		// Set page title
 		$document->setTitle(JText::_('Article Preview'));
 		$document->addStyleSheet('../templates/'.$template.'/css/editor.css');
+		$document->setBase(JUri::root());
 
 		// Render article preview
 		ContentView::previewContent();
@@ -1401,18 +1451,4 @@ class ContentController extends JController
 		$document->setTitle(JText::_('PGB ARTICLE PAGEBRK'));
 		ContentView::insertPagebreak();
 	}
-
-	function _validateDate($date)
-	{
-		$db =& JFactory::getDBO();
-
-		if (JHTML::_('date', $date, '%Y') == 1969 || $date == $db->getNullDate()) {
-			$newDate = JText::_('Never');
-		} else {
-			$newDate = JHTML::_('date', $date, '%Y-%m-%d %H:%M:%S');
-		}
-
-		return $newDate;
-	}
 }
-?>

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: poll.php 7984 2007-07-15 14:59:15Z friesengeist $
+* @version		$Id: poll.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Polls
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -28,7 +28,7 @@ class PollModelPoll extends JModel
 	 * @param int The id of the poll
 	 * @param int The id of the option selected
 	 */
-	function addVote( $poll_id, $option_id )
+	function vote( $poll_id, $option_id )
 	{
 		$db = $this->getDBO();
 		$poll_id	= (int) $poll_id;

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: banner.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: banner.php 9897 2008-01-05 23:21:53Z louis $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -101,29 +101,27 @@ class TableBanner extends JTable
 	{
 		// check for valid client id
 		if (is_null($this->cid) || $this->cid == 0) {
-			$this->_error = JText::_( 'BNR_CLIENT' );
+			$this->setError(JText::_( 'BNR_CLIENT' ));
 			return false;
 		}
 
 		// check for valid name
 		if(trim($this->name) == '') {
-			$this->_error = JText::_( 'BNR_NAME' );
+			$this->setError(JText::_( 'BNR_NAME' ));
 			return false;
 		}
 
-		jimport('joomla.filter.output');
-		$alias = JFilterOutput::stringURLSafe($this->name);
-
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		if(empty($this->alias)) {
+			$this->alias = $this->name;
 		}
+		$this->alias = JFilterOutput::stringURLSafe($this->alias);
 
 		/*if(trim($this->imageurl) == '') {
-			$this->_error = JText::_( 'BNR_IMAGE' );
+			$this->setError(JText::_( 'BNR_IMAGE' ));
 			return false;
 		}
 		if(trim($this->clickurl) == '' && trim($this->custombannercode) == '') {
-			$this->_error = JText::_( 'BNR_URL' );
+			$this->setError(JText::_( 'BNR_URL' ));
 			return false;
 		}*/
 

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
+* @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Media
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -35,13 +35,11 @@ class MediaViewImagesList extends JView
 		JResponse::allowCache(false);
 
 		JHTML::_('behavior.mootools');
+		JHTML::_('stylesheet', 'popup-imagelist.css', 'administrator/components/com_media/assets/');
 
-		$document = &JFactory::getDocument();
-		$document->addStyleSheet('components/com_media/assets/popup-imagelist.css');
-
+		$document =& JFactory::getDocument();
 		$document->addScriptDeclaration("var ImageManager = window.parent.ImageManager;");
 
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 		$this->assign('baseURL', COM_MEDIA_BASEURL);
 		$this->assignRef('images', $this->get('images'));
 		$this->assignRef('folders', $this->get('folders'));

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: frontpage.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: frontpage.php 9811 2008-01-03 00:42:00Z eddieajau $
 * @package		Joomla
 * @subpackage	Content
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -46,7 +46,7 @@ class FrontpageView
 
 			<table>
 				<tr>
-					<td align="left" width="100%">
+					<td width="100%" class="filter">
 						<?php echo JText::_( 'Filter' ); ?>:
 						<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 						<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
@@ -161,7 +161,8 @@ class FrontpageView
 						$author = $row->created_by_alias;
 					} else {
 						$linkA 	= JRoute::_( 'index.php?option=com_users&task=edit&cid[]='. $row->created_by );
-						$author = '<a href="'. $linkA .'" title="'. JText::_( 'Edit User' ) .'">'. $row->author .'</a>';
+						$author='<span class="editlinktip hasTip" title="'.JText::_( 'Edit User' ).'::'.$row->author.'">' .
+								'<a href="'. $linkA .'">'. $row->author .'</a><span>';
 					}
 				} else {
 					if ( $row->created_by_alias ) {
@@ -196,8 +197,9 @@ class FrontpageView
 							echo $row->title;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Content' ); ?>">
-								<?php echo $row->title; ?></a>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Content' );?>::<?php echo $row->name; ?>">
+							<a href="<?php echo $link; ?>">
+								<?php echo $row->title; ?></a></span>
 							<?php
 						}
 						?>
@@ -226,12 +228,18 @@ class FrontpageView
 						<?php echo $row->id;?>
 					</td>
 					<td>
-						<a href="<?php echo $row->sect_link; ?>" title="<?php echo $title_sec; ?>">
-							<?php echo $row->sect_name; ?></a>
+						<?php if ($row->sectionid) : ?>
+						<span class="editlinktip hasTip" title="<?php echo $title_sec; ?>::<?php echo $row->sect_name; ?>">
+							<a href="<?php echo $row->sect_link; ?>">
+								<?php echo $row->sect_name; ?></a></span>
+						<?php endif; ?>
 					</td>
 					<td>
-						<a href="<?php echo $row->cat_link; ?>" title="<?php echo $title_cat; ?>">
-							<?php echo $row->name; ?></a>
+						<?php if ($row->catid) : ?>
+						<span class="editlinktip hasTip" title="<?php echo $title_cat; ?>::<?php echo $row->name; ?>">
+							<a href="<?php echo $row->cat_link; ?>" title="<?php echo $title_cat; ?>">
+								<?php echo $row->name; ?></a></span>
+						<?php endif; ?>
 					</td>
 					<td>
 						<?php echo $author; ?>
@@ -244,13 +252,13 @@ class FrontpageView
 			</tbody>
 			</table>
 			<?php JHTML::_('content.legend'); ?>
-		</div>
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -32,16 +32,17 @@ class ContentViewArticle extends ContentView
 
 		$user		   =& JFactory::getUser();
 		$document	   =& JFactory::getDocument();
-		$dispatcher	   =& JEventDispatcher::getInstance();
+		$dispatcher	   =& JDispatcher::getInstance();
 		$pathway	   =& $mainframe->getPathway();
-		$contentConfig = &JComponentHelper::getParams( 'com_content' );
+		$params 	   =& $mainframe->getParams('com_content');
 
 		// Initialize variables
 		$article	=& $this->get('Article');
-		$params		=& $article->parameters;
+		$aparams		=& $article->parameters;
+		$params->merge($aparams);
 
 		// Get the menu item object
-		$menus = &JMenu::getInstance();
+		$menus = &JSite::getMenu();
 		$menu  = $menus->getActive();
 
 		if($this->getLayout() == 'pagebreak') {
@@ -60,13 +61,66 @@ class ContentViewArticle extends ContentView
 			return JError::raiseError( 404, JText::sprintf( 'Article # not found', $id ) );
 		}
 
-		$linkOn		= null;
-		$linkText	= null;
-
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
 
-		//set breadcrumbs
-		if($menu->query['view'] != 'article')
+		// Create a user access object for the current user
+		$access = new stdClass();
+		$access->canEdit	= $user->authorize('com_content', 'edit', 'content', 'all');
+		$access->canEditOwn	= $user->authorize('com_content', 'edit', 'content', 'own');
+		$access->canPublish	= $user->authorize('com_content', 'publish', 'content', 'all');
+
+		// Check to see if the user has access to view the full article
+		if ($article->access <= $user->get('aid', 0)) {
+			$article->readmore_link = JRoute::_(ContentHelperRoute::getArticleRoute($article->slug, $article->catslug, $article->sectionid));;
+		} else {
+			$article->readmore_link = JRoute::_("index.php?option=com_user&task=register");
+		}
+
+		/*
+		 * Process the prepare content plugins
+		 */
+		JPluginHelper::importPlugin('content');
+		$results = $dispatcher->trigger('onPrepareContent', array (& $article, & $params, $limitstart));
+
+		/*
+		 * Handle the metadata
+		 */
+		$document->setTitle($article->title);
+
+		if ($article->metadesc) {
+			$document->setDescription( $article->metadesc );
+		}
+		if ($article->metakey) {
+			$document->setMetadata('keywords', $article->metakey);
+		}
+
+		if ($mainframe->getCfg('MetaTitle') == '1') {
+			$mainframe->addMetaTag('title', $article->title);
+		}
+		if ($mainframe->getCfg('MetaAuthor') == '1') {
+			$mainframe->addMetaTag('author', $article->author);
+		}
+
+		$mdata = new JParameter($article->metadata);
+		$mdata = $mdata->toArray();
+		foreach ($mdata as $k => $v)
+		{
+			if ($v) {
+				$document->setMetadata($k, $v);
+			}
+		}
+
+		// If there is a pagebreak heading or title, add it to the page title
+		if (!empty($article->page_title))
+		{
+			$article->title = $article->title .' - '. $article->page_title;
+			$document->setTitle($article->page_title.' - '.JText::sprintf('Page %s', $limitstart + 1));
+		}
+
+		/*
+		 * Handle the breadcrumbs
+		 */
+		if($menu && $menu->query['view'] != 'article')
 		{
 			switch ($menu->query['view'])
 			{
@@ -80,81 +134,9 @@ class ContentViewArticle extends ContentView
 			}
 		}
 
-		// Handle Page Title
-		$document->setTitle($article->title);
-
-		// Handle metadata
-		if ($article->metadesc) {
-			$document->setDescription( $article->metadesc );
-		}
-		if ($article->metakey) {
-			$document->setMetadata('keywords', $article->metakey);
-		}
-		// Other metadata
-		$mdata = new JParameter($article->metadata);
-		$mdata = $mdata->toArray();
-		foreach ($mdata as $k => $v)
-		{
-			if ($v) {
-				$document->setMetadata($k, $v);
-			}
-		}
-
-		// If there is a pagebreak heading or title, add it to the page title
-		if (isset ($article->page_title)) {
-			$document->setTitle($article->title.' '.$article->page_title);
-		}
-
-		// Create a user access object for the current user
-		$access = new stdClass();
-		$access->canEdit		= $user->authorize('com_content', 'edit', 'content', 'all');
-		$access->canEditOwn	= $user->authorize('com_content', 'edit', 'content', 'own');
-		$access->canPublish	= $user->authorize('com_content', 'publish', 'content', 'all');
-
-		// Process the content plugins
-		JPluginHelper::importPlugin('content');
-		$results = $dispatcher->trigger('onPrepareContent', array (& $article, & $params, $limitstart));
-
-		if ($params->get('show_readmore') || $params->get('link_titles'))
-		{
-			if ($params->get('show_intro'))
-			{
-				// Check to see if the user has access to view the full article
-				if ($article->access <= $user->get('aid', 0))
-				{
-					$linkOn = JRoute::_("index.php?option=com_content&view=article&id=".$article->slug);
-
-					if (@$article->readmore) {
-						// text for the readmore link
-						$linkText = JText::_('Read more...');
-					}
-				}
-				else
-				{
-					$linkOn = JRoute::_("index.php?option=com_user&task=register");
-
-
-					if (@$article->readmore) {
-						// text for the readmore link if accessible only if registered
-						$linkText = JText::_('Register to read more...');
-					}
-				}
-			}
-		}
-
-		/* moved to template - tcp June 27 2007
-		$article->mod_date = '';
-		if (intval($article->modified) != 0) {
-			$article->mod_date = JHTML::_('date', $article->modified);
-		}
-		if (intval($article->created) != 0) {
-			$article->created = JHTML::_('date', $article->created);
-		}
-		*/
-
-		$article->readmore_link = $linkOn;
-		$article->readmore_text = $linkText;
-
+		/*
+		 * Handle display events
+		 */
 		$article->event = new stdClass();
 		$results = $dispatcher->trigger('onAfterDisplayTitle', array ($article, &$params, $limitstart));
 		$article->event->afterDisplayTitle = trim(implode("\n", $results));
@@ -178,11 +160,12 @@ class ContentViewArticle extends ContentView
 
 	function _displayForm($tpl)
 	{
-		global $mainframe, $Itemid;
+		global $mainframe;
 
 		// Initialize variables
 		$document	=& JFactory::getDocument();
 		$user		=& JFactory::getUser();
+		$uri     	 =& JFactory::getURI();
 
 		// Make sure you are logged in and have the necessary access rights
 		if ($user->get('gid') < 19) {
@@ -197,7 +180,6 @@ class ContentViewArticle extends ContentView
 
 		// At some point in the future this will come from a request object
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		$returnid	= JRequest::getVar('Returnid', $Itemid, '', 'int');
 
 		// Add the Calendar includes to the document <head> section
 		JHTML::_('behavior.calendar');
@@ -217,10 +199,6 @@ class ContentViewArticle extends ContentView
 		// Load the JEditor object
 		$editor =& JFactory::getEditor();
 
-		// Ensure the row data is safe html
-		jimport('joomla.filter.output');
-		JFilterOutput::objectHTMLSafe( $article);
-
 		// Build the page title string
 		$title = $article->id ? JText::_('Edit') : JText::_('New');
 
@@ -238,12 +216,17 @@ class ContentViewArticle extends ContentView
 			$article->text = $article->introtext;
 		}
 
-		$this->set('returnid',	$returnid);
-		$this->set('article',	$article);
-		$this->set('params',	$params);
-		$this->set('lists',		$lists);
-		$this->set('editor',	$editor);
-		$this->set('user',		$user);
+		// Ensure the row data is safe html
+		JFilterOutput::objectHTMLSafe( $article);
+
+		$this->assign('action', 	$uri->toString());
+
+		$this->assignRef('article',	$article);
+		$this->assignRef('params',	$params);
+		$this->assignRef('lists',	$lists);
+		$this->assignRef('editor',	$editor);
+		$this->assignRef('user',	$user);
+
 
 		parent::display($tpl);
 	}

@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: ilink.php 8399 2007-08-13 17:27:10Z hackwar $
+ * @version		$Id: ilink.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -24,7 +23,6 @@ jimport('joomla.filesystem.file');
 /**
  * Internal link builder
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Menus
  * @since		1.5

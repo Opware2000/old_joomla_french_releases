@@ -1,8 +1,8 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version		$Id: joomla.javascript.js 7729 2007-06-12 15:15:16Z tcp $
+* @version		$Id: joomla.javascript.js 9765 2007-12-30 08:21:02Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL
 * Joomla! is Free Software
 */
@@ -153,6 +153,7 @@ function moveInList( frmName, srcListName, index, to) {
 	   }
 	}
 	srcList.focus();
+	return true;
 }
 
 function getSelectedOption( frmName, srcListName ) {
@@ -321,10 +322,9 @@ function submitform(pressbutton){
 	if (pressbutton) {
 		document.adminForm.task.value=pressbutton;
 	}
-	try {
+	if (typeof document.adminForm.onsubmit == "function") {
 		document.adminForm.onsubmit();
-		}
-	catch(e){}
+	}
 	document.adminForm.submit();
 }
 
@@ -346,6 +346,7 @@ function getSelected(allbuttons){
 			return allbuttons[i].value
 		}
 	}
+	return null;
 }
 
 // JS Calendar
@@ -397,12 +398,12 @@ function showCalendar(id, dateFormat) {
 		var cal = new Calendar(true, null, selected, closeHandler);
 		calendar = cal;		// remember the calendar in the global
 		cal.setRange(1900, 2070);	// min/max year allowed
-		
+
 		if ( dateFormat )	// optional date format
 		{
 			cal.setDateFormat(dateFormat);
 		}
-		
+
 		calendar.create();		// create a popup calendar
 		calendar.parseDate(el.value); // set it to a new date
 	}
@@ -480,13 +481,13 @@ function mosDHTML(){
 		document.getElementById(elem).className = style;
 	}
 	this.showElem = function(id) {
-		if (elem = document.getElementById(id)) {
+		if ((elem = document.getElementById(id))) {
 			elem.style.visibility = 'visible';
 			elem.style.display = 'block';
 		}
 	}
 	this.hideElem = function(id) {
-		if (elem = document.getElementById(id)) {
+		if ((elem = document.getElementById(id))) {
 			elem.style.visibility = 'hidden';
 			elem.style.display = 'none';
 		}
@@ -521,7 +522,7 @@ function saveorder( n,  task ) {
 
 //needed by saveorder function
 function checkAll_button( n, task ) {
-    
+
     if (!task ) {
 		task = 'saveorder';
 	}

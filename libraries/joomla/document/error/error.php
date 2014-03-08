@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: error.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: error.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -76,32 +76,14 @@ class JDocumentError extends JDocument
 	 */
 	function render( $cache = false, $params = array())
 	{
-		global $mainframe;
-
 		// If no error object is set return null
 		if (!isset($this->_error)) {
 			return;
 		}
 
-		// Send error header and set error page file
-		switch ($this->_error->code)
-		{
-			case '403':
-				JResponse::setHeader('status', '403 Forbidden');
-				$file = "403.php";
-				break;
-
-			case '404':
-				JResponse::setHeader('status', '404 Not Found');
-				$file = "404.php";
-				break;
-
-			case '500':
-			default:
-				JResponse::setHeader('status', '500 Internal Server Error');
-				$file = "500.php";
-				break;
-		}
+		//Set the status header
+		JResponse::setHeader('status', $this->_error->code.' '.str_replace( "\n", ' ', $this->_error->message ));
+		$file = 'error.php';
 
 		// check template
 		$directory	= isset($params['directory']) ? $params['directory'] : 'templates';
@@ -112,9 +94,10 @@ class JDocumentError extends JDocument
 		}
 
 		//set variables
+		$this->baseurl  = JURI::base(true);
 		$this->template = $template;
 		$this->debug	= isset($params['debug']) ? $params['debug'] : false;
-		$this->message	= JText::_($this->_error->message);
+		$this->error	= $this->_error;
 
 		// load
 		$data = $this->_loadTemplate($directory.DS.$template, $file);
@@ -153,7 +136,7 @@ class JDocumentError extends JDocument
 	function renderBacktrace()
 	{
 		$contents	= null;
-		$backtrace	= $this->_error->getBacktrace();
+		$backtrace	= $this->_error->getTrace();
 		if( is_array( $backtrace ) )
 		{
 			ob_start();

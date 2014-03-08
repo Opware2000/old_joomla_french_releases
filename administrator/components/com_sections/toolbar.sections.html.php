@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.sections.html.php 8234 2007-07-28 23:16:01Z humvee $
+* @version		$Id: toolbar.sections.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Sections
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -23,16 +23,16 @@ class TOOLBAR_sections {
 	/**
 	* Draws the menu for Editing an existing category
 	*/
-	function _EDIT() {
+	function _EDIT( $edit) {
 		$cid = JRequest::getVar('cid', array(0), '', 'array');
 		JArrayHelper::toInteger($cid, array(0));
 
-		$text = ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+		$text = ( $edit ? JText::_( 'Edit' ) : JText::_( 'New' ) );
 
 		JToolBarHelper::title( JText::_( 'Section' ).': <small><small>[ '. $text.' ]</small></small>', 'sections.png' );
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
-		if ( $cid[0] ) {
+		if ( $edit ) {
 			// for existing items the button is renamed `close`
 			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
@@ -64,4 +64,3 @@ class TOOLBAR_sections {
 		JToolBarHelper::help( 'screen.sections' );
 	}
 }
-?>

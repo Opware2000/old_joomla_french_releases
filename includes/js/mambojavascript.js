@@ -1,8 +1,8 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version		$Id: mambojavascript.js 6140 2007-01-02 03:44:18Z eddiea $
+* @version		$Id: mambojavascript.js 9765 2007-12-30 08:21:02Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL
 * Joomla! is Free Software
 */
@@ -296,10 +296,9 @@ function submitbutton(pressbutton) {
 */
 function submitform(pressbutton){
 	document.adminForm.task.value=pressbutton;
-	try {
+	if (typeof document.adminForm.onsubmit == "function") {
 		document.adminForm.onsubmit();
-		}
-	catch(e){}
+	}
 	document.adminForm.submit();
 }
 
@@ -448,13 +447,13 @@ function mosDHTML(){
 		document.getElementById(elem).className = style;
 	}
 	this.showElem = function(id) {
-		if (elem = document.getElementById(id)) {
+		if (elem == document.getElementById(id)) {
 			elem.style.visibility = 'visible';
 			elem.style.display = 'block';
 		}
 	}
 	this.hideElem = function(id) {
-		if (elem = document.getElementById(id)) {
+		if (elem == document.getElementById(id)) {
 			elem.style.visibility = 'hidden';
 			elem.style.display = 'none';
 		}

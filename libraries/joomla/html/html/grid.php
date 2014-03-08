@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: grid.php 8559 2007-08-25 18:34:58Z jinx $
+* @version		$Id: grid.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -35,11 +35,11 @@ class JHTMLGrid
 		$images		= array( 'sort_asc.png', 'sort_desc.png' );
 		$index		= intval( $direction == 'desc' );
 		$direction	= ($direction == 'desc') ? 'asc' : 'desc';
-		
+
 		$html = '<a href="javascript:tableOrdering(\''.$order.'\',\''.$direction.'\',\''.$task.'\');" title="'.JText::_( 'Click to sort this column' ).'">';
 		$html .= JText::_( $title );
 		if ($order == $selected ) {
-			$html .= JHTML::_('image.administrator',  $images[$index], '/images/', NULL, NULL, '', '', 1 );
+			$html .= JHTML::_('image.administrator',  $images[$index], '/images/', NULL, NULL);
 		}
 		$html .= '</a>';
 		return $html;
@@ -83,8 +83,7 @@ class JHTMLGrid
 		{
 			$href = '
 			<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $task_access .'\')" '. $color_access .'>
-			'. JText::_( $row->groupname ) .'
-			</a>'
+			'. JText::_( $row->groupname ) .'</a>'
 			;
 		}
 
@@ -122,14 +121,13 @@ class JHTMLGrid
 
 		$href = '
 		<a href="javascript:void(0);" onclick="return listItemTask(\'cb'. $i .'\',\''. $prefix.$task .'\')" title="'. $action .'">
-		<img src="images/'. $img .'" border="0" alt="'. $alt .'" />
-		</a>'
+		<img src="images/'. $img .'" border="0" alt="'. $alt .'" /></a>'
 		;
 
 		return $href;
 	}
 
-	function state( $filter_state='*', $published='Published', $unpublished='Unpublished', $archived=NULL )
+	function state( $filter_state='*', $published='Published', $unpublished='Unpublished', $archived=NULL, $trashed=NULL )
 	{
 		$state[] = JHTML::_('select.option',  '', '- '. JText::_( 'Select State' ) .' -' );
 		//Jinx : Why is this used ?
@@ -141,12 +139,16 @@ class JHTMLGrid
 			$state[] = JHTML::_('select.option',  'A', JText::_( $archived ) );
 		}
 
+		if ($trashed) {
+			$state[] = JHTML::_('select.option',  'T', JText::_( $trashed ) );
+		}
+
 		return JHTML::_('select.genericlist',   $state, 'filter_state', 'class="inputbox" size="1" onchange="submitform( );"', 'value', 'text', $filter_state );
 	}
 
 	function order( $rows, $image='filesave.png', $task="saveorder" )
 	{
-		$image = JHTML::_('image.administrator',  $image, '/images/', NULL, NULL, JText::_( 'Save Order' ), '', 1 );
+		$image = JHTML::_('image.administrator',  $image, '/images/', NULL, NULL, JText::_( 'Save Order' ) );
 		$href = '<a href="javascript:saveorder('.(count( $rows )-1).', \''.$task.'\')" title="'.JText::_( 'Save Order' ).'">'.$image.'</a>';
 		return $href;
 	}

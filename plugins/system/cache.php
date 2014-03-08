@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: cache.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: cache.php 9944 2008-01-14 21:10:22Z eddieajau $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -14,7 +14,7 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.cache.cache');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla! Page Cache Plugin
@@ -50,9 +50,11 @@ class  plgSystemCache extends JPlugin
 			'cachebase' 	=> JPATH_BASE.DS.'cache',
 			'defaultgroup' 	=> 'page',
 			'lifetime' 		=> $this->params->get('cachetime', 15) * 60,
-			'browsercache'	=> $this->params->get('browsercache', false)
+			'browsercache'	=> $this->params->get('browsercache', false),
+			'caching'		=> false
 		);
 
+		jimport('joomla.cache.cache');
 		$this->_cache =& JCache::getInstance( 'page', $options );
 
 		if (!$user->get('aid') && $_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -76,7 +78,16 @@ class  plgSystemCache extends JPlugin
 
 		if($data !== false)
 		{
+			// the following code searches for a token in the cached page and replaces it with the
+			// proper token.
+			$user	= &JFactory::getUser();
+			$token	= JUtility::getToken();
+			$search = '#<input type="hidden" name="[0-9a-f]{32}" value="1" />#';
+			$replacement = '<input type="hidden" name="'.$token.'" value="1" />';
+			$data = preg_replace( $search, $replacement, $data );
+
 			JResponse::setBody($data);
+
 			echo JResponse::toString($mainframe->getCfg('gzip'));
 
 			if(JDEBUG)

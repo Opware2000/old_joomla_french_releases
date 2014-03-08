@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblink.php 7984 2007-07-15 14:59:15Z friesengeist $
+ * @version		$Id: weblink.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -205,7 +205,7 @@ class WeblinksModelWeblink extends JModel
 		$row =& $this->getTable();
 
 		// Bind the form fields to the web link table
-		if (!$row->bind($data, "published")) {
+		if (!$row->bind($data)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
@@ -213,6 +213,11 @@ class WeblinksModelWeblink extends JModel
 		// Create the timestamp for the date
 		$row->date = gmdate('Y-m-d H:i:s');
 
+		// if new item, order last in appropriate group
+		if (!$row->id) {
+			$where = 'catid = ' . (int) $row->catid ;
+			$row->ordering = $row->getNextOrder( $where );
+		}
 		// Make sure the web link table is valid
 		if (!$row->check()) {
 			$this->setError($this->_db->getErrorMsg());

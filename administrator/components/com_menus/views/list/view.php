@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.php 8286 2007-08-01 08:27:44Z eddieajau $
+ * @version		$Id: view.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -49,7 +49,7 @@ class MenusViewList extends JView
 		JToolBarHelper::customX( 'copy', 'copy.png', 'copy_f2.png', 'Copy', true );
 		JToolBarHelper::trash();
 		JToolBarHelper::editListX();
-		JToolBarHelper::addNewX('type');
+		JToolBarHelper::addNewX('newItem');
 		JToolBarHelper::help( 'screen.menus' );
 
 		$document = & JFactory::getDocument();
@@ -60,6 +60,14 @@ class MenusViewList extends JView
 		$pagination	= &$this->get('Pagination');
 		$lists		= &$this->_getViewLists();
 		$user		= &JFactory::getUser();
+
+		// Ensure ampersands and double quotes are encoded in item titles
+		foreach ($items as $i => $item) {
+			$treename = $item->treename;
+			$treename = JFilterOutput::ampReplace($treename);
+			$treename = str_replace('"', '&quot;', $treename);
+			$items[$i]->treename = $treename;
+		}
 
 		//Ordering allowed ?
 		$ordering = ($lists['order'] == 'm.ordering');

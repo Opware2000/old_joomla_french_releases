@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
+* @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -56,6 +56,7 @@ class WeblinksViewWeblink extends JView
 		$user 	=& JFactory::getUser();
 		$model	=& $this->getModel();
 
+
 		$lists = array();
 
 		//get the weblink
@@ -67,18 +68,6 @@ class WeblinksViewWeblink extends JView
 			$msg = JText::sprintf( 'DESCBEINGEDITTED', JText::_( 'The weblink' ), $weblink->title );
 			$mainframe->redirect( 'index.php?option='. $option, $msg );
 		}
-
-		// Set toolbar items for the page
-		$text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
-		JToolBarHelper::title(   JText::_( 'Weblink' ).': <small><small>[ ' . $text.' ]</small></small>' );
-		JToolBarHelper::save();
-		if ($isNew)  {
-			JToolBarHelper::cancel();
-		} else {
-			// for existing items the button is renamed `close`
-			JToolBarHelper::cancel( 'cancel', 'Close' );
-		}
-		JToolBarHelper::help( 'screen.weblink.edit' );
 
 		// Edit or Create?
 		if (!$isNew)
@@ -99,6 +88,7 @@ class WeblinksViewWeblink extends JView
 			. ' FROM #__weblinks'
 			. ' WHERE catid = ' . (int) $weblink->catid
 			. ' ORDER BY ordering';
+
 		$lists['ordering'] 			= JHTML::_('list.specificordering',  $weblink, $weblink->id, $query, 1 );
 
 		// build list of categories
@@ -107,7 +97,6 @@ class WeblinksViewWeblink extends JView
 		$lists['published'] 		= JHTML::_('select.booleanlist',  'published', 'class="inputbox"', $weblink->published );
 
 		//clean weblink data
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $weblink, ENT_QUOTES, 'description' );
 
 		$file 	= JPATH_COMPONENT.DS.'models'.DS.'weblink.xml';
@@ -116,9 +105,7 @@ class WeblinksViewWeblink extends JView
 		$this->assignRef('lists',		$lists);
 		$this->assignRef('weblink',		$weblink);
 		$this->assignRef('params',		$params);
-		$this->assignRef('request_url',	$uri->toString());
 
 		parent::display($tpl);
 	}
 }
-?>

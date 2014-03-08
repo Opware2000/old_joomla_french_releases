@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: string.php 7074 2007-03-31 15:37:23Z jinx $
+* @version		$Id: string.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Utilities
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,8 +15,29 @@
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
-jimport('joomla.utilities.compat.phputf8env');
-jimport('phputf8.utf8');
+/**
+ * PHP mbstring and iconv local configuration
+ */
+// check if mbstring extension is loaded and attempt to load it if not present except for windows
+if (extension_loaded('mbstring') || ((!strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && dl('mbstring.so')))) {
+	//Make sure to surpress the output in case ini_set is disabled
+	@ini_set('mbstring.internal_encoding', 'UTF-8');
+	@ini_set('mbstring.http_input', 'UTF-8');
+	@ini_set('mbstring.http_output', 'UTF-8');
+}
+
+// same for iconv
+if (function_exists('iconv') || ((!strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && dl('iconv.so')))) {
+   	// these are settings that can be set inside code
+	iconv_set_encoding("internal_encoding", "UTF-8");
+	iconv_set_encoding("input_encoding", "UTF-8");
+	iconv_set_encoding("output_encoding", "UTF-8");
+}
+
+/**
+ * Include the utf8 package
+ */
+require_once(JPATH_LIBRARIES.DS.'phputf8'.DS.'utf8.php');
 
 /**
  * String handling class for utf-8 data

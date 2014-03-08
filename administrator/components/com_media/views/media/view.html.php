@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
+* @version		$Id: view.html.php 9944 2008-01-14 21:10:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Media
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -53,8 +53,8 @@ class MediaViewMedia extends JView
 			document.preview = SqueezeBox;
 		});");
 
-		JHTML::script('mootree');
-		JHTML::stylesheet('mootree');
+		JHTML::script('mootree.js');
+		JHTML::stylesheet('mootree.css');
 
 		JHTML::_('behavior.uploader', 'file-upload', array('onAllComplete' => 'function(){ MediaManager.refreshFrame(); }'));
 
@@ -98,8 +98,7 @@ class MediaViewMedia extends JView
 		$title = JText::_('Delete');
 		$dhtml = "<a href=\"#\" onclick=\"MediaManager.submit('folder.delete')\" class=\"toolbar\">
 					<span class=\"icon-32-delete\" title=\"$title\" type=\"Custom\"></span>
-					$title
-				</a>";
+					$title</a>";
 		$bar->appendButton( 'Custom', $dhtml, 'delete' );
 
 		// Add a popup configuration button
@@ -119,4 +118,3 @@ class MediaViewMedia extends JView
 		return $txt;
 	}
 }
-?>

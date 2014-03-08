@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: table.php 8575 2007-08-26 20:02:09Z jinx $
+ * @version		$Id: table.php 9860 2008-01-04 20:46:05Z louis $
  * @package		Joomla.Framework
  * @subpackage	Table
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -46,23 +46,6 @@ class JTable extends JObject
 	var $_tbl_key	= '';
 
 	/**
-	 * Error Message
-	 * 
-	 * @var		string
-	 * @access	protected
-	 * @todo	remove the local implementation in preference of the one defined in JObject
-	 */
-	var $_error		= null;
-	
-	/**
-	 * Error number
-	 *
-	 * @var		int
-	 * @access	protected
-	 */
-	var $_errorNum = 0;
-
-	/**
 	 * Database connector
 	 *
 	 * @var		JDatabase
@@ -90,12 +73,13 @@ class JTable extends JObject
 	/**
 	 * Returns a reference to the a Table object, always creating it
 	 *
-	 * @param type $type The table type to instantiate
-	 * @param string A prefix for the table class name
+	 * @param type 		$type 	 The table type to instantiate
+	 * @param string 	$prefix	 A prefix for the table class name. Optional.
+	 * @param array		$options Configuration array for model. Optional.
 	 * @return database A database object
 	 * @since 1.5
 	*/
-	function &getInstance( $type, $prefix='JTable' )
+	function &getInstance( $type, $prefix = 'JTable', $config = array() )
 	{
 		$false = false;
 
@@ -122,9 +106,15 @@ class JTable extends JObject
 			}
 		}
 
-		$db =& JFactory::getDBO();
+		//Make sure we are returning a DBO object
+		if (array_key_exists('dbo', $config))  {
+			$db =& $config['dbo'];
+		} else {
+			$db = & JFactory::getDBO();
+		}
+
 		$instance = new $tableClass($db);
-		$instance->setDBO($db);
+		//$instance->setDBO($db);
 
 		return $instance;
 	}
@@ -171,33 +161,6 @@ class JTable extends JObject
 	{
 		return $this->_tbl_key;
 	}
-	
-	/**
-	 * Get the most recent error message
-	 *
-	 * Use this method in preference of accessing the $_error attribute directly!
-	 * 
-	 * @param	int		Not Used
-	 * @param	boolean	Not Used
-	 * @return	string	Error message
-	 * @access	public
-	 * @since	1.5
-	 * @todo 	Change dependent code to call the API, not access $_error directly
-	 */
-	function getError($i = null, $toString = true )
-	{
-		return $this->_error;
-	}
-	
-	/**
-	 * Returns the error number
-	 *
-	 * @return int The error number
-	 */
-	function getErrorNum()
-	{
-		return $this->_errorNum;
-	}
 
 	/**
 	 * Resets the default properties
@@ -206,9 +169,10 @@ class JTable extends JObject
 	function reset()
 	{
 		$k = $this->_tbl_key;
-		foreach (get_class_vars( get_class( $this ) ) as $name => $value)
+		foreach ($this->getProperties() as $name => $value)
 		{
-			if (($name != $k) and ($name != '_db') and ($name != '_tbl') and ($name != '_tbl_key')) {
+			if($name != $k)
+			{
 				$this->$name	= $value;
 			}
 		}
@@ -232,13 +196,12 @@ class JTable extends JObject
 		if (!$fromArray && !$fromObject)
 		{
 			$this->setError( get_class( $this ).'::bind failed. Invalid from argument' );
-			$this->setErrorNum(20);
 			return false;
 		}
 		if (!is_array( $ignore )) {
 			$ignore = explode( ' ', $ignore );
 		}
-		foreach ($this->getPublicProperties() as $k)
+		foreach ($this->getProperties() as $k => $v)
 		{
 			// internal attributes of an object are ignored
 			if (!in_array( $k, $ignore ))
@@ -329,7 +292,6 @@ class JTable extends JObject
 		if( !$ret )
 		{
 			$this->setError(get_class( $this ).'::store failed - '.$this->_db->getErrorMsg());
-			$this->setErrorNum($this->_db->getErrorNum());
 			return false;
 		}
 		else
@@ -347,6 +309,12 @@ class JTable extends JObject
 	 */
 	function move( $dirn, $where='' )
 	{
+		if (!in_array( 'ordering',  array_keys($this->getProperties())))
+		{
+			$this->setError( get_class( $this ).' does not support ordering' );
+			return false;
+		}
+
 		$k = $this->_tbl_key;
 
 		$sql = "SELECT $this->_tbl_key, ordering FROM $this->_tbl";
@@ -386,7 +354,7 @@ class JTable extends JObject
 			if (!$this->_db->query())
 			{
 				$err = $this->_db->getErrorMsg();
-				JError::raiseError( 0, $err );
+				JError::raiseError( 500, $err );
 			}
 
 			$query = 'UPDATE '.$this->_tbl
@@ -398,7 +366,7 @@ class JTable extends JObject
 			if (!$this->_db->query())
 			{
 				$err = $this->_db->getErrorMsg();
-				JError::raiseError( 0, $err );
+				JError::raiseError( 500, $err );
 			}
 
 			$this->ordering = $row->ordering;
@@ -414,7 +382,7 @@ class JTable extends JObject
 			if (!$this->_db->query())
 			{
 				$err = $this->_db->getErrorMsg();
-				JError::raiseError( 0, $err );
+				JError::raiseError( 500, $err );
 			}
 		}
 	}
@@ -427,10 +395,9 @@ class JTable extends JObject
 	 */
 	function getNextOrder ( $where='' )
 	{
-		if (!in_array( 'ordering', $this->getPublicProperties() ))
+		if (!in_array( 'ordering', array_keys($this->getProperties()) ))
 		{
 			$this->setError( get_class( $this ).' does not support ordering' );
-			$this->setErrorNum(21);
 			return false;
 		}
 
@@ -444,7 +411,6 @@ class JTable extends JObject
 		if ($this->_db->getErrorNum())
 		{
 			$this->setError($this->_db->getErrorMsg());
-			$this->setErrorNum($this->_db->getErrorNum());
 			return false;
 		}
 		return $maxord + 1;
@@ -460,10 +426,9 @@ class JTable extends JObject
 	{
 		$k = $this->_tbl_key;
 
-		if (!in_array( 'ordering', $this->getPublicProperties() ))
+		if (!in_array( 'ordering', array_keys($this->getProperties() ) ))
 		{
 			$this->setError( get_class( $this ).' does not support ordering');
-			$this->setErrorNum(21);
 			return false;
 		}
 
@@ -485,7 +450,6 @@ class JTable extends JObject
 		if (!($orders = $this->_db->loadObjectList()))
 		{
 			$this->setError($this->_db->getErrorMsg());
-			$this->setErrorNum($this->_db->getErrorNum());
 			return false;
 		}
 		// compact the ordering numbers
@@ -526,7 +490,7 @@ class JTable extends JObject
 		if ($oid) {
 			$this->$k = intval( $oid );
 		}
-		
+
 		if (is_array( $joins ))
 		{
 			$select = "$k";
@@ -548,23 +512,23 @@ class JTable extends JObject
 			if (!$obj = $this->_db->loadObject())
 			{
 				$this->setError($this->_db->getErrorMsg());
-				$this->setErrorNum($this->_db->getErrorNum());
 				return false;
 			}
 			$msg = array();
+			$i = 0;
 			foreach( $joins as $table )
 			{
-				$k = $table['idfield'];
+				$k = $table['idfield'] . $i;
 				if ($obj->$k)
 				{
 					$msg[] = JText::_( $table['label'] );
 				}
+				$i++;
 			}
 
 			if (count( $msg ))
 			{
 				$this->setError("noDeleteRecord" . ": " . implode( ', ', $msg ));
-				$this->setErrorNum(22);
 				return false;
 			}
 			else
@@ -607,7 +571,6 @@ class JTable extends JObject
 		else
 		{
 			$this->setError($this->_db->getErrorMsg());
-			$this->setErrorNum($this->_db->getErrorNum());
 			return false;
 		}
 	}
@@ -622,7 +585,7 @@ class JTable extends JObject
 	 */
 	function checkout( $who, $oid = null )
 	{
-		if (!in_array( 'checked_out', $this->getPublicProperties() )) {
+		if (!in_array( 'checked_out', array_keys($this->getProperties()) )) {
 			return true;
 		}
 
@@ -631,8 +594,8 @@ class JTable extends JObject
 			$this->$k = $oid;
 		}
 		jimport('joomla.utilities.date');
-		$datenow = new JDate();
-		$time = $datenow->toMysql();
+		$date = new JDate();
+		$time = $date->toMysql();
 
 		$query = 'UPDATE '.$this->_db->nameQuote( $this->_tbl ) .
 			' SET checked_out = '.(int)$who.', checked_out_time = '.$this->_db->Quote($time) .
@@ -655,8 +618,8 @@ class JTable extends JObject
 	function checkin( $oid=null )
 	{
 		if (!(
-			in_array( 'checked_out', $this->getPublicProperties() ) ||
-	 		in_array( 'checked_out_time', $this->getPublicProperties() )
+			in_array( 'checked_out', array_keys($this->getProperties()) ) ||
+	 		in_array( 'checked_out_time', array_keys($this->getProperties()) )
 		)) {
 			return true;
 		}
@@ -672,7 +635,7 @@ class JTable extends JObject
 		}
 
 		$query = 'UPDATE '.$this->_db->nameQuote( $this->_tbl ).
-				' SET checked_out = 0, checked_out_time = '.$this->_db->Quote($this->_db->_nullDate) .
+				' SET checked_out = 0, checked_out_time = '.$this->_db->Quote($this->_db->getNullDate()) .
 				' WHERE '.$this->_tbl_key.' = '. $this->_db->Quote($this->$k);
 		$this->_db->setQuery( $query );
 
@@ -691,7 +654,7 @@ class JTable extends JObject
 	 */
 	function hit( $oid=null, $log=false )
 	{
-		if (!in_array( 'hits', $this->getPublicProperties() )) {
+		if (!in_array( 'hits', array_keys($this->getProperties()) )) {
 			return;
 		}
 
@@ -767,33 +730,7 @@ class JTable extends JObject
 			$this->reorder( $order_filter ? $this->_db->nameQuote( $order_filter ).' = '.$this->_db->Quote( $filter_value ) : '' );
 		}
 		$this->setError('');
-		$this->setErrorNum(0);
 		return true;
-	}
-	
-	/**
-	 * Set an error message
-	 *
-	 * Use this method in preference of accessing the $_error attribute directly!
-	 * 
-	 * @param	string $error Error message
-	 * @access	public
-	 * @since	1.5
-	 * @todo 	Change dependent code to call the API, not access $_error directly
-	 */
-	function setError($error)
-	{
-		$this->_error	= $error;
-	}
-
-	/**
-	 * Sets the internal error number
-	 *
-	 * @param int Set the error number with this value
-	 */
-	function setErrorNum( $value )
-	{
-		$this->_errorNum = $value;
 	}
 
 	/**
@@ -814,9 +751,12 @@ class JTable extends JObject
 
 		if (count( $cid ) < 1)
 		{
-			$this->setError("No items selected.");
-			$this->setErrorNum(24);
-			return false;
+			if ($this->$k) {
+				$cid = array( $this->$k );
+			} else {
+				$this->setError("No items selected.");
+				return false;
+			}
 		}
 
 		$cids = $k . '=' . implode( ' OR ' . $k . '=', $cid );
@@ -826,7 +766,7 @@ class JTable extends JObject
 		. ' WHERE ('.$cids.')'
 		;
 
-		$checkin = in_array( 'checked_out', $this->getPublicProperties() );
+		$checkin = in_array( 'checked_out', array_keys($this->getProperties()) );
 		if ($checkin)
 		{
 			$query .= ' AND (checked_out = 0 OR checked_out = '.(int) $user_id.')';
@@ -836,16 +776,19 @@ class JTable extends JObject
 		if (!$this->_db->query())
 		{
 			$this->setError($this->_db->getErrorMsg());
-			$this->setErrorNum($this->_db->getErrorNum());
 			return false;
 		}
 
 		if (count( $cid ) == 1 && $checkin)
 		{
-			$this->checkin( $cid[0] );
+			if ($this->_db->getAffectedRows() == 1) {
+				$this->checkin( $cid[0] );
+				if ($this->$k == $cid[0]) {
+					$this->published = $publish;
+				}
+			}
 		}
 		$this->setError('');
-		$this->setErrorNum(0);
 		return true;
 	}
 

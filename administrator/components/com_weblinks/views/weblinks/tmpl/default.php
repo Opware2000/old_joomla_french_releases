@@ -1,20 +1,26 @@
 <?php defined('_JEXEC') or die('Restricted access'); ?>
+
+<?php JHTML::_('behavior.tooltip'); ?>
+
 <?php
-$user 	=& JFactory::getUser();
-
-//Ordering allowed ?
-$ordering = ($this->lists['order'] == 'a.ordering');
-
-JHTML::_('behavior.tooltip');
+	// Set toolbar items for the page
+	JToolBarHelper::title(   JText::_( 'Weblink Manager' ), 'generic.png' );
+	JToolBarHelper::publishList();
+	JToolBarHelper::unpublishList();
+	JToolBarHelper::deleteList();
+	JToolBarHelper::editListX();
+	JToolBarHelper::addNewX();
+	JToolBarHelper::preferences('com_weblinks', '360');
+	JToolBarHelper::help( 'screen.weblink' );
 ?>
-<form action="<?php echo $this->request_url; ?>" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm">
 <table>
 <tr>
 	<td align="left" width="100%">
 		<?php echo JText::_( 'Filter' ); ?>:
 		<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 		<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-		<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+		<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_catid').value='0';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 	</td>
 	<td nowrap="nowrap">
 		<?php
@@ -36,9 +42,6 @@ JHTML::_('behavior.tooltip');
 			</th>
 			<th class="title">
 				<?php echo JHTML::_('grid.sort',  'Title', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?>
-			</th>
-			<th width="15%" nowrap="nowrap">
-				<?php echo JHTML::_('grid.sort',  'Alias', 'a.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?>
 			</th>
 			<th width="5%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',  'Published', 'a.published', $this->lists['order_Dir'], $this->lists['order'] ); ?>
@@ -72,12 +75,14 @@ JHTML::_('behavior.tooltip');
 	{
 		$row = &$this->items[$i];
 
-		$link 	= JRoute::_( 'index.php?option=com_weblinks&controller=weblink&task=edit&cid[]='. $row->id );
+		$link 	= JRoute::_( 'index.php?option=com_weblinks&view=weblink&task=edit&cid[]='. $row->id );
 
 		$checked 	= JHTML::_('grid.checkedout',   $row, $i );
 		$published 	= JHTML::_('grid.published', $row, $i );
 
-		$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&section=com_weblinks&task=edit&id='. $row->catid );
+		$ordering = ($this->lists['order'] == 'a.ordering');
+
+		$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&section=com_weblinks&task=edit&type=other&cid[]='. $row->catid );
 		?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td>
@@ -92,14 +97,12 @@ JHTML::_('behavior.tooltip');
 					echo $row->title;
 				} else {
 				?>
-					<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Weblinks' ); ?>">
-						<?php echo $row->title; ?></a>
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Weblinks' );?>::<?php echo $row->title; ?>">
+					<a href="<?php echo $link; ?>">
+						<?php echo $row->title; ?></a></span>
 				<?php
 				}
 				?>
-			</td>
-			<td>
-				<?php echo $row->alias;?>
 			</td>
 			<td align="center">
 				<?php echo $published;?>
@@ -111,9 +114,9 @@ JHTML::_('behavior.tooltip');
 				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering;?>" <?php echo $disabled ?> class="text_area" style="text-align: center" />
 			</td>
 			<td>
-				<a href="<?php echo $row->cat_link; ?>" title="<?php echo JText::_( 'Edit Category' ); ?>">
-				<?php echo $row->category; ?>
-				</a>
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Category' );?>::<?php echo $row->category; ?>">
+				<a href="<?php echo $row->cat_link; ?>" >
+				<?php echo $row->category; ?></a><span>
 			</td>
 			<td align="center">
 				<?php echo $row->hits; ?>
@@ -130,9 +133,10 @@ JHTML::_('behavior.tooltip');
 	</table>
 </div>
 
-<input type="hidden" name="controller" value="weblink" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="boxchecked" value="0" />
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="" />
+	<input type="hidden" name="option" value="com_weblinks" />
+	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="boxchecked" value="0" />
+	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

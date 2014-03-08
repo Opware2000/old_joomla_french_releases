@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.languages.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: admin.languages.php 9813 2008-01-03 00:45:11Z eddieajau $
 * @package		Joomla
 * @subpackage	Languages
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -62,7 +62,7 @@ function viewLanguages()
 	$rows	= array ();
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-	$limitstart = $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+	$limitstart = $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 	$rowid = 0;
 
@@ -124,6 +124,9 @@ function publishLanguage( $language )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	// Initialize some variables
 	$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
@@ -149,4 +152,3 @@ function publishLanguage( $language )
 
 	$mainframe->redirect('index.php?option=com_languages&client='.$client->id);
 }
-?>

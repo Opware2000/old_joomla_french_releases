@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: banner.php 8179 2007-07-23 05:44:05Z eddieajau $
+ * @version		$Id: banner.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package  Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -95,6 +94,7 @@ class BannersModelBanner extends JModel
 		$n		= count( $list );
 
 		$trackImpressions = $config->get( 'track_impressions' );
+		// TODO: Should this be JDate?
 		$trackDate = date( 'Y-m-d' );
 
 		// TODO: Change loop single sql with where bid = x OR bid = y format
@@ -102,7 +102,7 @@ class BannersModelBanner extends JModel
 			$item = &$list[$i];
 
 			$item->impmade++;
-			$expire = ($item->imptotal >= $item->impmade);
+			$expire = ($item->impmade >= $item->imptotal) && ($item->imptotal != 0);
 
 			$query = 'UPDATE #__banner'
 			. ' SET impmade = impmade + 1'
@@ -144,6 +144,7 @@ class BannersModelBanner extends JModel
 		$db		= &$this->getDBO();
 
 		$trackClicks = $config->get( 'track_clicks' );
+		// TODO: Should this be JDate?
 		$trackDate = date( 'Y-m-d' );
 
 		// update click count

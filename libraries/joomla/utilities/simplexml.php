@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: simplexml.php 8270 2007-07-31 22:15:31Z eddieajau $
+* @version		$Id: simplexml.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Utilities
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -43,7 +43,7 @@ defined('JPATH_BASE') or die();
  * Example:
  * <code>
  * :simple.xml:
- * <?xml version="1.0" encoding="utf-8" standalon="yes"?>
+ * <?xml version="1.0" encoding="utf-8" standalone="yes"?>
  * <document>
  *   <node>
  *	 <child gender="m">Tom Foo</child>
@@ -56,7 +56,7 @@ defined('JPATH_BASE') or die();
  * // read and write a document
  * $xml = new JSimpleXML;
  * $xml->loadFile('simple.xml');
- * print $xml->toString();
+ * print $xml->document->toString();
  *
  * // access a given node's CDATA
  * print $xml->root->node->child[0]->data(); // Tom Foo
@@ -199,7 +199,7 @@ class JSimpleXML extends JObject
 	 * @param string   	currently ignored
 	 * @return object 	JSimpleXMLElement
 	 */
-	function importDom($node, $classname = null) {
+	function importDOM($node, $classname = null) {
 		return false;
 	}
 

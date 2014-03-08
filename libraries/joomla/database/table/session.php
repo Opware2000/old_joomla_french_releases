@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: session.php 8529 2007-08-23 12:16:45Z jinx $
+* @version		$Id: session.php 9948 2008-01-16 16:29:32Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -100,7 +100,7 @@ class JTableSession extends JTable
 		$ret = $this->_db->insertObject( $this->_tbl, $this, 'session_id' );
 
 		if( !$ret ) {
-			$this->_error = strtolower(get_class( $this ))."::". JText::_( 'store failed' ) ."<br />" . $this->_db->stderr();
+			$this->setError(strtolower(get_class( $this ))."::". JText::_( 'store failed' ) ."<br />" . $this->_db->stderr());
 			return false;
 		} else {
 			return true;
@@ -113,7 +113,7 @@ class JTableSession extends JTable
 		$ret = $this->_db->updateObject( $this->_tbl, $this, 'session_id', $updateNulls );
 
 		if( !$ret ) {
-			$this->_error = strtolower(get_class( $this ))."::". JText::_( 'store failed' ) ." <br />" . $this->_db->stderr();
+			$this->setError(strtolower(get_class( $this ))."::". JText::_( 'store failed' ) ." <br />" . $this->_db->stderr());
 			return false;
 		} else {
 			return true;
@@ -126,7 +126,7 @@ class JTableSession extends JTable
 	function destroy($userId, $clientIds = array())
 	{
 		$clientIds = implode( ',', $clientIds );
-		
+
 		$query = 'DELETE FROM #__session'
 			. ' WHERE userid = '. $this->_db->Quote( $userId )
 			. ' AND client_id IN ( '.$clientIds.' )'
@@ -134,7 +134,7 @@ class JTableSession extends JTable
 		$this->_db->setQuery( $query );
 
 		if ( !$this->_db->query() ) {
-			$this->_error =  $this->_db->stderr();
+			$this->setError( $this->_db->stderr());
 			return false;
 		}
 
@@ -150,7 +150,7 @@ class JTableSession extends JTable
 	function purge( $maxLifetime = 1440 )
 	{
 		$past = time() - $maxLifetime;
-		$query = 'DELETE FROM '. $this->_tbl .' WHERE ( time < '. (int) $past .' )';
+		$query = 'DELETE FROM '. $this->_tbl .' WHERE ( time < \''. (int) $past .'\' )'; // Index on 'VARCHAR'
 		$this->_db->setQuery($query);
 
 		return $this->_db->query();
@@ -169,10 +169,45 @@ class JTableSession extends JTable
 		$this->_db->setQuery( $query );
 
 		if ( !$result = $this->_db->loadResult() ) {
-			$this->_error =  $this->_db->stderr();
+			$this->setError($this->_db->stderr());
 			return false;
 		}
 
 		return (boolean) $result;
+	}
+
+	/**
+	 * Overloaded delete method
+	 *
+	 * We must override it because of the non-integer primary key
+	 *
+	 * @access public
+	 * @return true if successful otherwise returns and error message
+	 */
+	function delete( $oid=null )
+	{
+		//if (!$this->canDelete( $msg ))
+		//{
+		//	return $msg;
+		//}
+
+		$k = $this->_tbl_key;
+		if ($oid) {
+			$this->$k = $oid;
+		}
+
+		$query = 'DELETE FROM '.$this->_db->nameQuote( $this->_tbl ).
+				' WHERE '.$this->_tbl_key.' = '. $this->_db->Quote($this->$k);
+		$this->_db->setQuery( $query );
+
+		if ($this->_db->query())
+		{
+			return true;
+		}
+		else
+		{
+			$this->setError($this->_db->getErrorMsg());
+			return false;
+		}
 	}
 }

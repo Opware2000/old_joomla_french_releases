@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: frontpage.php 8591 2007-08-27 21:09:32Z hackwar $
+ * @version		$Id: frontpage.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -117,21 +117,21 @@ class ContentModelFrontpage extends JModel
 	{
 		global $mainframe;
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		// Voting is turned on, get voting data as well for the content items
 		$voting	= ContentHelperQuery::buildVotingQuery($params);
 
 		// Get the WHERE and ORDER BY clauses for the query
-		$where	 = $this->_buildContentWhere();
-		$orderby = $this->_buildContentOrderBy();
+		$where	= $this->_buildContentWhere();
+		$orderby 			= $this->_buildContentOrderBy();
 
-		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
-			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.attribs, a.urls, a.ordering, a.metakey, a.metadesc, a.access,' .
+		$query = ' SELECT a.id, a.title, a.title_alias, a.introtext, a.fulltext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
+			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.attribs, a.urls, a.metakey, a.metadesc, a.access,' .
 			' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'.
 			' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug,'.
 			' CHAR_LENGTH( a.`fulltext` ) AS readmore,' .
-			' u.name AS author, u.usertype, g.name AS groups, cc.title AS category, s.title AS section'.
+			' u.name AS author, u.usertype, g.name AS groups, cc.title AS category, s.title AS section, s.ordering AS s_ordering, cc.ordering AS cc_ordering, a.ordering AS a_ordering, f.ordering AS f_ordering'.
 			$voting['select'] .
 			' FROM #__content AS a' .
 			' INNER JOIN #__content_frontpage AS f ON f.content_id = a.id' .
@@ -140,8 +140,9 @@ class ContentModelFrontpage extends JModel
 			' LEFT JOIN #__users AS u ON u.id = a.created_by' .
 			' LEFT JOIN #__groups AS g ON a.access = g.id'.
 			$voting['join'].
-			$where.
-			$orderby;
+			$where
+			.$orderby
+			;
 
 		return $query;
 	}
@@ -150,7 +151,7 @@ class ContentModelFrontpage extends JModel
 	{
 		global $mainframe;
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 		if (!is_object($params)) {
 			$params = &JComponentHelper::getParams('com_content');
 		}
@@ -179,7 +180,7 @@ class ContentModelFrontpage extends JModel
 		$now		= $jnow->toMySQL();
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		$noauth		= !$params->get('show_noauth');
 		$nullDate	= $this->_db->getNullDate();
@@ -195,11 +196,13 @@ class ContentModelFrontpage extends JModel
 		if ($user->authorize('com_content', 'edit', 'content', 'all')) {
 			$where .= ' AND a.state >= 0';
 		} else {
-			$where .= ' AND a.state = 1' .
-					' AND ( cc.published = 1 )'.
-					' AND ( s.published = 1 )'.
-					' AND ( publish_up = '.$this->_db->Quote($nullDate).' OR publish_up <= '.$this->_db->Quote($now).' )' .
-					' AND ( publish_down = '.$this->_db->Quote($nullDate).' OR publish_down >= '.$this->_db->Quote($now).' )';
+			$where .= ' AND a.state = 1'.
+					' AND (( cc.published = 1'.
+					' AND s.published = 1 )'.
+					' OR ( a.catid = 0 AND a.sectionid = 0 ) )';
+
+			$where .= ' AND ( a.publish_up = '.$this->_db->Quote($nullDate).' OR a.publish_up <= '.$this->_db->Quote($now).' )' .
+					  ' AND ( a.publish_down = '.$this->_db->Quote($nullDate).' OR a.publish_down >= '.$this->_db->Quote($now).' )';
 		}
 
 		return $where;

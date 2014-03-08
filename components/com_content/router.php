@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: router.php 8531 2007-08-23 12:55:45Z jinx $
+* @version		$Id: router.php 9975 2008-01-30 17:02:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,31 +15,59 @@ function ContentBuildRoute(&$query)
 {
 	$segments = array();
 
+	if(isset($query['view']))
+	{
+		if(empty($query['Itemid'])) {
+			$segments[] = $query['view'];
+		}
+
+		unset($query['view']);
+	};
+
 	if(isset($query['catid'])) {
 		$segments[] = $query['catid'];
 		unset($query['catid']);
 	};
 
 	if(isset($query['id'])) {
-		$segments[] = $query['id'];
+		if (empty($query['Itemid'])) {
+			$segments[] = $query['id'];
+		} else {
+			$menu = &JSite::getMenu();
+			$menuItem = &$menu->getItem( $query['Itemid'] );
+			if (isset($menuItem->query['id']) && $query['id'] != $menuItem->query['id']) {
+				$segments[] = $query['id'];
+			}
+		}
 		unset($query['id']);
 	};
 
 	if(isset($query['year'])) {
-		$segments[] = $query['year'];
-		unset($query['year']);
+
+		if(!empty($query['Itemid'])) {
+			$segments[] = $query['year'];
+			unset($query['year']);
+		}
 	};
 
 	if(isset($query['month'])) {
-		$segments[] = $query['month'];
-		unset($query['month']);
-	};
-	
-	if(isset($query['layout'])) {
-		unset($query['layout']);
+
+		if(!empty($query['Itemid'])) {
+			$segments[] = $query['month'];
+			unset($query['month']);
+		}
 	};
 
-	unset($query['view']);
+	if(isset($query['layout']))
+	{
+		if(!empty($query['Itemid'])) {
+			$menu = &JSite::getMenu();
+			$menuItem = &$menu->getItem( $query['Itemid'] );
+			if ($query['layout'] == $menuItem->query['layout']) {
+				unset($query['layout']);
+			}
+		}
+	};
 
 	return $segments;
 }
@@ -49,11 +77,19 @@ function ContentParseRoute($segments)
 	$vars = array();
 
 	//Get the active menu item
-	$menu =& JMenu::getInstance();
+	$menu =& JSite::getMenu();
 	$item =& $menu->getActive();
 
 	// Count route segments
 	$count = count($segments);
+
+	//Standard routing for articles
+	if(!isset($item))
+	{
+		$vars['view']  = $segments[0];
+		$vars['id']    = $segments[$count - 1];
+		return $vars;
+	}
 
 	//Handle View and Identifier
 	switch($item->query['view'])
@@ -82,7 +118,7 @@ function ContentParseRoute($segments)
 		{
 			$vars['id']   = $segments[$count-1];
 			$vars['view'] = 'article';
-		
+
 		} break;
 
 		case 'frontpage'   :
@@ -97,8 +133,14 @@ function ContentParseRoute($segments)
 			$vars['id']	  = $segments[$count-1];
 			$vars['view'] = 'article';
 		} break;
+
+		case 'archive' :
+		{
+			$vars['year']  = $segments[$count-2];
+			$vars['month'] = $segments[$count-1];
+			$vars['view']  = 'archive';
+		}
 	}
 
 	return $vars;
 }
-?>

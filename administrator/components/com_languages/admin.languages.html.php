@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.languages.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.languages.html.php 9813 2008-01-03 00:45:11Z eddieajau $
 * @package		Joomla
 * @subpackage	Languages
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -145,15 +145,13 @@ class HTML_languages {
 			?>
 			</tbody>
 			</table>
-		</div>
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
 		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		<input type="hidden" name="boxchecked" value="0" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 }
-?>

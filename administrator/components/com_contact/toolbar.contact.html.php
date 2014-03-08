@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.contact.html.php 7747 2007-06-14 21:53:21Z friesengeist $
+* @version		$Id: toolbar.contact.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Contact
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -19,14 +19,15 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 * @package		Joomla
 * @subpackage	Contact
 */
-class TOOLBAR_contact {
+class TOOLBAR_contact
+{
 	/**
 	* Draws the menu for a New Contact
 	*/
-	function _EDIT() {
+	function _EDIT($edit) {
 		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 
-		$text = ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+		$text = ( $edit ? JText::_( 'Edit' ) : JText::_( 'New' ) );
 
 		JToolBarHelper::title( JText::_( 'Contact' ) .': <small><small>[ '. $text .' ]</small></small>', 'generic.png' );
 
@@ -34,7 +35,7 @@ class TOOLBAR_contact {
 		//JToolBarHelper::custom( 'save2copy', 'copy.png', 'copy_f2.png', 'Save To Copy', false,  false );
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
-		if ( $cid[0] ) {
+		if ( $edit ) {
 			// for existing items the button is renamed `close`
 			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
@@ -51,9 +52,8 @@ class TOOLBAR_contact {
 		JToolBarHelper::deleteList();
 		JToolBarHelper::editListX();
 		JToolBarHelper::addNewX();
-		JToolBarHelper::preferences('com_contact', '650');
+		JToolBarHelper::preferences('com_contact', '500');
 
 		JToolBarHelper::help( 'screen.contactmanager' );
 	}
 }
-?>

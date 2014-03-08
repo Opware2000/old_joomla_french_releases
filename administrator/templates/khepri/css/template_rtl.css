@@ -1,6 +1,6 @@
 /**
-* @version $Id: template_rtl.css 5809 2006-11-19 05:57:10Z eddiea $
-* @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
+* @version $Id: template_rtl.css 9768 2007-12-30 09:15:49Z ircmaxell $
+* @copyright Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -12,7 +12,7 @@
 /**
  * Joomla! 1.5 Admin template main css file
  *
- * @author		Andy Miller <andy.miller@joomla.org>
+ * @author		Mati Kochen
  * @package		Joomla
  * @since		1.5
  * @version  	1.0
@@ -21,7 +21,4 @@
 /* -- Imported styles ----------------------------- */
 
 @import url("general_rtl.css");
-@import url("icon.css");
 @import url("menu_rtl.css");
-@import url("component_rtl.css");
-

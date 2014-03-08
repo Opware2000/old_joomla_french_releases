@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.newsfeeds.html.php 8577 2007-08-26 22:45:22Z eddieajau $
+* @version		$Id: admin.newsfeeds.html.php 9819 2008-01-03 00:52:01Z eddieajau $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -40,7 +40,7 @@ class HTML_newsfeeds
 				<?php echo JText::_( 'Filter' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_catid').value='0';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 				<?php
@@ -62,9 +62,6 @@ class HTML_newsfeeds
 					</th>
 					<th class="title">
 						<?php echo JHTML::_('grid.sort',   'News Feed', 'a.name', @$lists['order_Dir'], @$lists['order'] ); ?>
-					</th>
-					<th width="15%">
-						<?php echo JHTML::_('grid.sort',   'Alias', 'a.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="5%">
 						<?php echo JHTML::_('grid.sort',   'Published', 'a.published', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -120,14 +117,12 @@ class HTML_newsfeeds
 							echo $row->name;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Newsfeed' ); ?>">
-								<?php echo $row->name; ?></a>
+								<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Newsfeed' );?>::<?php echo $row->name; ?>">
+							<a href="<?php echo $link; ?>">
+								<?php echo $row->name; ?></a></span>
 							<?php
 						}
 						?>
-					</td>
-					<td>
-						<?php echo $row->alias;?>
 					</td>
 					<td align="center">
 						<?php echo $published;?>
@@ -180,17 +175,16 @@ class HTML_newsfeeds
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	function editNewsFeed( &$row, &$lists, $option )
 	{
 		JRequest::setVar( 'hidemainmenu', 1 );
 
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES );
 		?>
 		<script language="javascript" type="text/javascript">
@@ -334,6 +328,7 @@ class HTML_newsfeeds
 		<input type="hidden" name="cid[]" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 	<?php
 	}
@@ -360,4 +355,3 @@ class HTML_newsfeeds
 		echo '</tr>';
 	}
 }
-?>

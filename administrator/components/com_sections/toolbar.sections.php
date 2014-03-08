@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.sections.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.sections.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Sections
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -20,12 +20,15 @@ require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 switch ( $task )
 {
 	case 'add'  :
+		TOOLBAR_sections::_EDIT(false);
+		break;
 	case 'edit' :
 	case 'editA':
-		TOOLBAR_sections::_EDIT();
+		TOOLBAR_sections::_EDIT(true);
 		break;
 
 	case 'copyselect':
+	case 'copysave':
 		TOOLBAR_sections::_COPY();
 		break;
 
@@ -33,4 +36,3 @@ switch ( $task )
 		TOOLBAR_sections::_DEFAULT();
 		break;
 }
-?>

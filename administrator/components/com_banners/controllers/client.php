@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: client.php 8180 2007-07-23 05:52:29Z eddieajau $
+ * @version		$Id: client.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -52,7 +52,7 @@ class BannerControllerClient extends JController
 		$where = array();
 
 		if ($search) {
-			$where[] = 'LOWER(a.name) LIKE "%'.$db->getEscaped($search).'%"';
+			$where[] = 'LOWER(a.name) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 
 		$where		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -130,6 +130,9 @@ class BannerControllerClient extends JController
 
 	function save()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners&c=client' );
 
 		// Initialize variables
@@ -159,6 +162,9 @@ class BannerControllerClient extends JController
 
 	function cancel()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners&c=client' );
 
 		// Initialize variables
@@ -170,6 +176,9 @@ class BannerControllerClient extends JController
 
 	function remove()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners&c=client' );
 
 		// Initialize variables
@@ -202,4 +211,3 @@ class BannerControllerClient extends JController
 		$this->setMessage( JText::sprintf( 'Items removed', $n ) );
 	}
 }
-?>

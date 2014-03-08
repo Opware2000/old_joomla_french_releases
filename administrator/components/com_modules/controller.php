@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: controller.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Modules
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -67,7 +67,7 @@ class ModulesController extends JController
 		$search				= JString::strtolower( $search );
 
 		$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-		$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+		$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 		$where[] = 'm.client_id = '.(int) $client->id;
 
@@ -87,7 +87,7 @@ class ModulesController extends JController
 			$where[] = 'm.module = '.$db->Quote($filter_type);
 		}
 		if ( $search ) {
-			$where[] = 'LOWER( m.title ) LIKE '.$db->Quote('%'.$search.'%');
+			$where[] = 'LOWER( m.title ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 		if ( $filter_state ) {
 			if ( $filter_state == 'P' ) {
@@ -181,6 +181,9 @@ class ModulesController extends JController
 	*/
 	function copy()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize some variables
 		$db 	=& JFactory::getDBO();
 		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
@@ -246,6 +249,9 @@ class ModulesController extends JController
 	 */
 	function save()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		global $mainframe;
 
 		$cache = & JFactory::getCache();
@@ -365,7 +371,7 @@ class ModulesController extends JController
 			return JError::raiseWarning( 500, JText::sprintf( 'DESCBEINGEDITTED', JText::_( 'The module' ), $row->title ) );
 		}
 
-		$row->content = htmlspecialchars( str_replace( '&amp;', '&', $row->content ) );
+		$row->content = htmlspecialchars( str_replace( '&amp;', '&', $row->content ), ENT_COMPAT, 'UTF-8' );
 
 		if ( $cid[0] ) {
 			$row->checkout( $user->get('id') );
@@ -550,6 +556,9 @@ class ModulesController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
 		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
@@ -564,13 +573,14 @@ class ModulesController extends JController
 
 		$cids = implode( ',', $cid );
 
-		$query = 'SELECT id, module, title, iscore, params'
+		// pasamio: Disabled this as it breaks the uninstall ability!
+		/*$query = 'SELECT id, module, title, iscore, params'
 		. ' FROM #__modules WHERE id IN ('.$cids.')'
 		;
 		$db->setQuery( $query );
 		if (!($rows = $db->loadObjectList())) {
 			return JError::raiseError( 500, $db->getErrorMsg() );
-		}
+		}*/
 
 		// remove mappings first (lest we leave orphans)
 		$query = 'DELETE FROM #__modules_menu'
@@ -598,6 +608,9 @@ class ModulesController extends JController
 	function publish()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$db 	=& JFactory::getDBO();
@@ -643,6 +656,9 @@ class ModulesController extends JController
 	{
 		global $mainframe;
 
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
 		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
@@ -660,6 +676,9 @@ class ModulesController extends JController
 	function reorder()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
@@ -688,6 +707,9 @@ class ModulesController extends JController
 	function access()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
@@ -735,6 +757,9 @@ class ModulesController extends JController
 	 */
 	function saveOrder()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
 		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));

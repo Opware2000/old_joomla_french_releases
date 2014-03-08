@@ -1,7 +1,7 @@
 /**
 * @version		$Id: validate.js 7401 2007-05-14 04:12:55Z eddieajau $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -71,6 +71,7 @@ var JFormValidator = new Class({
 	{
 		// Iterate through the form object and attach the validate method to all input fields.
 		$A(form.elements).each(function(el){
+			el = $(el);
 			if ((el.getTag() == 'input' || el.getTag() == 'button') && el.getProperty('type') == 'submit') {
 				if (el.hasClass('validate')) {
 					el.onclick = function(){return document.formvalidator.isValid(this.form);};

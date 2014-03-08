@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: controller.php 9812 2008-01-03 00:42:44Z eddieajau $
  * @package		Joomla
  * @subpackage	Installer
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -22,7 +21,6 @@ jimport('joomla.client.helper');
 /**
  * Installer Controller
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -57,6 +55,9 @@ class InstallerController extends JController
 	 */
 	function doInstall()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$model	= &$this->getModel( 'Install' );
 		$view	= &$this->getView( 'Install' );
 
@@ -101,6 +102,9 @@ class InstallerController extends JController
 	 */
 	function enable()
 	{
+		// Check for request forgeries
+		JRequest::checkToken( 'request' ) or die( 'Invalid Token' );
+
 		$type	= JRequest::getWord('type', 'components');
 		$model	= &$this->getModel( $type );
 		$view	= &$this->getView( $type );
@@ -127,6 +131,9 @@ class InstallerController extends JController
 	 */
 	function disable()
 	{
+		// Check for request forgeries
+		JRequest::checkToken( 'request' ) or die( 'Invalid Token' );
+
 		$type	= JRequest::getWord('type', 'components');
 		$model	= &$this->getModel( $type );
 		$view	= &$this->getView( $type );
@@ -153,6 +160,9 @@ class InstallerController extends JController
 	 */
 	function remove()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$type	= JRequest::getWord('type', 'components');
 		$model	= &$this->getModel( $type );
 		$view	= &$this->getView( $type );
@@ -161,6 +171,13 @@ class InstallerController extends JController
 		$view->assignRef('ftp', $ftp);
 
 		$eid = JRequest::getVar('eid', array(), '', 'array');
+
+		// Update to handle components radio box
+		// Checks there is only one extensions, we're uninstalling components
+		// and then checks that the zero numbered item is set (shouldn't be a zero
+		// if the eid is set to the proper format)
+		if((count($eid) == 1) && ($type == 'components') && (isset($eid[0]))) $eid = array($eid[0] => 0);
+
 		JArrayHelper::toInteger($eid, array());
 		$result = $model->remove($eid);
 

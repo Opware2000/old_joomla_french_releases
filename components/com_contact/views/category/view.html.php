@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.html.php 8604 2007-08-28 18:06:52Z jinx $
+ * @version		$Id: view.html.php 9903 2008-01-06 01:17:10Z robs $
  * @package		Joomla
  * @subpackage	Contact
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -32,11 +32,7 @@ class ContactViewCategory extends JView
 		$model	  = &$this->getModel();
 		$document =& JFactory::getDocument();
 
-		// Get the parameters of the active menu item
-		$menus	=& JMenu::getInstance();
-		$menu	= $menus->getActive();
-
-		$pparams = &$mainframe->getPageParameters('com_contact');
+		$pparams = &$mainframe->getParams('com_contact');
 
 		// Selected Request vars
 		$categoryId			= JRequest::getVar('catid',				0,				'', 'int');
@@ -44,9 +40,6 @@ class ContactViewCategory extends JView
 		$limitstart			= JRequest::getVar('limitstart',		0,				'', 'int');
 		$filter_order		= JRequest::getVar('filter_order',		'cd.ordering',	'', 'cmd');
 		$filter_order_Dir	= JRequest::getVar('filter_order_Dir',	'ASC',			'', 'word');
-
-		// Set some defaults against system variables
-		$pparams->def('page_title',	$menu->name);
 
 		// query options
 		$options['aid'] 		= $user->get('aid', 0);
@@ -62,7 +55,7 @@ class ContactViewCategory extends JView
 		//add alternate feed link
 		if($pparams->get('show_feed_link', 1) == 1)
 		{
-			$link	= 'index.php?option=com_contact&view=category&format=feed&id='.$categoryId;
+			$link	= '&format=feed&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 			$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -70,13 +63,24 @@ class ContactViewCategory extends JView
 		}
 
 		//prepare contacts
+		if($pparams->get('show_email', 0) == 1) {
+		    jimport('joomla.mail.helper');
+		}
+
 		$k = 0;
 		for($i = 0; $i <  count( $contacts ); $i++)
 		{
 			$contact =& $contacts[$i];
 
-			$contact->link	   = JRoute::_('index.php?option=com_contact&view=contact&id='.$contact->slug);
-			$contact->email_to = JHTML::_('email.cloak', $contact->email_to);
+			$contact->link	   = JRoute::_('index.php?option=com_contact&view=contact&id='.$contact->slug.'&catid='.$contact->catslug);
+			if($pparams->get('show_email', 0) == 1) {
+			    $contact->email_to = trim($contact->email_to);
+				if(!empty($contact->email_to) && JMailHelper::isEmailAddress($contact->email_to)) {
+				    $contact->email_to = JHTML::_('email.cloak', $contact->email_to);
+				} else {
+				    $contact->email_to = '';
+				}
+			}
 
 			$contact->odd	= $k;
 			$contact->count = $i;
@@ -108,11 +112,7 @@ class ContactViewCategory extends JView
 		}
 
 		// table ordering
-		if ( $filter_order_Dir == 'DESC' ) {
-			$lists['order_Dir'] = 'ASC';
-		} else {
-			$lists['order_Dir'] = 'DESC';
-		}
+		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 		$selected = '';
 
@@ -125,7 +125,7 @@ class ContactViewCategory extends JView
 		//$this->assignRef('data',		$data);
 		$this->assignRef('category',	$category);
 		$this->assignRef('params',		$pparams);
-		
+
 		$this->assign('action',		$uri->toString());
 
 		parent::display($tpl);

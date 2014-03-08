@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: admin.login.php 8412 2007-08-15 19:34:16Z jinx $
-* @package		Joomla
-* @subpackage	Joomla.Extensions
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: admin.login.php 9814 2008-01-03 00:45:28Z eddieajau $
+ * @package		Joomla
+ * @subpackage	Joomla.Extensions
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -35,23 +35,25 @@ switch ( JRequest::getCmd('task'))
  * Static class to hold controller functions for the Login component
  *
  * @static
- * @author		Johan Janssens <johan.janssens@joomla.org>
  * @package		Joomla
  * @subpackage	Login
  * @since		1.5
  */
-
 class LoginController
 {
 	function display()
 	{
-		$document =& JFactory::getDocument();
-		echo $document->getBuffer('module', 'login', array('style' => 'rounded', 'id' => 'section-box'));
+		$module = & JModuleHelper::getModule('mod_login');
+		$module = JModuleHelper::renderModule($module, array('style' => 'rounded', 'id' => 'section-box'));
+		echo $module;
 	}
 
 	function login()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		$credentials = array();
 

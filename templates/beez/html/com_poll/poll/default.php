@@ -1,25 +1,12 @@
-<?php
-/**
- * @version $Id: default.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
+<?php // @version $Id: default.php 9133 2007-10-04 02:41:01Z jinx $
 defined('_JEXEC') or die('Restricted access');
-
 ?>
 
-<script type = "text/javascript">
-//<![CDATA[
-	var link = document.createElement('link');
-	link.setAttribute('href', 'components/com_poll/assets/poll_bars.css');
-	link.setAttribute('rel', 'stylesheet');
-	link.setAttribute('type', 'text/css');
-	var head = document.getElementsByTagName('head').item(0);
-	head.appendChild(link);
-//]]>
-</script>
+<?php JHTML::_('stylesheet', 'poll_bars.css', 'components/com_poll/assets/'); ?>
 
 <?php if ($this->params->get('show_page_title')) : ?>
 <h1 class="componentheading<?php echo $this->params->get('pageclass_sfx'); ?>">
-	<?php echo $this->poll->title ? $this->poll->title : $this->params->get('page_title'); ?>
+	<?php echo $this->poll->title ? $this->escape($this->poll->title) : $this->escape($this->params->get('page_title')); ?>
 </h1>
 <?php endif; ?>
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: pane.php 8284 2007-08-01 08:14:55Z eddieajau $
+ * @version		$Id: pane.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	HTML
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -179,8 +179,6 @@ class JPaneTabs extends JPane
 	 */
 	function _loadBehavior($params = array())
 	{
-		global $mainframe;
-
 		// Include mootools framework
 		JHTML::_('behavior.mootools');
 
@@ -204,8 +202,7 @@ class JPaneTabs extends JPane
 		$js = '		window.addEvent(\'domready\', function(){ $$(\'dl.tabs\').each(function(tabs){ new JTabs(tabs, '.$options.'); }); });';
 
 		$document->addScriptDeclaration( $js );
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-		$document->addScript( $url. 'media/system/js/tabs.js' );
+		$document->addScript( JURI::root(true). '/media/system/js/tabs.js' );
 	}
 }
 

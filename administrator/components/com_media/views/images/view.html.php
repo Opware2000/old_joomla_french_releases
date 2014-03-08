@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
+* @version		$Id: view.html.php 9944 2008-01-14 21:10:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Media
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -31,15 +31,13 @@ class MediaViewImages extends JView
 	{
 		global $mainframe;
 
-		//attach stylesheet to document
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
+		$app = JFactory::getApplication();
+		$append = '';
+		if($app->getClientId() == 1) $append = 'administrator/';
 
-		// Load the mootools framework
-		JHTML::_('behavior.mootools');
-
-		$doc =& JFactory::getDocument();
-		$doc->addStyleSheet('components/com_media/assets/popup-imagemanager.css');
-		$doc->addScript('components/com_media/assets/popup-imagemanager.js');
+		JHTML::_('script'    , 'popup-imagemanager.js', $append .'components/com_media/assets/');
+		JHTML::_('stylesheet', 'popup-imagemanager.css', $append .'components/com_media/assets/');
+		JHTML::_('behavior.uploader', 'file-upload', array('onAllComplete' => 'function(){ ImageManager.refreshFrame(); }'));
 
 		/*
 		 * Display form for FTP credentials?
@@ -48,10 +46,10 @@ class MediaViewImages extends JView
 		jimport('joomla.client.helper');
 		$ftp = !JClientHelper::hasCredentials('ftp');
 
-		$this->assignRef('session', JFactory::getSession());
-		$this->assignRef('config', JComponentHelper::getParams('com_media'));
-		$this->assignRef('state', $this->get('state'));
-		$this->assignRef('folderList', $this->get('folderList'));
+		$this->assignRef( 'session',	JFactory::getSession());
+		$this->assignRef( 'config',		JComponentHelper::getParams('com_media'));
+		$this->assignRef( 'state',		$this->get('state'));
+		$this->assignRef( 'folderList',	$this->get('folderList'));
 		$this->assign('require_ftp', $ftp);
 
 		parent::display($tpl);

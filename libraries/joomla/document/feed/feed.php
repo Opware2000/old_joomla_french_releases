@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: feed.php 7544 2007-05-30 00:41:36Z friesengeist $
+* @version		$Id: feed.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -196,7 +196,7 @@ class JDocumentFeed extends JDocument
 	 */
 	function render( $cache = false, $params = array())
 	{
-		global $mainframe, $option;
+		global $option;
 
 		// Get the feed type
 		$type = JRequest::getCmd('type', 'rss');

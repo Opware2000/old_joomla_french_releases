@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.contact.php 8275 2007-07-31 23:10:13Z humvee $
+* @version		$Id: admin.contact.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Contact
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -35,8 +35,10 @@ JArrayHelper::toInteger($cid, array(0));
 switch ($task)
 {
 	case 'add' :
+		editContact(false );
+		break;
 	case 'edit':
-		editContact( );
+		editContact(true);
 		break;
 
 	case 'apply':
@@ -113,7 +115,7 @@ function showContacts( $option )
 	$where = array();
 
 	if ( $search ) {
-		$where[] = 'cd.name LIKE "%'.$db->getEscaped($search).'%"';
+		$where[] = 'cd.name LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 	if ( $filter_catid ) {
 		$where[] = 'cd.catid = '.(int) $filter_catid;
@@ -179,7 +181,7 @@ function showContacts( $option )
 * @param int The id of the record, 0 if a new entry
 * @param string The current GET/POST option
 */
-function editContact( )
+function editContact($edit )
 {
 	$db		=& JFactory::getDBO();
 	$user 	=& JFactory::getUser();
@@ -191,9 +193,10 @@ function editContact( )
 
 	$row =& JTable::getInstance('contact', 'Table');
 	// load the row from the db table
+	if($edit)
 	$row->load( $cid[0] );
 
-	if ($cid[0]) {
+	if ($edit) {
 		// do stuff for existing records
 		$row->checkout($user->get('id'));
 	} else {
@@ -211,7 +214,10 @@ function editContact( )
 	. ' AND catid = '.(int) $row->catid
 	. ' ORDER BY ordering'
 	;
-	$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query, 1 );
+	if($edit)
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query, 1 );
+	else
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, '', $query, 1 );
 
 	// build list of users
 	$lists['user_id'] 			= JHTML::_('list.users',  'user_id', $row->user_id, 1, NULL, 'name', 0 );
@@ -240,6 +246,9 @@ function editContact( )
 function saveContact( $task )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	// Initialize variables
 	$db		=& JFactory::getDBO();
@@ -322,6 +331,9 @@ function removeContacts( &$cid )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	// Initialize variables
 	$db =& JFactory::getDBO();
 	JArrayHelper::toInteger($cid);
@@ -349,6 +361,9 @@ function removeContacts( &$cid )
 function changeContact( $cid=null, $state=0 )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	// Initialize variables
 	$db 	=& JFactory::getDBO();
@@ -388,6 +403,9 @@ function orderContacts( $uid, $inc )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	// Initialize variables
 	$db =& JFactory::getDBO();
 
@@ -405,6 +423,9 @@ function cancelContact()
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	// Initialize variables
 	$db =& JFactory::getDBO();
 	$row =& JTable::getInstance('contact', 'Table');
@@ -421,6 +442,9 @@ function cancelContact()
 function changeAccess( $id, $access  )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	// Initialize variables
 	$db =& JFactory::getDBO();
@@ -442,6 +466,9 @@ function changeAccess( $id, $access  )
 function saveOrder( &$cid )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	// Initialize variables
 	$db			=& JFactory::getDBO();
@@ -476,4 +503,3 @@ function saveOrder( &$cid )
 	$msg 	= 'New ordering saved';
 	$mainframe->redirect( 'index.php?option=com_contact', $msg );
 }
-?>

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: calendar.php 8329 2007-08-03 15:56:00Z chrisdavenport $
+* @version		$Id: calendar.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
-* @subpackage	Articles
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @subpackage	Parameter
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -20,7 +20,7 @@ defined('_JEXEC') or die();
  *
  * @author 		Louis Landry
  * @package 	Joomla.Framework
- * @subpackage	Articles
+ * @subpackage	Parameter
  * @since		1.5
  */
 class JElementCalendar extends JElement
@@ -36,7 +36,7 @@ class JElementCalendar extends JElement
 	{
 		JHTML::_('behavior.calendar'); //load the calendar behavior
 
-		$format	= ( $node->attributes('format') ? $node->attributes('format') : 'y-mm-dd' );
+		$format	= ( $node->attributes('format') ? $node->attributes('format') : '%Y-%m-%d' );
 		$class	= $node->attributes('class') ? $node->attributes('class') : 'inputbox';
 
 		$id   = $control_name.$name;

@@ -1,21 +1,21 @@
 <?php
 /**
-* @version		$Id: gmail.php 8545 2007-08-24 15:43:10Z jinx $
-* @package		Joomla
-* @subpackage	JFramework
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: gmail.php 9764 2007-12-30 07:48:11Z ircmaxell $
+ * @package		Joomla
+ * @subpackage	JFramework
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * GMail Authentication Plugin
@@ -54,28 +54,40 @@ class plgAuthenticationGMail extends JPlugin
 	 */
 	function onAuthenticate( $credentials, $options, &$response )
 	{
-		$curl = curl_init('https://mail.google.com/gmail/feed/atom');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		//curl_setopt($curl, CURLOPT_HEADER, 1);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($curl, CURLOPT_USERPWD, $credentials['username'].':'.$credentials['password']);
-		$result = curl_exec($curl);
-		$code = curl_getinfo ($curl, CURLINFO_HTTP_CODE);
 		$message = '';
 		$success = 0;
-
-		switch($code)
+		if(function_exists('curl_init'))
 		{
-			case 200:
-		 		$message = 'Access Granted';
-		 		$success = 1;
-			break;
-			case 401:
-				$message = 'Access Denied';
-			break;
-			default:
-				$message = 'Result unknown, access denied.';
-				break;
+			if(strlen($credentials['username']) && strlen($credentials['password']))
+			{
+				$curl = curl_init('https://mail.google.com/mail/feed/atom');
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+				//curl_setopt($curl, CURLOPT_HEADER, 1);
+				curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+				curl_setopt($curl, CURLOPT_USERPWD, $credentials['username'].':'.$credentials['password']);
+				$result = curl_exec($curl);
+				$code = curl_getinfo ($curl, CURLINFO_HTTP_CODE);
+
+				switch($code)
+				{
+					case 200:
+				 		$message = 'Access Granted';
+				 		$success = 1;
+					break;
+					case 401:
+						$message = 'Access Denied';
+					break;
+					default:
+						$message = 'Result unknown, access denied.';
+						break;
+				}
+			}
+			else  {
+				$message = 'Username or password blank';
+			}
+		}
+		else {
+			$message = 'curl isn\'t insalled';
 		}
 
 		if ($success)
@@ -92,4 +104,3 @@ class plgAuthenticationGMail extends JPlugin
 		}
 	}
 }
-?>

@@ -3,7 +3,7 @@
  * @version		$Id: remind.php 7399 2007-05-14 04:10:09Z eddieajau $
  * @package		Joomla
  * @subpackage	User
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -46,7 +46,7 @@ class UserModelRemind extends JModel
 	 */
 	function remindUsername($email)
 	{
-		jimport('joomla.utilities.mail');
+		jimport('joomla.mail.helper');
 
 		global $mainframe;
 
@@ -92,7 +92,7 @@ class UserModelRemind extends JModel
 	{
 		$config		= &JFactory::getConfig();
 		$uri		= &JFactory::getURI();
-		$url		= JURI::base().JRoute::_('index.php?option=com_user&view=login', false);
+		$url		= $uri->toString( array('scheme', 'host', 'port')).JRoute::_('index.php?option=com_user&view=login', false);
 
 		$from		= $config->getValue('mailfrom');
 		$fromname	= $config->getValue('fromname');

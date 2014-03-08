@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: joomla.php 8555 2007-08-25 14:50:33Z jinx $
+* @version		$Id: joomla.php 9922 2008-01-11 01:00:16Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,8 +15,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-jimport('joomla.event.plugin');
-
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla Authentication plugin
@@ -68,11 +67,6 @@ class plgAuthenticationJoomla extends JPlugin
 
 		// Initialize variables
 		$conditions = '';
-		
-		//Make sure the group exists
-		if(!isset($credentials['group'])) {
-			$credentials['group'] = 0; 
-		}
 
 		// Get a database object
 		$db =& JFactory::getDBO();
@@ -83,30 +77,24 @@ class plgAuthenticationJoomla extends JPlugin
 			;
 		$db->setQuery( $query );
 		$result = $db->loadObject();
-		
+
+
 		if($result)
 		{
-			if($result->gid > $credentials['group']) 
-			{
-				$parts	= explode( ':', $result->password );
-				$crypt	= $parts[0];
-				$salt	= @$parts[1];
-				$testcrypt = JUserHelper::getCryptedPassword($credentials['password'], $salt);
+			$parts	= explode( ':', $result->password );
+			$crypt	= $parts[0];
+			$salt	= @$parts[1];
+			$testcrypt = JUserHelper::getCryptedPassword($credentials['password'], $salt);
 
-				if ($crypt == $testcrypt) {
-					$email = JUser::getInstance($result->id); // Bring this in line with the rest of the system
-					$response->email = $email->email;
-					$response->status = JAUTHENTICATE_STATUS_SUCCESS;
-					$response->error_message = '';
-				} else {
-					$response->status = JAUTHENTICATE_STATUS_FAILURE;
-					$response->error_message = 'Invalid password';
-				}
-			} 
-			else 
-			{
+			if ($crypt == $testcrypt) {
+				$user = JUser::getInstance($result->id); // Bring this in line with the rest of the system
+				$response->email = $user->email;
+				$response->fullname = $user->name;
+				$response->status = JAUTHENTICATE_STATUS_SUCCESS;
+				$response->error_message = '';
+			} else {
 				$response->status = JAUTHENTICATE_STATUS_FAILURE;
-				$response->error_message = 'Access denied';
+				$response->error_message = 'Invalid password';
 			}
 		}
 		else

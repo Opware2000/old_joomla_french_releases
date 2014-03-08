@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 8559 2007-08-25 18:34:58Z jinx $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -70,6 +70,7 @@ class modBannersHelper
 	function renderBanner($params, &$item)
 	{
 		$link = JRoute::_( 'index.php?option=com_banners&task=click&bid='. $item->bid );
+		$baseurl = JURI::base();
 
 		$html = '';
 		if (trim($item->custombannercode))
@@ -80,7 +81,7 @@ class modBannersHelper
 		}
 		else if (BannerHelper::isImage( $item->imageurl ))
 		{
-			$image 	= '<img src="images/banners/'.$item->imageurl.'" border="0" alt="'.JText::_('Banner').'" />';
+			$image 	= '<img src="'.$baseurl.'images/banners/'.$item->imageurl.'" border="0" alt="'.JText::_('Banner').'" />';
 			if ($item->clickurl)
 			{
 				switch ($params->get( 'target', 1 ))
@@ -111,7 +112,7 @@ class modBannersHelper
 		}
 		else if (BannerHelper::isFlash( $item->imageurl ))
 		{
-			$imageurl = "images/banners/".$item->imageurl;
+			$imageurl = $baseurl."images/banners/".$item->imageurl;
 			$html =	"<object classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" codebase=\"http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0\" border=\"5\">
 						<param name=\"movie\" value=\"$imageurl\"><embed src=\"$imageurl\" loop=\"false\" pluginspage=\"http://www.macromedia.com/go/get/flashplayer\" type=\"application/x-shockwave-flash\"></embed>
 					</object>";

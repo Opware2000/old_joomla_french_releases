@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: remember.php 8503 2007-08-22 07:39:40Z jinx $
+* @version		$Id: remember.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,8 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Joomla! System Remember Me Plugin
@@ -57,7 +59,11 @@ class plgSystemRemember extends JPlugin
 			if ($str = JRequest::getString($hash, '', 'cookie', JREQUEST_ALLOWRAW | JREQUEST_NOTRIM))
 			{
 				jimport('joomla.utilities.simplecrypt');
-				$crypt	= new JSimpleCrypt();
+
+				//Create the encryption key, apply extra hardening using the user agent string
+				$key = JUtility::getHash(@$_SERVER['HTTP_USER_AGENT']);
+
+				$crypt	= new JSimpleCrypt($key);
 				$str	= $crypt->decrypt($str);
 				$mainframe->login(unserialize($str));
 			}

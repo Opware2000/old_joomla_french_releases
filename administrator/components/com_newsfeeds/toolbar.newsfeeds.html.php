@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.newsfeeds.html.php 7796 2007-06-26 22:52:22Z friesengeist $
+* @version		$Id: toolbar.newsfeeds.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -29,20 +29,21 @@ class TOOLBAR_newsfeeds
 		JToolBarHelper::deleteList();
 		JToolBarHelper::editListX();
 		JToolBarHelper::addNewX();
+		JToolBarHelper::preferences( 'com_newsfeeds' );
 		JToolBarHelper::help( 'screen.newsfeeds' );
 	}
 
-	function _EDIT()
+	function _EDIT($edit)
 	{
 		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 		JArrayHelper::toInteger($cid, array(0));
 
-		$text 	= ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+		$text 	= ( $edit ? JText::_( 'Edit' ) : JText::_( 'New' ) );
 
 		JToolBarHelper::title(  JText::_( 'Newsfeed' ).': <small><small>[ '. $text.' ]</small></small>' );
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
-		if ($cid[0]) {
+		if ($edit) {
 			// for existing items the button is renamed `close`
 			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
@@ -51,4 +52,3 @@ class TOOLBAR_newsfeeds
 		JToolBarHelper::help( 'screen.newsfeeds.edit' );
 	}
 }
-?>

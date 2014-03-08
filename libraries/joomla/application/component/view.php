@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: view.php 9768 2007-12-30 09:15:49Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	Application
- * @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
+ * @copyright Copyright Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -112,12 +112,12 @@ class JView extends JObject
      * @access private
      */
     var $_escape = 'htmlspecialchars';
-	
+
 	 /**
      * Charset to use in escaping mechanisms; defaults to urf8 (UTF-8)
-     * 
+     *
      * @var string
-     * @access private 
+     * @access private
      */
     var $_charset = 'UTF-8';
 
@@ -137,12 +137,12 @@ class JView extends JObject
 				$this->_name = $this->getName();
 			}
 		}
-		
+
 		 // set the charset (used by the variable escaping functions)
         if (array_key_exists('charset', $config)) {
             $this->_charset = $config['charset'];
         }
-		
+
 		 // user-defined escaping callback
         if (array_key_exists('escape', $config)) {
             $this->setEscape($config['escape']);
@@ -160,7 +160,7 @@ class JView extends JObject
 			// user-defined dirs
 			$this->_setPath('template', $config['template_path']);
 		} else {
-			$this->_setPath('template', $this->_basePath.DS.'views'.DS.$this->_name.DS.'tmpl');
+			$this->_setPath('template', $this->_basePath.DS.'views'.DS.$this->getName().DS.'tmpl');
 		}
 
 		// set the default helper search path
@@ -177,6 +177,8 @@ class JView extends JObject
 		} else {
 			$this->setLayout('default');
 		}
+
+		$this->baseurl = JURI::base(true);
 	}
 
 	/**
@@ -319,7 +321,7 @@ class JView extends JObject
 	/**
      * Escapes a value for output in a view script.
      *
-     * If escaping mechanism is one of htmlspecialchars or htmlentities, uses 
+     * If escaping mechanism is one of htmlspecialchars or htmlentities, uses
      * {@link $_encoding} setting.
      *
      * @param  mixed $var The output to escape.
@@ -333,7 +335,7 @@ class JView extends JObject
 
         return call_user_func($this->_escape, $var);
     }
-	
+
 	/**
 	 * Method to get data from a registered model
 	 *
@@ -395,7 +397,7 @@ class JView extends JObject
 		}
 		return $this->_models[strtolower( $name )];
 	}
-	
+
 	/**
 	* Get the layout.
 	*
@@ -407,7 +409,7 @@ class JView extends JObject
 	{
 		return $this->_layout;
 	}
-	
+
 	/**
 	 * Method to get the view name
 	 *
@@ -428,12 +430,18 @@ class JView extends JObject
 			if (!preg_match('/View((view)*(.*(view)?.*))$/i', get_class($this), $r)) {
 				JError::raiseError (500, "JView::getName() : Cannot get or parse class name.");
 			}
+			if (strpos($r[3], "view"))
+			{
+				JError::raiseWarning('SOME_ERROR_CODE',"JView::getName() : Your classname contains the substring 'view'. ".
+											"This causes problems when extracting the classname from the name of your objects view. " .
+											"Avoid Object names with the substring 'view'.");
+			}
 			$name = strtolower( $r[3] );
 		}
 
 		return $name;
 	}
-	
+
 	/**
 	 * Method to add a model to the view.  We support a multiple model single
 	 * view system by which models are referenced by classname.  A caveat to the
@@ -489,7 +497,7 @@ class JView extends JObject
 		}
 		return $previous;
 	}
-	
+
 	 /**
      * Sets the _escape() callback.
      *
@@ -545,7 +553,8 @@ class JView extends JObject
 
 		// load the template script
 		jimport('joomla.filesystem.path');
-		$this->_template = JPath::find($this->_path['template'], $this->_createFileName('template', array('name' => $file)));
+		$filetofind	= $this->_createFileName('template', array('name' => $file));
+		$this->_template = JPath::find($this->_path['template'], $filetofind);
 
 		if ($this->_template != false)
 		{
@@ -627,7 +636,7 @@ class JView extends JObject
 				if (isset($mainframe))
 				{
 					$option = preg_replace('/[^A-Z0-9_\.-]/i', '', $option);
-					$fallback = JPATH_BASE.DS.'templates'.DS.$mainframe->getTemplate().DS.'html'.DS.$option.DS.$this->_name;
+					$fallback = JPATH_BASE.DS.'templates'.DS.$mainframe->getTemplate().DS.'html'.DS.$option.DS.$this->getName();
 					$this->_addPath('template', $fallback);
 				}
 			}	break;

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: element.php 8288 2007-08-01 08:40:54Z eddieajau $
+* @version		$Id: element.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Parameter
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -26,7 +26,6 @@ defined('JPATH_BASE') or die();
  * @subpackage		Parameter
  * @since		1.5
  */
-
 class JElement extends JObject
 {
 	/**
@@ -72,10 +71,8 @@ class JElement extends JObject
 		$name	= $xmlElement->attributes('name');
 		$label	= $xmlElement->attributes('label');
 		$descr	= $xmlElement->attributes('description');
-
 		//make sure we have a valid label
 		$label = $label ? $label : $name;
-
 		$result[0] = $this->fetchTooltip($label, $descr, $xmlElement, $control_name, $name);
 		$result[1] = $this->fetchElement($name, $value, $xmlElement, $control_name);
 		$result[2] = $descr;

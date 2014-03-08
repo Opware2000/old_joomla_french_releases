@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8425 2007-08-17 05:30:29Z tcp $
+* @version		$Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Weblinks
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -36,7 +36,7 @@ class UserViewUser extends JView
 			$this->_displayForm($tpl);
 			return;
 		}
-		
+
 		if ( $layout == 'login' ) {
 			parent::display($tpl);
 			return;
@@ -55,14 +55,6 @@ class UserViewUser extends JView
 		global $mainframe;
 
 		$user     =& JFactory::getUser();
-		$document =& JFactory::getDocument();
-
-		// Get the parameters of the active menu item
-		$menu = &JMenu::getInstance();
-		$item = $menu->getActive();
-
-		// Set page title
-		$document->setTitle( $item->name );
 
 		// check to see if Frontend User Params have been enabled
 		$usersConfig = &JComponentHelper::getParams( 'com_users' );
@@ -70,15 +62,8 @@ class UserViewUser extends JView
 
 		if ($check == '1' || $check == 1 || $check == NULL)
 		{
-			$params		= $user->getParameters();
-			$result		= $user->authorize( 'com_user', 'edit' );
-			// TODO: We should really act on a $result = 0 which is not authorised to change details
-			$setupFile	= 'users_'.preg_replace( '#[^A-Z0-9]#i', '_', strtolower( $result ) );
-
-			if (file_exists( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_users'.DS.$setupFile.'.xml' )) {
-				$params->loadSetupFile( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_users'.DS.$setupFile.'.xml' );
-			} else {
-				$params->loadSetupFile( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_users'.DS.'users.xml' );
+			if($user->authorize( 'com_user', 'edit' )) {
+				$params		= $user->getParameters(true);
 			}
 		}
 

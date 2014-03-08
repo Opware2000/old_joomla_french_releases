@@ -1,6 +1,6 @@
 /**
-* @version		$Id: index.js 8412 2007-08-15 19:34:16Z jinx $
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @version		$Id: index.js 9765 2007-12-30 08:21:02Z ircmaxell $
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -24,7 +24,7 @@ try {
 } catch(e) {}
 
 document.menu = null
-Window.onDomReady(function(){
+window.addEvent('load', function(){
 	element = $('menu')
 	if(!element.hasClass('disabled')) {
 		var menu = new JMenu(element)

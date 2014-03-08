@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: eaccelerator.php 8454 2007-08-19 07:36:36Z jinx $
+ * @version		$Id: eaccelerator.php 9972 2008-01-28 16:15:51Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	Cache
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -53,7 +53,12 @@ class JCacheStorageEaccelerator extends JCacheStorage
 	{
 		$cache_id = $this->_getCacheId($id, $group);
 		$this->_setExpire($cache_id);
-		return eaccelerator_get($cache_id);
+		$cache_content = eaccelerator_get($cache_id);
+		if($cache_content === null) 
+		{
+			return false;
+		}
+		return $cache_content;
 	}
 
 	/**

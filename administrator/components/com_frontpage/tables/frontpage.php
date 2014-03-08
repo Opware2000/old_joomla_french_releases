@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: frontpage.php 6140 2007-01-02 03:44:18Z eddiea $
+* @version		$Id: frontpage.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Content
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -33,4 +33,3 @@ class TableFrontPage extends JTable
 		parent::__construct( '#__content_frontpage', 'content_id', $db );
 	}
 }
-?>

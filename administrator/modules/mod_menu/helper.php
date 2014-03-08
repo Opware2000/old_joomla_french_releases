@@ -2,7 +2,7 @@
 /**
 * @version		$Id:mod_menu.php 2463 2006-02-18 06:05:38Z webImagery $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -29,7 +29,6 @@ class modMenuHelper
 		$lang		= & JFactory::getLanguage();
 		$user		= & JFactory::getUser();
 		$db			= & JFactory::getDBO();
-		$caching	= $mainframe->getCfg('caching');
 		$usertype	= $user->get('usertype');
 
 		// cache some acl checks
@@ -37,7 +36,7 @@ class modMenuHelper
 		$canConfig			= $user->authorize('com_config', 'manage');
 		$manageTemplates	= $user->authorize('com_templates', 'manage');
 		$manageTrash		= $user->authorize('com_trash', 'manage');
-		$manageMenuMan		= $user->authorize('com_menumanager', 'manage');
+		$manageMenuMan		= $user->authorize('com_menus', 'manage');
 		$manageLanguages	= $user->authorize('com_languages', 'manage');
 		$installModules		= $user->authorize('com_installer', 'module');
 		$editAllModules		= $user->authorize('com_modules', 'manage');
@@ -120,7 +119,7 @@ class modMenuHelper
 		/*
 		 * Components SubMenu
 		 */
-		if ($editAllComponents) 
+		if ($editAllComponents)
 		{
 			$menu->addChild(new JMenuNode(JText::_('Components')), true);
 
@@ -228,9 +227,7 @@ class modMenuHelper
 				$menu->addChild(new JMenuNode(JText::_('Global Checkin'), 'index.php?option=com_checkin', 'class:checkin'));
 				$menu->addSeparator();
 			}
-			if ($caching) {
-				$menu->addChild(new JMenuNode(JText::_('Clean Cache'), 'index.php?option=com_cache', 'class:config'));
-			}
+			$menu->addChild(new JMenuNode(JText::_('Clean Cache'), 'index.php?option=com_cache', 'class:config'));
 
 			$menu->getParent();
 		}

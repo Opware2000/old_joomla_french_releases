@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.php 8563 2007-08-25 20:50:33Z jinx $
+* @version		$Id: view.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Search
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -22,7 +22,7 @@ jimport('joomla.application.component.view');
  * @subpackage	Search
  * @since 1.5
  */
-class searchViewSearch extends JView
+class SearchViewSearch extends JView
 {
 	function display($tpl=null)
 	{
@@ -48,18 +48,17 @@ class searchViewSearch extends JView
 		$pageNav = new JPagination( count($items), $limitstart, $limit );
 
 		$showResults	= JRequest::getInt('search_results');
-		
+
 		$search 		= $mainframe->getUserStateFromRequest( 'com_search.search', 'search', '', 'string' );
-		
+
 		$this->assignRef('items', 	$items);
 		$this->assignRef('enabled', $enabled);
 		$this->assignRef('pageNav', $pageNav);
 		$this->assignRef('search', 	$search );
 		$this->assignRef('lists',	$model->lists );
-		
+
 		$this->assignRef('showResults', $showResults);
 
 		parent::display($tpl);
 	}
 }
-?>

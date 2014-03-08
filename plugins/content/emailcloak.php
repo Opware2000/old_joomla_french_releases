@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: emailcloak.php 8220 2007-07-27 22:09:08Z eddieajau $
+* @version		$Id: emailcloak.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -30,7 +30,7 @@ function plgContentEmailCloak( &$row, &$params, $page=0 )
 
 	// check for presence of {emailcloak=off} which is explicits disables this bot for the item
 	if ( !JString::strpos( $row->text, '{emailcloak=off}' ) === false ) {
-		$row->text = JString::str_replace( '{emailcloak=off}', '', $row->text );
+		$row->text = JString::str_ireplace( '{emailcloak=off}', '', $row->text );
 		return true;
 	}
 

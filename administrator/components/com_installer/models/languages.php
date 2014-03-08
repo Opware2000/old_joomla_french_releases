@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: languages.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: languages.php 9770 2007-12-30 10:16:40Z mtk $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -20,7 +19,6 @@ jimport( 'joomla.filesystem.folder' );
 /**
  * Installer Languages Model
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -164,6 +162,9 @@ class InstallerModelLanguages extends InstallerModel
 	{
 		global $mainframe;
 
+		$lang =& JFactory::getLanguage();
+		$lang->load('com_installer');
+
 		// Initialize variables
 		$failed = array ();
 
@@ -182,12 +183,25 @@ class InstallerModelLanguages extends InstallerModel
 
 		// Get an installer object for the extension type
 		jimport('joomla.installer.installer');
-		$installer = & JInstaller::getInstance($db, $this->_type);
+		$installer	=& JInstaller::getInstance($db, $this->_type);
 
 		// Uninstall the chosen extensions
 		foreach ($eid as $id)
 		{
 			$item = $this->_items[$id];
+
+			// Get client information
+			$client	=& JApplicationHelper::getClientInfo($item->client_id);
+
+			// Don't delete a default ( published language )
+			$params = JComponentHelper::getParams('com_languages');
+			$tag	= basename($item->language);
+			if ( $params->get($client->name, 'en-GB') == $tag ) {
+				$failed[]	= $id;
+				JError::raiseWarning('', JText::_('UNINSTALLLANGPUBLISHEDALREADY'));
+				return;
+			}
+
 			$result = $installer->uninstall( 'language', $item->language );
 
 			// Build an array of extensions that failed to uninstall
@@ -198,11 +212,11 @@ class InstallerModelLanguages extends InstallerModel
 
 		if (count($failed)) {
 			// There was an error in uninstalling the package
-			$msg = JText::sprintf('UNINSTALLEXT', $this->_type, JText::_('Error'));
+			$msg = JText::sprintf('UNINSTALLEXT', JText::_($this->_type), JText::_('Error'));
 			$result = false;
 		} else {
 			// Package uninstalled sucessfully
-			$msg = JText::sprintf('UNINSTALLEXT', $this->_type, JText::_('Success'));
+			$msg = JText::sprintf('UNINSTALLEXT', JText::_($this->_type), JText::_('Success'));
 			$result = true;
 		}
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: folder.php 8683 2007-08-31 20:02:02Z jinx $
+ * @version		$Id: folder.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -65,7 +65,8 @@ class JFolder
 			return JError::raiseError(-1, JText::_('Unable to create target folder'));
 		}
 
-		if ($FTPOptions['enabled'] == 1) {
+		if ($FTPOptions['enabled'] == 1)
+		{
 			// Connect the FTP client
 			jimport('joomla.client.ftp');
 			$ftp = & JFTP::getInstance($FTPOptions['host'], $FTPOptions['port'], null, $FTPOptions['user'], $FTPOptions['pass']);
@@ -238,6 +239,13 @@ class JFolder
 	 */
 	function delete($path)
 	{
+		// Sanity check
+		if ( ! $path ) {
+			// Bad programmer! Bad Bad programmer!
+			JError::raiseWarning(500, 'JFolder::delete: '.JText::_('Attempt to delete base directory') );
+			return false;
+		}
+
 		// Initialize variables
 		jimport('joomla.client.helper');
 		$FTPOptions = JClientHelper::getCredentials('ftp');
@@ -439,7 +447,7 @@ class JFolder
 
 		// read the source directory
 		$handle = opendir($path);
-		while (($file = readdir($handle)) !== false) 
+		while (($file = readdir($handle)) !== false)
 		{
 			$dir = $path.DS.$file;
 			$isDir = is_dir($dir);

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: authorization.php 8331 2007-08-03 20:37:49Z eddieajau $
+* @version		$Id: authorization.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	User
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -148,8 +148,8 @@ class JAuthorization extends gacl_api
 		$this->addACL( 'com_media', 'popup', 'users', 'editor' );
 		$this->addACL( 'com_media', 'popup', 'users', 'publisher' );
 
-		$this->addACL( 'com_menumanager', 'manage', 'users', 'administrator' );
-		$this->addACL( 'com_menumanager', 'manage', 'users', 'super administrator' );
+		$this->addACL( 'com_menus', 'manage', 'users', 'administrator' );
+		$this->addACL( 'com_menus', 'manage', 'users', 'super administrator' );
 
 		$this->addACL( 'com_modules', 'manage', 'users', 'super administrator' );
 		$this->addACL( 'com_modules', 'manage', 'users', 'administrator' );
@@ -531,51 +531,4 @@ class JAuthorization extends gacl_api
 		$this->addACL($aco_section_value, $aco_value, $aro_section_value, $aro_value, $axo_section_value, $axo_value, $return_value);
 	}
 
-}
-
-/**
- * Required for both Classess below
- */
-jimport('joomla.database.table');
-
-/**
- * @package 	Joomla.Framework
- * @subpackage	User
- * @since		1.5
- */
-class JTableARO extends JTable
-{
-	/** @var int Primary key */
-	var $id			  	= null;
-	var $section_value	= null;
-	var $value			= null;
-	var $order_value	= null;
-	var $name			= null;
-	var $hidden			= null;
-
-	function __construct( &$db )
-	{
-		parent::__construct( '#__core_acl_aro', 'aro_id', $db );
-	}
-}
-
-/**
- * @package 	Joomla.Framework
- * @subpackage	User
- * @since		1.5
- */
- class JTableAROGroup extends JTable
- {
-	/** @var int Primary key */
-	var $id			= null;
-	var $parent_id	= null;
-	var $name		= null;
-	var $value		= null;
-	var $lft		= null;
-	var $rgt		= null;
-
-	function __construct( &$db )
-	{
-		parent::__construct( '#__core_acl_aro_groups', 'group_id', $db );
-	}
 }

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.frontpage.php 8275 2007-07-31 23:10:13Z humvee $
+* @version		$Id: admin.frontpage.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Content
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -91,12 +91,12 @@ function viewFrontPage( $option )
 	$filter_state		= $mainframe->getUserStateFromRequest( $option.'.filter_state',		'filter_state',		'',				'word' );
 	$catid				= $mainframe->getUserStateFromRequest( $option.'.catid',			'catid',			0,				'int' );
 	$filter_authorid	= $mainframe->getUserStateFromRequest( $option.'.filter_authorid',	'filter_authorid',	0,				'int' );
-	$filter_sectionid	= $mainframe->getUserStateFromRequest( $option.'.filter_sectionid',	'filter_sectionid',	0,				'int' );
+	$filter_sectionid	= $mainframe->getUserStateFromRequest( $option.'.filter_sectionid',	'filter_sectionid',	-1,				'int' );
 	$search				= $mainframe->getUserStateFromRequest( $option.'.search',			'search',			'',				'string' );
 	$search				= JString::strtolower( $search );
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-	$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+	$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 	JToolBarHelper::title( JText::_( 'Frontpage Manager' ), 'frontpage.png' );
 	JToolBarHelper::archiveList();
@@ -110,7 +110,7 @@ function viewFrontPage( $option )
 	);
 
 	// used by filter
-	if ( $filter_sectionid > 0 ) {
+	if ( $filter_sectionid >= 0 ) {
 		$where[] = 'c.sectionid = '.(int) $filter_sectionid;
 	}
 	if ( $catid > 0 ) {
@@ -128,7 +128,7 @@ function viewFrontPage( $option )
 	}
 
 	if ($search) {
-		$where[] = 'LOWER( c.title ) LIKE '.$db->Quote('%'.$search.'%');
+		$where[] = 'LOWER( c.title ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 
 	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -173,7 +173,7 @@ function viewFrontPage( $option )
 	. ' ORDER BY s.ordering, cc.ordering'
 	;
 	$db->setQuery( $query );
-	$categories[] 	= JHTML::_('select.option',  '0', '- '. JText::_( 'Select Category' ) .' -' );
+	$categories[] 	= JHTML::_('select.option',  '-1', '- '. JText::_( 'Select Category' ) .' -' );
 	$categories 	= array_merge( $categories, $db->loadObjectList() );
 	$lists['catid'] = JHTML::_('select.genericlist',   $categories, 'catid', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', $catid );
 
@@ -219,6 +219,9 @@ function changeFrontPage( $cid=null, $state=0, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db 	=& JFactory::getDBO();
 	$user 	=& JFactory::getUser();
 
@@ -256,6 +259,9 @@ function removeFrontPage( &$cid, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 	if (!is_array( $cid ) || count( $cid ) < 1) {
 		JError::raiseError(500, JText::_( 'Select an item to delete', true ) );
@@ -288,6 +294,9 @@ function orderFrontPage( $uid, $inc, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 
 	$fp =& JTable::getInstance('frontpage','Table');
@@ -308,6 +317,9 @@ function orderFrontPage( $uid, $inc, $option )
 function accessMenu( $uid, $access )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db = & JFactory::getDBO();
 	$row =& JTable::getInstance('content');
@@ -331,6 +343,9 @@ function saveOrder( &$cid )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db 	=& JFactory::getDBO();
 	$total	= count( $cid );
 	$order 	= JRequest::getVar( 'order', array(0), 'post', 'array' );
@@ -344,11 +359,6 @@ function saveOrder( &$cid )
 		if (!$db->query()) {
 			JError::raiseError(500, $db->getErrorMsg() );
 		}
-
-		// update ordering
-		$row =& JTable::getInstance('frontpage','Table');
-		$row->load( $cid[$i] );
-		$row->reorder();
 	}
 
 	$cache = & JFactory::getCache('com_content');
@@ -357,4 +367,3 @@ function saveOrder( &$cid )
 	$msg 	= JText::_( 'New ordering saved' );
 	$mainframe->redirect( 'index.php?option=com_frontpage', $msg );
 }
-?>

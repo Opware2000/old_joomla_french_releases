@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: menu.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: menu.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	Application
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -57,9 +57,9 @@ class JMenu extends JObject
 	 * @access public
 	 * @return boolean True on success
 	 */
-	function __construct()
+	function __construct($options = array())
 	{
-		$this->_items = $this->_load();
+		$this->load(); //load the menu items
 
 		foreach ($this->_items as $k => $item)
 		{
@@ -70,25 +70,50 @@ class JMenu extends JObject
 	}
 
 	/**
-	 * Returns a reference to the global JMenu object, only creating it if it
-	 * doesn't already exist.
+	 * Returns a reference to a JMenu object
 	 *
 	 * This method must be invoked as:
-	 * 		<pre>  $menu = &JMenu::getInstance();</pre>
+	 * 		<pre>  $menu = &JSite::getMenu();</pre>
 	 *
 	 * @access	public
-	 * @return	JMenu	The menu object.
+	 * @param   string  $client  The name of the client
+	 * @param array     $options An associative array of options
+	 * @return JMenu 	A menu object.
 	 * @since	1.5
 	 */
-	function &getInstance()
+	function &getInstance($client, $options = array())
 	{
-		static $instance;
+		static $instances;
 
-		if (!$instance) {
-			$instance = new JMenu();
+		if (!isset( $instances )) {
+			$instances = array();
 		}
 
-		return $instance;
+		if (empty($instances[$client]))
+		{
+			//Load the router object
+			$info =& JApplicationHelper::getClientInfo($client, true);
+
+			$path = $info->path.DS.'includes'.DS.'menu.php';
+			if(file_exists($path))
+			{
+				require_once $path;
+
+				// Create a JPathway object
+				$classname = 'JMenu'.ucfirst($client);
+				$instance = new $classname($options);
+			}
+			else
+			{
+				//$error = JError::raiseError( 500, 'Unable to load menu: '.$client);
+				$error = null; //Jinx : need to fix this
+				return $error;
+			}
+
+			$instances[$client] = & $instance;
+		}
+
+		return $instances[$client];
 	}
 
 	/**
@@ -187,7 +212,8 @@ class JMenu extends JObject
 	 */
 	function getItems($attribute, $value, $firstonly = false)
 	{
-		$items = array ();
+		$items = null;
+
 		foreach ($this->_items as  $item)
 		{
 			if ( ! is_object($item) )
@@ -251,55 +277,14 @@ class JMenu extends JObject
 	}
 
 	/**
-	 * Loads the entire menu table into memory
+	 * Loads the menu items
 	 *
-	 * @access protected
+	 * @abstract
+	 * @access public
 	 * @return array
 	 */
-	function _load()
+	function load()
 	{
-		static $menus;
-
-		if (isset ($menus)) {
-			return $menus;
-		}
-		// Initialize some variables
-		$db		= & JFactory::getDBO();
-		$user	= & JFactory::getUser();
-		$sql	= 'SELECT m.*, c.`option` as component' .
-				' FROM #__menu AS m' .
-				' LEFT JOIN #__components AS c ON m.componentid = c.id'.
-				' WHERE m.published = 1'.
-				' ORDER BY m.sublevel, m.parent, m.ordering';
-		$db->setQuery($sql);
-
-		if (!($menus = $db->loadObjectList('id'))) {
-			JError::raiseWarning('SOME_ERROR_CODE', "Error loading Menus: ".$db->getErrorMsg());
-			return false;
-		}
-
-		foreach($menus as $key => $menu)
-		{
-			//Get parent information
-			$parent_route = '';
-			$parent_tree  = array();
-			if($parent = $menus[$key]->parent) {
-				$parent_route = $menus[$parent]->route.'/';
-				$parent_tree  = $menus[$parent]->tree;
-			}
-
-			//Create tree
-			array_push($parent_tree, $menus[$key]->id);
-			$menus[$key]->tree   = $parent_tree;
-
-			//Create route
-			$route = $parent_route.$menus[$key]->alias;
-			$menus[$key]->route  = $route;
-
-			$url = JURI::getInstance($menus[$key]->link);
-			$menus[$key]->query = $url->getQuery(true);
-		}
-
-		return $menus;
+		return array();
 	}
 }

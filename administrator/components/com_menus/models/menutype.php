@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: menutype.php 8286 2007-08-01 08:27:44Z eddieajau $
+ * @version		$Id: menutype.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -83,7 +82,16 @@ class MenusModelMenutype extends JModel
 		$db->setQuery( $query );
 		$trash = $db->loadObjectList( 'menutype' );
 
-		$menuTypes 	= MenusHelper::getMenuTypeList();
+		$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
+		$limitstart = $mainframe->getUserStateFromRequest( 'com_menus.limitstart', 'limitstart', 0, 'int' );
+
+		$query = 'SELECT a.*, SUM(b.home) AS home' .
+				' FROM #__menu_types AS a' .
+				' LEFT JOIN #__menu AS b ON b.menutype = a.menutype' .
+				' GROUP BY a.id';
+		$db->setQuery( $query, $limitstart, $limit );
+		$menuTypes	= $db->loadObjectList();
+
 		$total		= count( $menuTypes );
 		$i			= 0;
 		for ($i = 0;  $i < $total; $i++) {
@@ -215,7 +223,7 @@ class MenusModelMenutype extends JModel
 
 		// Delete Associations
 		if (!$this->deleteByType( $table->menutype )) {
-			$this->setError( $menu->getError() );
+			$this->setError( $this->getError() );
 			return false;
 		}
 

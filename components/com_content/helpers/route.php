@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: route.php 8337 2007-08-07 03:33:35Z jinx $
+ * @version		$Id: route.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -33,190 +33,90 @@ class ContentHelperRoute
 	 */
 	function getArticleRoute($id, $catid = 0, $sectionid = 0)
 	{
-		$item = ContentHelperRoute::_getArticleMenuInfo((int)$id, (int)$catid, (int)$sectionid);
+		$needles = array(
+			'article'  => (int) $id,
+			'category' => (int) $catid,
+			'section'  => (int) $sectionid,
+		);
 
-		$link = 'index.php?option=com_content';
+		//Create the link
+		$link = 'index.php?option=com_content&view=article&id='. $id;
 
-		if(isset($item))
-		{
-			if($item->link_parts['view'] == 'article') {
-				$link .=  '&Itemid='. $item->id;
-			}
-
-			if($item->link_parts['view'] == 'category') {
-				$link .= '&view=article&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
-			}
-
-			if($item->link_parts['view'] == 'section') {
-				$link .= '&view=article&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
-			}
-		} else {
-			$link .= '&view=article&catid='.$catid.'&id='. $id;
+		if($catid) {
+			$link .= '&catid='.$catid;
 		}
 
-		return JRoute::_( $link );
+		if($item = ContentHelperRoute::_findItem($needles)) {
+			$link .= '&Itemid='.$item->id;
+		};
+
+		return $link;
 	}
 
-	function getSectionRoute(& $row)
+	function getSectionRoute($sectionid)
 	{
-		$db =& JFactory::getDBO();
-		static $links;
+		$needles = array(
+			'section' => (int) $sectionid
+		);
 
-		if (!isset ($links)) {
-			$links = array ();
-		}
+		//Create the link
+		$link = 'index.php?option=com_content&view=section&id='.$sectionid;
 
-		if (empty ($links[$row->sectionid]))
-		{
-			$query = 'SELECT id, link' .
-					' FROM #__menu' .
-					' WHERE published = 1' .
-					' AND (type = "content_section" OR type = "content_blog_section" )' .
-					' AND componentid = '. (int) $row->sectionid .
-					' ORDER BY type DESC, ordering';
-			$db->setQuery($query);
-			$result = $db->loadRow();
-
-			$secLinkID = $result[0];
-			$secLinkURL = $result[1];
-
-			$Itemid = null;
-			if ($secLinkID)
-			{
-				$Itemid = '&Itemid='.(int) $secLinkID;
-
-				if ($secLinkURL) {
-					$link = JRoute::_($secLinkURL.$Itemid);
-				} else {
-					$link = JRoute::_('index.php?option=com_content&task=section&id='.$row->sectionid.$Itemid);
-				}
-
-				$links[$row->sectionid] = '<a href="'.$link.'">'.$row->section.'</a>';
+		if($item = ContentHelperRoute::_findItem($needles)) {
+			if(isset($item->query['layout'])) {
+				$link .= '&layout='.$item->query['layout'];
 			}
-			else
-			{
-				$links[$row->sectionid] = $row->section;
-			}
-		}
+			$link .= '&Itemid='.$item->id;
+		};
 
-		return $links[$row->sectionid];
+		return $link;
 	}
 
-	function getCategoryRoute(& $row)
+	function getCategoryRoute($catid, $sectionid)
 	{
-		$db =& JFactory::getDBO();
-		static $links;
+		$needles = array(
+			'category' => (int) $catid,
+			'section'  => (int) $sectionid
+		);
 
-		if (!isset ($links)) {
-			$links = array ();
-		}
+		//Create the link
+		$link = 'index.php?option=com_content&view=category&id='.$catid;
 
-		if (empty ($links[$row->catid])) {
-
-			$query = 'SELECT id, link' .
-					' FROM #__menu' .
-					' WHERE published = 1' .
-					' AND (type = "content_category" OR type = "content_blog_category" )' .
-					' AND componentid = ' . (int) $row->catid .
-					' ORDER BY type DESC, ordering';
-			$db->setQuery($query);
-			$result = $db->loadRow();
-
-			$catLinkID = $result[0];
-			$catLinkURL = $result[1];
-
-			// Did we find an Itemid for the category?
-			$Itemid = null;
-			if ($catLinkID)
-			{
-				$Itemid = '&amp;Itemid='.(int) $catLinkID;
+		if($item = ContentHelperRoute::_findItem($needles)) {
+			if(isset($item->query['layout'])) {
+				$link .= '&layout='.$item->query['layout'];
 			}
-			else
-			{
-				// Nope, lets try to find it by section...
-				$query = 'SELECT id, link' .
-						' FROM #__menu' .
-						' WHERE published = 1' .
-						' AND (type = "content_section" OR type = "content_blog_section" )' .
-						' AND componentid = '. (int) $row->sectionid .
-						' ORDER BY type DESC, ordering';
-				$db->setQuery($query);
-				$secLinkID = $db->loadResult();
+			$link .= '&Itemid='.$item->id;
+		};
 
-				// Find it by section?
-				if ($secLinkID)	{
-					$Itemid = '&amp;Itemid='.$secLinkID;
+		return $link;
+	}
+
+	function _findItem($needles)
+	{
+		$component =& JComponentHelper::getComponent('com_content');
+
+		$menus	= &JApplication::getMenu('site', array());
+		$items	= $menus->getItems('componentid', $component->id);
+
+		$match = null;
+
+		foreach($needles as $needle => $id)
+		{
+			foreach($items as $item)
+			{
+				if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id)) {
+					$match = $item;
+					break;
 				}
 			}
 
-			if ($Itemid !== null)
-			{
-				if ($catLinkURL) {
-					$link = JRoute::_($catLinkURL.$Itemid);
-				} else {
-					$link = JRoute::_('index.php?option=com_content&task=category&sectionid='.$row->sectionid.'&id='.$row->catid.$Itemid);
-				}
-
-				// We found an Itemid... build the link
-				$links[$row->catid] = '<a href="'.$link.'">'.$row->category.'</a>';
-			}
-			else
-			{
-				// Didn't find an Itemid.. set the section name as the link
-				$links[$row->catid] = $row->category;
+			if(isset($match)) {
+				break;
 			}
 		}
 
-		return $links[$row->catid];
-	}
-
-	/**
-	 * @param	int	The menu information based on the article identifiers
-	 */
-	function _getArticleMenuInfo($id, $catid = 0, $sectionid = 0)
-	{
-		$component	=& JComponentHelper::getComponent('com_content');
-
-		$menus		=& JMenu::getInstance();
-		$items		= $menus->getItems('componentid', $component->id);
-
-		$n = count( $items );
-		if (!$n) {
-			return null;
-		}
-
-		for ($i = 0; $i < $n; $i++)
-		{
-			$item = &$items[$i];
-			$url = str_replace('index.php?', '', $item->link);
-			$url = str_replace('&amp;', '&', $url);
-			$parts = null;
-			parse_str($url, $parts);
-
-			if(!isset($parts['id'])) {
-				continue;
-			}
-
-			// set the link parts
-			$item->link_parts = $parts;
-
-			// Do we have a content item linked to the menu with this id?
-			if (($item->published) && ($item->link_parts['id'] == $id) && ($item->link_parts['view'] == 'article')) {
-				return $item;
-			}
-
-			// Check to see if it is in a published category
-			if (($item->published) && ($item->link_parts['id'] == $catid) && $item->link_parts['view'] == 'category') {
-				return $item;
-			}
-
-			// Check to see if it is in a published section
-			if (($item->published) && ($item->link_parts['id'] == $sectionid) && $item->link_parts['view'] == 'section') {
-				return $item;
-			}
-		}
-
-		return null;
+		return $match;
 	}
 }
 ?>

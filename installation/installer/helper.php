@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @version		$Id: helper.php 8519 2007-08-23 01:51:03Z pasamio $
+ * @version		$Id: helper.php 9783 2007-12-31 14:56:55Z pasamio $
  * @package		Joomla
  * @subpackage	Installation
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -688,7 +688,7 @@ class JInstallationHelper
 		if(!$uploaded) {
 			return JText::_('WARNUPLOADFAILURE');
 		}
-		
+
 		if( !eregi('.sql$', $sqlFile['name']) )
 		{
 			$archive = JPATH_SITE.DS.'tmp'.DS.$sqlFile['name'];
@@ -840,6 +840,52 @@ class JInstallationHelper
 
 	}
 
+	function return_bytes($val) {
+	    $val = trim($val);
+	    $last = strtolower($val{strlen($val)-1});
+	    switch($last) {
+	        // The 'G' modifier is available since PHP 5.1.0
+	        case 'g':
+	            $val *= 1024;
+	        case 'm':
+	            $val *= 1024;
+	        case 'k':
+	            $val *= 1024;
+	    }
+
+	    return $val;
+	}
+
+	function replaceBuffer(&$buffer, $oldPrefix, $newPrefix, $srcEncoding) {
+
+			$buffer = str_replace( $oldPrefix, $newPrefix, $buffer );
+
+			/*
+			 * give temp name to menu and modules tables
+			 */
+			$buffer = str_replace ( $newPrefix.'modules', $newPrefix.'modules_migration', $buffer );
+			$buffer = str_replace ( $newPrefix.'menu', $newPrefix.'menu_migration', $buffer );
+
+			/*
+			 * rename two aro_acl... field names
+			 */
+			$buffer = preg_replace ( '/group_id(?!.{15,25}aro_id)/', 'id', $buffer );
+			$buffer = preg_replace ( '/aro_id(?=.{1,6}section_value)/', 'id', $buffer );
+
+			/*
+			 * convert to utf-8
+			 */
+			if(function_exists('iconv')) {
+				$buffer = iconv( $srcEncoding, 'utf-8//TRANSLIT', $buffer );
+			}
+	}
+
+	function appendFile(&$buffer, $filename) {
+		$fh = fopen($filename, 'a');
+		fwrite($fh, $buffer);
+		fclose($fh);
+	}
+
 	/**
 	 * Performs pre-populate conversions on a migration script
 	 *
@@ -851,33 +897,56 @@ class JInstallationHelper
 	 */
 	function preMigrate( $scriptName, &$args, $db )
 	{
-		//TODO add error handling
-		//TODO sam: work out who wrote that todo
+		$maxread = 0;
+		jimport('joomla.filesystem.file');
+		if(function_exists('memory_get_usage')) {
+			$memlimit = JInstallationHelper::return_bytes(ini_get('memory_limit'));
+			$maxread = $memlimit / 16; 	// Read only a eigth of our max amount of memory, we could be up to a lot by now
+										// By default this pegs us at 0.5MB
+		}
 		$buffer = '';
 		$newPrefix = $args['DBPrefix'];
-		/*
-		 * read script file into buffer
-		 */
-		if(is_file($scriptName)) {
-			$buffer = file_get_contents( $scriptName );
-		} else return false;
-		if(  $buffer == false )
-		{
-			return false;
-		}
-
 		/*
 		 * search and replace table prefixes
 		 */
 		$oldPrefix = trim( $args['oldPrefix']);
 		$oldPrefix = rtrim( $oldPrefix, '_' ) . '_';
-		$buffer = str_replace( $oldPrefix, $newPrefix, $buffer );
+		$srcEncoding = $args['srcEncoding'];
+		if(!is_file($scriptName)) return false; // not a file?
+		$newFile = dirname( $scriptName ).DS.'converted.sql';
+		$tfilesize = filesize($scriptName);
+		if($maxread > 0 && $tfilesize > 0 && $maxread < $tfilesize) 		
+		{
+			$parts = ceil($tfilesize / $maxread);
+			file_put_contents( $newFile, '' ); // cleanse the file first
+			for($i = 0; $i < $parts; $i++) {
+				$buffer = JFile::read($scriptName, false, $maxread, $maxread,($i * $maxread));
+				// Lets try and read a portion of the file
+				JInstallationHelper::replaceBuffer($buffer, $oldPrefix, $newPrefix, $srcEncoding);
+				JInstallationHelper::appendFile($buffer, $newFile);
+				unset($buffer);
+			}
+			JFile::delete( $scriptName );
+		} else {
+			/*
+			 * read script file into buffer
+			 */
+			if(is_file($scriptName)) {
+				$buffer = file_get_contents( $scriptName );
+			} else return false;
 
-		/*
-		 * give temp name to menu and modules tables
-		 */
-		$buffer = str_replace ( $newPrefix.'modules', $newPrefix.'modules_migration', $buffer );
-		$buffer = str_replace ( $newPrefix.'menu', $newPrefix.'menu_migration', $buffer );
+			if(  $buffer == false ) return false;
+			JInstallationHelper::replaceBuffer($buffer, $oldPrefix, $newPrefix, $srcEncoding);
+
+			/*
+			 * write to file
+			 */
+			//$newFile = dirname( $scriptName ).DS.'converted.sql';
+			$ret = file_put_contents( $newFile, $buffer );
+			unset($buffer); // Release the memory used by the buffer
+			jimport('joomla.filesystem.file');
+			JFile::delete( $scriptName );
+		}
 
 		/*
 		 * Create two empty temporary tables
@@ -903,26 +972,6 @@ class JInstallationHelper
 		$db->setQuery( $query );
 		$db->query();
 
-		/*
-		 * rename two aro_acl... field names
-		 */
-		$buffer = preg_replace ( '/group_id(?!.{15,25}aro_id)/', 'id', $buffer );
-		$buffer = preg_replace ( '/aro_id(?=.{1,6}section_value)/', 'id', $buffer );
-
-		/*
-		 * convert to utf-8
-		 */
-		$srcEncoding = $args['srcEncoding'];
-		if(function_exists('iconv')) {
-			$buffer = iconv( $srcEncoding, 'utf-8//TRANSLIT', $buffer );
-		}
-		/*
-		 * write to file
-		 */
-		$newFile = dirname( $scriptName ).DS.'converted.sql';
-		$ret = file_put_contents( $newFile, $buffer );
-		$buffer = '';
-		JFile::delete( $scriptName );
 		return $newFile;
 	}
 
@@ -995,17 +1044,17 @@ class JInstallationHelper
 		$db->query();
 		JInstallationHelper::getDBErrors($errors, $db );
 
+		// fix up standalone contact
+		$query = 'UPDATE `'. $newPrefix.'menu_migration` SET `link` = "index.php?option=com_contact&view=category" WHERE `link` = "index.php?option=com_contact"';
+		$db->setQuery( $query );
+		$db->query();
+		JInstallationHelper::getDBErrors($errors, $db );
+
 		// get com_content id
 		$query = 'SELECT `id` FROM `'.$newPrefix.'components` WHERE `option`="com_content" AND `parent` = 0';
 		$db->setQuery( $query );
 
 		$compId = $db->loadResult();
-		JInstallationHelper::getDBErrors($errors, $db );
-
-		// fix up standalone contact
-		$query = 'UPDATE `'. $newPrefix.'menu_migration` SET `link` = "index.php?option=com_contact&view=category" WHERE `link` = "index.php?option=com_contact"';
-		$db->setQuery( $query );
-		$db->query();
 		JInstallationHelper::getDBErrors($errors, $db );
 
 		// front page
@@ -1121,17 +1170,19 @@ class JInstallationHelper
 		$query = 'UPDATE `'.$newPrefix.'menu_migration` SET `link` = CONCAT(link, "&view=wrapper"), `type` = "component", `componentid` = '.$compId.' WHERE `type` = "wrapper"';
 		$db->setQuery( $query );
 		$db->query();
-		JInstallationHelper::getDBErrors($errors, $db );
+		JInstallationHelper::getDBErrors($errors, $db ); 
 
 		// set default to lowest ordering published on mainmenu
 		$query = 'SELECT MIN( `ordering` ) FROM `'.$newPrefix.'menu_migration` WHERE `published` = 1 AND `parent` = 0 AND `menutype` = "mainmenu"';
 		$db->setQuery( $query );
 		$minorder = $db->loadResult();
+		if(!$minorder) $minorder = 0;
 		JInstallationHelper::getDBErrors($errors, $db );
 		$query = 'SELECT `id` FROM `'.$newPrefix.'menu_migration` WHERE `published` = 1 AND `parent` = 0 AND `menutype` = "mainmenu" AND `ordering` = '.$minorder;
 		$db->setQuery( $query );
 		$menuitemid = $db->loadResult();
 		JInstallationHelper::getDBErrors($errors, $db );
+		if(!$menuitemid) $menuitemid = 1;
 		$query = 'UPDATE `'.$newPrefix.'menu_migration` SET `home` = 1 WHERE `id` = '.$menuitemid;
 		$db->setQuery( $query );
 		$db->query();
@@ -1258,7 +1309,8 @@ class JInstallationHelper
 		$db->setQuery( $query );
 		$nextId = $db->loadResult();
 		JInstallationHelper::getDBErrors($errors, $db );
-
+		jimport('joomla.filesystem.folder');
+		jimport('joomla.filesystem.file');
 		foreach( $lookup as $module )
 		{
 			$qry = 'SELECT * FROM '.$newPrefix.'modules_migration WHERE id = "'.$module.'" AND client_id = 0';
@@ -1396,6 +1448,24 @@ class JInstallationHelper
 		return $ret;
 	}
 
-
+	/** Borrowed from http://au.php.net/manual/en/ini.core.php comments */
+	function let_to_num($v){ //This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
+	    $l = substr($v, -1);
+	    $ret = substr($v, 0, -1);
+	    switch(strtoupper($l)){
+	    case 'P':
+	        $ret *= 1024;
+	    case 'T':
+	        $ret *= 1024;
+	    case 'G':
+	        $ret *= 1024;
+	    case 'M':
+	        $ret *= 1024;
+	    case 'K':
+	        $ret *= 1024;
+	        break;
+	    }
+	    return $ret;
+	}
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: wrapper.php 8180 2007-07-23 05:52:29Z eddieajau $
+* @version		$Id: wrapper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Wrapper
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -44,11 +44,11 @@ class WrapperController
 
 		$document =& JFactory::getDocument();
 
-		$menus	= &JMenu::getInstance();
+		$menus	= &JSite::getMenu();
 		$menu	= $menus->getActive();
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		//set page title
 		$document->setTitle($menu->name);

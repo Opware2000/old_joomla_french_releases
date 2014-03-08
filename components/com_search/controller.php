@@ -3,7 +3,7 @@
  * @version		$Id: controller.php 7682 2007-06-08 16:12:14Z friesengeist $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -36,13 +36,25 @@ class SearchController extends JController
 	{
 		parent::display();
 	}
-	
+
 	function search()
 	{
-		$post = JRequest::get('post');
-		
+		$post['searchword'] = JRequest::getString('searchword', null, 'post');
+		$post['ordering']	= JRequest::getWord('ordering', null, 'post');
+		$post['searchphrase']	= JRequest::getWord('searchphrase', 'all', 'post');
+		$post['limit']  = JRequest::getInt('limit', null, 'post');
+		if($post['limit'] === null) unset($post['limit']);
+
+		$areas = JRequest::getVar('areas', null, 'post', 'array');
+		if ($areas) {
+			foreach($areas as $area)
+			{
+				$post['areas'][] = JFilterInput::clean($area, 'cmd');
+			}
+		}
+
 		// set Itemid id for links
-		$menu = &JMenu::getInstance();
+		$menu = &JSite::getMenu();
 		$items	= $menu->getItems('link', 'index.php?option=com_search&view=search');
 
 		if(isset($items[0])) {
@@ -55,8 +67,8 @@ class SearchController extends JController
 		$uri = JURI::getInstance();
 		$uri->setQuery($post);
 		$uri->setVar('option', 'com_search');
-		
-		
+
+
 		$this->setRedirect(JRoute::_('index.php'.$uri->toString(array('query', 'fragment')), false));
 	}
 }

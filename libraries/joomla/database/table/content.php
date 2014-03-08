@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: content.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: content.php 9936 2008-01-13 22:44:03Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,8 +15,6 @@
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
-// Include library dependencies
-jimport('joomla.filter.input');
 
 /**
  * Content table
@@ -117,16 +115,20 @@ class JTableContent extends JTable
 		$this->fulltext =  trim( $filter->clean( $this->fulltext ) );
 		*/
 
-		jimport('joomla.filter.output');
-		$alias = JFilterOutput::stringURLSafe($this->title);
 
 		if(empty($this->title)) {
 			$this->setError(JText::_('Article must have a title'));
 			return false;
 		}
 
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		if(empty($this->alias)) {
+			$this->alias = $this->title;
+		}
+		$this->alias = JFilterOutput::stringURLSafe($this->alias);
+
+		if(trim(str_replace('-','',$this->alias)) == '') {
+			$datenow = new JDate();
+			$this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
 		}
 
 		if (trim( str_replace( '&nbsp;', '', $this->fulltext ) ) == '') {

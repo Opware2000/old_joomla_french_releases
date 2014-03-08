@@ -1,15 +1,15 @@
 <?php
 /**
-* @version		$Id: content.php 8627 2007-08-29 21:55:02Z jinx $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: content.php 9875 2008-01-05 11:33:51Z eddieajau $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -22,7 +22,8 @@ JPlugin::loadLanguage( 'plg_search_content' );
 /**
  * @return array An array of search areas
  */
-function &plgSearchContentAreas() {
+function &plgSearchContentAreas()
+{
 	static $areas = array(
 		'content' => 'Articles'
 	);
@@ -45,6 +46,8 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	$db		=& JFactory::getDBO();
 	$user	=& JFactory::getUser();
 
+	require_once(JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'route.php');
+
 	if (is_array( $areas )) {
 		if (!array_intersect( $areas, array_keys( plgSearchContentAreas() ) )) {
 			return array();
@@ -61,23 +64,25 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	$limit 			= $pluginParams->def( 'search_limit', 		50 );
 
 	$nullDate 		= $db->getNullDate();
-	$now 			= date( 'Y-m-d H:i:s', time()+$mainframe->getCfg('offset')*60*60 );
+	jimport('joomla.utilities.date');
+	$date = new JDate();
+	$now = $date->toMySQL();
 
 	$text = trim( $text );
 	if ($text == '') {
 		return array();
 	}
-	
+
 	$wheres = array();
 	switch ($phrase) {
 		case 'exact':
-			$text = $db->getEscaped($text);
+			$text		= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
 			$wheres2 	= array();
-			$wheres2[] 	= "LOWER(a.title) LIKE '%$text%'";
-			$wheres2[] 	= "LOWER(a.introtext) LIKE '%$text%'";
-			$wheres2[] 	= "LOWER(a.`fulltext`) LIKE '%$text%'";
-			$wheres2[] 	= "LOWER(a.metakey) LIKE '%$text%'";
-			$wheres2[] 	= "LOWER(a.metadesc) LIKE '%$text%'";
+			$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
+			$wheres2[] 	= 'LOWER(a.introtext) LIKE '.$text;
+			$wheres2[] 	= 'LOWER(a.`fulltext`) LIKE '.$text;
+			$wheres2[] 	= 'LOWER(a.metakey) LIKE '.$text;
+			$wheres2[] 	= 'LOWER(a.metadesc) LIKE '.$text;
 			$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
 			break;
 
@@ -87,13 +92,13 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 			$words = explode( ' ', $text );
 			$wheres = array();
 			foreach ($words as $word) {
-				$word = $db->getEscaped($word);
+				$word		= $db->Quote( '%'.$db->getEscaped( $word, true ).'%', false );
 				$wheres2 	= array();
-				$wheres2[] 	= 'LOWER(a.title) LIKE "%'.$word.'%"';
-				$wheres2[] 	= 'LOWER(a.introtext) LIKE "%'.$word.'%"';
-				$wheres2[] 	= 'LOWER(a.`fulltext`) LIKE "%'.$word.'%"';
-				$wheres2[] 	= 'LOWER(a.metakey) LIKE "%'.$word.'%"';
-				$wheres2[] 	= 'LOWER(a.metadesc) LIKE "%'.$word.'%"';
+				$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
+				$wheres2[] 	= 'LOWER(a.introtext) LIKE '.$word;
+				$wheres2[] 	= 'LOWER(a.`fulltext`) LIKE '.$word;
+				$wheres2[] 	= 'LOWER(a.metakey) LIKE '.$word;
+				$wheres2[] 	= 'LOWER(a.metadesc) LIKE '.$word;
 				$wheres[] 	= implode( ' OR ', $wheres2 );
 			}
 			$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
@@ -128,13 +133,15 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	$rows = array();
 
 	// search articles
-	if ( $sContent ) 
+	if ( $sContent && $limit > 0 )
 	{
 		$query = 'SELECT a.title AS title,'
 		. ' a.created AS created,'
 		. ' CONCAT(a.introtext, a.`fulltext`) AS text,'
 		. ' CONCAT_WS( "/", u.title, b.title ) AS section,'
-		. ' CONCAT( "index.php?option=com_content&view=article&id=", a.id ) AS href,'
+		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug,'
+		. ' CASE WHEN CHAR_LENGTH(b.alias) THEN CONCAT_WS(":", b.id, b.alias) ELSE b.id END as catslug,'
+		. ' u.id AS sectionid,'
 		. ' "2" AS browsernav'
 		. ' FROM #__content AS a'
 		. ' INNER JOIN #__categories AS b ON b.id=a.catid'
@@ -153,16 +160,23 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 		;
 		$db->setQuery( $query, 0, $limit );
 		$list = $db->loadObjectList();
+		$limit -= count($list);
 
+		if(isset($list))
+		{
+			foreach($list as $key => $item)
+			{
+				$list[$key]->href = ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid);
+			}
+		}
 		$rows[] = $list;
 	}
 
 	// search uncategorised content
-	if ( $sUncategorised ) 
+	if ( $sUncategorised && $limit > 0 )
 	{
 		$query = 'SELECT id, a.title AS title, a.created AS created,'
 		. ' a.introtext AS text,'
-		. ' CONCAT( "index.php?option=com_content&view=article&id=", a.id ) AS href,'
 		. ' "2" as browsernav, "'. $db->Quote(JText::_('Uncategorised Content')) .'" AS section'
 		. ' FROM #__content AS a'
 		. ' WHERE ('.$where.')'
@@ -176,20 +190,30 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 		;
 		$db->setQuery( $query, 0, $limit );
 		$list2 = $db->loadObjectList();
+		$limit -= count($list2);
+
+		if(isset($list2))
+		{
+			foreach($list2 as $key => $item)
+			{
+				$list2[$key]->href = ContentHelperRoute::getArticleRoute($item->id);
+			}
+		}
 
 		$rows[] = $list2;
 	}
 
 	// search archived content
-	if ( $sArchived ) 
+	if ( $sArchived && $limit > 0 )
 	{
 		$searchArchived = JText::_( 'Archived' );
 
 		$query = 'SELECT a.title AS title,'
 		. ' a.created AS created,'
 		. ' a.introtext AS text,'
-		. ' CONCAT_WS( "/", '. $db->Quote($searchArchived) .', u.title, b.title ) AS section,'
-		. ' CONCAT("index.php?option=com_content&view=article&id=",a.id) AS href,'
+		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug,'
+		. ' CASE WHEN CHAR_LENGTH(b.alias) THEN CONCAT_WS(":", b.id, b.alias) ELSE b.id END as catslug,'
+		. ' u.id AS sectionid,'
 		. ' "2" AS browsernav'
 		. ' FROM #__content AS a'
 		. ' INNER JOIN #__categories AS b ON b.id=a.catid AND b.access <= ' .$user->get( 'gid' )
@@ -208,30 +232,25 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 		$db->setQuery( $query, 0, $limit );
 		$list3 = $db->loadObjectList();
 
+		if(isset($list3))
+		{
+			foreach($list3 as $key => $item)
+			{
+				$list3[$key]->href = ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid);
+			}
+		}
+
 		$rows[] = $list3;
 	}
 
-
-	$count = count( $rows );
-	if ( $count > 1 ) {
-		switch ( $count ) {
-			case 2:
-				$results = array_merge( (array) $rows[0], (array) $rows[1] );
-				break;
-
-			case 3:
-				$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2] );
-				break;
-
-			case 4:
-			default:
-				$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2], (array) $rows[3] );
-				break;
+	$results = array();
+	if(count($rows))
+	{
+		foreach($rows as $row)
+		{
+			$results = array_merge($results, (array) $row);
 		}
-
-		return $results;
-	} else if ( $count == 1 ) {
-		return $rows[0];
 	}
+
+	return $results;
 }
-?>

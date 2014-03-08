@@ -2,7 +2,7 @@
 defined('_JEXEC') or die('Restricted access'); ?>
 <?php if ( $this->params->def( 'show_page_title', 1 ) ) : ?>
 	<div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-		<?php echo $this->params->get('page_title'); ?>
+		<?php echo $this->escape($this->params->get('page_title')); ?>
 	</div>
 <?php endif; ?>
 
@@ -22,8 +22,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 <?php foreach ( $this->categories as $category ) : ?>
 	<li>
 		<a href="<?php echo $category->link; ?>" class="category<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-			<?php echo $category->title;?>
-		</a>
+			<?php echo $category->title;?></a>
 		&nbsp;
 		<span class="small">
 			(<?php echo $category->numlinks;?>)

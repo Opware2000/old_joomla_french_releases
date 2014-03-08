@@ -1,7 +1,7 @@
 /**
- * @version		$Id: xstandard.js 8491 2007-08-21 12:10:12Z jinx $
+ * @version		$Id: xstandard.js 9765 2007-12-30 08:21:02Z ircmaxell $
  * @package		Joomla
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -41,7 +41,7 @@ var JXStandard = new Class({
 			$(instance.className).value = contents;
 		});
 	}
-}
+})
 
 document.xstandard = null
 window.addEvent('domready', function(){

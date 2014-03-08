@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: banner.php 8180 2007-07-23 05:52:29Z eddieajau $
+ * @version		$Id: banner.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -46,7 +46,7 @@ class BannerControllerBanner extends JController
 		$db =& JFactory::getDBO();
 
 		$context			= 'com_banners.banner.list.';
-		$filter_order		= $mainframe->getUserStateFromRequest( $context.'filter_order',		'filter_order',		'cc.name',	'cmd' );
+		$filter_order		= $mainframe->getUserStateFromRequest( $context.'filter_order',		'filter_order',		'cc.title',	'cmd' );
 		$filter_order_Dir	= $mainframe->getUserStateFromRequest( $context.'filter_order_Dir',	'filter_order_Dir',	'',			'word' );
 		$filter_catid		= $mainframe->getUserStateFromRequest( $context.'filter_catid',		'filter_catid',		'',			'int' );
 		$filter_state		= $mainframe->getUserStateFromRequest( $context.'filter_state',		'filter_state',		'',			'word' );
@@ -70,7 +70,7 @@ class BannerControllerBanner extends JController
 			$where[] = 'cc.id = ' . (int) $filter_catid;
 		}
 		if ($search) {
-			$where[] = 'LOWER(b.name) LIKE ' . $db->Quote( '%'.$search.'%' );
+			$where[] = 'LOWER(b.name) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 
 		$where		= count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '';
@@ -180,6 +180,9 @@ class BannerControllerBanner extends JController
 	 */
 	function save()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		// Initialize variables
@@ -242,6 +245,9 @@ class BannerControllerBanner extends JController
 
 	function cancel()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		// Initialize variables
@@ -257,6 +263,9 @@ class BannerControllerBanner extends JController
 	 */
 	function copy()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		$cid	= JRequest::getVar( 'cid', null, 'post', 'array' );
@@ -295,6 +304,9 @@ class BannerControllerBanner extends JController
 
 	function publish()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		// Initialize variables
@@ -326,6 +338,9 @@ class BannerControllerBanner extends JController
 
 	function remove()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		// Initialize variables
@@ -353,6 +368,9 @@ class BannerControllerBanner extends JController
 	 */
 	function saveOrder()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$this->setRedirect( 'index.php?option=com_banners' );
 
 		// Initialize variables

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: menuitem.php 8288 2007-08-01 08:40:54Z eddieajau $
+* @version		$Id: menuitem.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Parameter
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -59,7 +59,7 @@ class JElementMenuItem extends JElement
 
 		// load the list of menu items
 		// TODO: move query to model
-		$query = 'SELECT id, parent, name, menutype' .
+		$query = 'SELECT id, parent, name, menutype, type' .
 				' FROM #__menu' .
 				$where .
 				' ORDER BY menutype, parent, ordering'
@@ -72,9 +72,11 @@ class JElementMenuItem extends JElement
 		// TODO: use node model
 		$children = array();
 
-		if ($menuItems) {
+		if ($menuItems)
+		{
 			// first pass - collect children
-			foreach ($menuItems as $v) {
+			foreach ($menuItems as $v)
+			{
 				$pt 	= $v->parent;
 				$list 	= @$children[$pt] ? $children[$pt] : array();
 				array_push( $list, $v );
@@ -100,8 +102,8 @@ class JElementMenuItem extends JElement
 		{
 			if ($menuType == '')
 			{
-				$options[]	= JHTML::_('select.option',  '0', '&nbsp;' );
-				$options[]	= JHTML::_('select.option',  $type->menutype, $type->title . ' - ' . JText::_( 'Top' ) );
+				$options[]	= JHTML::_('select.option',  '0', '&nbsp;', 'value', 'text', true);
+				$options[]	= JHTML::_('select.option',  $type->menutype, $type->title . ' - ' . JText::_( 'Top' ), 'value', 'text', true );
 			}
 			if (isset( $groupedList[$type->menutype] ))
 			{
@@ -109,7 +111,8 @@ class JElementMenuItem extends JElement
 				for ($i = 0; $i < $n; $i++)
 				{
 					$item = &$groupedList[$type->menutype][$i];
-					$options[] = JHTML::_('select.option',  $item->id, '&nbsp;&nbsp;&nbsp;' .$item->treename );
+					$disable = strpos($node->attributes('disable'), $item->type) !== false ? true : false;
+					$options[] = JHTML::_('select.option',  $item->id, '&nbsp;&nbsp;&nbsp;' .$item->treename, 'value', 'text', $disable );
 
 				}
 			}

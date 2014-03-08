@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblinks.php 8117 2007-07-20 13:37:22Z friesengeist $
+ * @version		$Id: weblinks.php 9918 2008-01-10 01:41:37Z pasamio $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -20,7 +20,6 @@ jimport('joomla.application.component.model');
 /**
  * Weblinks Component Weblink Model
  *
- * @author	Johan Janssens <johan.janssens@joomla.org>
  * @package		Joomla
  * @subpackage	Content
  * @since 1.5
@@ -61,7 +60,10 @@ class WeblinksModelWeblinks extends JModel
 
 		// Get the pagination request variables
 		$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-		$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+		$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
+
+		// In case limit has been changed, adjust limitstart accordingly
+		$limitstart = ($limit != 0 ? (floor($limitstart / $limit) * $limit) : 0);
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -157,7 +159,7 @@ class WeblinksModelWeblinks extends JModel
 	function _buildContentWhere()
 	{
 		global $mainframe, $option;
-
+		$db					=& JFactory::getDBO();
 		$filter_state		= $mainframe->getUserStateFromRequest( $option.'filter_state',		'filter_state',		'',				'word' );
 		$filter_catid		= $mainframe->getUserStateFromRequest( $option.'filter_catid',		'filter_catid',		0,				'int' );
 		$filter_order		= $mainframe->getUserStateFromRequest( $option.'filter_order',		'filter_order',		'a.ordering',	'cmd' );
@@ -171,7 +173,7 @@ class WeblinksModelWeblinks extends JModel
 			$where[] = 'a.catid = '.(int) $filter_catid;
 		}
 		if ($search) {
-			$where[] = 'LOWER(a.title) LIKE '.$this->_db->Quote('%'.$search.'%');
+			$where[] = 'LOWER(a.title) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 		if ( $filter_state ) {
 			if ( $filter_state == 'P' ) {
@@ -186,4 +188,3 @@ class WeblinksModelWeblinks extends JModel
 		return $where;
 	}
 }
-?>

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: article.php 8345 2007-08-07 09:20:52Z eddieajau $
+* @version		$Id: article.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -31,7 +31,6 @@ class JElementArticle extends JElement
 		$db			=& JFactory::getDBO();
 		$doc 		=& JFactory::getDocument();
 		$template 	= $mainframe->getTemplate();
-		$url 		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 		$fieldName	= $control_name.'['.$name.']';
 		$article =& JTable::getInstance('content');
 		if ($value) {
@@ -51,7 +50,7 @@ class JElementArticle extends JElement
 		$link = 'index.php?option=com_content&amp;task=element&amp;tmpl=component';
 
 		JHTML::_('behavior.modal', 'a.modal');
-		$html = "\n".'<div style="float: left;"><input style="background: #ffffff;" type="text" id="a_name" value="'.htmlspecialchars($article->title, ENT_QUOTES).'" disabled="disabled" /></div>';
+		$html = "\n".'<div style="float: left;"><input style="background: #ffffff;" type="text" id="a_name" value="'.htmlspecialchars($article->title, ENT_QUOTES, 'UTF-8').'" disabled="disabled" /></div>';
 //		$html .= "\n &nbsp; <input class=\"inputbox modal-button\" type=\"button\" value=\"".JText::_('Select')."\" />";
 		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="'.JText::_('Select an Article').'"  href="'.$link.'" rel="{handler: \'iframe\', size: {x: 650, y: 375}}">'.JText::_('Select').'</a></div></div>'."\n";
 		$html .= "\n".'<input type="hidden" id="a_id" name="'.$fieldName.'" value="'.(int)$value.'" />';

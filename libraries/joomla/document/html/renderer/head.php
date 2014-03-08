@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: head.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: head.php 9888 2008-01-05 19:23:09Z hackwar $
 * @package		Joomla.Framework
 * @subpackage	Document
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -57,103 +57,101 @@ class JDocumentRendererHead extends JDocumentRenderer
 		$lnEnd = $document->_getLineEnd();
 		$tab = $document->_getTab();
 
-		$tagEnd		= ' />';
-		$strHtml	= $tab . '<title>' . htmlspecialchars($document->getTitle()) . '</title>' . $lnEnd;
+		$tagEnd	= ' />';
 
+		$strHtml = '';
+
+		// Generate base tag (need to happen first)
 		$base = $document->getBase();
 		if(!empty($base)) {
-			$strHtml .= $tab . '<base href="' . $document->getBase() . '" />' . $lnEnd;
+			$strHtml .= $tab.'<base href="'.$document->getBase().'" />'.$lnEnd;
 		}
 
-		$strHtml .= $tab . '<meta name="description" content="' . $document->getDescription() . '" />' . $lnEnd;
-		$strHtml .= $tab . '<meta name="generator" content="' . $document->getGenerator() . '" />' . $lnEnd;
-
-		// Generate META tags
+		// Generate META tags (needs to happen as early as possible in the head)
 		foreach ($document->_metaTags as $type => $tag)
 		{
 			foreach ($tag as $name => $content)
 			{
 				if ($type == 'http-equiv') {
-					$strHtml .= $tab . "<meta http-equiv=\"$name\" content=\"$content\"" . $tagEnd . $lnEnd;
+					$strHtml .= $tab.'<meta http-equiv="'.$name.'" content="'.$content.'"'.$tagEnd.$lnEnd;
 				} elseif ($type == 'standard') {
-					$strHtml .= $tab . "<meta name=\"$name\" content=\"$content\"" . $tagEnd . $lnEnd;
+					$strHtml .= $tab.'<meta name="'.$name.'" content="'.$content.'"'.$tagEnd.$lnEnd;
 				}
 			}
 		}
 
+		$strHtml .= $tab.'<meta name="description" content="'.$document->getDescription().'" />'.$lnEnd;
+		$strHtml .= $tab.'<meta name="generator" content="'.$document->getGenerator().'" />'.$lnEnd;
+
+		$strHtml .= $tab.'<title>'.htmlspecialchars($document->getTitle()).'</title>'.$lnEnd;
+
 		// Generate link declarations
 		foreach ($document->_links as $link) {
-			$strHtml .= $tab . $link . $tagEnd . $lnEnd;
+			$strHtml .= $tab.$link.$tagEnd.$lnEnd;
 		}
 
 		// Generate stylesheet links
 		foreach ($document->_styleSheets as $strSrc => $strAttr )
 		{
-			$strHtml .= $tab . "<link rel=\"stylesheet\" href=\"$strSrc\" type=\"".$strAttr['mime'].'"';
+			$strHtml .= $tab . '<link rel="stylesheet" href="'.$strSrc.'" type="'.$strAttr['mime'].'"';
 			if (!is_null($strAttr['media'])){
 				$strHtml .= ' media="'.$strAttr['media'].'" ';
 			}
-
-			$strHtml .= JArrayHelper::toString($strAttr['attribs']);
-
-			$strHtml .= $tagEnd . $lnEnd;
+			if ($temp = JArrayHelper::toString($strAttr['attribs'])) {
+				$strHtml .= ' '.$temp;;
+			}
+			$strHtml .= $tagEnd.$lnEnd;
 		}
 
 		// Generate stylesheet declarations
-		foreach ($document->_style as $styledecl)
+		foreach ($document->_style as $type => $content)
 		{
-			foreach ($styledecl as $type => $content)
-			{
-				$strHtml .= $tab . '<style type="' . $type . '">' . $lnEnd;
+			$strHtml .= $tab.'<style type="'.$type.'">'.$lnEnd;
 
-				// This is for full XHTML support.
-				if ($document->_mime == 'text/html' ) {
-					$strHtml .= $tab . $tab . '<!--' . $lnEnd;
-				} else {
-					$strHtml .= $tab . $tab . '<![CDATA[' . $lnEnd;
-				}
-
-				$strHtml .= $content . $lnEnd;
-
-				// See above note
-				if ($document->_mime == 'text/html' ) {
-					$strHtml .= $tab . $tab . '-->' . $lnEnd;
-				} else {
-					$strHtml .= $tab . $tab . ']]>' . $lnEnd;
-				}
-				$strHtml .= $tab . '</style>' . $lnEnd;
+			// This is for full XHTML support.
+			if ($document->_mime == 'text/html' ) {
+				$strHtml .= $tab.$tab.'<!--'.$lnEnd;
+			} else {
+				$strHtml .= $tab.$tab.'<![CDATA['.$lnEnd;
 			}
+
+			$strHtml .= $content . $lnEnd;
+
+			// See above note
+			if ($document->_mime == 'text/html' ) {
+				$strHtml .= $tab.$tab.'-->'.$lnEnd;
+			} else {
+				$strHtml .= $tab.$tab.']]>'.$lnEnd;
+			}
+			$strHtml .= $tab.'</style>'.$lnEnd;
 		}
 
 		// Generate script file links
 		foreach ($document->_scripts as $strSrc => $strType) {
-			$strHtml .= $tab . "<script type=\"$strType\" src=\"$strSrc\"></script>" . $lnEnd;
+			$strHtml .= $tab.'<script type="'.$strType.'" src="'.$strSrc.'"></script>'.$lnEnd;
 		}
 
 		// Generate script declarations
-		foreach ($document->_script as $script)
+		foreach ($document->_script as $type => $content)
 		{
-			foreach ($script as $type => $content)
-			{
-				$strHtml .= $tab . '<script type="' . $type . '">' . $lnEnd;
+			$strHtml .= $tab.'<script type="'.$type.'">'.$lnEnd;
 
-				// This is for full XHTML support.
-				if ($document->_mime != 'text/html' ) {
-					$strHtml .= $tab . $tab . '<![CDATA[' . $lnEnd;
-				}
-
-				$strHtml .= $content . $lnEnd;
-
-				// See above note
-				if ($document->_mime != 'text/html' ) {
-					$strHtml .= $tab . $tab . '// ]]>' . $lnEnd;
-				}
-				$strHtml .= $tab . '</script>' . $lnEnd;
+			// This is for full XHTML support.
+			if ($document->_mime != 'text/html' ) {
+				$strHtml .= $tab.$tab.'<![CDATA['.$lnEnd;
 			}
+
+			$strHtml .= $content.$lnEnd;
+
+			// See above note
+			if ($document->_mime != 'text/html' ) {
+				$strHtml .= $tab.$tab.'// ]]>'.$lnEnd;
+			}
+			$strHtml .= $tab.'</script>'.$lnEnd;
 		}
 
 		foreach($document->_custom as $custom) {
-			$strHtml .= $tab . $custom .$lnEnd;
+			$strHtml .= $tab.$custom.$lnEnd;
 		}
 
 		return $strHtml;

@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: ftp.php 7372 2007-05-06 12:40:05Z friesengeist $
+* @version		$Id: ftp.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Client
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software and parts of it may contain or be derived from the
 * GNU General Public License or other free or open source software licenses.
@@ -40,7 +40,7 @@ if (!defined("FTP_ASCII")) {
 
 // Is FTP extension loaded?  If not try to load it
 if (!extension_loaded('ftp')) {
-	if (JPATH_ISWIN) {
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 		@ dl('php_ftp.dll');
 	} else {
 		@ dl('ftp.so');
@@ -58,7 +58,8 @@ if (!defined('FTP_NATIVE')) {
  * @subpackage	Client
  * @since		1.5
  */
-class JFTP extends JObject {
+class JFTP extends JObject
+{
 
 	/**
 	 * Server connection resource
@@ -149,9 +150,9 @@ class JFTP extends JObject {
 		}
 		$this->setOptions($options);
 
-		if (JPATH_ISWIN) {
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 			$this->_OS = 'WIN';
-		} elseif (JPATH_ISMAC) {
+		} elseif (strtoupper(substr(PHP_OS, 0, 3)) === 'MAC') {
 			$this->_OS = 'MAC';
 		} else {
 			$this->_OS = 'UNIX';
@@ -160,6 +161,8 @@ class JFTP extends JObject {
 		if (FTP_NATIVE) {
 			// Import the generic buffer stream handler
 			jimport('joomla.utilities.buffer');
+			// Autoloading fails for JBuffer as the class is used as a stream handler
+			JLoader::load('JBuffer');
 		}
 
 		// Register faked "destructor" in PHP4 to close all connections we might have made
@@ -547,7 +550,9 @@ class JFTP extends JObject {
 		// If native FTP support is enabled lets use it...
 		if (FTP_NATIVE) {
 			if (@ftp_site($this->_conn, 'CHMOD '.$mode.' '.$path) === false) {
-				JError::raiseWarning('35', 'JFTP::chmod: Bad response' );
+				if($this->_OS != 'WIN') {
+					JError::raiseWarning('35', 'JFTP::chmod: Bad response' );
+				}
 				return false;
 			}
 			return true;
@@ -555,7 +560,9 @@ class JFTP extends JObject {
 
 		// Send change mode command and verify success [must convert mode from octal]
 		if (!$this->_putCmd('SITE CHMOD '.$mode.' '.$path, array(200, 250))) {
-			JError::raiseWarning('35', 'JFTP::chmod: Bad response', 'Server response: '.$this->_response.' [Expected: 200 or 250] Path sent: '.$path.' Mode sent: '.$mode);
+			if($this->_OS != 'WIN') {
+				JError::raiseWarning('35', 'JFTP::chmod: Bad response', 'Server response: '.$this->_response.' [Expected: 200 or 250] Path sent: '.$path.' Mode sent: '.$mode);
+			}
 			return false;
 		}
 		return true;

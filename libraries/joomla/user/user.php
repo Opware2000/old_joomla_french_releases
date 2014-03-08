@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: user.php 8536 2007-08-23 18:14:11Z jinx $
+ * @version		$Id: user.php 9954 2008-01-17 17:12:50Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	User
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -16,6 +16,7 @@
 defined('JPATH_BASE') or die();
 
 jimport( 'joomla.html.parameter');
+jimport( 'joomla.utilities.date');
 
 /**
  * User class.  Handles all application interaction with a user
@@ -149,11 +150,13 @@ class JUser extends JObject
 		// Load the user if it exists
 		if (!empty($identifier)) {
 			$this->load($identifier);
-		} else {
+		}
+		else
+		{
 			//initialise
 			$this->id        = 0;
 			$this->gid       = 0;
-			$this->sendEmail = 1;
+			$this->sendEmail = 0;
 			$this->aid       = 0;
 			$this->guest     = 1;
 		}
@@ -253,9 +256,10 @@ class JUser extends JObject
 	 */
 	function authorize( $acoSection, $aco, $axoSection = null, $axo = null )
 	{
-		$acl	= & JFactory::getACL();
 		// the native calls (Check Mode 1) work on the user id, not the user type
+		$acl	= & JFactory::getACL();
 		$value	= $acl->getCheckMode() == 1 ? $this->id : $this->usertype;
+
 		return $acl->acl_check( $acoSection, $aco,	'users', $value, $axoSection, $axo );
 	}
 
@@ -270,7 +274,7 @@ class JUser extends JObject
 	function setLastVisit($timestamp=null)
 	{
 		// Create the user table object
-		$table 	=& JTable::getInstance( 'user');
+		$table 	=& $this->getTable();
 		$table->load($this->id);
 
 		return $table->setLastVisit($timestamp);
@@ -279,62 +283,88 @@ class JUser extends JObject
 	/**
 	 * Method to get the user parameters
 	 *
+	 * This function tries to load an xml file based on the users usertype. The filename of the xml
+	 * file is the same as the usertype. The functionals has a static variable to store the parameters
+	 * setup file base path. You can call this function statically to set the base path if needed.
+	 *
 	 * @access 	public
+	 * @param	boolean	If true, loads the parameters setup file. Default is false.
+	 * @param	path	Set the parameters setup file base path to be used to load the user parameters.
 	 * @return	object	The user parameters object
 	 * @since	1.5
 	 */
-	function &getParameters()
+	function &getParameters($loadsetupfile = false, $path = null)
 	{
+		static $parampath;
+
+		// Set a custom parampath if defined
+		if( isset($path) ) {
+			$parampath = $path;
+		}
+
+		// Set the default parampath if not set already
+		if( !isset($parampath) ) {
+			$parampath = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_users'.DS.'models';
+		}
+
+		if($loadsetupfile)
+		{
+			$type = str_replace(' ', '_', strtolower($this->usertype));
+
+			$file = $parampath.DS.$type.'.xml';
+			if(!file_exists($file)) {
+				$file = $parampath.DS.'user.xml';
+			}
+
+			$this->_params->loadSetupFile($file);
+		}
 		return $this->_params;
+	}
+
+	/**
+	 * Method to get the user parameters
+	 *
+	 * @access 	public
+	 * @param	object	The user parameters object
+	 * @since	1.5
+	 */
+	function setParameters($params )
+	{
+		$this->_params = $params;
 	}
 
 	/**
 	 * Method to get the user table object
 	 *
+	 * This function uses a static variable to store the table name of the user table to
+	 * it instantiates. You can call this function statically to set the table name if
+	 * needed.
+	 *
 	 * @access 	public
+	 * @param	string	The user table name to be used
+	 * @param	string	The user table prefix to be used
 	 * @return	object	The user table object
 	 * @since	1.5
 	 */
-	function &getTable()
+	function &getTable( $type = null, $prefix = 'JTable' )
 	{
-		// Create the user table object
-		$table 	=& JTable::getInstance( 'user');
-		$table->load($this->id);
+		static $tabletype;
 
-		return $table;
-	}
-
-	/**
-	 * Method to set the user parameters
-	 *
-	 *
-	 * @access 	public
-	 * @param 	string 	$data 	The paramters string in INI format
-	 * @param 	string 	$path 	Path to the parameters xml file [optional]
-	 * @since 	1.5
-	 */
-	function setParameters($data, $path = null)
-	{
-		// Assume we are using the xml file from com_users if no other xml file has been set
-		if (is_null($path))
-		{
-			jimport( 'joomla.application.helper' );
-			$path 	= JApplicationHelper::getPath( 'com_xml', 'com_users' );
+		//Set the default tabletype;
+		if(!isset($tabletype)) {
+			$tabletype['name'] 		= 'user';
+			$tabletype['prefix']	= 'JTable';
 		}
 
-		$this->_params->loadSetupFile($path);
-		$this->_params->loadINI($data);
-	}
+		//Set a custom table type is defined
+		if(isset($type)) {
+			$tabletype['name'] 		= $type;
+			$tabletype['prefix']	= $prefix;
+		}
 
-	/**
-	 * Method to get JUser error message
-	 *
-	 * @access 	public
-	 * @return	string	The error message
-	 * @since	1.5
-	 */
-	function getError() {
-		return $this->_errorMsg;
+		// Create the user table object
+		$table 	=& JTable::getInstance( $tabletype['name'], $tabletype['prefix'] );
+		return $table;
 	}
 
 	/**
@@ -348,7 +378,6 @@ class JUser extends JObject
 	function bind(& $array)
 	{
 		jimport('joomla.user.helper');
-		jimport( 'joomla.utilities.array' );
 
 		// Lets check to see if the user is new or not
 		if (empty($this->id))
@@ -358,9 +387,9 @@ class JUser extends JObject
 				$array['password']  = JUserHelper::genRandomPassword();
 				$array['password2'] = $array['password'];
 			}
-			
+
 			if ($array['password'] != $array['password2']) {
-					$this->_setError( JText::_( 'PASSWORD DO NOT MATCH.' ) );
+					$this->setError( JText::_( 'PASSWORD DO NOT MATCH.' ) );
 					return false;
 			}
 
@@ -371,7 +400,9 @@ class JUser extends JObject
 			$array['password'] = $crypt.':'.$salt;
 
 			// Set the registration timestamp
-			$this->set( 'registerDate', date( 'Y-m-d H:i:s' ) );
+			jimport('joomla.utilities.date');
+			$now = new JDate();
+			$this->set( 'registerDate', $now->toMySQL() );
 
 			// Check that username is not greater than 25 characters
 			$username = $this->get( 'username' );
@@ -395,7 +426,7 @@ class JUser extends JObject
 			if (!empty($array['password']))
 			{
 				if ( $array['password'] != $array['password2'] ) {
-					$this->_setError( JText::_( 'PASSWORD DO NOT MATCH.' ) );
+					$this->setError( JText::_( 'PASSWORD DO NOT MATCH.' ) );
 					return false;
 				}
 
@@ -414,7 +445,7 @@ class JUser extends JObject
 		// TODO: this will be deprecated as of the ACL implementation
 		$db =& JFactory::getDBO();
 
-		$gid	= array_key_exists('gid', $array ) ? $array['gid'] : $this->get('gid');
+		$gid = array_key_exists('gid', $array ) ? $array['gid'] : $this->get('gid');
 
 		$query = 'SELECT name'
 		. ' FROM #__core_acl_aro_groups'
@@ -436,9 +467,9 @@ class JUser extends JObject
 			$this->params = $params;
 		}
 
-		// Bind the array 
-		if (!$this->_bind($array, 'aid guest')) {
-			$this->_setError("Unable to bind array to user object");
+		// Bind the array
+		if (!$this->setProperties($array)) {
+			$this->setError("Unable to bind array to user object");
 			return false;
 		}
 
@@ -458,15 +489,14 @@ class JUser extends JObject
 	 */
 	function save( $updateOnly = false )
 	{
-		jimport( 'joomla.utilities.array' );
-
 		// Create the user table object
-		$table 	=& JTable::getInstance( 'user');
-		$table->bind(JArrayHelper::fromObject($this, false));
+		$table 	=& $this->getTable();
+		$this->params = $this->_params->toString();
+		$table->bind($this->getProperties());
 
 		// Check and store the object.
 		if (!$table->check()) {
-			$this->_setError($table->getError());
+			$this->setError($table->getError());
 			return false;
 		}
 
@@ -475,7 +505,15 @@ class JUser extends JObject
 		if ( $this->get('gid') == 25 && $my->get('gid') != 25 )
 		{
 			// disallow creation of Super Admin by non Super Admin users
-			$this->_setError(JText::_( 'WARNSUPERADMINCREATE' ));
+			$this->setError(JText::_( 'WARNSUPERADMINCREATE' ));
+			return false;
+		}
+
+		// If user is made an Admin group and user is NOT a Super Admin
+		if ($this->get('gid') == 24 && !($my->get('gid') == 25 || ($this->get('id') == $my->id && $my->get('gid') == 24)))
+		{
+			// disallow creation of Admin by non Super Admin users
+			$this->setError(JText::_( 'WARNSUPERADMINCREATE' ));
 			return false;
 		}
 
@@ -486,27 +524,27 @@ class JUser extends JObject
 		if ($isnew && $updateOnly) {
 			return true;
 		}
-		
-		// Get the old user 
+
+		// Get the old user
 		$old = new JUser($this->id);
 
 		// Fire the onBeforeStoreUser event.
 		JPluginHelper::importPlugin( 'user' );
-		$dispatcher =& JEventDispatcher::getInstance();
-		$dispatcher->trigger( 'onBeforeStoreUser', array( $old->getPublicProperties(true), $isnew ) );
+		$dispatcher =& JDispatcher::getInstance();
+		$dispatcher->trigger( 'onBeforeStoreUser', array( $old->getProperties(), $isnew ) );
 
 		//Store the user data in the database
 		if (!$result = $table->store()) {
-			$this->_setError($table->getError());
+			$this->setError($table->getError());
 		}
 
-		// Set the id for the JUser object in case we created a new user. 
+		// Set the id for the JUser object in case we created a new user.
 		if (empty($this->id)) {
 			$this->id = $table->get( 'id' );
 		}
 
 		// Fire the onAftereStoreUser event
-		$dispatcher->trigger( 'onAfterStoreUser', array( $this->getPublicProperties(true), $isnew, $result, $this->getError() ) );
+		$dispatcher->trigger( 'onAfterStoreUser', array( $this->getProperties(), $isnew, $result, $this->getError() ) );
 
 		return $result;
 	}
@@ -524,19 +562,19 @@ class JUser extends JObject
 		JPluginHelper::importPlugin( 'user' );
 
 		//trigger the onBeforeDeleteUser event
-		$dispatcher =& JEventDispatcher::getInstance();
-		$dispatcher->trigger( 'onBeforeDeleteUser', array( $this->getPublicProperties(true) ) );
+		$dispatcher =& JDispatcher::getInstance();
+		$dispatcher->trigger( 'onBeforeDeleteUser', array( $this->getProperties() ) );
 
 		// Create the user table object
-		$table 	=& JTable::getInstance( 'user');
+		$table 	=& $this->getTable();
 
 		$result = false;
 		if (!$result = $table->delete($this->id)) {
-			$this->_setError($table->getError());
+			$this->setError($table->getError());
 		}
 
 		//trigger the onAfterDeleteUser event
-		$dispatcher->trigger( 'onAfterDeleteUser', array( $this->getPublicProperties(true), $result, $this->getError()) );
+		$dispatcher->trigger( 'onAfterDeleteUser', array( $this->getProperties(), $result, $this->getError()) );
 		return $result;
 
 	}
@@ -553,7 +591,7 @@ class JUser extends JObject
 	function load($id)
 	{
 		// Create the user table object
-		$table 	=& JTable::getInstance( 'user');
+		$table 	=& $this->getTable();
 
 		 // Load the JUserModel object based on the user id or throw a warning.
 		 if(!$table->load($id)) {
@@ -569,69 +607,8 @@ class JUser extends JObject
 		$this->_params->loadINI($table->params);
 
 		// Assuming all is well at this point lets bind the data
-		$this->_bind(JArrayHelper::fromObject($table, false));
+		$this->setProperties($table->getProperties());
 
 		return true;
-	}
-
-	/**
-	* Binds a named array/hash to this object
-	*
-	* @access	protected
-	* @param	$array  mixed Either and associative array or another object
-	* @param	$ignore string	Space separated list of fields not to bind
-	* @return	boolean
-	* @since	1.5
-	*/
-	function _bind( $from, $ignore='' )
-	{
-		if (!is_array( $from ) && !is_object( $from )) {
-			$this->_setError(strtolower(get_class( $this ))."::bind failed.");
-			return false;
-		}
-
-		$fromArray  = is_array( $from );
-		$fromObject = is_object( $from );
-
-		if ($fromArray || $fromObject)
-		{
-			foreach (get_object_vars($this) as $k => $v)
-			{
-				// only bind to public variables
-				if( substr( $k, 0, 1 ) != '_' )
-				{
-					// internal attributes of an object are ignored
-					if (strpos( $ignore, $k) === false)
-					{
-						$ak = $k;
-
-						if ($fromArray && isset( $from[$ak] )) {
-							$this->$k = $from[$ak];
-						} else if ($fromObject && isset( $from->$ak )) {
-							$this->$k = $from->$ak;
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Method to set an error message
-	 *
-	 * @access	private
-	 * @param	string	$msg	The message to append to the error message
-	 * @return	void
-	 * @since	1.5
-	 */
-	function _setError( $msg )
-	{
-		$this->_errorMsg .= $msg."\n";
 	}
 }

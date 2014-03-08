@@ -100,9 +100,10 @@ var FancyUpload = new Class({
 		$(this.element.form).addEvent('submit', this.upload.bindWithEvent(this));
 		if (this.options.createReplacement) this.options.createReplacement(this.element);
 		else {
+			
 			new Element('input', {
 				type: 'button',
-				value: 'Browse Files',
+				value: sBrowseCaption,
 				events: {
 					click: this.browse.bind(this)
 				}
@@ -196,7 +197,7 @@ var FancyUpload = new Class({
 		new Element('a', {
 			href: 'javascript:void(0)',
 			'class': 'input-delete',
-			title: 'Remove from queue',
+			title: sRemoveToolTip,
 			events: {
 				click: this.cancelFile.bindWithEvent(this, [name, size])
 			}

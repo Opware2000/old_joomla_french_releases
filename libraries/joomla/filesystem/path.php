@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: path.php 8592 2007-08-27 21:19:18Z robs $
+ * @version		$Id: path.php 9854 2008-01-04 15:44:02Z jinx $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -224,13 +224,15 @@ class JPath
 	 * Searches the directory paths for a given file.
 	 *
 	 * @access	protected
-	 * @param	array	$path	An array of paths to search in
+	  * @param	array|string	$path	An path or array of path to search in
 	 * @param	string	$file	The file name to look for.
 	 * @return	mixed	The full path and file name for the target file, or boolean false if the file is not found in any of the paths.
 	 * @since	1.5
 	 */
 	function find($paths, $file)
 	{
+		settype($paths, 'array'); //force to array
+		
 		// start looping through the path set
 		foreach ($paths as $path)
 		{

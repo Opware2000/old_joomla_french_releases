@@ -1,21 +1,16 @@
-<?php
-/**
- * @version $Id: default.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
-defined( '_JEXEC' ) or die( 'Restricted access' );
-
+<?php // @version $Id: default.php 9718 2007-12-20 22:35:36Z eddieajau $
+defined('_JEXEC') or die('Restricted access');
 ?>
 
 <?php if ( $this->params->get( 'show_page_title' ) ) : ?>
 <h1 class="componentheading<?php echo $this->params->get('pageclass_sfx'); ?>">
-	<?php echo $this->params->get('page_title'); ?>
+	<?php echo $this->escape($this->params->get('page_title')); ?>
 </h1>
 <?php endif; ?>
 
 <h2 class="componentheading<?php echo $this->params->get('pageclass_sfx'); ?>">
 	<a href="<?php echo $this->newsfeed->channel['link']; ?>" target="_blank">
-		<?php echo str_replace('&apos;', "'", $this->newsfeed->channel['title']); ?>
-	</a>
+		<?php echo str_replace('&apos;', "'", $this->newsfeed->channel['title']); ?></a>
 </h2>
 
 <?php if ( $this->params->get( 'show_feed_description' ) )  : ?>
@@ -34,8 +29,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 	<li>
 		<?php if ( !is_null( $item->get_link() ) ) : ?>
 		<a href="<?php echo $item->get_link(); ?>" target="_blank">
-			<?php echo $item->get_title(); ?>
-		</a>
+			<?php echo $item->get_title(); ?></a>
 		<?php endif; ?>
 		<?php if ( $this->params->get( 'show_item_description' ) && $item->get_description() ) : ?>
 		<br />

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: defines.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: defines.php 9803 2008-01-02 20:55:13Z instance $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 */
 
 //Global definitions
-//Joomla framework paht definitions
+//Joomla framework path definitions
 $parts = explode( DS, JPATH_BASE );
 
 //Defines

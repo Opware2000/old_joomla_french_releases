@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: content.php 7644 2007-06-05 16:27:13Z jinx $
+ * @version		$Id: content.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -62,7 +62,7 @@ class JHTMLContent
 			</td>
 		</tr>
 		<tr>
-			<td colspan="8" align="center">
+			<td colspan="10" align="center">
 			<?php echo JText::_( 'Click on icon to toggle state.' ); ?>
 			</td>
 		</tr>

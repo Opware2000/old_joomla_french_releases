@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: helper.php 7944 2007-07-13 21:48:48Z friesengeist $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -39,13 +39,21 @@ class modNewsFlashHelper
 			{
 				// Check to see if the user has access to view the full article
 				if ($item->access <= $user->get('aid', 0)) {
-					$linkOn = ContentHelperRoute::getArticleRoute($item->slug, $item->catslug);
+					$linkOn = JRoute::_(ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid));
 				} else {
 					$linkOn = JRoute::_('index.php?option=com_user&task=register');
 				}
 			}
 
 			$item->linkOn = $linkOn;
+		}
+
+		if (!$params->get('image')) {
+			$item->text = preg_replace( '/<img[^>]*>/', '', $item->text );
+		}
+
+		if (!$params->get('image')) {
+			$item->text = preg_replace( '/<img[^>]*>/', '', $item->text );
 		}
 
 		$results = $mainframe->triggerEvent('onAfterDisplayTitle', array (&$item, &$params, 1));
@@ -71,7 +79,10 @@ class modNewsFlashHelper
 		$contentConfig	= &JComponentHelper::getParams( 'com_content' );
 		$noauth			= !$contentConfig->get('shownoauth');
 
-		$now 	 = date('Y-m-d H:i:s', time() + $mainframe->getCfg('offset') * 60 * 60);
+		jimport('joomla.utilities.date');
+		$date = new JDate();
+		$now = $date->toMySQL();
+
 		$nullDate = $db->getNullDate();
 
 		// query to determine article count

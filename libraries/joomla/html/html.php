@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: html.php 8412 2007-08-15 19:34:16Z jinx $
+ * @version		$Id: html.php 9789 2008-01-02 01:01:00Z jinx $
  * @package		Joomla.Framework
  * @subpackage	HTML
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -28,24 +28,38 @@ class JHTML
 	 * Additional arguments may be supplied and are passed to the sub-class.
 	 * Additional include paths are also able to be specified for third-party use
 	 *
-	 * @param	string	The type of helper method to load
+	 * @param	string	The name of helper method to load, (prefix).(class).function
+	 *                  prefix and class are optional and can be used to load custom
+	 *                  html helpers.
 	 */
 	function _( $type )
 	{
 		//Initialise variables
-		$file = '';
-		$func = $type;
+		$prefix = 'JHTML';
+		$file   = '';
+		$func   = $type;
 
 		// Check to see if we need to load a helper file
-		if(substr_count($type, '.'))
+		$parts = explode('.', $type);
+		
+		switch(count($parts)) 
 		{
-			$parts = explode('.', $type);
-			$file		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[0] );
-			$func		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[1] );
+			case 3 : 
+			{
+				$prefix		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[0] );
+				$file		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[1] );
+				$func		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[2] );
+			} break;
+			
+			case 2 : 
+			{
+				$file		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[0] );
+				$func		= preg_replace( '#[^A-Z0-9_]#i', '', $parts[1] );
+			} break;
 		}
-
-		$className	= 'JHTML'.ucfirst($file);
-
+		
+		$className	= $prefix.ucfirst($file);
+		
 		if (!class_exists( $className ))
 		{
 			jimport('joomla.filesystem.path');
@@ -55,13 +69,13 @@ class JHTML
 
 				if (!class_exists( $className ))
 				{
-					JError::raiseWarning( 0, 'JHTML '. $className.'::' .$func. ' not found in file.' );
+					JError::raiseWarning( 0, $className.'::' .$func. ' not found in file.' );
 					return false;
 				}
 			}
 			else
 			{
-				JError::raiseWarning( 0, 'JHTML ' . $file . ' not supported. File not found.' );
+				JError::raiseWarning( 0, $prefix.$file . ' not supported. File not found.' );
 				return false;
 			}
 		}
@@ -101,20 +115,22 @@ class JHTML
 	 * Write a <img></amg> element
 	 *
 	 * @access	public
-	 * @param	string 	The relative URL to use for the src attribute
+	 * @param	string 	The relative or absoluete URL to use for the src attribute
 	 * @param	string	The target attribute to use
 	 * @param	array	An associative array of attributes to add
 	 * @since	1.5
 	 */
 	function image($url, $alt, $attribs = null)
 	{
-		global $mainframe;
-
 		if (is_array($attribs)) {
 			$attribs = JArrayHelper::toString( $attribs );
 		}
-
-		return '<img src="'.JURI::base().$url.'" alt="'.$alt.'" '.$attribs.' />';
+		
+		if(strpos($url, 'http') !== 0) {
+			$url =  JURI::root(true).'/'.$url;
+		}; 
+			
+		return '<img src="'.$url.'" alt="'.$alt.'" '.$attribs.' />';
 	}
 
 	/**
@@ -141,23 +157,23 @@ class JHTML
 	 *
 	 * @access	public
 	 * @param	string 	The name of the script file
-	 * * @param	string 	The relative path of the script file
+	 * * @param	string 	The relative or absolute path of the script file
 	 * @param	boolean If true, the mootools library will be loaded
 	 * @since	1.5
 	 */
 	function script($filename, $path = 'media/system/js/', $mootools = true)
 	{
-		global $mainframe;
-
 		// Include mootools framework
 		if($mootools) {
 			JHTML::_('behavior.mootools');
 		}
-
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
+		
+		if(strpos($path, 'http') !== 0) {
+			$path =  JURI::root(true).'/'.$path;
+		}; 
 
 		$document = &JFactory::getDocument();
-		$document->addScript( $base.$path.$filename.'.js' );
+		$document->addScript( $path.$filename );
 		return;
 	}
 
@@ -168,13 +184,14 @@ class JHTML
 	 * @param	string 	The relative URL to use for the href attribute
 	 * @since	1.5
 	 */
-	function stylesheet($filename, $path = '/media/system/css/', $attribs = array())
+	function stylesheet($filename, $path = 'media/system/css/', $attribs = array())
 	{
-		global $mainframe;
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
+		if(strpos($path, 'http') !== 0) {
+			$path =  JURI::root(true).'/'.$path;
+		}; 
+		
 		$document = &JFactory::getDocument();
-		$document->addStylesheet( $base.$path.$filename.'.css', 'text/css', null, $attribs );
+		$document->addStylesheet( $path.$filename, 'text/css', null, $attribs );
 		return;
 	}
 
@@ -211,26 +228,22 @@ class JHTML
 	 * Creates a tooltip with an image as button
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	string
-	 * @param	string
-	 * @param	string
-	 * @param	boolean
+	 * @param	string	$tooltip The tip string
+	 * @param	string	$title The title of the tooltip
+	 * @param	string	$image The image for the tip, if no text is provided
+	 * @param	string	$text The text for the tip
+	 * @param	string	$href An URL that will be used to create the link
+	 * @param	boolean depreciated
 	 * @return	string
 	 * @since	1.5
 	 */
 	function tooltip($tooltip, $title='', $image='tooltip.png', $text='', $href='', $link=1)
 	{
-		global $mainframe;
-
 		$tooltip	= addslashes(htmlspecialchars($tooltip));
 		$title		= addslashes(htmlspecialchars($title));
 
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
 		if ( !$text ) {
-			$image 	= $url . 'includes/js/ThemeOffice/'. $image;
+			$image 	= JURI::root(true).'/includes/js/ThemeOffice/'. $image;
 			$text 	= '<img src="'. $image .'" border="0" alt="'. JText::_( 'Tooltip' ) .'"/>';
 		} else {
 			$text 	= JText::_( $text, true );
@@ -245,8 +258,6 @@ class JHTML
 		if ( $href ) {
 			$href = JRoute::_( $href );
 			$style = '';
-		}
-		if ( $link ) {
 			$tip = '<span class="editlinktip hasTip" title="'.$title.$tooltip.'" '. $style .'><a href="'. $href .'">'. $text .'</a></span>';
 		} else {
 			$tip = '<span class="editlinktip hasTip" title="'.$title.$tooltip.'" '. $style .'>'. $text .'</span>';
@@ -264,16 +275,24 @@ class JHTML
 	 * @param	string	The date format
 	 * @param	array	Additional html attributes
 	 */
-	function calendar($value, $name, $id, $format = 'y-mm-dd', $attribs = null)
+	function calendar($value, $name, $id, $format = '%Y-%m-%d', $attribs = null)
 	{
 		JHTML::_('behavior.calendar'); //load the calendar behavior
 
 		if (is_array($attribs)) {
 			$attribs = JArrayHelper::toString( $attribs );
 		}
+		$document =& JFactory::getDocument();
+		$document->addScriptDeclaration('window.addEvent(\'domready\', function() {Calendar.setup({
+        inputField     :    "'.$id.'",     // id of the input field
+        ifFormat       :    "'.$format.'",      // format of the input field
+        button         :    "'.$id.'_img",  // trigger for the calendar (button ID)
+        align          :    "Tl",           // alignment (defaults to "Bl")
+        singleClick    :    true
+    });});');
 
-		return '<input type="text" name="'.$name.'" id="'.$id.'" value="'.htmlspecialchars($value).'" '.$attribs.' />'.
-				 '<a href="#" onclick="return showCalendar(\''.$id.'\', \''.$format.'\');"><img class="calendar" src="images/blank.png" alt="calendar" /></a>';
+		return '<input type="text" name="'.$name.'" id="'.$id.'" value="'.htmlspecialchars($value, ENT_COMPAT, 'UTF-8').'" '.$attribs.' />'.
+				 '<img class="calendar" src="'.JURI::root(true).'/templates/system/images/calendar.png" alt="calendar" id="'.$id.'_img" />';
 	}
 
 	/**

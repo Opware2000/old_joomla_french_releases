@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: view.php 8345 2007-08-07 09:20:52Z eddieajau $
+ * @version		$Id: view.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -31,7 +31,6 @@ class ContentViewElement extends JView
 		global $mainframe;
 
 		// Initialize variables
-		$url 		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 		$db			= &JFactory::getDBO();
 		$nullDate	= $db->getNullDate();
 
@@ -122,9 +121,8 @@ class ContentViewElement extends JView
 						<?php echo $page->getRowOffset( $i ); ?>
 					</td>
 					<td>
-						<a style="cursor: pointer;" onclick="window.parent.jSelectArticle('<?php echo $row->id; ?>', '<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>');">
-							<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>
-						</a>
+						<a style="cursor: pointer;" onclick="window.parent.jSelectArticle('<?php echo $row->id; ?>', '<?php echo str_replace(array("'", "\""), array("\\'", ""),$row->title); ?>');">
+							<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?></a>
 					</td>
 					<td align="center">
 						<?php echo $row->groupname;?>
@@ -150,9 +148,8 @@ class ContentViewElement extends JView
 			</table>
 
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
 		</form>
 		<?php
 	}
@@ -199,4 +196,3 @@ class ContentViewElement extends JView
 		return $lists;
 	}
 }
-?>

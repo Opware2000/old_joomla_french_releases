@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: element.php 8180 2007-07-23 05:52:29Z eddieajau $
+ * @version		$Id: element.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -21,10 +21,9 @@ jimport( 'joomla.application.component.model');
 /**
  * Content Component Article Model
  *
- * @author	Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Content
- * @since 1.5
+ * @since		1.5
  */
 class ContentModelElement extends JModel
 {
@@ -104,7 +103,7 @@ class ContentModelElement extends JModel
 
 		// Keyword filter
 		if ($search) {
-			$where[] = 'LOWER( c.title ) LIKE "%'.$db->getEscaped($search).'%"';
+			$where[] = 'LOWER( c.title ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 
 		// Build the where clause of the content record query

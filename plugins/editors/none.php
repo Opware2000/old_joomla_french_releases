@@ -1,20 +1,20 @@
 <?php
 /**
-* @version		$Id: none.php 8503 2007-08-22 07:39:40Z jinx $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: none.php 9764 2007-12-30 07:48:11Z ircmaxell $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * No WYSIWYG Editor Plugin
@@ -25,7 +25,6 @@ jimport('joomla.event.plugin');
  */
 class plgEditorNone extends JPlugin
 {
-
 	/**
 	 * Constructor
 	 *
@@ -37,7 +36,8 @@ class plgEditorNone extends JPlugin
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgEditorNone(& $subject, $config) {
+	function plgEditorNone(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -131,14 +131,14 @@ class plgEditorNone extends JPlugin
 	{
 		$doc = & JFactory::getDocument();
 
-		$js= "\tfunction jInsertEditorText( text ) {
-			insertAtCursor( document.adminForm.".$name.", text );
+		$js= "\tfunction jInsertEditorText( text, editor ) {
+			insertAtCursor( document.getElementById(editor), text );
 		}";
 		$doc->addScriptDeclaration($js);
 
 		return true;
 	}
-	
+
 	function _displayButtons($name, $buttons)
 	{
 		// Load modal popup behavior
@@ -168,7 +168,7 @@ class plgEditorNone extends JPlugin
 				/*
 				 * Results should be an object
 				 */
-				if ( $button->get('name') ) 
+				if ( $button->get('name') )
 				{
 					$modal		= ($button->get('modal')) ? 'class="modal-button"' : null;
 					$href		= ($button->get('link')) ? 'href="'.$button->get('link').'"' : null;
@@ -178,8 +178,7 @@ class plgEditorNone extends JPlugin
 			}
 			$return .= "</div>\n";
 		}
-		
+
 		return $return;
 	}
 }
-?>

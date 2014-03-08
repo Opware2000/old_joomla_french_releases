@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.messages.html.php 8540 2007-08-24 12:36:22Z jinx $
+* @version		$Id: admin.messages.html.php 9858 2008-01-04 18:26:20Z tsai146 $
 * @package		Joomla
 * @subpackage	Messages
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -34,7 +34,7 @@ class HTML_messages
 				<?php echo JText::_( 'Search' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 				<?php
@@ -99,7 +99,7 @@ class HTML_messages
 						<?php echo JHTML::_('grid.id', $i, $row->message_id ); ?>
 					</td>
 					<td>
-						<a href="#edit" onclick="hideMainMenu();return listItemTask('cb<?php echo $i;?>','view')">
+						<a href="#edit" onclick="return listItemTask('cb<?php echo $i;?>','view')">
 							<?php echo $row->subject; ?></a>
 					</td>
 					<td align="center">
@@ -124,7 +124,8 @@ class HTML_messages
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -177,6 +178,7 @@ class HTML_messages
 
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -215,7 +217,7 @@ class HTML_messages
 					<?php echo JText::_( 'Message' ); ?>:
 				</td>
 				<td width="100%" bgcolor="#ffffff">
-					<pre><?php echo htmlspecialchars( $row->message );?></pre>
+					<pre><?php echo htmlspecialchars( $row->message, ENT_COMPAT, 'UTF-8' );?></pre>
 				</td>
 			</tr>
 		</table>
@@ -226,6 +228,7 @@ class HTML_messages
 		<input type="hidden" name="cid[]" value="<?php echo $row->message_id; ?>" />
 		<input type="hidden" name="userid" value="<?php echo $row->user_id_from; ?>" />
 		<input type="hidden" name="subject" value="Re: <?php echo $row->subject; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
@@ -286,8 +289,8 @@ class HTML_messages
 		<input type="hidden" name="user_id_from" value="<?php echo $user->get('id'); ?>">
 		<input type="hidden" name="option" value="<?php echo $option; ?>">
 		<input type="hidden" name="task" value="">
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 }
-?>

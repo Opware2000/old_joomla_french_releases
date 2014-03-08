@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: application.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: application.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -27,14 +27,6 @@ jimport('joomla.application.component.helper');
 class JAdministrator extends JApplication
 {
 	/**
-	 * The url of the site
-	 *
-	 * @var string
-	 * @access protected
-	 */
-	var $_siteURL = null;
-
-	/**
 	* Class constructor
 	*
 	* @access protected
@@ -45,6 +37,9 @@ class JAdministrator extends JApplication
 	{
 		$config['clientId'] = 1;
 		parent::__construct($config);
+
+		//Set the root in the URI based on the application name
+		JURI::root(null, str_replace('/'.$this->getName(), '', JURI::base(true)));
 	}
 
 	/**
@@ -66,7 +61,6 @@ class JAdministrator extends JApplication
 			if ( $lang && JLanguage::exists($lang) ) {
 				$options['language'] = $lang;
 			} else {
-				jimport('joomla.application.helper');
 				$params = JComponentHelper::getParams('com_languages');
 				$client	=& JApplicationHelper::getClientInfo($this->getClientId());
 				$options['language'] = $params->get($client->name, 'en-GB');
@@ -92,6 +86,19 @@ class JAdministrator extends JApplication
 	}
 
 	/**
+	 * Return a reference to the JRouter object.
+	 *
+	 * @access	public
+	 * @return	JRouter.
+	 * @since	1.5
+	 */
+	function &getRouter()
+	{
+		$router =& parent::getRouter('administrator');
+		return $router;
+	}
+
+	/**
 	* Dispatch the application
 	*
 	* @access public
@@ -99,7 +106,6 @@ class JAdministrator extends JApplication
 	function dispatch($component)
 	{
 		$document	=& JFactory::getDocument();
-		$config		=& JFactory::getConfig();
 		$user		=& JFactory::getUser();
 
 		switch($document->getType())
@@ -109,7 +115,7 @@ class JAdministrator extends JApplication
 				$document->setMetaData( 'keywords', $this->getCfg('MetaKeys') );
 
 				if ( $user->get('id') ) {
-					$document->addScript( '../includes/js/joomla.javascript.js');
+					$document->addScript( JURI::root(true).'/includes/js/joomla.javascript.js');
 				}
 
 				JHTML::_('behavior.mootools');
@@ -154,15 +160,23 @@ class JAdministrator extends JApplication
 	/**
 	* Login authentication function
 	*
-	* @param string The username
-	* @param string The password
+	* @param	array 	Array( 'username' => string, 'password' => string )
+	* @param	array 	Array( 'remember' => boolean )
 	* @access public
 	* @see JApplication::login
 	*/
 	function login($credentials, $options = array())
 	{
-		$credentials['group']    = '22';  //The minimum group identifier
-		$options['autoregister'] = false; //Make sure users are not autoregistered
+		//The minimum group
+		$options['group'] = 'Public Backend';
+
+		 //Make sure users are not autoregistered
+		$options['autoregister'] = false;
+
+		//Set the application login entry point
+		if(!array_key_exists('entry_url', $options)) {
+			$options['entry_url'] = JURI::base().'index.php?option=com_user&task=login';
+		}
 
 		$result = parent::login($credentials, $options);
 
@@ -211,25 +225,6 @@ class JAdministrator extends JApplication
 	}
 
 	/**
-	* Get the url of the site
-	*
-	* @return string The site URL
-	* @since 1.5
-	*/
-	function getSiteURL()
-	{
-		if(isset($this->_siteURL)) {
-			return $this->_siteURL;
-		}
-
-		$url = JURI::base();
-		$url = str_replace('administrator/', '', $url);
-
-		$this->_siteURL = $url;
-		return $url;
-	}
-
-	/**
 	* Purge the jos_messages table of old messages
 	*
 	* static method
@@ -266,7 +261,7 @@ class JAdministrator extends JApplication
 		if ($purge > 0)
 		{
 			// purge old messages at day set in message configuration
-
+			// TODO: Should this be JDate? Or updated to handle offset
 			$past = date( 'Y-m-d H:i:s', time() - $purge * 86400 );
 
 			$query = 'DELETE FROM #__messages'
@@ -276,5 +271,17 @@ class JAdministrator extends JApplication
 			$db->setQuery( $query );
 			$db->query();
 		}
+	}
+
+   /**
+	* Deprecated, use JURI::root() instead.
+	*
+	* @since 1.5
+	* @deprecated As of version 1.5
+	* @see JURI::root()
+	*/
+	function getSiteURL()
+	{
+	   return JURI::root();
 	}
 }

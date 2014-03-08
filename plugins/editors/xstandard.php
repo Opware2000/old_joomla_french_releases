@@ -1,8 +1,8 @@
 <?php
 /**
- * @version		$Id: xstandard.php 8532 2007-08-23 14:21:52Z jinx $
+ * @version		$Id: xstandard.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -14,7 +14,7 @@
 // Do not allow direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * XStandard Lite for Joomla! WYSIWYG Editor Plugin
@@ -23,8 +23,8 @@ jimport('joomla.event.plugin');
  * @package Editors
  * @since 1.5
  */
-class plgEditorXstandard extends JPlugin {
-
+class plgEditorXstandard extends JPlugin
+{
 	/**
 	 * Constructor
 	 *
@@ -36,7 +36,8 @@ class plgEditorXstandard extends JPlugin {
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgEditorXstandard(& $subject, $config) {
+	function plgEditorXstandard(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -50,14 +51,10 @@ class plgEditorXstandard extends JPlugin {
 	 */
 	function onInit()
 	{
-		global $mainframe;
-
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
 		$html = '';
 		ob_start();
 		?>
-  		<script type="text/javascript" src="<?php echo $url; ?>plugins/editors/xstandard/xstandard.js"></script>
+  		<script type="text/javascript" src="<?php echo JURI::root() ?>/plugins/editors/xstandard/xstandard.js"></script>
 		<?php
 		$html = ob_get_contents();
 		ob_end_clean();
@@ -92,7 +89,7 @@ class plgEditorXstandard extends JPlugin {
 
 		$js = "var editor = $('xstandard');\n";
 		$js .= "editor.EscapeUnicode = true;";
-		$js .= "$('text').value = editor.value;";
+		$js .= "$('".$editor."').value = editor.value;";
 
 		return $js;
 	}
@@ -111,11 +108,9 @@ class plgEditorXstandard extends JPlugin {
 	 */
 	function onDisplay( $name, $content, $width, $height, $col, $row, $buttons = true )
 	{
-		global $mainframe;
-		
 		// Load modal popup behavior
 		JHTML::_('behavior.modal', 'a.modal-button');
-		
+
 		// Only add "px" to width and height if they are not given as a percentage
 		if (is_numeric( $width )) {
 			$width .= 'px';
@@ -128,16 +123,17 @@ class plgEditorXstandard extends JPlugin {
 		$instance	=& JBrowser::getInstance();
 		$language	=& JFactory::getLanguage();
 		$db			=& JFactory::getDBO();
-		$url		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-		
+
+		$url = JURI::root();
+
 		$lang = substr( $language->getTag(), 0, strpos( $language->getTag(), '-' ) );
-		
+
 		if ($language->isRTL()) {
 			$direction = 'rtl';
 		} else {
 			$direction = 'ltr';
 		}
-		
+
 		/*
 		 * Lets get the default template for the site application
 		 */
@@ -152,10 +148,10 @@ class plgEditorXstandard extends JPlugin {
 		$file_path = JPATH_SITE .'/templates/'. $template .'/css/';
 		if ( !file_exists( $file_path .DS. 'editor.css' ) ) {
 			$template = 'system';
-		} 
-				
-		$css =  $url .'templates/'. $template . '/css/editor.css';
-		
+		}
+
+		$css =  JURI::root() .'/templates/'. $template . '/css/editor.css';
+
 		$html = '';
 		ob_start();
 		?>
@@ -177,7 +173,7 @@ class plgEditorXstandard extends JPlugin {
 			<param name="BackgroundColor" value="#F9F9F9" />
 			<param name="Mode" value="<?php echo $this->params->get('mode', 'wysiwyg'); ?>" />
 			<param name="IndentOutput" value="yes" />
-
+            <param name="Options" value="<?php echo $this->params->get('wrap', '0'); ?>" />
  			<param name="BorderColor" value="#FFF" />
  			<param name="Base" value="<?php echo $url ?>" />
  			<param name="ExpandWidth" value="800" />
@@ -200,12 +196,12 @@ class plgEditorXstandard extends JPlugin {
 		<?php
 		$html = ob_get_contents();
 		ob_end_clean();
-		
+
 		$html .= $this->_displayButtons($name, $buttons);
 
 		return $html;
 	}
-	
+
 	function onGetInsertMethod($name)
 	{
 		$doc = & JFactory::getDocument();
@@ -221,10 +217,7 @@ class plgEditorXstandard extends JPlugin {
 
 	function _getTemplateCss()
 	{
-		global $mainframe;
-
 		$db			=& JFactory::getDBO();
-		$url		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 
 		/*
 		 * Lets get the default template for the site application
@@ -237,7 +230,7 @@ class plgEditorXstandard extends JPlugin {
 		$db->setQuery( $query );
 		$template = $db->loadResult();
 
-		$content_css = $url .'templates/'. $template .'/css/';
+		$content_css = JURI::root() .'/templates/'. $template .'/css/';
 
 		$file_path = JPATH_SITE .'/templates/'. $template .'/css/';
 		if ( file_exists( $file_path .DS. 'editor.css' ) ) {
@@ -248,7 +241,7 @@ class plgEditorXstandard extends JPlugin {
 
 		return $content_css;
 	}
-	
+
 	function _displayButtons($name, $buttons)
 	{
 		// Load modal popup behavior
@@ -278,7 +271,7 @@ class plgEditorXstandard extends JPlugin {
 				/*
 				 * Results should be an object
 				 */
-				if ( $button->get('name') ) 
+				if ( $button->get('name') )
 				{
 					$modal		= ($button->get('modal')) ? 'class="modal-button"' : null;
 					$href		= ($button->get('link')) ? 'href="'.$button->get('link').'"' : null;
@@ -288,9 +281,7 @@ class plgEditorXstandard extends JPlugin {
 			}
 			$return .= "</div>\n";
 		}
-		
+
 		return $return;
 	}
-
 }
-?>

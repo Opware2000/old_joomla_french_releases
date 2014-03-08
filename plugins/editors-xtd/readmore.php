@@ -1,20 +1,20 @@
 <?php
 /**
-* @version		$Id: readmore.php 8503 2007-08-22 07:39:40Z jinx $
-* @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: readmore.php 9764 2007-12-30 07:48:11Z ircmaxell $
+ * @package		Joomla
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport('joomla.event.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * Editor Readmore buton
@@ -36,7 +36,8 @@ class plgButtonReadmore extends JPlugin
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgButtonReadmore(& $subject, $config) {
+	function plgButtonReadmore(& $subject, $config)
+	{
 		parent::__construct($subject, $config);
 	}
 
@@ -51,19 +52,18 @@ class plgButtonReadmore extends JPlugin
 		$doc 		=& JFactory::getDocument();
 		$template 	= $mainframe->getTemplate();
 
-		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 		// button is not active in specific content components
 
 		$getContent = $this->_subject->getContent($name);
-		$present = JText::_('ALREADY EXISTS') ;
+		$present = JText::_('ALREADY EXISTS', true) ;
 		$js = "
-			function insertReadmore() {
+			function insertReadmore(editor) {
 				var content = $getContent
 				if (content.match(/<hr id=\"system-readmore\" \/>/)) {
 					alert('$present');
 					return false;
 				} else {
-					jInsertEditorText('<hr id=\"system-readmore\" />');
+					jInsertEditorText('<hr id=\"system-readmore\" />', editor);
 				}
 			}
 			";
@@ -72,11 +72,13 @@ class plgButtonReadmore extends JPlugin
 
 		$button = new JObject();
 		$button->set('modal', false);
-		$button->set('onclick', 'insertReadmore();');
+		$button->set('onclick', 'insertReadmore(\''.$name.'\');return false;');
 		$button->set('text', JText::_('Readmore'));
 		$button->set('name', 'readmore');
+		// TODO: The button writer needs to take into account the javascript directive
+		//$button->set('link', 'javascript:void(0)');
+		$button->set('link', '#');
 
 		return $button;
 	}
 }
-?>

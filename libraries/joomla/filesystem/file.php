@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: file.php 8513 2007-08-22 21:08:14Z pasamio $
+ * @version		$Id: file.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -226,25 +226,38 @@ class JFile
 	 *
 	 * @param string $filename The full file path
 	 * @param boolean $incpath Use include path
+	 * @param int $amount Amount of file to read
+	 * @param int $chunksize Size of chunks to read
+	 * @param int $offset Offset of the file
 	 * @return mixed Returns file contents or boolean False if failed
 	 * @since 1.5
 	 */
-	function read($filename, $incpath = false)
+	function read($filename, $incpath = false, $amount = 0, $chunksize = 8192, $offset = 0)
 	{
 		// Initialize variables
 		$data = null;
-
+		if($amount && $chunksize > $amount) { $chunksize = $amount; }
 		if (false === $fh = fopen($filename, 'rb', $incpath)) {
 			JError::raiseWarning(21, 'JFile::read: '.JText::_('Unable to open file') . ": '$filename'");
 			return false;
 		}
 		clearstatcache();
+		if($offset) fseek($fh, $offset);
 		if ($fsize = @ filesize($filename)) {
-			$data = fread($fh, $fsize);
+			if($amount && $fsize > $amount) {
+				$data = fread($fh, $amount);
+			} else {
+				$data = fread($fh, $fsize);
+			}
 		} else {
 			$data = '';
-			while (!feof($fh)) {
-				$data .= fread($fh, 8192);
+			$x = 0;
+			// While its:
+			// 1: Not the end of the file AND
+			// 2a: No Max Amount set OR
+			// 2b: The length of the data is less than the max amount we want
+			while (!feof($fh) && (!$amount || strlen($data) < $amount)) {
+				$data .= fread($fh, $chunksize);
 			}
 		}
 		fclose($fh);

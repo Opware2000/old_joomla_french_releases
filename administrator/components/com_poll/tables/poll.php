@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: poll.php 8040 2007-07-18 09:51:13Z friesengeist $
+* @version		$Id: poll.php 9936 2008-01-13 22:44:03Z ircmaxell $
 * @package		Joomla
 * @subpackage	Polls
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -28,15 +28,15 @@ class TablePoll extends JTable
 	/** @var string */
 	var $alias				= '';
 	/** @var string */
-	var $checked_out			= 0;
+	var $checked_out		= 0;
 	/** @var time */
-	var $checked_out_time		= 0;
+	var $checked_out_time	= 0;
 	/** @var boolean */
 	var $published			= 0;
 	/** @var int */
 	var $access				= 0;
 	/** @var int */
-	var $lag					= 0;
+	var $lag				= 0;
 
 	/**
 	* @param database A database connector object
@@ -74,34 +74,23 @@ class TablePoll extends JTable
 		// check for valid name
 		if (trim( $this->title ) == '')
 		{
-			$this->_error = JText::_( 'Your Poll must contain a title.' );
+			$this->setError(JText::_( 'Your Poll must contain a title.' ));
 			return false;
 		}
 		// check for valid lag
 		$this->lag = intval( $this->lag );
 		if ($this->lag == 0) {
-			$this->_error = JText::_( 'Your Poll must have a non-zero lag time.' );
-			return false;
-		}
-		// check for existing title
-		$query = 'SELECT id'
-		. ' FROM #__polls'
-		. ' WHERE title = '.$this->_db->Quote($this->title)
-		;
-		$this->_db->setQuery( $query );
-
-		$xid = intval( $this->_db->loadResult() );
-		if ( $xid && $xid != intval( $this->id ) )
-		{
-			$this->_error = JText::sprintf( 'WARNNAMETRYAGAIN', JText::_( 'Module') );
+			$this->setError(JText::_( 'Your Poll must have a non-zero lag time.' ));
 			return false;
 		}
 
-		jimport('joomla.filter.output');
-		$alias = JFilterOutput::stringURLSafe($this->title);
-
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		if(empty($this->alias)) {
+			$this->alias = $this->title;
+		}
+		$this->alias = JFilterOutput::stringURLSafe($this->alias);
+		if(trim(str_replace('-','',$this->alias)) == '') {
+			$datenow = new JDate();
+			$this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
 		}
 
 		return true;
@@ -115,7 +104,8 @@ class TablePoll extends JTable
 			$this->$k = intval( $oid );
 		}
 
-		if ( parent::delete( $oid )) {
+		if ( parent::delete( $oid ))
+		{
 			$query = 'DELETE FROM #__poll_data'
 			. ' WHERE pollid = '.(int) $this->$k
 			;
@@ -141,9 +131,8 @@ class TablePoll extends JTable
 			}
 
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 }
-?>

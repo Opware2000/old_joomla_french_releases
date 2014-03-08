@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @version		$Id: ldap.php 8567 2007-08-25 21:31:05Z jinx $
+* @version		$Id: ldap.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Client
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software and parts of it may contain or be derived from the
 * GNU General Public License or other free or open source software licenses.
@@ -16,10 +16,10 @@
  *
  * @author		Samuel Moffatt <pasamio@gmail.com>
  * @package		Joomla.Framework
- * @subpackage		Client
+ * @subpackage	Client
  * @since		1.5
  */
-class JLDAP
+class JLDAP extends JObject
 {
 	/** @var string Hostname of LDAP server
 		@access public */
@@ -65,14 +65,17 @@ class JLDAP
 
 	/**
 	 * Constructor
+	 *
 	 * @param object An object of configuration variables
 	 * @access public
 	 */
-	function JLDAP($configObj = null)
+	function __construct($configObj = null)
 	{
-		if (is_object($configObj)) {
+		if (is_object($configObj))
+		{
 			$vars = get_class_vars(get_class($this));
-			foreach (array_keys($vars) as $var) {
+			foreach (array_keys($vars) as $var)
+			{
 				if (substr($var, 0, 1) != '_') {
 					if ($param = $configObj->get($var)) {
 						$this-> $var = $param;
@@ -93,17 +96,18 @@ class JLDAP
 			return false;
 		}
 		$this->_resource = @ ldap_connect($this->host, $this->port);
-		if ($this->_resource) {
+		if ($this->_resource)
+		{
 			if ($this->use_ldapV3) {
-				if (!ldap_set_option($this->_resource, LDAP_OPT_PROTOCOL_VERSION, 3)) {
+				if (!@ldap_set_option($this->_resource, LDAP_OPT_PROTOCOL_VERSION, 3)) {
 					return false;
 				}
 			}
-			if (!ldap_set_option($this->_resource, LDAP_OPT_REFERRALS, intval($this->no_referrals))) {
+			if (!@ldap_set_option($this->_resource, LDAP_OPT_REFERRALS, intval($this->no_referrals))) {
 				return false;
 			}
 			if ($this->negotiate_tls) {
-				if (!ldap_start_tls($this->_resource)) {
+				if (!@ldap_start_tls($this->_resource)) {
 					return false;
 				}
 			}
@@ -123,15 +127,18 @@ class JLDAP
 
 	/**
 	 * Sets the DN with some template replacements
+	 *
 	 * @param string The username
 	 * @access public
 	 */
-	function setDN($username,$nosub=0)
+	function setDN($username,$nosub = 0)
 	{
 		if ($this->users_dn == '' || $nosub) {
 			$this->_dn = $username;
-		} else {
+		} else if(strlen($username)) {
 			$this->_dn = str_replace('[username]', $username, $this->users_dn);
+		} else {
+			$this->_dn = '';
 		}
 	}
 
@@ -154,6 +161,7 @@ class JLDAP
 
 	/**
 	 * Binds to the LDAP directory
+	 *
 	 * @param string The username
 	 * @param string The password
 	 * @return boolean Result
@@ -168,12 +176,14 @@ class JLDAP
 			$password = $this->password;
 		}
 		$this->setDN($username,$nosub);
-		$bindResult = ldap_bind($this->_resource, $this->getDN(), $password);
+		//if(strlen($this->getDN()))
+		$bindResult = @ldap_bind($this->_resource, $this->getDN(), $password);
 		return $bindResult;
 	}
 
 	/**
 	 * Perform an LDAP search using comma seperated search strings
+	 *
 	 * @param string search string of search values
 	 */
 	function simple_search($search)
@@ -188,6 +198,7 @@ class JLDAP
 
 	/**
 	 * Perform an LDAP search
+	 *
 	 * @param array Search Filters (array of strings)
 	 * @param string DN Override
 	 * @return array Multidimensional array of results
@@ -206,8 +217,8 @@ class JLDAP
 
 		foreach ($filters as $search_filter)
 		{
-			$search_result = ldap_search($resource, $dn, $search_filter);
-			if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0)
+			$search_result = @ldap_search($resource, $dn, $search_filter);
+			if ($search_result && ($count = @ldap_count_entries($resource, $search_result)) > 0)
 			{
 				for ($i = 0; $i < $count; $i++)
 				{
@@ -236,11 +247,11 @@ class JLDAP
 		}
 		return $attributes;
 	}
-	
+
 	/**
 	 * Replace an entry and return a true or false result
 	 *
-	 * @param string dn The DN which contains the attribute you want to compare
+	 * @param string dn The DN which contains the attribute you want to replace
 	 * @param string attribute The attribute values you want to replace
 	 * @return mixed result of comparison (true, false, -1 on error)
 	 */
@@ -249,8 +260,34 @@ class JLDAP
 		return ldap_mod_replace($this->_resource, $dn, $attribute);
 	}
 
+
+	/**
+	 * Modifies an entry and return a true or false result
+	 *
+	 * @param string dn The DN which contains the attribute you want to modify
+	 * @param string attribute The attribute values you want to modify
+	 * @return mixed result of comparison (true, false, -1 on error)
+	 */
+	function modify($dn, $attribute) {
+		return ldap_modify($this->_resource, $dn, $attribute);
+	}
+
+	/**
+	 * Removes attribute value from given dn and return a true or false result
+	 *
+	 * @param string dn The DN which contains the attribute you want to remove
+	 * @param string attribute The attribute values you want to remove
+	 * @return mixed result of comparison (true, false, -1 on error)
+	 */
+	function remove($dn, $attribute)
+	{
+		$resource = $this->_resource;
+		return ldap_mod_del($resource, $dn, $attribute);
+	}
+
 	/**
 	 * Compare an entry and return a true or false result
+	 *
 	 * @param string dn The DN which contains the attribute you want to compare
 	 * @param string attribute The attribute whose value you want to compare
 	 * @param string value The value you want to check against the LDAP attribute
@@ -261,7 +298,29 @@ class JLDAP
 	}
 
 	/**
+	 * Read all or specified attributes of given dn
+	 *
+	 * @param string dn The DN of the object you want to read
+	 * @param string attribute The attribute values you want to read (Optional)
+	 * @return array of attributes or -1 on error
+	 */
+	function read($dn, $attribute = array())
+	{
+		$base = substr($dn,strpos($dn,',')+1);
+		$cn = substr($dn,0,strpos($dn,','));
+		$result = ldap_read($this->_resource, $base, $cn);
+
+		if ($result) {
+			// TODO: instead of just returning array of attributes, convert to object before returning
+			return ldap_get_entries($this->_resource, $result);
+		} else {
+			return $result;
+		}
+	}
+
+	/**
 	 * Converts a dot notation IP address to net address (e.g. for Netware, etc)
+	 *
 	 * @param string IP Address (e.g. xxx.xxx.xxx.xxx)
 	 * @return string Net address
 	 * @access public
@@ -285,6 +344,7 @@ class JLDAP
 	 * extract readable network address from the LDAP encoded networkAddress attribute.
 	 * @author Jay Burrell, Systems & Networks, Mississippi State University
 	 * Please keep this document block and author attribution in place.
+	 *
 	 *  Novell Docs, see: http://developer.novell.com/ndk/doc/ndslib/schm_enu/data/sdk5624.html#sdk5624
 	 *  for Address types: http://developer.novell.com/ndk/doc/ndslib/index.html?page=/ndk/doc/ndslib/schm_enu/data/sdk4170.html
 	 *  LDAP Format, String:
@@ -293,14 +353,21 @@ class JLDAP
 	 *	 byte 1 = char = "#" - separator
 	 *	 byte 2+ = octetstring - the ordinal value of the address
 	 *   Note: with eDirectory 8.6.2, the IP address (type 1) returns
-	 *				 correctly, however, an IPX address does not seem to.  eDir 8.7 may
-	 *				correct this.
+	 *				 correctly, however, an IPX address does not seem to.  eDir 8.7 may correct this.
+	 *  Enhancement made by Merijn van de Schoot:
+	 *	 If addresstype is 8 (UDP) or 9 (TCP) do some additional parsing like still returning the IP address
+	 *	 TODO: Return an extra value with UDP or TCP portnumber
 	 */
 	function LDAPNetAddr($networkaddress)
 	{
 		$addr = "";
 		$addrtype = intval(substr($networkaddress, 0, 1));
 		$networkaddress = substr($networkaddress, 2); // throw away bytes 0 and 1 which should be the addrtype and the "#" separator
+
+		if (($addrtype == 8) || ($addrtype = 9)) {    // if udp or tcp, (TODO fill addrport and) strip portnumber information from address
+			$networkaddress = substr($networkaddress, (strlen($networkaddress)-4));
+		}
+
 		$addrtypes = array (
 			'IPX',
 			'IP',
@@ -325,11 +392,11 @@ class JLDAP
 			{
 				$byte = substr($networkaddress, $i, 1);
 				$addr .= ord($byte);
-				if ($addrtype == 1) { // dot separate IP addresses...
+				if ( ($addrtype == 1) || ($addrtype == 8) || ($addrtype = 9) ) { // dot separate IP addresses...
 					$addr .= ".";
 				}
 			}
-			if ($addrtype == 1) { // strip last period from end of $addr
+			if ( ($addrtype == 1) || ($addrtype == 8) || ($addrtype = 9) ) { // strip last period from end of $addr
 				$addr = substr($addr, 0, strlen($addr) - 1);
 			}
 		} else {

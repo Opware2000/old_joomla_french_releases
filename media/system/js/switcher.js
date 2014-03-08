@@ -1,8 +1,8 @@
 /**
-* @version		$Id: switcher.js 8412 2007-08-15 19:34:16Z jinx $
+* @version		$Id: switcher.js 9765 2007-12-30 08:21:02Z ircmaxell $
 * @package		Joomla
 * @subpackage	Config
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -49,16 +49,17 @@ var JSwitcher = new Class({
 		this.page    = $('page-'+ this.toggler.id);
 
 		this.show(this.page);
-
-		if(page = Cookie.get(this.options.cookieName)) {
-			this.switchTo($(page));
+		if (this.options.cookieName)
+		{
+			if((page = Cookie.get(this.options.cookieName))) {
+				this.switchTo($(page));
+			}
 		}
 	},
 
 	switchTo: function(toggler)
 	{
-		page  = $('page-' + toggler.id);
-
+		page = $chk(toggler) ? $('page-'+toggler.id) : null;
 		if(page && page != this.page)
 		{
 			//hide old element

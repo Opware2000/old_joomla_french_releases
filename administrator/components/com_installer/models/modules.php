@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: modules.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: modules.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -19,7 +18,6 @@ require_once(dirname(__FILE__).DS.'extension.php');
 /**
  * Extension Manager Modules Model
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -56,15 +54,17 @@ class InstallerModelModules extends InstallerModel
 
 		$and = null;
 		if ($this->_state->get('filter.client') < 0) {
-			if ($this->_state->get('filter.string')) {
-				$and = ' AND title LIKE "%'.$db->getEscaped($this->_state->get('filter.string')).'%"';
+			if ($search = $this->_state->get('filter.string')) {
+				$and = ' AND title LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 			}
 		} else {
-			if (!$this->_state->get('filter.string')) {
+			if ($search = $this->_state->get('filter.string'))
+			{
 				$and = ' AND client_id = '.(int)$this->_state->get('filter.client');
-			} else {
+				$and .= ' AND title LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
+			}
+			else {
 				$and = ' AND client_id = '.(int)$this->_state->get('filter.client');
-				$and .= ' AND title LIKE "%'.$db->getEscaped($this->_state->get('filter.string')).'%"';
 			}
 		}
 

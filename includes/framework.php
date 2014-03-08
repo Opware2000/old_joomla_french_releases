@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: framework.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: framework.php 9992 2008-02-06 20:58:24Z willebil $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -24,9 +24,14 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 /*
  * Installation check, and check on removal of the install directory.
  */
-if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize( JPATH_CONFIGURATION . DS . 'configuration.php' ) < 10) /*|| file_exists( JPATH_INSTALLATION . DS . 'index.php' )*/) {
-	header( 'Location: installation/index.php' );
-	exit();
+if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize( JPATH_CONFIGURATION . DS . 'configuration.php' ) < 10) || file_exists( JPATH_INSTALLATION . DS . 'index.php' )) {
+	if( file_exists( JPATH_INSTALLATION . DS . 'index.php' ) ) {
+		header( 'Location: installation/index.php' );
+		exit();
+	} else {
+		echo 'No configuration file found and no installation code available. Exiting...';
+		exit();
+	}
 }
 
 /*
@@ -34,14 +39,10 @@ if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize(
  */
 
 // System includes
-require_once( JPATH_LIBRARIES		. DS . 'loader.php' );
-require_once( JPATH_CONFIGURATION	. DS . 'configuration.php' );
+require_once( JPATH_LIBRARIES		.DS.'joomla'.DS.'import.php');
 
-//clean the request
-jimport( 'joomla.base.object' );
-jimport( 'joomla.environment.request' );
-// ALERT! DO NOT CALL JRequest::clean ANY LATER IN EXECUTION!
-JRequest::clean();
+// Pre-Load configuration
+require_once( JPATH_CONFIGURATION	.DS.'configuration.php' );
 
 // System configuration
 $CONFIG = new JConfig();
@@ -50,6 +51,7 @@ if (@$CONFIG->error_reporting === 0) {
 	error_reporting( 0 );
 } else if (@$CONFIG->error_reporting > 0) {
 	error_reporting( $CONFIG->error_reporting );
+	ini_set( 'display_errors', 1 );
 }
 
 define( 'JDEBUG', $CONFIG->debug );
@@ -65,26 +67,18 @@ jimport( 'joomla.utilities.compat.compat' );
 
 // System profiler
 if (JDEBUG) {
-	jimport( 'joomla.utilities.profiler' );
+	jimport( 'joomla.error.profiler' );
 	$_PROFILER =& JProfiler::getInstance( 'Application' );
 }
 
 // Joomla! library imports;
-
-jimport( 'joomla.environment.response'   );
-jimport( 'joomla.application.application' );
-jimport( 'joomla.application.menu' ); 		//needs to be loaded later
+jimport( 'joomla.application.menu' );
 jimport( 'joomla.user.user');
 jimport( 'joomla.environment.uri' );
-jimport( 'joomla.factory' );
-jimport( 'joomla.methods' );
-jimport( 'joomla.html.html' );		  		//needs to be loaded later
-jimport( 'joomla.utilities.array' );	  		//needs to be loaded later
-jimport( 'joomla.utilities.error' );
+jimport( 'joomla.html.html' );
 jimport( 'joomla.utilities.utility' );
-jimport( 'joomla.utilities.string' );		//needs to be loaded later
-jimport( 'joomla.filter.output' );
-jimport( 'joomla.version' );				//needs to be loaded later
-jimport( 'joomla.event.*');
-
+jimport( 'joomla.event.event');
+jimport( 'joomla.event.dispatcher');
+jimport( 'joomla.language.language');
+jimport( 'joomla.utilities.string' );
 ?>

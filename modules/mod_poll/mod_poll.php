@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_poll.php 8268 2007-07-31 21:04:36Z jinx $
+* @version		$Id: mod_poll.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -19,23 +19,16 @@ require_once (dirname(__FILE__).DS.'helper.php');
 
 $tabclass_arr = array ('sectiontableentry2', 'sectiontableentry1');
 
-$menu 	= &JMenu::getInstance();
-$items	= $menu->getItems('link', 'index.php?option=com_poll');
-$itemid = isset($items[0]) ? $items[0]->id : '0';
+$menu 	= &JSite::getMenu();
+$items	= $menu->getItems('link', 'index.php?option=com_poll&view=poll');
+$itemid = isset($items[0]) ? '&Itemid='.$items[0]->id : '';
 
-$list   = modPollHelper::getList($params);
-$layout = JModuleHelper::getLayoutPath('mod_poll');
+$poll   = modPollHelper::getPoll($params->get( 'id', 0 ));
 
-foreach ($list as $item)
-{
-	$tabcnt 	= 0;
-
-	$cookieName = JUtility::getHash($mainframe->getName().'poll'.$item->id);
-	$voted = JRequest::getInt($cookieName, '0', 'COOKIE');
-
-	if ($item->id && $item->title)  {
-		$options = modPollHelper::getPollOptions($item->id);
-	}
+if ( $poll && $poll->id ) {
+    $layout = JModuleHelper::getLayoutPath('mod_poll');
+    $tabcnt = 0;
+    $options = modPollHelper::getPollOptions($poll->id);
 
 	require($layout);
 }

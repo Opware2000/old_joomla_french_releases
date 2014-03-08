@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: popup.php 7898 2007-07-09 07:10:00Z louis $
+* @version		$Id: popup.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	HTML
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -75,8 +75,6 @@ class JButtonPopup extends JButton
 	 */
 	function _getCommand($name, $url, $width, $height, $top, $left)
 	{
-		global $mainframe;
-
 		if (substr($url, 0, 4) !== 'http') {
 			$url = JURI::base().$url;
 		}

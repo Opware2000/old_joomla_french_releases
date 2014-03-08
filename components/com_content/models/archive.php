@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: archive.php 8648 2007-08-30 20:41:08Z jinx $
+ * @version		$Id: archive.php 9873 2008-01-05 11:24:43Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -54,7 +54,7 @@ class ContentModelArchive extends JModel
 		if (empty($this->_data))
 		{
 			// Get the page/component configuration
-			$params = &$mainframe->getPageParameters();
+			$params = &$mainframe->getParams();
 
 			// Get the pagination request variables
 			$limit		= JRequest::getVar('limit', $params->get('display_num', 20), '', 'int');
@@ -86,11 +86,25 @@ class ContentModelArchive extends JModel
 		return $this->_total;
 	}
 
+	// JModel override to add alternating value for $odd
+	function &_getList( $query, $limitstart=0, $limit=0 )
+	{
+		$result =& parent::_getList($query, $limitstart, $limit);
+
+		$odd = 1;
+		foreach ($result as $k => $row) {
+			$result[$k]->odd = $odd;
+			$odd = 1 - $odd;
+		}
+
+		return $result;
+	}
+
 	function _buildQuery()
 	{
 		global $mainframe;
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		// If voting is turned on, get voting data as well for the content items
 		$voting	= ContentHelperQuery::buildVotingQuery($params);
@@ -100,9 +114,10 @@ class ContentModelArchive extends JModel
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,'.
-			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.attribs, a.hits, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,' .
+			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.attribs, a.hits, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access, cc.title AS category, s.title AS section,' .
 			' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'.
-			' CHAR_LENGTH( a.`fulltext` ) AS readmore, u.name AS author, u.usertype, cc.name AS category, g.name AS groups'.$voting['select'] .
+			' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug,'.
+			' CHAR_LENGTH( a.`fulltext` ) AS readmore, u.name AS author, u.usertype, g.name AS groups'.$voting['select'] .
 			' FROM #__content AS a' .
 			' INNER JOIN #__categories AS cc ON cc.id = a.catid' .
 			' LEFT JOIN #__sections AS s ON s.id = a.sectionid' .
@@ -173,22 +188,22 @@ class ContentModelArchive extends JModel
 		if ($filter) {
 			// clean filter variable
 			$filter = JString::strtolower($filter);
-			$filter	= $db->getEscaped($filter);
+			$filter	= $db->Quote( '%'.$db->getEscaped( $filter, true ).'%', false );
 
 			// Get the page/component configuration
-			$params = &$mainframe->getPageParameters();
+			$params = &$mainframe->getParams();
 			switch ($params->get('filter_type', 'title'))
 			{
 				case 'title' :
-					$where .= ' AND LOWER( a.title ) LIKE \'%'.$filter.'%\'';
+					$where .= ' AND LOWER( a.title ) LIKE '.$filter;
 					break;
 
 				case 'author' :
-					$where .= ' AND ( ( LOWER( u.name ) LIKE \'%'.$filter.'%\' ) OR ( LOWER( a.created_by_alias ) LIKE \'%'.$filter.'%\' ) )';
+					$where .= ' AND ( ( LOWER( u.name ) LIKE '.$filter.' ) OR ( LOWER( a.created_by_alias ) LIKE '.$filter.' ) )';
 					break;
 
 				case 'hits' :
-					$where .= ' AND a.hits LIKE \'%'.$filter.'%\'';
+					$where .= ' AND a.hits LIKE '.$filter;
 					break;
 			}
 		}

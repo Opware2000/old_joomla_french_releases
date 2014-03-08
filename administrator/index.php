@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: index.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: index.php 9987 2008-02-05 17:43:24Z ian $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -30,7 +30,7 @@ JDEBUG ? $_PROFILER->mark( 'afterLoad' ) : null;
  *
  * NOTE :
  */
-$mainframe =& JApplication::getInstance('administrator');
+$mainframe =& JFactory::getApplication('administrator');
 
 /**
  * INITIALISE THE APPLICATION
@@ -54,7 +54,7 @@ $mainframe->triggerEvent('onAfterInitialise');
  */
 $mainframe->route();
 
-// trigger the onAfterDisplay events
+// trigger the onAfterRoute events
 JDEBUG ? $_PROFILER->mark('afterRoute') : null;
 $mainframe->triggerEvent('onAfterRoute');
 
@@ -66,7 +66,7 @@ $mainframe->triggerEvent('onAfterRoute');
 $option = JAdministratorHelper::findOption();
 $mainframe->dispatch($option);
 
-// trigger the onAfterDisplay events
+// trigger the onAfterDispatch events
 JDEBUG ? $_PROFILER->mark('afterDispatch') : null;
 $mainframe->triggerEvent('onAfterDispatch');
 
@@ -77,7 +77,7 @@ $mainframe->triggerEvent('onAfterDispatch');
  */
 $mainframe->render();
 
-// trigger the onAfterDisplay events
+// trigger the onAfterRender events
 JDEBUG ? $_PROFILER->mark( 'afterRender' ) : null;
 $mainframe->triggerEvent( 'onAfterRender' );
 

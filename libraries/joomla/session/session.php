@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: session.php 8568 2007-08-26 10:30:33Z jinx $
+* @version		$Id: session.php 9948 2008-01-16 16:29:32Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Session
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -15,7 +15,8 @@
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
-jimport('joomla.session.storage');
+//Register the session storage class with the loader
+JLoader::register('JSessionStorage', dirname(__FILE__).DS.'storage.php');
 
 /**
 * Class for managing HTTP sessions
@@ -82,10 +83,13 @@ class JSession extends JObject
 		if (version_compare(PHP_VERSION, '5') == -1) {
 			register_shutdown_function((array(&$this, '__destruct')));
 		}
-		
+
 		//set default sessios save handler
 		ini_set('session.save_handler', 'files');
-		
+
+		//disable transparent sid support
+		ini_set('session.use_trans_sid', '0');
+
 		//create handler
 		$this->_store =& JSessionStorage::getInstance($store, $options);
 
@@ -104,7 +108,7 @@ class JSession extends JObject
 		// perform security checks
 		$this->_validate();
 	}
-	
+
     /**
 	 * Session object destructor
 	 *
@@ -253,8 +257,13 @@ class JSession extends JObject
 		foreach($handlers as $handler)
 		{
 			$name = substr($handler, 0, strrpos($handler, '.'));
-			jimport('joomla.session.storage.'.$name);
 			$class = 'JSessionStorage'.ucfirst($name);
+
+			//Load the class only if needed
+			if(!class_exists($class)) {
+				require_once(dirname(__FILE__).DS.'storage'.DS.$name.'.php');
+			}
+
 			if(call_user_func_array( array( trim($class), 'test' ), null)) {
 				$names[] = $name;
 			}
@@ -457,6 +466,9 @@ class JSession extends JObject
 		$this->_store->register();
 
 		$this->_state	=   'restart';
+		//regenerate session id
+		$id	=	$this->_createId( strlen( $this->getId() ) );
+		session_id($id);
 		$this->_start();
 		$this->_state	=	'active';
 
@@ -670,7 +682,7 @@ class JSession extends JObject
 		if( $this->_expire )
 		{
 			$curTime =	$this->get( 'session.timer.now' , 0  );
-			$maxTime =	$this->get( 'session.timer.last', 0 ) + (60 * $this->_expire);
+			$maxTime =	$this->get( 'session.timer.last', 0 ) +  $this->_expire;
 
 			// empty session variables
 			if( $maxTime < $curTime ) {

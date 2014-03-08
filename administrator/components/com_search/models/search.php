@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: search.php 8040 2007-07-18 09:51:13Z friesengeist $
+ * @version		$Id: search.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Search
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -21,7 +20,6 @@ jimport( 'joomla.application.component.model' );
 /**
  * @package		Joomla
  * @subpackage	Search
- * @author Hannes Papenberg
  */
 class SearchModelSearch extends JModel
 {
@@ -58,7 +56,7 @@ class SearchModelSearch extends JModel
 		$showResults		= JRequest::getInt('search_results');
 
 		// table ordering
-		if ( $filter_order_Dir == 'DESC' ) {
+		if ( $filter_order_Dir == 'ASC' ) {
 			$this->lists['order_Dir'] = 'ASC';
 		} else {
 			$this->lists['order_Dir'] = 'DESC';
@@ -70,7 +68,7 @@ class SearchModelSearch extends JModel
 
 		$where = array();
 		if ($search) {
-			$where[] = 'LOWER( search_term ) LIKE '.$db->Quote('%'.$search.'%');
+			$where[] = 'LOWER( search_term ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		}
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -96,6 +94,12 @@ class SearchModelSearch extends JModel
 
 		JPluginHelper::importPlugin( 'search' );
 
+		if (!class_exists( 'JSite' ))
+		{
+			// This fools the routers in the search plugins into thinking it's in the frontend
+			require_once( JPATH_COMPONENT.DS.'helpers'.DS.'site.php' );
+		}
+
 		for ($i=0, $n = count($rows); $i < $n; $i++) {
 			// determine if number of results for search item should be calculated
 			// by default it is `off` as it is highly query intensive
@@ -116,4 +120,3 @@ class SearchModelSearch extends JModel
 		return $rows;
 	}
 }
-?>

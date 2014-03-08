@@ -1,111 +1,121 @@
-<?php
+<?php // @version $Id: blog_item.php 9718 2007-12-20 22:35:36Z eddieajau $
 defined('_JEXEC') or die('Restricted access');
-
-// temporary fix
-$hlevel = 2;
-$image = 'templates/' . $mainframe->getTemplate() . '/images/trans.gif';
-
-if ($this->user->authorize('com_content', 'edit', 'content', 'all')) {
-	echo '<div class="contentpaneopen_edit' . $this->params->get('pageclass_sfx') . '" style="float: left;">';
-	echo JHTML::_('icon.edit', $this->item, $this->params, $this->access);
-	echo '</div>';
-}
-
-if ($this->params->get('show_title')) {
-	echo '<h' . $hlevel . ' class="contentheading' . $this->params->get('pageclass_sfx') . '">';
-	if ($this->params->get('link_titles') && $this->item->readmore_link != '') {
-		echo '<a href="' . $this->item->readmore_link . '" class="contentpagetitle' . $this->params->get('pageclass_sfx') . '">';
-		echo $this->item->title;
-		echo '</a>';
-	} else {
-		echo $this->item->title;
-	}
-	echo '</h' . $hlevel . '>';
-}
-
-if (!$this->params->get('show_intro')) {
-	echo $this->item->event->afterDisplayTitle;
-}
-
-if ($this->params->get('show_pdf_icon') || $this->params->get('show_print_icon') || $this->params->get('show_email_icon')) {
-	echo '<p class="buttonheading">';
-	echo '<img src="' . $image . '" alt="' . JText :: _('attention open in a new window') . '" />';
-	if ($this->params->get('show_pdf_icon')) {
-		echo JHTML::_('icon.pdf', $this->item, $this->params, $this->access);
-	}
-	if ($this->params->get('show_print_icon')) {
-		echo JHTML::_('icon.print_popup', $this->item, $this->params, $this->access);
-	}
-	if ($this->params->get('show_email_icon')) {
-		echo JHTML::_('icon.email', $this->item, $this->params, $this->access);
-	}
-	echo '</p>';
-}
-
-if (($this->params->get('show_section') && $this->item->sectionid) || ($this->params->get('show_category') && $this->item->catid)) {
-	echo '<p class="pageinfo">';
-	if ($this->params->get('show_section') && $this->item->sectionid) {
-		echo '<span>';
-		echo $this->item->section;
-		if ($this->params->get('show_category')) {
-			echo ' - ';
-		}
-		echo '</span>';
-	}
-
-	if ($this->params->get('show_category') && $this->item->catid) {
-		echo '<span>';
-		echo $this->item->category;
-		echo '</span>';
-	}
-	echo '</p>';
-}
-
-if ((!empty ($this->item->modified) && $this->params->get('show_modify_date')) || ($this->params->get('show_author') && ($this->item->author != "")) || ($this->params->get('show_create_date'))) {
-	echo '<p class="iteminfo">';
-
-	if (!empty ($this->item->modified) && $this->params->get('show_modify_date')) {
-		echo '<span class="modifydate">';
-		echo JText :: _('Last Updated') . ' (' . JHTML::_('date', $this->item->modified, JText::_('DATE_FORMAT_LC2')) . ')';
-		echo '</span>';
-	}
-	if (($this->params->get('show_author')) && ($this->item->author != "")) {
-		echo '<span class="createdby">';
-		JText :: printf('Written by', ($this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author));
-		echo '</span>';
-	}
-	if ($this->params->get('show_create_date')) {
-		echo '<span class="createdate">';
-		echo JHTML::_('date', $this->item->created, JText::_('DATE_FORMAT_LC2'));
-		echo '</span>';
-	}
-	echo '</p>';
-}
-
-echo $this->item->event->beforeDisplayContent;
-
-if ($this->params->get('show_url') && $this->item->urls) {
-	echo '<span class="small">';
-	echo '<a href="' .$this->item->urls. '" target="_blank">';
-	echo $this->item->urls . '</a></span>';
-}
-
-if (isset ($this->item->toc)) {
-	echo $this->item->toc;
-}
-
-echo JFilterOutput::ampReplace($this->item->text);
-
-if ($this->params->get('show_readmore') && $this->item->readmore_text && $this->item->readmore) {
-	echo '<p><a href="' . $this->item->readmore_link . '" class="readon' . $this->params->get('pageclass_sfx') . '">';
-	$alias = JFilterOutput :: stringURLSafe($this->item->title);
-	if ($this->item->title_alias != '' && $this->item->title_alias == $alias) {
-		echo $this->item->title_alias;
-	} else {
-		echo $this->item->readmore_text;
-	}
-	echo '</a></p>';
-}
-
-echo $this->item->event->afterDisplayContent;
 ?>
+
+<?php if ($this->user->authorize('com_content', 'edit', 'content', 'all') || $this->user->authorize('com_content', 'edit', 'content', 'own')) : ?>
+<div class="contentpaneopen_edit<?php echo $this->item->params->get('pageclass_sfx'); ?>">
+	<?php echo JHTML::_('icon.edit', $this->item, $this->item->params, $this->access); ?>
+</div>
+<?php endif; ?>
+
+<?php if ($this->item->params->get('show_title')) : ?>
+<h2 class="contentheading<?php echo $this->item->params->get('pageclass_sfx'); ?>">
+	<?php if ($this->item->params->get('link_titles') && $this->item->readmore_link != '') : ?>
+		<a href="<?php echo $this->item->readmore_link; ?>" class="contentpagetitle<?php echo $this->item->params->get('pageclass_sfx'); ?>">
+			<?php echo $this->escape($this->item->title); ?></a>
+	<?php else :
+		echo $this->escape($this->item->title);
+	endif; ?>
+</h2>
+<?php endif; ?>
+
+<?php if (!$this->item->params->get('show_intro')) :
+	echo $this->item->event->afterDisplayTitle;
+endif; ?>
+
+<?php if ($this->item->params->get('show_pdf_icon') || $this->item->params->get('show_print_icon') || $this->item->params->get('show_email_icon')) : ?>
+<p class="buttonheading">
+	<img src="<?php echo $this->baseurl ?>/templates/beez/images/trans.gif" alt="<?php echo JText::_('attention open in a new window'); ?>" />
+	<?php if ($this->item->params->get('show_pdf_icon')) :
+		echo JHTML::_('icon.pdf', $this->item, $this->item->params, $this->access);
+	endif;
+	if ($this->item->params->get('show_print_icon')) :
+		echo JHTML::_('icon.print_popup', $this->item, $this->item->params, $this->access);
+	endif;
+	if ($this->item->params->get('show_email_icon')) :
+		echo JHTML::_('icon.email', $this->item, $this->item->params, $this->access);
+	endif; ?>
+</p>
+<?php endif; ?>
+
+<?php if (($this->item->params->get('show_section') && $this->item->sectionid) || ($this->item->params->get('show_category') && $this->item->catid)) : ?>
+<p class="pageinfo">
+       <?php if ($this->item->params->get('show_section') && $this->item->sectionid && isset($this->item->section)) : ?>
+        <span>
+            <?php if ($this->item->params->get('link_section')) : ?>
+                <?php echo '<a href="'.JRoute::_(ContentHelperRoute::getSectionRoute($this->item->sectionid)).'">'; ?>
+            <?php endif; ?>
+            <?php echo $this->item->section; ?>
+            <?php if ($this->item->params->get('link_section')) : ?>
+                <?php echo '</a>'; ?>
+            <?php endif; ?>
+                <?php if ($this->item->params->get('show_category')) : ?>
+                <?php echo ' - '; ?>
+            <?php endif; ?>
+        </span>
+        <?php endif; ?>
+        <?php if ($this->item->params->get('show_category') && $this->item->catid) : ?>
+        <span>
+            <?php if ($this->item->params->get('link_category')) : ?>
+                <?php echo '<a href="'.JRoute::_(ContentHelperRoute::getCategoryRoute($this->item->catslug, $this->item->sectionid)).'">'; ?>
+            <?php endif; ?>
+            <?php echo $this->item->category; ?>
+            <?php if ($this->item->params->get('link_section')) : ?>
+                <?php echo '</a>'; ?>
+            <?php endif; ?>
+        </span>
+        <?php endif; ?>
+</p>
+<?php endif; ?>
+
+<?php if ((!empty ($this->item->modified) && $this->item->params->get('show_modify_date')) || ($this->item->params->get('show_author') && ($this->item->author != "")) || ($this->item->params->get('show_create_date'))) : ?>
+<p class="iteminfo">
+	<?php if (!empty ($this->item->modified) && $this->item->params->get('show_modify_date')) : ?>
+	<span class="modifydate">
+		<?php echo JText::_('Last Updated').' ('.JHTML::_('date', $this->item->modified, JText::_('DATE_FORMAT_LC2')).')'; ?>
+	</span>
+	<?php endif; ?>
+
+	<?php if (($this->item->params->get('show_author')) && ($this->item->author != "")) : ?>
+	<span class="createdby">
+		<?php JText::printf('Written by', ($this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author)); ?>
+	</span>
+	<?php endif; ?>
+
+	<?php if ($this->item->params->get('show_create_date')) : ?>
+	<span class="createdate">
+		<?php echo JHTML::_('date', $this->item->created, JText::_('DATE_FORMAT_LC2')); ?>
+	</span>
+	<?php endif; ?>
+</p>
+<?php endif; ?>
+
+<?php echo $this->item->event->beforeDisplayContent; ?>
+
+<?php if ($this->item->params->get('show_url') && $this->item->urls) : ?>
+<span class="small">
+	<a href="<?php echo $this->item->urls; ?>" target="_blank">
+		<?php echo $this->item->urls; ?></a>
+</span>
+<?php endif; ?>
+
+<?php if (isset ($this->item->toc)) :
+	echo $this->item->toc;
+endif; ?>
+
+<?php echo JFilterOutput::ampReplace($this->item->text); ?>
+
+<?php if ($this->item->params->get('show_readmore') && $this->item->readmore) : ?>
+<p>
+	<a href="<?php echo $this->item->readmore_link; ?>" class="readon<?php echo $this->item->params->get('pageclass_sfx'); ?>">
+		<?php if ($this->item->readmore_register) :
+			echo JText::_('Register to read more...');
+		elseif ($readmore = $this->item->params->get('readmore')) :
+			echo $readmore;
+		else :
+			echo JText::sprintf('Read more', $this->item->title);
+		endif; ?></a>
+</p>
+<?php endif; ?>
+
+<?php echo $this->item->event->afterDisplayContent;

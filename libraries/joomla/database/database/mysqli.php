@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: mysqli.php 8123 2007-07-20 16:14:16Z friesengeist $
+* @version		$Id: mysqli.php 9978 2008-02-01 17:23:39Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Database
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -24,11 +24,25 @@ defined('JPATH_BASE') or die();
  */
 class JDatabaseMySQLi extends JDatabase
 {
-	/** @var string The database driver name */
+	/**
+	 *  The database driver name
+	 *
+	 * @var string
+	 */
 	var $name			= 'mysqli';
-	/** @var string The null/zero date string */
+
+	/**
+	 * The null/zero date string
+	 *
+	 * @var string
+	 */
 	var $_nullDate		= '0000-00-00 00:00:00';
-	/** @var string Quote for named objects */
+
+	/**
+	 * Quote for named objects
+	 *
+	 * @var string
+	 */
 	var $_nameQuote		= '`';
 
 	/**
@@ -162,6 +176,8 @@ class JDatabaseMySQLi extends JDatabase
 
 	/**
 	 * Determines UTF support
+	 *
+	 * @access public
 	 * @return boolean True - UTF is supported
 	 */
 	function hasUTF()
@@ -172,6 +188,8 @@ class JDatabaseMySQLi extends JDatabase
 
 	/**
 	 * Custom settings for UTF support
+	 *
+	 * @access public
 	 */
 	function setUTF()
 	{
@@ -179,16 +197,26 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
-	* Get a database escaped string
-	* @return string
-	*/
-	function getEscaped( $text )
+	 * Get a database escaped string
+	 *
+	 * @param	string	The string to be escaped
+	 * @param	boolean	Optional parameter to provide extra escaping
+	 * @return	string
+	 * @access	public
+	 * @abstract
+	 */
+	function getEscaped( $text, $extra = false )
 	{
-		return mysqli_real_escape_string( $this->_resource, $text );
+		$result = mysqli_real_escape_string( $this->_resource, $text );
+		if ($extra) {
+			$result = addcslashes( $result, '%_' );
+		}
+		return $result;
 	}
-
 	/**
 	* Execute the query
+	*
+	* @access public
 	* @return mixed A database resource if successful, FALSE if not.
 	*/
 	function query()
@@ -214,7 +242,7 @@ class JDatabaseMySQLi extends JDatabase
 			$this->_errorMsg = mysqli_error( $this->_resource )." SQL=$this->_sql";
 
 			if ($this->_debug) {
-				JError::raiseError('joomla.database:'.$this->_errorNum, 'JDatabaseMySQLi::query: '.$this->_errorMsg );
+				JError::raiseError(500, 'JDatabaseMySQL::query: '.$this->_errorNum.' - '.$this->_errorMsg );
 			}
 			return false;
 		}
@@ -222,6 +250,9 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
+	 * Description
+	 *
+	 * @access public
 	 * @return int The number of affected rows in the previous operation
 	 * @since 1.0.5
 	 */
@@ -232,6 +263,8 @@ class JDatabaseMySQLi extends JDatabase
 
 	/**
 	* Execute a batch query
+	*
+	* @access public
 	* @return mixed A database resource if successful, FALSE if not.
 	*/
 	function queryBatch( $abort_on_error=true, $p_transaction_safe = false)
@@ -249,7 +282,7 @@ class JDatabaseMySQLi extends JDatabase
 				$this->_sql = 'BEGIN;' . $this->_sql . '; COMMIT;';
 			}
 		}
-		$query_split = preg_split ("/[;]+/", $this->_sql);
+		$query_split = $this->splitSql($this->_sql);
 		$error = 0;
 		foreach ($query_split as $command_line) {
 			$command_line = trim( $command_line );
@@ -269,13 +302,15 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
-	* Diagnostic function
-	*/
+	 * Diagnostic function
+	 *
+	 * @access public
+	 * @return	string
+	 */
 	function explain()
 	{
 		$temp = $this->_sql;
 		$this->_sql = "EXPLAIN $this->_sql";
-		$this->query();
 
 		if (!($cur = $this->query())) {
 			return null;
@@ -308,8 +343,11 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
-	* @return int The number of rows returned from the most recent query.
-	*/
+	 * Description
+	 *
+	 * @access public
+	 * @return int The number of rows returned from the most recent query.
+	 */
 	function getNumRows( $cur=null )
 	{
 		return mysqli_num_rows( $cur ? $cur : $this->_cursor );
@@ -318,6 +356,7 @@ class JDatabaseMySQLi extends JDatabase
 	/**
 	* This method loads the first field of the first row returned by the query.
 	*
+	* @access public
 	* @return The value returned in the query or null if the query failed.
 	*/
 	function loadResult()
@@ -332,8 +371,11 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $ret;
 	}
+
 	/**
 	* Load an array of single field results into an array
+	*
+	* @access public
 	*/
 	function loadResultArray($numinarray = 0)
 	{
@@ -351,7 +393,8 @@ class JDatabaseMySQLi extends JDatabase
 	/**
 	* Fetch a result row as an associative array
 	*
-	* return array
+	* @access public
+	* @return array
 	*/
 	function loadAssoc()
 	{
@@ -368,6 +411,8 @@ class JDatabaseMySQLi extends JDatabase
 
 	/**
 	* Load a assoc list of database rows
+	*
+	* @access public
 	* @param string The field name of a primary key
 	* @return array If <var>key</var> is empty as sequential list of returned records.
 	*/
@@ -387,10 +432,12 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $array;
 	}
+
 	/**
 	* This global function loads the first row of a query into an object
 	*
-	* return object
+	* @access public
+	* @return object
 	*/
 	function loadObject( )
 	{
@@ -404,12 +451,16 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $ret;
 	}
+
 	/**
 	* Load a list of database objects
-	* @param string The field name of a primary key
-	* @return array If <var>key</var> is empty as sequential list of returned records.
+	*
 	* If <var>key</var> is not empty then the returned array is indexed by the value
 	* the database key.  Returns <var>null</var> if the query fails.
+	*
+	* @access public
+	* @param string The field name of a primary key
+	* @return array If <var>key</var> is empty as sequential list of returned records.
 	*/
 	function loadObjectList( $key='' )
 	{
@@ -427,9 +478,13 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $array;
 	}
+
 	/**
-	* @return The first row of the query.
-	*/
+	 * Description
+	 *
+	 * @access public
+	 * @return The first row of the query.
+	 */
 	function loadRow()
 	{
 		if (!($cur = $this->query())) {
@@ -442,12 +497,16 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $ret;
 	}
+
 	/**
 	* Load a list of database rows (numeric column indexing)
-	* @param string The field name of a primary key
-	* @return array If <var>key</var> is empty as sequential list of returned records.
+	*
 	* If <var>key</var> is not empty then the returned array is indexed by the value
 	* the database key.  Returns <var>null</var> if the query fails.
+	*
+	* @access public
+	* @param string The field name of a primary key
+	* @return array If <var>key</var> is empty as sequential list of returned records.
 	*/
 	function loadRowList( $key=null )
 	{
@@ -465,8 +524,11 @@ class JDatabaseMySQLi extends JDatabase
 		mysqli_free_result( $cur );
 		return $array;
 	}
+
 	/**
 	 * Inserts a row into a table based on an objects properties
+	 *
+	 * @access public
 	 * @param	string	The name of the table
 	 * @param	object	An object whose properties match table fields
 	 * @param	string	The name of the primary key. If provided the object property is updated.
@@ -497,7 +559,9 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
-	 * Document::db_updateObject()
+	 * Description
+	 *
+	 * @access public
 	 * @param [type] $updateNulls
 	 */
 	function updateObject( $table, &$object, $keyName, $updateNulls=true )
@@ -528,11 +592,21 @@ class JDatabaseMySQLi extends JDatabase
 		return $this->query();
 	}
 
+	/**
+	 * Description
+	 *
+	 * @access public
+	 */
 	function insertid()
 	{
 		return mysqli_insert_id( $this->_resource );
 	}
 
+	/**
+	 * Description
+	 *
+	 * @access public
+	 */
 	function getVersion()
 	{
 		return mysqli_get_server_info( $this->_resource );
@@ -540,6 +614,8 @@ class JDatabaseMySQLi extends JDatabase
 
 	/**
 	 * Assumes database collation in use by sampling one text field in one table
+	 *
+	 * @access public
 	 * @return string Collation in use
 	 */
 	function getCollation ()
@@ -554,6 +630,9 @@ class JDatabaseMySQLi extends JDatabase
 	}
 
 	/**
+	 * Description
+	 *
+	 * @access public
 	 * @return array A list of all the tables in the database
 	 */
 	function getTableList()
@@ -561,15 +640,21 @@ class JDatabaseMySQLi extends JDatabase
 		$this->setQuery( 'SHOW TABLES' );
 		return $this->loadResultArray();
 	}
+
 	/**
-	 * @param array A list of table names
-	 * @return array A list the create SQL for the tables
+	 * Shows the CREATE TABLE statement that creates the given tables
+	 *
+	 * @access	public
+	 * @param 	array|string 	A table name or a list of table names
+	 * @return 	array A list the create SQL for the tables
 	 */
 	function getTableCreate( $tables )
 	{
+		settype($tables, 'array'); //force to array
 		$result = array();
 
-		foreach ($tables as $tblval) {
+		foreach ($tables as $tblval)
+		{
 			$this->setQuery( 'SHOW CREATE table ' . $this->getEscaped( $tblval ) );
 			$rows = $this->loadRowList();
 			foreach ($rows as $row) {
@@ -579,19 +664,36 @@ class JDatabaseMySQLi extends JDatabase
 
 		return $result;
 	}
+
 	/**
-	 * @param array A list of table names
-	 * @return array An array of fields by table
+	 * Retrieves information about the given tables
+	 *
+	 * @access	public
+	 * @param 	array|string 	A table name or a list of table names
+	 * @param	boolean			Only return field types, default true
+	 * @return	array An array of fields by table
 	 */
-	function getTableFields( $tables )
+	function getTableFields( $tables, $typeonly = true )
 	{
+		settype($tables, 'array'); //force to array
 		$result = array();
 
-		foreach ($tables as $tblval) {
+		foreach ($tables as $tblval)
+		{
 			$this->setQuery( 'SHOW FIELDS FROM ' . $tblval );
 			$fields = $this->loadObjectList();
-			foreach ($fields as $field) {
-				$result[$tblval][$field->Field] = preg_replace("/[(0-9)]/",'', $field->Type );
+
+			if($typeonly)
+			{
+				foreach ($fields as $field) {
+					$result[$tblval][$field->Field] = preg_replace("/[(0-9)]/",'', $field->Type );
+				}
+			}
+			else
+			{
+				foreach ($fields as $field) {
+					$result[$tblval][$field->Field] = $field;
+				}
 			}
 		}
 

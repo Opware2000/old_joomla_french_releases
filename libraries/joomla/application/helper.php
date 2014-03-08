@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: helper.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: helper.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -37,8 +37,6 @@ class JApplicationHelper
 	 */
 	function &getClientInfo($id = null, $byName = false)
 	{
-		global $mainframe;
-
 		static $clients;
 
 		// Only create the array if it does not exist
@@ -63,8 +61,14 @@ class JApplicationHelper
 			$obj->name	= 'installation';
 			$obj->path	= JPATH_INSTALLATION;
 			$clients[2] = clone($obj);
+
+			// XMLRPC Client
+			$obj->id		= 3;
+			$obj->name	= 'xmlrpc';
+			$obj->path	= JPATH_XMLRPC;
+			$clients[3] = clone($obj);
 		}
-		
+
 		//If no client id has been passed return the whole array
 		if(is_null($id)) {
 			return $clients;
@@ -79,15 +83,15 @@ class JApplicationHelper
 		}
 		else
 		{
-			foreach ($clients as $client) 
+			foreach ($clients as $client)
 			{
 				if ($client->name == strtolower($id)) {
 					return $client;
 				}
 			}
 		}
-		
-		return null;
+		$null = null;
+		return $null;
 	}
 
 	/**

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
+ * @version		$Id: controller.php 9935 2008-01-13 22:42:34Z ircmaxell $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -56,11 +56,8 @@ class UserController extends JController
 
 	function save()
 	{
-		//preform token check (prevent spoofing)
-		$token	= JUtility::getToken();
-		if(!JRequest::getInt($token, 0, 'post')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		$user	 =& JFactory::getUser();
 		$userid = JRequest::getVar( 'id', 0, 'post', 'int' );
@@ -78,13 +75,20 @@ class UserController extends JController
 		$post['password2']	= JRequest::getVar('password2', '', 'post', 'string', JREQUEST_ALLOWRAW);
 
 		// do a password safety check
-		if(strlen($post['password'])) { // so that "0" can be used as password e.g.
+		if(strlen($post['password']) || strlen($post['password2'])) { // so that "0" can be used as password e.g.
 			if($post['password'] != $post['password2']) {
 				$msg	= JText::_('PASSWORDS_DO_NOT_MATCH');
 				$this->setRedirect($_SERVER['HTTP_REFERER'], $msg);
 				return false;
 			}
 		}
+
+		// we don't want users to edit certain fields so we will unset them
+		unset($post['gid']);
+		unset($post['block']);
+		unset($post['usertype']);
+		unset($post['registerDate']);
+		unset($post['activation']);
 
 		// store data
 		$model = $this->getModel('user');
@@ -106,6 +110,9 @@ class UserController extends JController
 
 	function login()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		global $mainframe;
 
 		if ($return = JRequest::getVar('return', '', 'method', 'base64')) {
@@ -119,12 +126,6 @@ class UserController extends JController
 		$credentials = array();
 		$credentials['username'] = JRequest::getVar('username', '', 'method', 'username');
 		$credentials['password'] = JRequest::getString('passwd', '', 'post', JREQUEST_ALLOWRAW);
-
-		//check the token before we do anything else
-		/*$token	= JUtility::getToken();
-		if(!JRequest::getInt( $token, 0, 'post' )) {
-			JError::raiseError(403, 'Request Forbidden');
-		}*/
 
 		//preform the login action
 		$error = $mainframe->login($credentials, $options);
@@ -178,8 +179,6 @@ class UserController extends JController
 	 */
 	function register()
 	{
-		global $mainframe;
-
 		$usersConfig = &JComponentHelper::getParams( 'com_users' );
 		if (!$usersConfig->get( 'allowUserRegistration' )) {
 			JError::raiseError( 403, JText::_( 'Access Forbidden' ));
@@ -199,11 +198,8 @@ class UserController extends JController
 	{
 		global $mainframe;
 
-		//check the token before we do anything else
-		$token	= JUtility::getToken();
-		if(!JRequest::getInt($token, 0, 'post')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get required system objects
 		$user 		= clone(JFactory::getUser());
@@ -234,36 +230,24 @@ class UserController extends JController
 		$user->set('id', 0);
 		$user->set('usertype', '');
 		$user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
+
+		// TODO: Should this be JDate?
 		$user->set('registerDate', date('Y-m-d H:i:s'));
 
 		// If user activation is turned on, we need to set the activation information
 		$useractivation = $usersConfig->get( 'useractivation' );
-		if ($useractivation == '1') {
+		if ($useractivation == '1')
+		{
 			jimport('joomla.user.helper');
 			$user->set('activation', md5( JUserHelper::genRandomPassword()) );
 			$user->set('block', '1');
 		}
 
-		// create the view
-		require_once (JPATH_COMPONENT.DS.'views'.DS.'register'.DS.'view.html.php');
-		$view = new UserViewRegister();
-
-		$view->assignRef('user', $user);
-		$message = new stdClass();
-
 		// If there was an error with registration, set the message and display form
-		if ( !$user->save() ) {
-		 	// Page Title
-		 	$document->setTitle( JText::_( 'Registration' ) );
-			// Breadcrumb
-			$pathway->addItem( JText::_( 'New' ) );
-
-			$message->title	= JText::_( 'REGERROR' );
-			$message->text	= JText::_( $user->getError() );
-
-			$view->assign('message', $message);
-			$view->display();
-
+		if ( !$user->save() )
+		{
+			JError::raiseWarning('', JText::_( $user->getError()));
+			$this->register();
 			return false;
 		}
 
@@ -274,25 +258,14 @@ class UserController extends JController
 
 		// Everything went fine, set relevant message depending upon user activation state and display message
 		if ( $useractivation == 1 ) {
-			// Page Title
-			$document->setTitle( JText::_( 'REG_COMPLETE_ACTIVATE_TITLE' ) );
-			// Breadcrumb
-			$pathway->addItem( JText::_( 'REG_COMPLETE_ACTIVATE_TITLE' ));
-
-			$message->title = JText::_( 'REG_COMPLETE_ACTIVATE_TITLE' );
-			$message->text = JText::_( 'REG_COMPLETE_ACTIVATE' );
+			$message  = JText::_( 'REG_COMPLETE_ACTIVATE' );
 		} else {
-			// Page Title
-			$document->setTitle( JText::_( 'REG_COMPLETE_TITLE' ) );
-			// Breadcrumb
-			$pathway->addItem( JText::_( 'REG_COMPLETE_TITLE' ));
-
-			$message->title = JText::_( 'REG_COMPLETE_TITLE' );
-			$message->text = JText::_( 'REG_COMPLETE' );
+			$message = JText::_( 'REG_COMPLETE' );
 		}
 
-		$view->assign('message', $message);
-		$view->display('message');
+		//TODO :: this needs to be replace by raiseMessage
+		JError::raiseNotice('', $message);
+		$this->register();
 	}
 
 	function activate()
@@ -378,10 +351,8 @@ class UserController extends JController
 	 */
 	function requestreset()
 	{
-		// Verify the submission
-		if(!JRequest::getVar(JUtility::getToken(), 0, 'post', 'alnum')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get the input
 		$email		= JRequest::getVar('email', null, 'post', 'string');
@@ -407,10 +378,8 @@ class UserController extends JController
 	 */
 	function confirmreset()
 	{
-		// Verify the submission
-		if(!JRequest::getVar(JUtility::getToken(), 0, 'post', 'alnum')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get the input
 		$token = JRequest::getVar('token', null, 'post', 'alnum');
@@ -436,10 +405,8 @@ class UserController extends JController
 	 */
 	function completereset()
 	{
-		// Verify the submission
-		if(!JRequest::getVar(JUtility::getToken(), 0, 'post', 'alnum')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get the input
 		$password1 = JRequest::getVar('password1', null, 'post', 'string', JREQUEST_ALLOWRAW);
@@ -467,10 +434,8 @@ class UserController extends JController
 	 */
 	function remindusername()
 	{
-		// Verify the submission
-		if(!JRequest::getVar(JUtility::getToken(), 0, 'post', 'alnum')) {
-			JError::raiseError(403, 'Request Forbidden');
-		}
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Get the input
 		$email = JRequest::getVar('email', null, 'post', 'string');
@@ -500,7 +465,7 @@ class UserController extends JController
 		$email 		= $user->get('email');
 		$username 	= $user->get('username');
 
-		$usersConfig = &JComponentHelper::getParams( 'com_users' );
+		$usersConfig 	= &JComponentHelper::getParams( 'com_users' );
 		$sitename 		= $mainframe->getCfg( 'sitename' );
 		$useractivation = $usersConfig->get( 'useractivation' );
 		$mailfrom 		= $mainframe->getCfg( 'mailfrom' );
@@ -517,47 +482,34 @@ class UserController extends JController
 		}
 
 		$message = html_entity_decode($message, ENT_QUOTES);
-		// Send email to user
-		if ($mailfrom != "" && $fromname != "") {
-			$adminName2 = $fromname;
-			$adminEmail2 = $mailfrom;
-		} else {
-			$query = 'SELECT name, email' .
-					' FROM #__users' .
-					' WHERE LOWER( usertype ) = "superadministrator"' .
-					' OR LOWER( usertype ) = "super administrator"';
-			$db->setQuery( $query );
-			$rows = $db->loadObjectList();
 
-			$row2 			= $rows[0];
-			$adminName2 	= $row2->name;
-			$adminEmail2 	= $row2->email;
+		//get all super administrator
+		$query = 'SELECT name, email, sendEmail' .
+				' FROM #__users' .
+				' WHERE LOWER( usertype ) = "super administrator"';
+		$db->setQuery( $query );
+		$rows = $db->loadObjectList();
+
+		// Send email to user
+		if ( ! $mailfrom  || ! $fromname ) {
+			$fromname = $rows[0]->name;
+			$mailfrom = $rows[0]->email;
 		}
 
-		JUtility::sendMail($adminEmail2, $adminName2, $email, $subject, $message);
+		JUtility::sendMail($mailfrom, $fromname, $email, $subject, $message);
 
 		// Send notification to all administrators
-		$subject2 = sprintf ( JText::_( 'Account details for %s at %s' ), $name, $sitename);
-		$message2 = sprintf ( JText::_( 'SEND_MSG_ADMIN' ), $adminName2, $sitename, $name, $email, $username);
+		$subject2 = sprintf ( JText::_( 'Account details for' ), $name, $sitename);
 		$subject2 = html_entity_decode($subject2, ENT_QUOTES);
-		$message2 = html_entity_decode($message2, ENT_QUOTES);
 
 		// get superadministrators id
-		$authorize =& JFactory::getACL();
-		$admins = $authorize->get_group_objects( 25, 'ARO' );
-
-		foreach ( $admins['users'] AS $id )
+		foreach ( $rows as $row )
 		{
-			$query = 'SELECT email, sendEmail' .
-					' FROM #__users' .
-					' WHERE id = '. (int) $id;
-			$db->setQuery( $query );
-			$rows = $db->loadObjectList();
-
-			$row = $rows[0];
-
-			if ($row->sendEmail) {
-				JUtility::sendMail($adminEmail2, $adminName2, $row->email, $subject2, $message2);
+			if ($row->sendEmail)
+			{
+				$message2 = sprintf ( JText::_( 'SEND_MSG_ADMIN' ), $row->name, $sitename, $name, $email, $username);
+				$message2 = html_entity_decode($message2, ENT_QUOTES);
+				JUtility::sendMail($mailfrom, $fromname, $row->email, $subject2, $message2);
 			}
 		}
 	}

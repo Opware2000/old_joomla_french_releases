@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: vote.php 8386 2007-08-11 20:44:58Z jinx $
+* @version		$Id: vote.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -18,15 +18,15 @@ $mainframe->registerEvent( 'onBeforeDisplayContent', 'plgContentVote' );
 
 function plgContentVote( &$row, &$params, $page=0 )
 {
+	$uri = & JFactory::getURI();
+
 	$id 	= $row->id;
-	$option = 'com_content';
-	$task 	= JRequest::getCmd('task');
 	$html 	= '';
 
 	if (isset($row->rating_count) && $params->get( 'show_vote' ) && !$params->get( 'popup' ))
 	{
 		JPlugin::loadLanguage( 'plg_content_vote' );
-		$html .= '<form method="post" action="' . JRoute::_( 'index.php' ) . '">';
+		$html .= '<form method="post" action="' . $uri->toString( ) . '">';
 		$img = '';
 
 		// look for images in template if available
@@ -43,9 +43,9 @@ function plgContentVote( &$row, &$params, $page=0 )
 		$html .= JText::_( 'User Rating' ) .':'. $img .'&nbsp;/&nbsp;';
 		$html .= intval( $row->rating_count );
 		$html .= "</span>\n<br />\n";
-		$url = JRoute::_('index.php');
 
-		if (!$params->get( 'intro_only' ) && $task != "blogsection") {
+		if (!$params->get( 'intro_only' ))
+		{
 			$html .= '<span class="content_vote">';
 			$html .= JText::_( 'Poor' );
 			$html .= '<input type="radio" alt="vote 1 star" name="user_rating" value="1" />';
@@ -56,10 +56,9 @@ function plgContentVote( &$row, &$params, $page=0 )
 			$html .= JText::_( 'Best' );
 			$html .= '&nbsp;<input class="button" type="submit" name="submit_vote" value="'. JText::_( 'Rate' ) .'" />';
 			$html .= '<input type="hidden" name="task" value="vote" />';
-			$html .= '<input type="hidden" name="pop" value="0" />';
 			$html .= '<input type="hidden" name="option" value="com_content" />';
 			$html .= '<input type="hidden" name="cid" value="'. $id .'" />';
-			$html .= '<input type="hidden" name="url" value="'. $url .'" />';
+			$html .= '<input type="hidden" name="url" value="'.  $uri->toString( ) .'" />';
 			$html .= '</span>';
 		}
 		$html .= '</form>';

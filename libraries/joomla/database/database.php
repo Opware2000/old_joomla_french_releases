@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: database.php 8575 2007-08-26 20:02:09Z jinx $
+* @version		$Id: database.php 9978 2008-02-01 17:23:39Z ircmaxell $
 * @package		Joomla.Framework
 * @subpackage	Database
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -25,46 +25,124 @@ defined('JPATH_BASE') or die();
  */
 class JDatabase extends JObject
 {
-	/** @var string The database driver name */
-	var $name			= '';
-	/** @var string Internal variable to hold the query sql */
-	var $_sql			= '';
-	/** @var int Internal variable to hold the database error number */
-	var $_errorNum		= 0;
-	/** @var string Internal variable to hold the database error message */
-	var $_errorMsg		= '';
-	/** @var string Internal variable to hold the prefix used on all database tables */
-	var $_table_prefix	= '';
-	/** @var Internal variable to hold the connector resource */
-	var $_resource		= '';
-	/** @var Internal variable to hold the last query cursor */
-	var $_cursor		= null;
-	/** @var boolean Debug option */
-	var $_debug			= 0;
-	/** @var int The limit for the query */
-	var $_limit			= 0;
-	/** @var int The for offset for the limit */
-	var $_offset		= 0;
-	/** @var int A counter for the number of queries performed by the object instance */
-	var $_ticker		= 0;
-	/** @var array A log of queries */
-	var $_log			= null;
-	/** @var string The null/zero date string */
-	var $_nullDate		= null;
-	/** @var string Quote for named objects */
-	var $_nameQuote		= null;
 	/**
-	 * @var boolean UTF-8 support
+	 * The database driver name
+	 *
+	 * @var string
+	 */
+	var $name			= '';
+
+	/**
+	 * The query sql string
+	 *
+	 * @var string
+	 **/
+	var $_sql			= '';
+
+	/**
+	 * The database error number
+	 *
+	 * @var int
+	 **/
+	var $_errorNum		= 0;
+
+	/**
+	 * The database error message
+	 *
+	 * @var string
+	 */
+	var $_errorMsg		= '';
+
+	/**
+	 * The prefix used on all database tables
+	 *
+	 * @var string
+	 */
+	var $_table_prefix	= '';
+
+	/**
+	 * The connector resource
+	 *
+	 * @var resource
+	 */
+	var $_resource		= '';
+
+	/**
+	 * The last query cursor
+	 *
+	 * @var resource
+	 */
+	var $_cursor		= null;
+
+	/**
+	 * Debug option
+	 *
+	 * @var boolean
+	 */
+	var $_debug			= 0;
+
+	/**
+	 * The limit for the query
+	 *
+	 * @var int
+	 */
+	var $_limit			= 0;
+
+	/**
+	 * The for offset for the limit
+	 *
+	 * @var int
+	 */
+	var $_offset		= 0;
+
+	/**
+	 * The number of queries performed by the object instance
+	 *
+	 * @var int
+	 */
+	var $_ticker		= 0;
+
+	/**
+	 * A log of queries
+	 *
+	 * @var array
+	 */
+	var $_log			= null;
+
+	/**
+	 * The null/zero date string
+	 *
+	 * @var string
+	 */
+	var $_nullDate		= null;
+
+	/**
+	 * Quote for named objects
+	 *
+	 * @var string
+	 */
+	var $_nameQuote		= null;
+
+	/**
+	 * UTF-8 support
+	 *
+	 * @var boolean
 	 * @since	1.5
 	 */
 	var $_utf			= 0;
+
 	/**
-	 * @var array The fields that are to be quote
+	 * The fields that are to be quote
+	 *
+	 * @var array
 	 * @since	1.5
 	 */
 	var $_quoted	= null;
+
 	/**
-	 * @var bool Legacy compatibility
+	 *  Legacy compatibility
+	 *
+	 * @var bool
 	 * @since	1.5
 	 */
 	var $_hasQuoted	= null;
@@ -105,12 +183,11 @@ class JDatabase extends JObject
 	 * Returns a reference to the global Database object, only creating it
 	 * if it doesn't already exist.
 	 *
-	 * @param string  Database driver
-	 * @param string Database host
-	 * @param string Database user name
-	 * @param string Database user password
-	 * @param string Database name
-	 * @param string Common prefix for all tables
+	 * The 'driver' entry in the parameters array specifies the database driver
+	 * to be used (defaults to 'mysql' if omitted). All other parameters are
+	 * database driver dependent.
+	 *
+	 * @param array Parameters to be passed to the database driver
 	 * @return JDatabase A database object
 	 * @since 1.5
 	*/
@@ -131,15 +208,14 @@ class JDatabase extends JObject
 			$database	= array_key_exists('database', $options)	? $options['database']	: null;
 
 			$driver = preg_replace('/[^A-Z0-9_\.-]/i', '', $driver);
-			$path	= JPATH_LIBRARIES.DS.'joomla'.DS.'database'.DS.'database'.DS.$driver.'.php';
+			$path	= dirname(__FILE__).DS.'database'.DS.$driver.'.php';
 
 			if (file_exists($path)) {
-				$path	= "joomla.database.database.$driver";
-				jimport( $path );
+				require_once($path);
 			} else {
-				$error = new JException( E_ERROR, 500, 'Unable to load Database Driver:' .$driver);
+				JError::setErrorHandling(E_ERROR, 'die'); //force error type to die
+				$error = JError::raiseError( 500, JTEXT::_('Unable to load Database Driver:') .$driver);
 				return $error;
-				//die('Unable to load Database Driver:' .$driver);
 			}
 
 			$adapter	= 'JDatabase'.$driver;
@@ -147,10 +223,11 @@ class JDatabase extends JObject
 
 			if ( $error = $instance->getErrorMsg() )
 			{
-				$error = new JException( E_ERROR, 500, 'Unable to connect to the database:' .$error);
+				JError::setErrorHandling(E_ERROR, 'ignore'); //force error type to die
+				$error = JError::raiseError( 500, JTEXT::_('Unable to connect to the database:') .$error);
 				return $error;
-				//die('Unable to connect to the database: '.$error);
 			}
+
 
 			$instances[$signature] = & $instance;
 		}
@@ -186,8 +263,12 @@ class JDatabase extends JObject
 		foreach($handlers as $handler)
 		{
 			$name = substr($handler, 0, strrpos($handler, '.'));
-			jimport('joomla.database.database.'.$name);
 			$class = 'JDatabase'.ucfirst($name);
+
+			if(!class_exists($class)) {
+				require_once(dirname(__FILE__).DS.'database'.DS.$name.'.php');
+			}
+
 			if(call_user_func_array( array( trim($class), 'test' ), null)) {
 				$names[] = $name;
 			}
@@ -260,6 +341,50 @@ class JDatabase extends JObject
 	}
 
 	/**
+	 * Splits a string of queries into an array of individual queries
+	 *
+	 * @access public
+	 * @param string The queries to split
+	 * @return array queries
+	 */
+	function splitSql( $queries )
+	{
+		$start = 0;
+		$open = false;
+		$open_char = '';
+		$end = strlen($queries);
+		$query_split = array();
+		for($i=0;$i<$end;$i++) {
+			$current = substr($queries,$i,1);
+			if(($current == '"' || $current == '\'')) {
+				$n = 2;
+				while(substr($queries,$i - $n + 1, 1) == '\\' && $n < $i) {
+					$n ++;
+				}
+				if($n%2==0) {
+					if ($open) {
+						if($current == $open_char) {
+							$open = false;
+							$open_char = '';
+						}
+					} else {
+						$open = true;
+						$open_char = $current;
+					}
+				}
+			} 
+			if(($current == ';' && !$open)|| $i == $end - 1) {
+				$query_split[] = substr($queries, $start, ($i - $start + 1));
+				$start = $i + 1;
+			}
+		}
+
+		return $query_split;
+	}
+
+
+
+	/**
 	 * Checks if field name needs to be quoted
 	 *
 	 * @access public
@@ -313,7 +438,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return string The error message for the most recent query
 	 */
-	function getErrorMsg($escaped = false) {
+	function getErrorMsg($escaped = false)
+	{
 		if($escaped) {
 			return addslashes($this->_errorMsg);
 		} else {
@@ -324,12 +450,37 @@ class JDatabase extends JObject
 	/**
 	 * Get a database escaped string
 	 *
+	 * @param	string	The string to be escaped
+	 * @param	boolean	Optional parameter to provide extra escaping
+	 * @return	string
+	 * @access	public
 	 * @abstract
-	 * @access public
-	 * @return string
 	 */
-	function getEscaped( $text ) {
+	function getEscaped( $text, $extra = false )
+	{
 		return;
+	}
+
+	/**
+	 * Get a database error log
+	 *
+	 * @access public
+	 * @return array
+	 */
+	function getLog( )
+	{
+		return $this->_log;
+	}
+
+	/**
+	 * Get the total number of queries made
+	 *
+	 * @access public
+	 * @return array
+	 */
+	function getTicker( )
+	{
+		return $this->_ticker;
 	}
 
 	/**
@@ -354,7 +505,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return string The database prefix
 	 */
-	function getPrefix() {
+	function getPrefix()
+	{
 		return $this->_table_prefix;
 	}
 
@@ -364,7 +516,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return string Quoted null/zero date string
 	 */
-	function getNullDate() {
+	function getNullDate()
+	{
 		return $this->_nullDate;
 	}
 
@@ -496,7 +649,8 @@ class JDatabase extends JObject
 	 * @return int The number of affected rows in the previous operation
 	 * @since 1.0.5
 	 */
-	function getAffectedRows() {
+	function getAffectedRows()
+	{
 		return;
 	}
 
@@ -507,7 +661,8 @@ class JDatabase extends JObject
 	* @access public
 	* @return mixed A database resource if successful, FALSE if not.
 	*/
-	function queryBatch( $abort_on_error=true, $p_transaction_safe = false) {
+	function queryBatch( $abort_on_error=true, $p_transaction_safe = false)
+	{
 		return false;
 	}
 
@@ -517,7 +672,8 @@ class JDatabase extends JObject
 	 * @abstract
 	 * @access public
 	 */
-	function explain() {
+	function explain()
+	{
 		return;
 	}
 
@@ -529,7 +685,8 @@ class JDatabase extends JObject
 	 * @param object Database resource
 	 * @return int The number of rows
 	 */
-	function getNumRows( $cur=null ) {
+	function getNumRows( $cur=null )
+	{
 		return;
 	}
 
@@ -540,7 +697,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return The value returned in the query or null if the query failed.
 	 */
-	function loadResult() {
+	function loadResult()
+	{
 		return;
 	}
 
@@ -549,7 +707,8 @@ class JDatabase extends JObject
 	 *
 	 * @abstract
 	 */
-	function loadResultArray($numinarray = 0) {
+	function loadResultArray($numinarray = 0)
+	{
 		return;
 	}
 
@@ -558,7 +717,8 @@ class JDatabase extends JObject
 	*
 	* @abstract
 	*/
-	function loadAssoc() {
+	function loadAssoc()
+	{
 		return;
 	}
 
@@ -570,7 +730,8 @@ class JDatabase extends JObject
 	 * @param string The field name of a primary key
 	 * @return array If key is empty as sequential list of returned records.
 	 */
-	function loadAssocList( $key='' ) {
+	function loadAssocList( $key='' )
+	{
 		return;
 	}
 
@@ -582,7 +743,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @param object
 	 */
-	function loadObject( ) {
+	function loadObject( )
+	{
 		return;
 	}
 
@@ -597,7 +759,8 @@ class JDatabase extends JObject
 	* If <var>key</var> is not empty then the returned array is indexed by the value
 	* the database key.  Returns <var>null</var> if the query fails.
 	*/
-	function loadObjectList( $key='' ) {
+	function loadObjectList( $key='' )
+	{
 		return;
 	}
 
@@ -608,7 +771,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return The first row of the query.
 	 */
-	function loadRow() {
+	function loadRow()
+	{
 		return;
 	}
 
@@ -623,7 +787,8 @@ class JDatabase extends JObject
 	* @param string The field name of a primary key
 	* @return array
 	*/
-	function loadRowList( $key='' ) {
+	function loadRowList( $key='' )
+	{
 		return;
 	}
 
@@ -633,7 +798,8 @@ class JDatabase extends JObject
 	 * @param	object	An object whose properties match table fields
 	 * @param	string	The name of the primary key. If provided the object property is updated.
 	 */
-	function insertObject( $table, &$object, $keyName = NULL ) {
+	function insertObject( $table, &$object, $keyName = NULL )
+	{
 		return;
 	}
 
@@ -647,7 +813,8 @@ class JDatabase extends JObject
 	 * @param string
 	 * @param boolean
 	 */
-	function updateObject( $table, &$object, $keyName, $updateNulls=true ) {
+	function updateObject( $table, &$object, $keyName, $updateNulls=true )
+	{
 		return;
 	}
 
@@ -657,7 +824,7 @@ class JDatabase extends JObject
 	 * @param boolean If TRUE, displays the last SQL statement sent to the database
 	 * @return string A standised error message
 	 */
-	function stderr( $showSQL = false ) 
+	function stderr( $showSQL = false )
 	{
 		if ( $this->_errorNum != 0 ) {
 			return "DB function failed with error number $this->_errorNum"
@@ -675,7 +842,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return mixed
 	 */
-	function insertid() {
+	function insertid()
+	{
 		return;
 	}
 
@@ -686,7 +854,8 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return string Collation in use
 	 */
-	function getCollation() {
+	function getCollation()
+	{
 		return;
 	}
 
@@ -695,7 +864,8 @@ class JDatabase extends JObject
 	 *
 	 * @abstract
 	 */
-	function getVersion() {
+	function getVersion()
+	{
 		return 'Not available for this connector';
 	}
 
@@ -706,31 +876,35 @@ class JDatabase extends JObject
 	 * @access public
 	 * @return array A list of all the tables in the database
 	 */
-	function getTableList() {
+	function getTableList()
+	{
 		return;
 	}
 
 	/**
-	 *
+	 * Shows the CREATE TABLE statement that creates the given tables
 	 *
 	 * @abstract
-	 * @access public
-	 * @param array A list of table names
-	 * @return array A list the create SQL for the tables
+	 * @access	public
+	 * @param 	array|string 	A table name or a list of table names
+	 * @return 	array A list the create SQL for the tables
 	 */
-	function getTableCreate( $tables ) {
+	function getTableCreate( $tables )
+	{
 		return;
 	}
 
 	/**
-	 * List database table fields
+	 * Retrieves information about the given tables
 	 *
 	 * @abstract
-	 * @access public
-	 * @param array A list of table names
-	 * @return array An array of fields by table
+	 * @access	public
+	 * @param 	array|string 	A table name or a list of table names
+	 * @param	boolean			Only return field types, default true
+	 * @return	array An array of fields by table
 	 */
-	function getTableFields( $tables ) {
+	function getTableFields( $tables, $typeonly = true )
+	{
 		return;
 	}
 
@@ -741,19 +915,22 @@ class JDatabase extends JObject
 	/**
 	* Get a quoted database escaped string
 	*
+	* @param	string	A string
+	* @param	boolean	Default true to escape string, false to leave the string unchanged
+	* @return	string
 	* @access public
-	* @return string
 	*/
-	function Quote( $text ) {
-		return '\'' . $this->getEscaped( $text ) . '\'';
+	function Quote( $text, $escaped = true )
+	{
+		return '\''.($escaped ? $this->getEscaped( $text ) : $text).'\'';
 	}
 
 	/**
 	 * ADODB compatability function
 	 *
-	 * @access public
-	 * @param string SQL
-	 * @since 1.5
+	 * @access	public
+	 * @param	string SQL
+	 * @since	1.5
 	 */
 	function GetCol( $query )
 	{
@@ -764,10 +941,10 @@ class JDatabase extends JObject
 	/**
 	 * ADODB compatability function
 	 *
-	 * @access public
-	 * @param string SQL
-	 * @return object
-	 * @since 1.5
+	 * @access	public
+	 * @param	string SQL
+	 * @return	object
+	 * @since	1.5
 	 */
 	function Execute( $query )
 	{
@@ -852,7 +1029,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function BeginTrans() {
+	function BeginTrans()
+	{
 	}
 
 	/**
@@ -860,7 +1038,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function RollbackTrans() {
+	function RollbackTrans()
+	{
 	}
 
 	/**
@@ -868,7 +1047,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function CommitTrans() {
+	function CommitTrans()
+	{
 	}
 
 	/**
@@ -876,7 +1056,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function ErrorMsg() {
+	function ErrorMsg()
+	{
 		return $this->getErrorMsg();
 	}
 
@@ -885,7 +1066,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function ErrorNo() {
+	function ErrorNo()
+	{
 		return $this->getErrorNum();
 	}
 
@@ -894,7 +1076,8 @@ class JDatabase extends JObject
 	 *
 	 * @since 1.5
 	 */
-	function GenID( $foo1=null, $foo2=null ) {
+	function GenID( $foo1=null, $foo2=null )
+	{
 		return '0';
 	}
 }

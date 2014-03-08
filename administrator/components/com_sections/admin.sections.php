@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.sections.php 8540 2007-08-24 12:36:22Z jinx $
+* @version		$Id: admin.sections.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Sections
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -27,8 +27,11 @@ $task = JRequest::getCmd('task');
 switch ($task)
 {
 	case 'add' :
+		editSection(false );
+		break;
+
 	case 'edit':
-		editSection( );
+		editSection(true );
 		break;
 
 	case 'go2menu':
@@ -47,7 +50,7 @@ switch ($task)
 		break;
 
 	case 'copysave':
-		copySectionSave( $cid );
+		copySectionSave( $cid, $scope );
 		break;
 
 	case 'publish':
@@ -110,7 +113,7 @@ function showSections( $scope, $option )
 	$search				= JString::strtolower( $search );
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
-	$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+	$limitstart	= $mainframe->getUserStateFromRequest( $option.'.limitstart', 'limitstart', 0, 'int' );
 
 	$where[] = 's.scope = '.$db->Quote($scope);
 
@@ -122,7 +125,7 @@ function showSections( $scope, $option )
 		}
 	}
 	if ($search) {
-		$where[] = 'LOWER(s.title) LIKE '.$db->Quote('%'.$search.'%');
+		$where[] = 'LOWER(s.title) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 	}
 
 	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
@@ -210,7 +213,7 @@ function showSections( $scope, $option )
 * @param integer The unique id of the category to edit (0 if new)
 * @param string The name of the current user
 */
-function editSection( )
+function editSection( $edit)
 {
 	global $mainframe;
 
@@ -224,7 +227,8 @@ function editSection( )
 
 	$row =& JTable::getInstance('section');
 	// load the row from the db table
-	$row->load( $cid[0] );
+	if ($edit)
+		$row->load( $cid[0] );
 
 	// fail if checked out not by 'me'
 	if ($row->isCheckedOut( $user->get('id') )) {
@@ -232,7 +236,7 @@ function editSection( )
 		$mainframe->redirect( 'index.php?option='. $option .'&scope='. $row->scope, $msg );
 	}
 
-	if ( $cid[0] ) {
+	if ( $edit ) {
 		$row->checkout( $user->get('id') );
 	} else {
 		$row->scope 		= $scope;
@@ -244,8 +248,10 @@ function editSection( )
 	. ' FROM #__sections'
 	. ' WHERE scope='.$db->Quote($row->scope).' ORDER BY ordering'
 	;
-	$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query );
-
+	if($edit)
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query );
+	else
+		$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, '', $query );
 	// build the select list for the image positions
 	$active =  ( $row->image_position ? $row->image_position : 'left' );
 	$lists['image_position'] 	= JHTML::_('list.positions',  'image_position', $active, NULL, 0 );
@@ -267,6 +273,9 @@ function editSection( )
 function saveSection( $option, $scope, $task )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db			=& JFactory::getDBO();
 	$menu		= JRequest::getVar( 'menu', 'mainmenu', 'post', 'string' );
@@ -339,6 +348,9 @@ function removeSections( $cid, $scope, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 	if (count( $cid ) < 1) {
 		JError::raiseError(500, JText::_( 'Select a section to delete', true ) );
@@ -406,6 +418,9 @@ function publishSections( $scope, $cid=null, $publish=1, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db 	=& JFactory::getDBO();
 	$user 	=& JFactory::getUser();
 
@@ -418,13 +433,6 @@ function publishSections( $scope, $cid=null, $publish=1, $option )
 
 	$cids = implode( ',', $cid );
 	$count = count( $cid );
-	if ( $publish ) {
-		if ( !$count ){
-			echo "<script> alert('". JText::_( 'Cannot Publish an Empty Section', true ) .": ". $count ."'); window.history.go(-1);</script>\n";
-			return;
-		}
-	}
-
 	$query = 'UPDATE #__sections'
 	. ' SET published = '.(int) $publish
 	. ' WHERE id IN ( '.$cids.' )'
@@ -475,6 +483,9 @@ function cancelSection( $option, $scope )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 	$row =& JTable::getInstance('section');
 	$row->bind(JRequest::get('post'));
@@ -491,6 +502,9 @@ function orderSection( $uid, $inc, $option, $scope )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 	$row =& JTable::getInstance('section');
 	$row->load( $uid );
@@ -499,13 +513,15 @@ function orderSection( $uid, $inc, $option, $scope )
 	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope );
 }
 
-
 /**
 * Form for copying item(s) to a specific menu
 */
 function copySectionSelect( $option, $cid, $section )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db =& JFactory::getDBO();
 
@@ -540,9 +556,12 @@ function copySectionSelect( $option, $cid, $section )
 /**
 * Save the item(s) to the menu selected
 */
-function copySectionSave( $sectionid )
+function copySectionSave( $sectionid, $scope )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db			=& JFactory::getDBO();
 	$title		= JRequest::getString( 'title' );
@@ -559,7 +578,9 @@ function copySectionSave( $sectionid )
 		$section->title = $title;
 		$section->name 	= $title;
 		if ( !$section->check() ) {
-			JError::raiseError(500, $section->getError() );
+			copySectionSelect('com_sections', $sectionid, $scope );
+			JError::raiseWarning(500, $section->getError() );
+			return;
 		}
 
 		if ( !$section->store() ) {
@@ -639,6 +660,9 @@ function accessMenu( $uid, $access, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db	=& JFactory::getDBO();
 	$row =& JTable::getInstance('section');
 	$row->load( $uid );
@@ -657,6 +681,9 @@ function accessMenu( $uid, $access, $option )
 function saveOrder( &$cid )
 {
 	global $mainframe;
+
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
 
 	$db			=& JFactory::getDBO();
 	$row		=& JTable::getInstance('section');
@@ -682,4 +709,3 @@ function saveOrder( &$cid )
 	$msg 	= JText::_( 'New ordering saved' );
 	$mainframe->redirect( 'index.php?option=com_sections&scope=content', $msg );
 }
-?>

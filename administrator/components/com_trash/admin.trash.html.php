@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.trash.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.trash.html.php 9824 2008-01-03 00:55:39Z eddieajau $
 * @package		Joomla
 * @subpackage	Trash
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -116,7 +116,7 @@ class HTML_trash
 		<input type="hidden" name="return" value="viewContent" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
 		</form>
 		<?php
 	}
@@ -161,7 +161,7 @@ class HTML_trash
 				<?php echo JText::_( 'Filter' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 			</td>
@@ -256,29 +256,29 @@ class HTML_trash
 
 		<table class="adminform">
 		<tr>
-			<td width="3%"></td>
+			<td width="3%">
+			</td>
 			<td  valign="top" width="20%">
-			<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
-			<br />
-			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
-			<br /><br />
+				<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
+				<br />
+				<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
+				<br /><br />
 			</td>
 			<td  valign="top" width="25%">
-			<strong><?php echo JText::_( 'Items being Deleted' ); ?>:</strong>
-			<br />
-			<?php
-			echo "<ol>";
-			foreach ( $items as $item ) {
-				echo "<li>". $item->name ."</li>";
-			}
-			echo "</ol>";
-			?>
-			</td>
-			 <td valign="top"><?php echo JText::_( 'PERMDELETETHESEITEMS' ); ?>
-			<br /><br /><br />
-			<a class="icon-32-delete" style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 50px; background-repeat: no-repeat; padding-left: 40px; "  href="javascript:void submitbutton('delete')">
-			&nbsp;<?php echo JText::_( 'Delete' ); ?>
-			</a>
+				<strong><?php echo JText::_( 'Items being Deleted' ); ?>:</strong>
+				<br />
+				<?php
+				echo "<ol>";
+				foreach ( $items as $item ) {
+					echo "<li>". $item->name ."</li>";
+				}
+				echo "</ol>";
+				?>
+				</td>
+				 <td valign="top"><?php echo JText::_( 'PERMDELETETHESEITEMS' ); ?>
+				<br /><br /><br />
+				<a class="icon-32-delete" style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 50px; background-repeat: no-repeat; padding-left: 40px; "  href="javascript:void submitbutton('delete')">
+				&nbsp;<?php echo JText::_( 'Delete' ); ?></a>
 			</td>
 		</tr>
 		<tr>
@@ -297,10 +297,10 @@ class HTML_trash
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	/**
 	* A restore confirmation page
@@ -314,30 +314,29 @@ class HTML_trash
 		<tr>
 			<td width="3%"></td>
 			<td  valign="top" width="20%">
-			<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
-			<br />
-			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
-			<br /><br />
+				<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
+				<br />
+				<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
+				<br /><br />
 			</td>
 			<td  valign="top" width="25%">
-			<strong><?php echo JText::_( 'Items being Restored' ); ?>:</strong>
-			<br />
-			<?php
-			echo "<ol>";
-			foreach ( $items as $item ) {
-				echo "<li>". $item->name ."</li>";
-			}
-			echo "</ol>";
-			?>
+				<strong><?php echo JText::_( 'Items being Restored' ); ?>:</strong>
+				<br />
+				<?php
+				echo "<ol>";
+				foreach ( $items as $item ) {
+					echo "<li>". $item->name ."</li>";
+				}
+				echo "</ol>";
+				?>
 			</td>
-			 <td valign="top"><?php echo JText::_( 'RESTOREITEMS' ); ?><br /><?php echo JText::_( 'TIPWILLBERETURNED' ); ?>
-			<br /><br /><br />
-			<div style="border: 1px dotted gray; width: 80px; padding: 10px; margin-left: 50px;">
-			<a class="toolbar" href="javascript:if (confirm('<?php echo JText::_( 'WARNRESTORE' ); ?>')){ submitbutton('restore');}">
-			<img name="restore" src="images/restore_f2.png" alt="<?php echo JText::_( 'Restore' ); ?>" border="0" align="middle" />
-			&nbsp;<?php echo JText::_( 'Restore' ); ?>
-			</a>
-			</div>
+			<td valign="top"><?php echo JText::_( 'RESTOREITEMS' ); ?><br /><?php echo JText::_( 'TIPWILLBERETURNED' ); ?>
+				<br /><br /><br />
+				<div style="border: 1px dotted gray; width: 80px; padding: 10px; margin-left: 50px;">
+				<a class="toolbar" href="javascript:if (confirm('<?php echo JText::_( 'WARNRESTORE' ); ?>')){ submitbutton('restore');}">
+				<img name="restore" src="images/restore_f2.png" alt="<?php echo JText::_( 'Restore' ); ?>" border="0" align="middle" />
+				&nbsp;<?php echo JText::_( 'Restore' ); ?></a>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -356,9 +355,8 @@ class HTML_trash
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
 		}
 		?>
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 }
-?>

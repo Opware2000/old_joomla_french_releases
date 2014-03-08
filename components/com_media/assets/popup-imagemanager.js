@@ -1,7 +1,7 @@
 /**
 * @version		$Id: popup-imagemanager.js 8656 2007-08-30 22:40:39Z louis $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -22,6 +22,11 @@
 var ImageManager = {
 	initialize: function()
 	{
+		o = this._getUriObject(window.self.location.href);
+		//console.log(o);
+		q = $H(this._getQueryObject(o.query));
+		this.editor = decodeURIComponent(q.get('e_name'));
+
 		// Setup image manager fields object
 		this.fields			= new Object();
 		this.fields.url		= $("f_url");
@@ -116,7 +121,7 @@ var ImageManager = {
 			var tag = "<img src=\""+url+"\" "+extra+"/>";
 		}
 
-		window.parent.jInsertEditorText(tag);
+		window.parent.jInsertEditorText(tag, this.editor);
 		return false;
 	},
 
@@ -172,7 +177,7 @@ var ImageManager = {
 
 	populateFields: function(file)
 	{
-		$("f_url").value = "images/stories/"+file;
+		$("f_url").value = image_base_path+file;
 	},
 
 	showMessage: function(text)

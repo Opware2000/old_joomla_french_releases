@@ -1,9 +1,9 @@
 /**
- * @version $Id$
+ * @version $Id: ieonly.css 9765 2007-12-30 08:21:02Z ircmaxell $
  * @author Design & Accessible Team ( Angie Radtke / Robert Deutz )
  * @package Joomla
  * @subpackage Accessible-Template-Beez
- * @copyright Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -17,7 +17,9 @@
 #all { width: expression(document . body . clientWidth > 980 ? "980px" : "auto"); }
 .leading ,#contentarea2, #main { zoom: 1; }
 #all { padding: 0; }
-#main2 {height:550px;}
+#wrapper
+{border:solid 0px; width:100%}
+#main2 {height:550px; width:68%}
 #main
 {
 	position: relative;
@@ -92,3 +94,9 @@ form.login input
 {
 	margin:0 0 0 -10px
 }
+
+table.contenttoc
+{font-size:1em !important;}
+
+table.contenttoc  td  , table.contenttoc  th
+{padding:3px !important     }

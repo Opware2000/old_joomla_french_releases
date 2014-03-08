@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.contact.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.contact.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Contact
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -17,16 +17,17 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 
-switch ( $task )
+switch ($task)
 {
 	case 'add'  :
+		TOOLBAR_contact::_EDIT(false);
+		break;
 	case 'edit' :
 	case 'editA':
-		TOOLBAR_contact::_EDIT();
+		TOOLBAR_contact::_EDIT(true);
 		break;
 
 	default:
 		TOOLBAR_contact::_DEFAULT();
 		break;
 }
-?>

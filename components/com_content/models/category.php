@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: category.php 8171 2007-07-23 00:28:29Z eddieajau $
+ * @version		$Id: category.php 9918 2008-01-10 01:41:37Z pasamio $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -71,8 +71,15 @@ class ContentModelCategory extends JModel
 	{
 		parent::__construct();
 
+		global $mainframe;
+
 		$id = JRequest::getVar('id', 0, '', 'int');
 		$this->setId((int)$id);
+
+		// here we initialize defaults for category model
+		$params = &$mainframe->getParams();
+		$params->def('filter',					1);
+		$params->def('filter_type',				'title');
 	}
 
 	/**
@@ -220,7 +227,7 @@ class ContentModelCategory extends JModel
 		if (empty($this->_category))
 		{
 			// Lets get the information for the current category
-			$query = 'SELECT c.*, s.id sectionid, s.title as sectiontitle,' .
+			$query = 'SELECT c.*, s.id as sectionid, s.title as sectiontitle,' .
 					' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(":", c.id, c.alias) ELSE c.id END as slug'.
 					' FROM #__categories AS c' .
 					' INNER JOIN #__sections AS s ON s.id = c.section' .
@@ -252,7 +259,7 @@ class ContentModelCategory extends JModel
 			$user	 =& JFactory::getUser();
 
 			// Get the page/component configuration
-			$params = &$mainframe->getPageParameters();
+			$params = &$mainframe->getParams();
 
 			$noauth	 = !$params->get('show_noauth');
 			$gid		 = (int) $user->get('aid', 0);
@@ -261,7 +268,7 @@ class ContentModelCategory extends JModel
 			$section	 = $this->_category->section;
 
 			// Get the parameters of the active menu item
-			$menu	=& JMenu::getInstance();
+			$menu	=& JSite::getMenu();
 			$item    = $menu->getActive();
 			$params	=& $menu->getParams($item->id);
 
@@ -322,8 +329,19 @@ class ContentModelCategory extends JModel
 			$limit		= JRequest::getVar('limit', 0, '', 'int');
 			$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
 
-			$query = $this->_buildQuery($state);
-			$this->_data[$state] = $this->_getList($query, $limitstart, $limit);
+			$query = $this->_buildQuery();
+			$Arows = $this->_getList($query, $limitstart, $limit);
+
+			// special handling required as Uncategorized content does not have a section / category id linkage
+			$i = $limitstart;
+			$rows = array();
+			foreach ($Arows as $row)
+			{
+				// check to determine if section or category has proper access rights
+				$rows[$i] = $row;
+				$i ++;
+			}
+			$this->_data[$state] = $rows;
 		}
 		return true;
 	}
@@ -332,7 +350,7 @@ class ContentModelCategory extends JModel
 	{
 		global $mainframe;
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		// If voting is turned on, get voting data as well for the content items
 		$voting	= ContentHelperQuery::buildVotingQuery($params);
@@ -341,9 +359,10 @@ class ContentModelCategory extends JModel
 		$where		= $this->_buildContentWhere($state);
 		$orderby	= $this->_buildContentOrderBy($state);
 
-		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
+		$query = 'SELECT cc.title AS category, a.id, a.title, a.title_alias, a.introtext, a.fulltext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
 			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.attribs, a.hits, a.images, a.urls, a.ordering, a.metakey, a.metadesc, a.access,' .
 			' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug,'.
+			' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug,'.
 			' CHAR_LENGTH( a.`fulltext` ) AS readmore, u.name AS author, u.usertype, g.name AS groups'.$voting['select'] .
 			' FROM #__content AS a' .
 			' LEFT JOIN #__categories AS cc ON a.catid = cc.id' .
@@ -360,7 +379,7 @@ class ContentModelCategory extends JModel
 	{
 		global $mainframe;
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 
 		$filter_order		= JRequest::getCmd('filter_order');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir');
@@ -412,15 +431,21 @@ class ContentModelCategory extends JModel
 		$now			= $jnow->toMySQL();
 
 		// Get the page/component configuration
-		$params = &$mainframe->getPageParameters();
+		$params = &$mainframe->getParams();
 		$noauth		= !$params->get('show_noauth');
 		$nullDate	= $this->_db->getNullDate();
 
-		$where = $noauth ? ' WHERE a.access <= '.(int) $gid . ' AND ' : ' WHERE ' ;
+        $where = ' WHERE 1';
+
+		// Does the user have access to view the items?
+		if ($noauth) {
+			$where .= ' AND a.access <= '.(int) $gid;
+		}
+
 		// First thing we need to do is assert that the articles are in the current category
 		if ($this->_id)
 		{
-			$where .= ' a.catid = '.(int) $this->_id;
+			$where .= ' AND a.catid = '.(int) $this->_id;
 		}
 
 		// Regular Published Content
@@ -466,19 +491,20 @@ class ContentModelCategory extends JModel
 			{
 				// clean filter variable
 				$filter = JString::strtolower($filter);
+				$filter	= $this->_db->Quote( '%'.$this->_db->getEscaped( $filter, true ).'%', false );
 
 				switch ($params->get('filter_type'))
 				{
 					case 'title' :
-						$where .= ' AND LOWER( a.title ) LIKE "%'.$this->_db->getEscaped($filter).'%"';
+						$where .= ' AND LOWER( a.title ) LIKE '.$filter;
 						break;
 
 					case 'author' :
-						$where .= ' AND ( ( LOWER( u.name ) LIKE "%'.$this->_db->getEscaped($filter).'%" ) OR ( LOWER( a.created_by_alias ) LIKE "%'.$this->_db->getEscaped($filter).'%" ) )';
+						$where .= ' AND ( ( LOWER( u.name ) LIKE '.$filter.' ) OR ( LOWER( a.created_by_alias ) LIKE '.$filter.' ) )';
 						break;
 
 					case 'hits' :
-						$where .= ' AND a.hits LIKE "%'.$this->_db->getEscaped($filter).'%"';
+						$where .= ' AND a.hits LIKE '.$filter;
 						break;
 				}
 			}

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version		$Id: factory.php 8529 2007-08-23 12:16:45Z jinx $
+ * @version		$Id: factory.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -20,6 +20,35 @@
  */
 class JFactory
 {
+	/**
+	 * Get a application object
+	 *
+	 * Returns a reference to the global {@link JApplication} object, only creating it
+	 * if it doesn't already exist.
+	 *
+	 * @access public
+	 * @param	mixed	$id 		A client identifier or name.
+	 * @param	array	$config 	An optional associative array of configuration settings.
+	 * @return object JApplication
+	 */
+	function &getApplication($id = null, $config = array(), $prefix='J')
+	{
+		static $instance;
+
+		if (!is_object($instance))
+		{
+			jimport( 'joomla.application.application' );
+
+			if (!$id) {
+				JError::raiseError(500, 'Application Instantiation Error');
+			}
+
+			$instance = JApplication::getInstance($id, $config, $prefix);
+		}
+
+		return $instance;
+	}
+
 	/**
 	 * Get a configuration object
 	 *
@@ -128,20 +157,20 @@ class JFactory
 	function &getUser($id = null)
 	{
 		jimport('joomla.user.user');
-		
-		if(is_null($id)) 
+
+		if(is_null($id))
 		{
 			$session  =& JFactory::getSession();
 			$instance =& $session->get('user');
 			if (!is_a($instance, 'JUser')) {
 				$instance =& JUser::getInstance();
 			}
-		} 
+		}
 		else
 		{
 			$instance =& JUser::getInstance($id);
-		} 
-		
+		}
+
 		return $instance;
 	}
 
@@ -259,14 +288,14 @@ class JFactory
 	{
 		static $instance;
 
-		if ( ! is_object($instance) ) { 
+		if ( ! is_object($instance) ) {
 			$instance = JFactory::_createMailer();
 		}
-		
+
 		// Create a copy of this object - do not return the original because it may be used several times
 		// PHP4 copies objects by value whereas PHP5 copies by reference
 		$copy	= (PHP_VERSION < 5) ? $instance : clone($instance);
-		
+
 		return $copy;
 	}
 
@@ -294,9 +323,8 @@ class JFactory
 				if (!is_null( $options['rssUrl'] ))
 				{
 					jimport ('simplepie.simplepie');
-					$simplepie = new SimplePie();
-					$simplepie->feed_url($options['rssUrl']);
-					$simplepie->cache_location(JPATH_BASE.DS.'cache');
+					$simplepie = new SimplePie($options['rssUrl']);
+					$simplepie->set_cache_location(JPATH_BASE.DS.'cache');
 					$simplepie->init();
 					$simplepie->handle_content_type();
 					if ($simplepie->data) {
@@ -412,7 +440,7 @@ class JFactory
 		//get the editor configuration setting
 		$conf =& JFactory::getConfig();
 		$handler =  $conf->getValue('config.session_handler', 'none');
-		
+
 		// config time is in minutes
 		$options['expire'] = ($conf->getValue('config.lifetime')) ? $conf->getValue('config.lifetime') * 60 : 900;
 
@@ -479,7 +507,7 @@ class JFactory
 		}
 
 		if ($db->getErrorNum() > 0) {
-			JError::raiseError('joomla.library:'.$db->getErrorNum(), 'JDatabase::getInstance: Could not connect to database <br/>' . $db->getErrorMsg() );
+			JError::raiseError(500 , 'JDatabase::getInstance: Could not connect to database <br/>' . 'joomla.library:'.$db->getErrorNum().' - '.$db->getErrorMsg() );
 		}
 
 		$db->debug( $debug );
@@ -495,7 +523,7 @@ class JFactory
 	 */
 	function &_createMailer()
 	{
-		jimport('joomla.utilities.mail');
+		jimport('joomla.mail.mail');
 
 		$conf	=& JFactory::getConfig();
 
@@ -587,7 +615,7 @@ class JFactory
 	 */
 	function &_createLanguage()
 	{
-		jimport('joomla.i18n.language');
+		jimport('joomla.language.language');
 
 		$conf	=& JFactory::getConfig();
 		$locale	= $conf->getValue('config.language');
@@ -607,7 +635,6 @@ class JFactory
 	function &_createDocument()
 	{
 		jimport('joomla.document.document');
-		jimport('joomla.environment.request');
 
 		$lang	=& JFactory::getLanguage();
 

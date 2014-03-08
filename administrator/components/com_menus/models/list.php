@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: list.php 8598 2007-08-28 08:44:08Z robs $
+ * @version		$Id: list.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -87,7 +86,7 @@ class MenusModelList extends JModel
 			$query = 'SELECT m.id' .
 					' FROM #__menu AS m' .
 					' WHERE menutype = '.$db->Quote($menutype) .
-					' AND LOWER( m.name ) LIKE '.$db->Quote('%'.$search.'%') .
+					' AND LOWER( m.name ) LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false ) .
 					$and;
 			$db->setQuery( $query );
 			$search_rows = $db->loadResultArray();
@@ -144,6 +143,7 @@ class MenusModelList extends JModel
 		$list = array_slice( $list, $this->_pagination->limitstart, $this->_pagination->limit );
 
 		$i = 0;
+		$query = array();
 		foreach ( $list as $mitem )
 		{
 			$edit = '';
@@ -163,6 +163,22 @@ class MenusModelList extends JModel
 
 				case 'component':
 					$list[$i]->descrip 	= JText::_('Component');
+					$query 			= parse_url($list[$i]->link);
+					$view = array();
+					if(isset($query['query'])) parse_str($query['query'], $view);
+					$list[$i]->view		= $list[$i]->com_name;
+					if (isset($view['view']))
+					{
+						$list[$i]->view	.= ' &raquo; '.JText::_(ucfirst($view['view']));
+					}
+					if (isset($view['layout']))
+					{
+						$list[$i]->view	.= ' / '.JText::_(ucfirst($view['layout']));
+					}
+					if (isset($view['task']) && !isset($view['view']))
+					{
+						$list[$i]->view	.= ' :: '.JText::_(ucfirst($view['task']));
+					}
 					break;
 
 				default:
@@ -324,24 +340,35 @@ class MenusModelList extends JModel
 		$db		=& $this->getDBO();
 		$nd		= $db->getNullDate();
 		$state	= -2;
+        $row =& $this->getTable();
+        $default = 0;
 
 		// Add all children to the list
 		foreach ($items as $id)
 		{
-			$this->_addChildren($id, $items);
+            //Check if it's the default item
+            $row->load( $id );
+            if ($row->home != 1) {
+                $this->_addChildren($id, $items);
+            } else {
+                unset($items[$default]);
+                JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('You cannot trash the default menu item'));
+            }
+            $default++;
 		}
-
-		// Sent menu items to the trash
-		JArrayHelper::toInteger($items, array(0));
-		$where = ' WHERE (id = ' . implode( ' OR id = ', $items ) . ') AND home = 0';
-		$query = 'UPDATE #__menu' .
-				' SET published = '.(int) $state.', parent = 0, ordering = 0, checked_out = 0, checked_out_time = '.$db->Quote($nd) .
-				$where;
-		$db->setQuery( $query );
-		if (!$db->query()) {
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
+        if (count($items) > 0) {
+            // Sent menu items to the trash
+            JArrayHelper::toInteger($items, array(0));
+            $where = ' WHERE (id = ' . implode( ' OR id = ', $items ) . ') AND home = 0';
+            $query = 'UPDATE #__menu' .
+                    ' SET published = '.(int) $state.', parent = 0, ordering = 0, checked_out = 0, checked_out_time = '.$db->Quote($nd) .
+                    $where;
+            $db->setQuery( $query );
+            if (!$db->query()) {
+                $this->setError( $db->getErrorMsg() );
+                return false;
+            }
+        }
 
 		// Clear the content cache
 		// TODO: Is this necessary?
@@ -446,7 +473,7 @@ class MenusModelList extends JModel
 						return false;
 					}
 				} else {
-					JError::raiseWarning( 'SOME_ERROR_CODE', 'You cannot unpublish the default menu item');
+					JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('You cannot unpublish the default menu item'));
 					return false;
 				}
 			}

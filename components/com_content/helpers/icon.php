@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: icon.php 8502 2007-08-22 05:55:34Z jinx $
+ * @version		$Id: icon.php 9985 2008-02-05 16:44:18Z ian $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -27,14 +27,10 @@ class JHTMLIcon
 {
 	function create($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
-		$user =& JFactory::getUser();
-
 		$url = 'index.php?task=new&id=0&sectionid='.$article->sectionid;
 
 		if ($params->get('show_icons')) {
-			$text = JHTML::_('image.site', 'new.png', '/images/M_images/', NULL, NULL, JText::_('New'), JText::_('New'). $article->id );
+			$text = JHTML::_('image.site', 'new.png', '/images/M_images/', NULL, NULL, JText::_('New') );
 		} else {
 			$text = JText::_('New').'&nbsp;';
 		}
@@ -45,10 +41,6 @@ class JHTMLIcon
 
 	function pdf($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
-		$user =& JFactory::getUser();
-
 		$url  = 'index.php?view=article;';
 		$url .=  @$article->catslug ? '&catid='.$article->catslug : '';
 		$url .= '&id='.$article->slug.'&format=pdf';
@@ -57,7 +49,7 @@ class JHTMLIcon
 
 		// checks template image directory for image, if non found default are loaded
 		if ($params->get('show_icons')) {
-			$text = JHTML::_('image.site', 'pdf_button.png', '/images/M_images/', NULL, NULL, JText::_('PDF'), JText::_('PDF'));
+			$text = JHTML::_('image.site', 'pdf_button.png', '/images/M_images/', NULL, NULL, JText::_('PDF'));
 		} else {
 			$text = JText::_('PDF').'&nbsp;';
 		}
@@ -71,17 +63,16 @@ class JHTMLIcon
 
 	function email($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
-		$user =& JFactory::getUser();
-
-		$link	= JURI::base().JRoute::_("index.php?view=article&id=".$article->slug, false);
+		//$link	= JURI::base()."index.php?view=article&id=".$article->slug;
+		$uri     =& JURI::getInstance();
+		$base  = $uri->toString( array('scheme', 'host', 'port'));
+		$link    = $base.JRoute::_( "index.php?view=article&id=".$article->slug, false );
 		$url	= 'index.php?option=com_mailto&tmpl=component&link='.base64_encode( $link );
 
 		$status = 'width=400,height=300,menubar=yes,resizable=yes';
 
 		if ($params->get('show_icons')) 	{
-			$text = JHTML::_('image.site', 'emailButton.png', '/images/M_images/', NULL, NULL, JText::_('Email'), JText::_('Email'));
+			$text = JHTML::_('image.site', 'emailButton.png', '/images/M_images/', NULL, NULL, JText::_('Email'));
 		} else {
 			$text = '&nbsp;'.JText::_('Email');
 		}
@@ -95,8 +86,6 @@ class JHTMLIcon
 
 	function edit($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
 		$user =& JFactory::getUser();
 
 		if ($params->get('popup')) {
@@ -113,8 +102,9 @@ class JHTMLIcon
 
 		JHTML::_('behavior.tooltip');
 
-		$url = 'index.php?view=article&id='.$article->id.'&task=edit&Returnid='.$Itemid;
-		$text = JHTML::_('image.site', 'edit.png', '/images/M_images/', NULL, NULL, JText::_('Edit'), JText::_('Edit'). $article->id );
+		$url = 'index.php?view=article&id='.$article->slug.'&task=edit';
+		$icon = $article->state ? 'edit.png' : 'edit_unpublished.png';
+		$text = JHTML::_('image.site', $icon, '/images/M_images/', NULL, NULL, JText::_('Edit'));
 
 		if ($article->state == 0) {
 			$overlib = JText::_('Unpublished');
@@ -140,10 +130,6 @@ class JHTMLIcon
 
 	function print_popup($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
-		$user =& JFactory::getUser();
-
 		$url  = 'index.php?view=article';
 		$url .=  @$article->catslug ? '&catid='.$article->catslug : '';
 		$url .= '&id='.$article->slug.'&tmpl=component&print=1&page='.@ $request->limitstart;
@@ -152,7 +138,7 @@ class JHTMLIcon
 
 		// checks template image directory for image, if non found default are loaded
 		if ( $params->get( 'show_icons' ) ) {
-			$text = JHTML::_('image.site',  'printButton.png', '/images/M_images/', NULL, NULL, JText::_( 'Print' ), JText::_( 'Print' ) );
+			$text = JHTML::_('image.site',  'printButton.png', '/images/M_images/', NULL, NULL, JText::_( 'Print' ) );
 		} else {
 			$text = JText::_( 'ICON_SEP' ) .'&nbsp;'. JText::_( 'Print' ) .'&nbsp;'. JText::_( 'ICON_SEP' );
 		}
@@ -165,13 +151,9 @@ class JHTMLIcon
 
 	function print_screen($article, $params, $access, $attribs = array())
 	{
-		global $Itemid;
-
-		$user =& JFactory::getUser();
-
 		// checks template image directory for image, if non found default are loaded
 		if ( $params->get( 'show_icons' ) ) {
-			$text = JHTML::_('image.site',  'printButton.png', '/images/M_images/', NULL, NULL, JText::_( 'Print' ), JText::_( 'Print' ) );
+			$text = JHTML::_('image.site',  'printButton.png', '/images/M_images/', NULL, NULL, JText::_( 'Print' ) );
 		} else {
 			$text = JText::_( 'ICON_SEP' ) .'&nbsp;'. JText::_( 'Print' ) .'&nbsp;'. JText::_( 'ICON_SEP' );
 		}
@@ -179,4 +161,3 @@ class JHTMLIcon
 	}
 
 }
-?>

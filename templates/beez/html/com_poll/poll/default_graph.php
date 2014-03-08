@@ -1,9 +1,5 @@
-<?php
-/**
- * @version $Id: default_graph.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
+<?php // @version $Id: default_graph.php 8796 2007-09-09 15:46:34Z jinx $
 defined('_JEXEC') or die('Restricted access');
-
 ?>
 
 <dl class="poll">

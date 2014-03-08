@@ -1,4 +1,6 @@
-<?php defined('_JEXEC') or die; ?>
+<?php // @version $Id: complete.php  $
+defined('_JEXEC') or die('Restricted access');
+?>
 
 <div class="componentheading">
 	<?php echo JText::_('Reset your Password'); ?>
@@ -29,6 +31,6 @@
 		</tr>
 	</table>
 
-	<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
 	<button type="submit" class="validate"><?php echo JText::_('Submit'); ?></button>
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

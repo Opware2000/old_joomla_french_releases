@@ -1,10 +1,18 @@
-<?php /** $Id: default.php 8497 2007-08-21 19:05:27Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
+<?php
+/**
+ * $Id: default.php 9934 2008-01-13 22:40:54Z ircmaxell $
+ */
+defined( '_JEXEC' ) or die();
+
+$cparams =& JComponentHelper::getParams('com_media');
+?>
+
 <?php if ( $this->params->get( 'show_page_title' ) ) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 <?php if ($this->category->title) :
-	echo $this->params->get('page_title').' - '.$this->category->title;
+	echo $this->escape($this->params->get('page_title')).' - '.$this->escape($this->category->title);
 else :
-	echo $this->params->get('page_title');
+	echo $this->escape($this->params->get('page_title'));
 endif; ?>
 </div>
 <?php endif; ?>
@@ -12,9 +20,9 @@ endif; ?>
 <?php if ($this->category->image || $this->category->description) : ?>
 	<div class="contentdescription<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 	<?php if ($this->params->get('image') != -1 && $this->params->get('image') != '') : ?>
-		<img src="images/stories/<?php echo $this->params->get('image'); ?>" align="<?php echo $this->params->get('image_align'); ?>" hspace="6" alt="<?php echo JText::_( 'Contacts' ); ?>" />
+		<img src="<?php echo $this->baseurl .'/'. $cparams->get('image_path') . '/'. $this->params->get('image'); ?>" align="<?php echo $this->params->get('image_align'); ?>" hspace="6" alt="<?php echo JText::_( 'Contacts' ); ?>" />
 	<?php elseif ($this->category->image) : ?>
-		<img src="images/stories/<?php echo $this->category->image; ?>" align="<?php echo $this->category->image_position; ?>" hspace="6" alt="<?php echo JText::_( 'Contacts' ); ?>" />
+		<img src="<?php echo $this->baseurl .'/'. $cparams->get('image_path') . '/'. $this->category->image; ?>" align="<?php echo $this->category->image_position; ?>" hspace="6" alt="<?php echo JText::_( 'Contacts' ); ?>" />
 	<?php endif; ?>
 	<?php echo $this->category->description; ?>
 	</div>

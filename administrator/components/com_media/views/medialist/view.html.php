@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
+* @version		$Id: view.html.php 9884 2008-01-05 16:59:53Z ircmaxell $
 * @package		Joomla
 * @subpackage	Media
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -43,6 +43,7 @@ class MediaViewMediaList extends JView
 
 		$document->addScriptDeclaration("
 		window.addEvent('domready', function() {
+			window.top.document.updateUploader();
 			$$('a.img-preview').each(function(el) {
 				el.addEvent('click', function(e) {
 					new Event(e).stop();
@@ -51,8 +52,7 @@ class MediaViewMediaList extends JView
 			});
 		});");
 
-		$base = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-		$this->assign('baseURL', $base);
+		$this->assign('baseURL', JURI::root());
 		$this->assignRef('images', $this->get('images'));
 		$this->assignRef('documents', $this->get('documents'));
 		$this->assignRef('folders', $this->get('folders'));

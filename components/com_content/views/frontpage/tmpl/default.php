@@ -2,27 +2,14 @@
 defined('_JEXEC') or die('Restricted access'); ?>
 <?php if ($this->params->get('show_page_title')) : ?>
 <div class="componentheading<?php echo $this->params->get('pageclass_sfx') ?>">
-	<?php echo $this->params->get('page_title'); ?>
+	<?php echo $this->escape($this->params->get('page_title')); ?>
 </div>
 <?php endif; ?>
 <table class="blog<?php echo $this->params->get('pageclass_sfx') ?>" cellpadding="0" cellspacing="0">
-<?php if (isset($this->frontpage->description)) : ?>
-<tr>
-	<td valign="top">
-	<?php if ($this->params->get('show_description_image') && $this->frontpage->description->image) : ?>
-		<img src="<?php echo $this->frontpage->description->link ?>" align="<?php echo $this->frontpage->description->image_position ?>" hspace="6" alt="" />
-	<?php endif; ?>
-	<?php if ($this->params->get('show_description') && $this->frontpage->description->text) : ?>
-		<?php echo $this->frontpage->description->text; ?>
-	<?php endif; ?>
-	<br/><br/>
-	</td>
-</tr>
-<?php endif; ?>
 <?php if ($this->params->def('num_leading_articles', 1)) : ?>
 <tr>
 	<td valign="top">
-	<?php for ($i = $this->pagination->limitstart; $i < $this->params->get('num_leading_articles'); $i++) : ?>
+	<?php for ($i = $this->pagination->limitstart; $i < ($this->pagination->limitstart + $this->params->get('num_leading_articles')); $i++) : ?>
 		<?php if ($i >= $this->total) : break; endif; ?>
 		<div>
 		<?php
@@ -36,9 +23,9 @@ defined('_JEXEC') or die('Restricted access'); ?>
 <?php else : $i = $this->pagination->limitstart; endif; ?>
 
 <?php
-$numIntroArticles = $this->total - $this->params->get('num_leading_articles', 4); 
-$numIntroArticles = $numIntroArticles < $this->params->get('num_intro_articles', 4) ? $numIntroArticles : $this->params->get('num_intro_articles', 4);
-if ($numIntroArticles && ($i < $this->total)) : ?>
+$startIntroArticles = $this->pagination->limitstart + $this->params->get('num_leading_articles');
+$numIntroArticles = $startIntroArticles + $this->params->get('num_intro_articles', 4);
+if (($numIntroArticles != $startIntroArticles) && ($i < $this->total)) : ?>
 <tr>
 	<td valign="top">
 		<table width="100%"  cellpadding="0" cellspacing="0">
@@ -47,16 +34,25 @@ if ($numIntroArticles && ($i < $this->total)) : ?>
 			$divider = '';
 			for ($z = 0; $z < $this->params->def('num_columns', 2); $z ++) :
 				if ($z > 0) : $divider = " column_separator"; endif; ?>
+				<?php
+				    $rows = (int) ($this->params->get('num_intro_articles', 4) / $this->params->get('num_columns'));
+				    $cols = ($this->params->get('num_intro_articles', 4) % $this->params->get('num_columns'));
+				?>
 				<td valign="top" width="<?php echo intval(100 / $this->params->get('num_columns')) ?>%" class="article_column<?php echo $divider ?>">
-				<?php for ($y = 0; $y < $numIntroArticles / $this->params->get('num_columns'); $y ++) :
-					if ($i < $this->total) :
-						$this->item =& $this->getItem($i, $this->params);
+				<?php 
+				$loop = (($z < $cols)?1:0) + $rows;
+				
+				for ($y = 0; $y < $loop; $y ++) :
+					$target = $i + ($y * $this->params->get('num_columns')) + $z;
+					if ($target < $this->total && $target < ($numIntroArticles)) :
+						$this->item =& $this->getItem($target, $this->params);
 						echo $this->loadTemplate('item');
-						$i ++;
 					endif;
-				endfor; ?>
+				endfor; 
+				?>
 				</td>
 		<?php endfor; ?>
+		<?php $i = $i + $this->params->get('num_intro_articles') ; ?>
 		</tr>
 		</table>
 	</td>
@@ -67,7 +63,7 @@ if ($numIntroArticles && ($i < $this->total)) : ?>
 	<td valign="top">
 		<div class="blog_more<?php echo $this->params->get('pageclass_sfx') ?>">
 			<?php
-				$this->links = array_splice($this->items, $i);
+				$this->links = array_splice($this->items, $i - $this->pagination->limitstart);
 				echo $this->loadTemplate('links');
 			?>
 		</div>

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: utility.php 8176 2007-07-23 04:26:14Z eddieajau $
+ * @version		$Id: utility.php 9944 2008-01-14 21:10:22Z eddieajau $
  * @package		Joomla.Framework
  * @subpackage	Utilities
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -21,7 +21,7 @@ defined('JPATH_BASE') or die();
  * @static
  * @author		Johan Janssens <johan.janssens@joomla.org>
  * @package 	Joomla.Framework
- * @subpackage		Utilities
+ * @subpackage	Utilities
  * @since	1.5
  */
 class JUtility
@@ -44,8 +44,6 @@ class JUtility
   	 */
 	function sendMail($from, $fromname, $recipient, $subject, $body, $mode=0, $cc=null, $bcc=null, $attachment=null, $replyto=null, $replytoname=null )
 	{
-		jimport('joomla.utilities.mail');
-
 	 	// Get a JMail instance
 		$mail =& JFactory::getMailer();
 
@@ -94,8 +92,6 @@ class JUtility
 		$message = sprintf ( JText::_( 'MAIL_MSG_ADMIN' ), $adminName, $type, $title, $author, $url, $url, 'administrator', $type);
 		$message .= JText::_( 'MAIL_MSG') ."\n";
 
-		jimport('joomla.utilities.mail');
-
 	 	// Get a JMail instance
 		$mail =& JFactory::getMailer();
 		$mail->addRecipient($adminEmail);
@@ -114,7 +110,7 @@ class JUtility
 	function getHash( $seed )
 	{
 		$conf =& JFactory::getConfig();
-		return md5( $conf->getValue('config.secret') . md5( $seed ) );
+		return md5( $conf->getValue('config.secret') .  $seed  );
 	}
 
 	/**
@@ -126,8 +122,10 @@ class JUtility
 	 */
 	function getToken($forceNew = false)
 	{
-		$session =& JFactory::getSession();
-		return $session->getToken($forceNew);
+		$user		= &JFactory::getUser();
+		$session	= &JFactory::getSession();
+		$hash		= JUtility::getHash( $user->get( 'id', 0 ).$session->getToken( $forceNew ) );
+		return $hash;
 	}
 
 	/**
@@ -144,7 +142,7 @@ class JUtility
 		$retarray	= array();
 
 		// Lets grab all the key/value pairs using a regular expression
-		preg_match_all( '/([\w]+)[\s]?=[\s]?"([^"]*)"/i', $string, $attr );
+		preg_match_all( '/([\w:-]+)[\s]?=[\s]?"([^"]*)"/i', $string, $attr );
 
 		if (is_array($attr))
 		{

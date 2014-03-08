@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: archive.php 8468 2007-08-20 10:42:01Z eddieajau $
+ * @version		$Id: archive.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -53,10 +53,10 @@ class JArchive
 					$result = $adapter->extract($archivename, $extractdir);
 				}
 				break;
-			case 'tgz';
+			case 'tgz'  :
 				$untar = true;	// This format is a tarball gzip'd
-			case 'gz';	// This may just be an individual file (e.g. sql script)
-			case 'gzip';
+			case 'gz'   :	// This may just be an individual file (e.g. sql script)
+			case 'gzip' :
 				$adapter =& JArchive::getAdapter('gzip');
 				if ($adapter)
 				{
@@ -85,10 +85,10 @@ class JArchive
 					@unlink($tmpfname);
 				}
 				break;
-			case 'tbz2';
+			case 'tbz2' :
 				$untar = true; // This format is a tarball bzip2'd
-			case 'bz2';	// This may just be an individual file (e.g. sql script)
-			case 'bzip2';
+			case 'bz2'  :	// This may just be an individual file (e.g. sql script)
+			case 'bzip2':
 				$adapter =& JArchive::getAdapter('bzip2');
 				if ($adapter)
 				{
@@ -140,13 +140,18 @@ class JArchive
 		if (!isset($adapters[$type]))
 		{
 			// Try to load the adapter object
-			jimport('joomla.filesystem.archive.'.strtolower($type));
 			$class = 'JArchive'.ucfirst($type);
+
 			if (!class_exists($class))
 			{
-				$false = false;
-				return $false;
+				$path = dirname(__FILE__).DS.'archive'.DS.strtolower($type).'.php';
+				if (file_exists($path)) {
+					require_once($path);
+				} else {
+					JError::raiseError(500,JText::_('Unable to load archive'));
+				}
 			}
+
 			$adapters[$type] = new $class();
 		}
 		return $adapters[$type];
@@ -163,7 +168,7 @@ class JArchive
 	 */
 	function create($archive, $files, $compress = 'tar', $addPath = '', $removePath = '', $autoExt = false, $cleanUp = false)
 	{
-		jimport( 'archive.tar' );
+		jimport( 'pear.archive_tar.Archive_Tar' );
 
 		if (is_string($files)) {
 			$files = array ($files);

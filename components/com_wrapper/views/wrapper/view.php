@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: view.php 8171 2007-07-23 00:28:29Z eddieajau $
+* @version		$Id: view.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Wrapper
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -25,12 +25,6 @@ class WrapperViewWrapper extends JView
 {
 	function display( $tpl = null )
 	{
-		// Get the parameters of the active menu item
-		$menus = &JMenu::getInstance();
-		$menu  = $menus->getActive();
-
-		$this->params->def( 'page_title', $menu->name );
-
 		// auto height control
 		if ( $this->params->def( 'height_auto' ) ) {
 			$this->wrapper->load = 'onload="iFrameHeight()"';

@@ -1,9 +1,9 @@
 <?php
 /**
-* version $Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
+* version $Id: view.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Newsfeeds
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 *
 * Joomla! is free software. This version may have been modified pursuant
@@ -44,9 +44,9 @@ class NewsfeedsViewNewsfeed extends JView
 		$document =& JFactory::getDocument();
 
 		// Get the current menu item
-		$menus	= &JMenu::getInstance();
+		$menus	= &JSite::getMenu();
 		$menu	= $menus->getActive();
-		$params	= &$mainframe->getPageParameters();
+		$params	= &$mainframe->getParams();
 
 		//get the newsfeed
 		$newsfeed =& $this->get('data');
@@ -66,15 +66,17 @@ class NewsfeedsViewNewsfeed extends JView
 		$lists = array();
 
 		// channel header and link
-		$newsfeed->channel['title'] = $rssDoc->get_feed_title();
-		$newsfeed->channel['link'] = $rssDoc->get_feed_link();
-		$newsfeed->channel['description'] = $rssDoc->get_feed_description();
+		$newsfeed->channel['title'] 	  = $rssDoc->get_title();
+		$newsfeed->channel['link'] 		  = $rssDoc->get_link();
+		$newsfeed->channel['description'] = $rssDoc->get_description();
+		$newsfeed->channel['language'] 	  = $rssDoc->get_language();
 
 		// channel image if exists
-		if ($rssDoc->get_image_exist()) {
-			$newsfeed->image['url'] = $rssDoc->get_image_url();
-			$newsfeed->image['title'] = $rssDoc->get_image_title();
-		}
+		$newsfeed->image['url']    = $rssDoc->get_image_url();
+		$newsfeed->image['title']  = $rssDoc->get_image_title();
+		$newsfeed->image['link']   = $rssDoc->get_image_link();
+		$newsfeed->image['height'] = $rssDoc->get_image_height();
+		$newsfeed->image['width']  = $rssDoc->get_image_width();
 
 		// items
 		$newsfeed->items = $rssDoc->get_items();
@@ -82,27 +84,15 @@ class NewsfeedsViewNewsfeed extends JView
 		// feed elements
 		$newsfeed->items = array_slice($newsfeed->items, 0, $newsfeed->numarticles);
 
-		// Adds parameter handling
-		$params->def( 'page_title', $menu->name );
-
 		// Set page title per category
 		$document->setTitle( $newsfeed->name . ' - '. $params->get( 'page_title'));
 
-
 		//set breadcrumbs
-		if($menu->query['view'] != 'newsfeed')
-		{
-			switch ($menu->query['view'])
-			{
-				case 'categories':
-					$pathway->addItem($newsfeed->category, 'index.php?view=category&id='.$newsfeed->catslug);
-					$pathway->addItem($newsfeed->name, '');
-					break;
-				case 'category':
-					$pathway->addItem($newsfeed->name, '');
-					break;
-			}
+		$viewname	= JRequest::getString('view');
+		if ( $viewname == 'categories' ) {
+			$pathway->addItem($newsfeed->category, 'index.php?view=category&id='.$newsfeed->catslug);
 		}
+		$pathway->addItem($newsfeed->name, '');
 
 		$this->assignRef('params'  , $params   );
 		$this->assignRef('newsfeed', $newsfeed );

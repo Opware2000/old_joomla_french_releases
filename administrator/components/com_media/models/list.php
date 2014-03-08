@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblink.php 8117 2007-07-20 13:37:22Z friesengeist $
+ * @version		$Id: list.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Media
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -22,7 +22,6 @@ jimport('joomla.filesystem.file');
 /**
  * Media Component List Model
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Media
  * @since 1.5

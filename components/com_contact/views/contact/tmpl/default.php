@@ -1,10 +1,18 @@
-<?php /** $Id: default.php 8448 2007-08-19 01:22:48Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
+<?php
+/**
+ * $Id: default.php 9718 2007-12-20 22:35:36Z eddieajau $
+ */
+defined( '_JEXEC' ) or die();
+
+$cparams = JComponentHelper::getParams ('com_media');
+?>
 <?php if ( $this->params->get( 'show_page_title' ) && !$this->contact->params->get( 'popup' ) ) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 	<?php echo $this->params->get( 'page_title' ); ?>
 </div>
 <?php endif; ?>
-<table width="100%" cellpadding="0" cellspacing="0" border="0" class="contentpane<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+<div id="component-contact">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="contentpaneopen<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 <?php if ( $this->params->get( 'show_contact_list' ) && count( $this->contacts ) > 1) : ?>
 <tr>
 	<td colspan="2" align="center">
@@ -41,7 +49,7 @@
 			<td rowspan="2" align="right" valign="top">
 			<?php if ( $this->contact->image && $this->contact->params->get( 'show_image' ) ) : ?>
 				<div style="float: right;">
-					<img src="images/stories/<?php echo $this->contact->image; ?>" align="middle" alt="<?php echo JText::_( 'Contact' ); ?>" />
+					<?php echo JHTML::_('image', $cparams->get('image_path') . '/'.$this->contact->image, JText::_( 'Contact' ), array('align' => 'middle')); ?>
 				</div>
 			<?php endif; ?>
 			</td>
@@ -60,8 +68,7 @@
 	<td colspan="2">
 	<?php echo JText::_( 'Download information as a' );?>
 		<a href="index.php?option=com_contact&amp;task=vcard&amp;contact_id=<?php echo $this->contact->id; ?>&amp;format=raw&amp;tmpl=component">
-		<?php echo JText::_( 'VCard' );?>
-		</a>
+			<?php echo JText::_( 'VCard' );?></a>
 	</td>
 </tr>
 <?php endif;
@@ -69,3 +76,4 @@ if ( $this->contact->params->get('show_email_form') && ($this->contact->email_to
 	echo $this->loadTemplate('form');
 ?>
 </table>
+</div>

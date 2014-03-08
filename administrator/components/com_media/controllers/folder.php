@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: weblink.php 7873 2007-07-05 22:44:21Z friesengeist $
+ * @version		$Id: folder.php 9827 2008-01-03 00:58:16Z eddieajau $
  * @package		Joomla
  * @subpackage	Media
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -55,7 +55,7 @@ class MediaControllerFolder extends MediaController
 			foreach ($paths as $path)
 			{
 				if ($path !== JFilterInput::clean($path, 'path')) {
-					JError::raiseWarning(100, JText::_('Unable to delete:').htmlspecialchars($path).' '.JText::_('WARNFILENAME'));
+					JError::raiseWarning(100, JText::_('Unable to delete:').htmlspecialchars($path, ENT_COMPAT, 'UTF-8').' '.JText::_('WARNFILENAME'));
 					continue;
 				}
 
@@ -95,6 +95,9 @@ class MediaControllerFolder extends MediaController
 	function create()
 	{
 		global $mainframe;
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');

@@ -1,10 +1,8 @@
-<?php
-/**
- * @version $Id: default.php 8637 2007-08-30 16:25:06Z friesengeist $
- */
-
+<?php // @version $Id: default.php 9830 2008-01-03 01:09:39Z eddieajau $
 defined('_JEXEC') or die('Restricted access');
+?>
 
+<?php
 $return = base64_encode(base64_decode($return).'#content');
 
 if ($type == 'logout') : ?>
@@ -22,7 +20,7 @@ if ($type == 'logout') : ?>
 	<input type="hidden" name="return" value="<?php echo $return; ?>" />
 </form>
 <?php else : ?>
-<form action="index.php" method="post" name="login" class="login">
+<form action="<?php echo JRoute::_( 'index.php', true, $params->get('usesecure')); ?>" method="post" name="login" class="form-login">
 	<?php if ($params->get('pretext')) : ?>
 	<p>
 		<?php echo $params->get('pretext'); ?>
@@ -44,28 +42,25 @@ if ($type == 'logout') : ?>
 	<input type="checkbox" name="remember" id="mod_login_remember" class="checkbox" value="yes" alt="<?php echo JText::_('Remember me'); ?>" />
 	<input type="submit" name="Submit" class="button" value="<?php echo JText::_('BUTTON_LOGIN'); ?>" />
 	<p>
-		<a href="<?php echo JRoute::_('index.php?option=com_user&view=reset'); ?>#content">
-			<?php echo JText::_('FORGOT_YOUR_PASSWORD'); ?>
-		</a>
+		<a href="<?php echo JRoute::_('index.php?option=com_user&view=reset#content'); ?>">
+			<?php echo JText::_('FORGOT_YOUR_PASSWORD'); ?></a>
 	</p>
 	<p>
-		<a href="<?php echo JRoute::_('index.php?option=com_user&view=remind'); ?>#content">
-			<?php echo JText::_('FORGOT_YOUR_USERNAME'); ?>
-		</a>
+		<a href="<?php echo JRoute::_('index.php?option=com_user&view=remind#content'); ?>">
+			<?php echo JText::_('FORGOT_YOUR_USERNAME'); ?></a>
 	</p>
 	<?php $usersConfig =& JComponentHelper::getParams('com_users');
 	if ($usersConfig->get('allowUserRegistration')) : ?>
 	<p>
 		<?php echo JText::_('No account yet?'); ?>
-		<a href="<?php echo JRoute::_('index.php?option=com_user&amp;task=register'); ?>#content">
-			<?php echo JText::_('Register'); ?>
-		</a>
+		<a href="<?php echo JRoute::_('index.php?option=com_user&task=register#content'); ?>">
+			<?php echo JText::_('Register'); ?></a>
 	</p>
 	<?php endif;
 	echo $params->get('posttext'); ?>
 	<input type="hidden" name="option" value="com_user" />
 	<input type="hidden" name="task" value="login" />
 	<input type="hidden" name="return" value="<?php echo $return; ?>" />
-	<input type="hidden" name="<?php echo JUtility::getToken(); ?>" value="1" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>
 <?php endif;

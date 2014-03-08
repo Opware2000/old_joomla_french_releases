@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: mod_latest.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: mod_latest.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -82,8 +82,8 @@ if (count( $rows ))
 			}
 			else
 			{
-				$linkA 	= 'index.php?option=com_users&task=edit&cid[]='. $row->created_by;
-				$author = '<a href="'. $linkA .'" title="'. JText::_( 'Edit User' ) .'">'. htmlspecialchars( $row->name, ENT_QUOTES ) .'</a>';
+				$linkA 	= 'index.php?option=com_users&amp;task=edit&amp;cid[]='. $row->created_by;
+				$author = '<a href="'. $linkA .'" title="'. JText::_( 'Edit User' ) .'">'. htmlspecialchars( $row->name, ENT_QUOTES, 'UTF-8' ) .'</a>';
 			}
 		}
 		else
@@ -94,14 +94,14 @@ if (count( $rows ))
 			}
 			else
 			{
-				$author = htmlspecialchars( $row->name, ENT_QUOTES );
+				$author = htmlspecialchars( $row->name, ENT_QUOTES, 'UTF-8' );
 			}
 		}
 		?>
 		<tr>
 			<td>
 				<a href="<?php echo $link; ?>">
-					<?php echo htmlspecialchars($row->title, ENT_QUOTES);?></a>
+					<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');?></a>
 			</td>
 			<td>
 				<?php echo $row->$dateProperty;?>

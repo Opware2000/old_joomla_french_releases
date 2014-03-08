@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.contact.html.php 8577 2007-08-26 22:45:22Z eddieajau $
+* @version		$Id: admin.contact.html.php 9809 2008-01-03 00:38:55Z eddieajau $
 * @package		Joomla
 * @subpackage	Contact
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -38,7 +38,7 @@ class HTML_contact
 				<?php echo JText::_( 'Filter' ); ?>:
 				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_catid').value='0';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 				<?php
@@ -60,9 +60,6 @@ class HTML_contact
 					</th>
 					<th class="title">
 						<?php echo JHTML::_('grid.sort',   'Name', 'cd.name', @$lists['order_Dir'], @$lists['order'] ); ?>
-					</th>
-					<th width="10%" class="title" nowrap="nowrap">
-						<?php echo JHTML::_('grid.sort',   'Alias', 'cd.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="5%" class="title" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Published', 'cd.published', @$lists['order_Dir'], @$lists['order'] ); ?>
@@ -104,7 +101,7 @@ class HTML_contact
 				$access 	= JHTML::_('grid.access',   $row, $i );
 				$published 	= JHTML::_('grid.published', $row, $i );
 
-				$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&section=com_contact_details&task=editA&cid[]='. $row->catid );
+				$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&section=com_contact_details&task=edit&type=other&cid[]='. $row->catid );
 				$row->user_link	= JRoute::_( 'index.php?option=com_users&task=editA&cid[]='. $row->user_id );
 				?>
 				<tr class="<?php echo "row$k"; ?>">
@@ -120,14 +117,12 @@ class HTML_contact
 						echo $row->name;
 					else :
 						?>
-						<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Contact' ); ?>">
-							<?php echo $row->name; ?></a>
+						<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Contact' );?>::<?php echo $row->name; ?>">
+						<a href="<?php echo $link; ?>">
+							<?php echo $row->name; ?></a> </span>
 						<?php
 					endif;
 					?>
-					</td>
-					<td>
-						<?php echo $row->alias;?>
 					</td>
 					<td align="center">
 						<?php echo $published;?>
@@ -164,11 +159,11 @@ class HTML_contact
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $lists['order_Dir']; ?>" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
-
 
 	function editContact( &$row, &$lists, $option, &$params ) {
 
@@ -182,8 +177,8 @@ class HTML_contact
 		jimport('joomla.html.pane');
 		$pane =& JPane::getInstance('sliders');
 
-		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'misc' );
+		$cparams = JComponentHelper::getParams ('com_media');
 		?>
 		<script language="javascript" type="text/javascript">
 		<!--
@@ -208,7 +203,7 @@ class HTML_contact
 
 		<form action="index.php" method="post" name="adminForm">
 
-		<div class="col60">
+		<div class="col width-60">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Details' ); ?></legend>
 
@@ -438,7 +433,7 @@ class HTML_contact
 					<td colspan="2">
 						<script language="javascript" type="text/javascript">
 						if (document.forms.adminForm.image.options.value!=''){
-							jsimg='../images/stories/' + getSelectedValue( 'adminForm', 'image' );
+							jsimg='../<?echo $cparams->get('image_path'); ?>/' + getSelectedValue( 'adminForm', 'image' );
 						} else {
 							jsimg='../images/M_images/blank.png';
 						}
@@ -450,7 +445,7 @@ class HTML_contact
 			</fieldset>
 		</div>
 
-		<div class="col40">
+		<div class="col width-40">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_( 'Parameters' ); ?></legend>
 
@@ -474,8 +469,8 @@ class HTML_contact
 		<input type="hidden" name="id" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="cid[]" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="task" value="" />
+		<?php echo JHTML::_( 'form.token' ); ?>
 		</form>
 		<?php
 	}
 }
-?>

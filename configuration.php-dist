@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		$Id: configuration.php-dist 8290 2007-08-01 14:03:11Z jinx $
+* @version		$Id: configuration.php-dist 9991 2008-02-05 22:13:22Z ircmaxell $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software and parts of it may contain or be derived from the
 * GNU General Public License or other free or open source software licenses.
@@ -11,7 +11,7 @@
 * -------------------------------------------------------------------------
 * THIS SHOULD ONLY BE USED AS A LAST RESORT WHEN THE WEB INSTALLER FAILS
 *
-* If you are installing Joomla manually i.e. not using the web installer
+* If you are installing Joomla! manually i.e. not using the web browser installer
 * then rename this file to configuration.php e.g.
 *
 * UNIX -> mv configuration.php-dist configuration.php
@@ -50,7 +50,6 @@ class JConfig {
 	/* Server Settings */
 	var $secret = 'FBVtggIk5lAzEU9H'; 		//Change this to something more secure
 	var $gzip = '0';
-	var $lifetime = '900';					// Session time
 	var $error_reporting = '-1';
 	var $helpurl = 'http://help.joomla.org';
 	var $xmlrpc_server = '1';
@@ -62,12 +61,12 @@ class JConfig {
 	var $ftp_enable = '';
 	var $tmp_path	= '/tmp';
 	var $log_path	= '/var/logs';
-
-	/* Locale Settings */
-	var $language = 'en-GB';
-	var $lang = 'english';					// Site language
 	var $offset = '0';
-	var $offset_user = '0';
+	var $live_site = ''; 					// Optional, Full url to Joomla install.
+
+	/* Session settings */
+	var $lifetime = '15';					// Session time
+	var $session_handler = 'database';
 
 	/* Mail Settings */
 	var $mailer = 'mail';
@@ -81,7 +80,7 @@ class JConfig {
 
 	/* Cache Settings */
 	var $caching = '0';
-	var $cachetime = '900';
+	var $cachetime = '15';
 	var $cache_handler = 'file';
 
 	/* Debug Settings */
@@ -98,9 +97,9 @@ class JConfig {
 	/* SEO Settings */
 	var $sef = '0';
 	var $sef_rewrite = '0';
+	var $sef_suffix = '';
 
 	/* Feed Settings */
 	var $feed_limit   = 10;
-	var $feed_summary = 0;
 }
 ?>

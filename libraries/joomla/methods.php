@@ -1,9 +1,8 @@
 <?php
 /**
-* @version		$Id: router.php 8340 2007-08-07 08:18:10Z jinx $
+* @version		$Id: methods.php 9878 2008-01-05 13:51:57Z jinx $
 * @package		Joomla.Framework
-* @subpackage	Application
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +20,6 @@ defined('JPATH_BASE') or die();
  * @static
  * @author		Johan Janssens <johan.janssens@joomla.org>
  * @package 	Joomla.Framework
- * @subpackage	Application
  * @since		1.5
  */
 class JRoute
@@ -38,15 +36,27 @@ class JRoute
 	 * 		-1: Make URI unsecure using the global unsecure site URI
 	 * @return The translated humanly readible URL
 	 */
-	function _($url, $xhtml = true, $ssl = 0)
+	function _($url, $xhtml = true, $ssl = null)
 	{
-		global $mainframe;
-
 		// Get the router
-		$router =& $mainframe->getRouter();
+		$app	= &JFactory::getApplication();
+		$router = &$app->getRouter();
+
+		// Make sure that we have our router
+		if (! $router) {
+			return null;
+		}
+
+		if ( (strpos($url, '&') !== 0 ) && (strpos($url, 'index.php') !== 0) ) {
+            return $url;
+ 		}
 
 		// Build route
-		$url = $router->build($url);
+		$uri = &$router->build($url);
+		$url = $uri->toString(array('path', 'query', 'fragment'));
+
+		// Replace spaces
+		$url = preg_replace('/\s/', '%20', $url);
 
 		/*
 		 * Get the secure/unsecure URLs.
@@ -55,28 +65,28 @@ class JRoute
 		 * https and need to set our secure URL to the current request URL, if not, and the scheme is
 		 * 'http', then we need to do a quick string manipulation to switch schemes.
 		 */
-
-		$base = JURI::base(); //get base URL
-
-		if ( substr( $base, 0, 5 ) == 'https' )
+		$ssl	= (int) $ssl;
+		if ( $ssl )
 		{
-			$secure 	= $base;
-			$unsecure	= 'http'.substr( $base, 5 );
-		}
-		elseif ( substr( $base, 0, 4 ) == 'http' )
-		{
-			$secure		= 'https'.substr( $base, 4 );
-			$unsecure	= $base;
-		}
+			$uri	         =& JURI::getInstance();
 
-		// Ensure that proper secure URL is used if ssl flag set secure
-		if ($ssl == 1) {
-			$url = $secure.$url;
-		}
+			// Get additional parts
+			static $prefix;
+			if ( ! $prefix ) {
+				$prefix = $uri->toString( array('host', 'port'));
+				//$prefix .= JURI::base(true);
+			}
 
-		// Ensure that unsecure URL is used if ssl flag is set to unsecure
-		if ($ssl == -1) {
-			$url = $unsecure.$url;
+			// Determine which scheme we want
+			$scheme	= ( $ssl === 1 ) ? 'https' : 'http';
+
+			// Make sure our url path begins with a slash
+			if ( ! preg_match('#^/#', $url) ) {
+				$url	= '/' . $url;
+			}
+
+			// Build the URL
+			$url	= $scheme . '://' . $prefix . $url;
 		}
 
 		if($xhtml) {

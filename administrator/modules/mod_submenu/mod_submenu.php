@@ -2,7 +2,7 @@
 /**
 * @version		$Id:mod_menu.php 2463 2006-02-18 06:05:38Z webImagery $
 * @package		Joomla
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -16,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 
 // Lets get some variables we will need to render the menu
 $lang	=& JFactory::getLanguage();
-$doc		=& JFactory::getDocument();
+$doc	=& JFactory::getDocument();
 $user	=& JFactory::getUser();
 
 // If hidemainmenu is true, we don't want to render this module at all
@@ -81,10 +81,10 @@ class JAdminSubMenu
 			else
 			{
 				if (isset ($item[2]) && $item[2] == 1) {
-					$txt .= "<a class=\"active\" href=\"".$item[1]."\">".$item[0]."</a>\n";
+					$txt .= "<a class=\"active\" href=\"".JFilterOutput::ampReplace($item[1])."\">".$item[0]."</a>\n";
 				}
 				else {
-					$txt .= "<a href=\"".$item[1]."\">".$item[0]."</a>\n";
+					$txt .= "<a href=\"".JFilterOutput::ampReplace($item[1])."\">".$item[0]."</a>\n";
 				}
 			}
 			$txt .= "</li>\n";

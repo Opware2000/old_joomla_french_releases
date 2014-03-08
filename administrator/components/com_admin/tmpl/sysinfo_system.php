@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: sysinfo_system.php 8630 2007-08-30 04:30:51Z robs $
+ * @version		$Id: sysinfo_system.php 9233 2007-10-15 21:14:45Z jinx $
  */
 // No direct access
 defined('_JEXEC') or die('Restricted access');
@@ -80,7 +80,6 @@ defined('_JEXEC') or die('Restricted access');
 			</td>
 			<td>
 				<?php
-					jimport('joomla.version');
 					$version = new JVersion();
 					echo $version->getLongVersion();
 				?>

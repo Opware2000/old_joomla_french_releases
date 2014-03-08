@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: framework.php 8682 2007-08-31 18:36:45Z jinx $
+* @version		$Id: framework.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Installation
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -36,12 +36,7 @@ if (file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) && (filesize( 
  */
 
 // System includes
-require_once( JPATH_LIBRARIES . DS . 'loader.php' );
-
-//clean the request
-jimport( 'joomla.base.object' );
-jimport( 'joomla.environment.request' );
-JRequest::clean();
+require_once( JPATH_LIBRARIES		.DS.'joomla'.DS.'import.php');
 
 // Installation file includes
 define( 'JPATH_INCLUDES', dirname(__FILE__) );
@@ -54,24 +49,12 @@ define( 'JPATH_INCLUDES', dirname(__FILE__) );
 jimport( 'joomla.utilities.compat.compat' );
 
 // Joomla! library imports
-jimport( 'joomla.environment.response' );
-jimport( 'joomla.application.application' );
 jimport( 'joomla.database.table' );
 jimport( 'joomla.user.user');
 jimport( 'joomla.environment.uri' );
 jimport( 'joomla.user.user');
-jimport( 'joomla.factory' );
-jimport( 'joomla.methods' );
-jimport( 'joomla.filesystem.*' );
 jimport( 'joomla.html.parameter' );
-jimport( 'joomla.utilities.array' );
-jimport( 'joomla.utilities.error' );
 jimport( 'joomla.utilities.utility' );
-jimport( 'joomla.version' );
-
-// JString should only be loaded after pre-install checks
-$task = JRequest::getCmd( 'task' );
-if (!($task == '' || $task == 'preinstall' || $task == 'lang')) {
-	jimport( 'joomla.utilities.string' );
-}
+jimport( 'joomla.language.language');
+jimport( 'joomla.utilities.string' );
 ?>

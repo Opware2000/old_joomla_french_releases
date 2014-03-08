@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: plugins.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: plugins.php 9872 2008-01-05 11:14:10Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
- * reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -19,7 +18,6 @@ require_once(dirname(__FILE__).DS.'extension.php');
 /**
  * Installer Plugins Model
  *
- * @author		Louis Landry <louis.landry@joomla.org>
  * @package		Joomla
  * @subpackage	Installer
  * @since		1.5
@@ -75,15 +73,17 @@ class InstallerModelPlugins extends InstallerModel
 
 		$where = null;
 		if ($this->_state->get('filter.group')) {
-			if ($this->_state->get('filter.string')) {
+			if ($search = $this->_state->get('filter.string'))
+			{
 				$where = ' WHERE folder = "'.$db->getEscaped($this->_state->get('filter.group')).'"';
-				$where .= ' AND name LIKE "%'.$db->getEscaped($this->_state->get('filter.string')).'%"';
-			} else {
+				$where .= ' AND name LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
+			}
+			else {
 				$where = ' WHERE folder = "'.$db->getEscaped($this->_state->get('filter.group')).'"';
 			}
 		} else {
-			if ($this->_state->get('filter.string')) {
-				$where .= ' WHERE name LIKE "%'.$db->getEscaped($this->_state->get('filter.string')).'%"';
+			if ($search = $this->_state->get('filter.string')) {
+				$where .= ' WHERE name LIKE '.$db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 			}
 		}
 

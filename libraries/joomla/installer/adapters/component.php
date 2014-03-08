@@ -3,7 +3,7 @@
  * @version		$Id:component.php 6961 2007-03-15 16:06:53Z tcp $
  * @package		Joomla.Framework
  * @subpackage	Installer
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -90,7 +90,7 @@ class JInstallerComponent extends JObject
 		// Make sure that we have an admin element
 		if ( ! is_a($this->adminElement, 'JSimpleXMLElement') )
 		{
-			JError::raiseWarning(1, 'Component Install: '.JText::_('The XML file did not contain an administration element'));
+			JError::raiseWarning(1, JText::_('Component').' '.JText::_('Install').': '.JText::_('The XML file did not contain an administration element'));
 			return false;
 		}
 
@@ -105,7 +105,7 @@ class JInstallerComponent extends JObject
 		 * installed or another component is using that directory.
 		 */
 		if ((file_exists($this->parent->getPath('extension_site')) || file_exists($this->parent->getPath('extension_administrator'))) && !$this->parent->getOverwrite()) {
-			JError::raiseWarning(1, 'Component Install: '.JText::_('Another component is already using directory').': "'.$this->parent->getPath('extension_site').'"');
+			JError::raiseWarning(1, JText::_('Component').' '.JText::_('Install').': '.JText::_('Another component is already using directory').': "'.$this->parent->getPath('extension_site').'"');
 			return false;
 		}
 
@@ -113,7 +113,7 @@ class JInstallerComponent extends JObject
 		$created = false;
 		if (!file_exists($this->parent->getPath('extension_site'))) {
 			if (!$created = JFolder::create($this->parent->getPath('extension_site'))) {
-				JError::raiseWarning(1, 'Component Install: '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_site').'"');
+				JError::raiseWarning(1, JText::_('Component').' '.JText::_('Install').': '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_site').'"');
 				return false;
 			}
 		}
@@ -130,7 +130,7 @@ class JInstallerComponent extends JObject
 		$created = false;
 		if (!file_exists($this->parent->getPath('extension_administrator'))) {
 			if (!$created = JFolder::create($this->parent->getPath('extension_administrator'))) {
-				JError::raiseWarning(1, 'Component Install: '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_administrator').'"');
+				JError::raiseWarning(1, JText::_('Component').' '.JText::_('Install').': '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_administrator').'"');
 				// Install failed, rollback any changes
 				$this->parent->abort();
 				return false;
@@ -170,7 +170,6 @@ class JInstallerComponent extends JObject
 
 		// Parse optional tags
 		$this->parent->parseMedia($this->manifest->getElementByPath('media'));
-		$this->parent->parseMedia($this->manifest->getElementByPath('administration/media'), 1);
 		$this->parent->parseLanguages($this->manifest->getElementByPath('languages'));
 		$this->parent->parseLanguages($this->manifest->getElementByPath('administration/languages'), 1);
 
@@ -188,7 +187,7 @@ class JInstallerComponent extends JObject
 				$path['dest']	= $this->parent->getPath('extension_administrator').DS.$installScriptElement->data();
 				if (!$this->parent->copyFiles(array ($path))) {
 					// Install failed, rollback changes
-					$this->parent->abort('Component Install: '.JText::_('Could not copy PHP install file.'));
+					$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('Could not copy PHP install file.'));
 					return false;
 				}
 			}
@@ -205,7 +204,7 @@ class JInstallerComponent extends JObject
 				$path['dest']	= $this->parent->getPath('extension_administrator').DS.$uninstallScriptElement->data();
 				if (!$this->parent->copyFiles(array ($path))) {
 					// Install failed, rollback changes
-					$this->parent->abort('Component Install: '.JText::_('Could not copy PHP uninstall file.'));
+					$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('Could not copy PHP uninstall file.'));
 					return false;
 				}
 			}
@@ -226,7 +225,7 @@ class JInstallerComponent extends JObject
 		$result = $this->parent->parseQueries($this->manifest->getElementByPath('install/queries'));
 		if ($result === false) {
 			// Install failed, rollback changes
-			$this->parent->abort('Component Install: '.JText::_('SQL Error')." ".$db->stderr(true));
+			$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('SQL Error')." ".$db->stderr(true));
 			return false;
 		} elseif ($result === 0) {
 			// no backward compatibility queries found - try for Joomla 1.5 type queries
@@ -234,7 +233,7 @@ class JInstallerComponent extends JObject
 			$utfresult = $this->parent->parseSQLFiles($this->manifest->getElementByPath('install/sql'));
 			if ($utfresult === false) {
 				// Install failed, rollback changes
-				$this->parent->abort('Component Install: '.JText::_('SQLERRORORFILE')." ".$db->stderr(true));
+				$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('SQLERRORORFILE')." ".$db->stderr(true));
 				return false;
 			}
 		}
@@ -260,7 +259,7 @@ class JInstallerComponent extends JObject
 				require_once ($this->parent->getPath('extension_administrator').DS.$this->get('install.script'));
 				if (function_exists('com_install')) {
 					if (com_install() === false) {
-						$this->parent->abort('Component Install: '.JText::_('Custom install routine failure'));
+						$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('Custom install routine failure'));
 						return false;
 					}
 				}
@@ -281,7 +280,7 @@ class JInstallerComponent extends JObject
 		// Lastly, we will copy the manifest file to its appropriate place.
 		if (!$this->parent->copyManifest()) {
 			// Install failed, rollback changes
-			$this->parent->abort('Component Install: '.JText::_('Could not copy setup file'));
+			$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('Could not copy setup file'));
 			return false;
 		}
 		return true;
@@ -306,12 +305,15 @@ class JInstallerComponent extends JObject
 		// First order of business will be to load the component object table from the database.
 		// This should give us the necessary information to proceed.
 		$row = & JTable::getInstance('component');
-		$row->load($id);
+		if ( !$row->load((int) $id) ) {
+			JError::raiseWarning(100, JText::_('ERRORUNKOWNEXTENSION'));
+			return false;
+		}
 
 		// Is the component we are trying to uninstall a core one?
 		// Because that is not a good idea...
 		if ($row->iscore) {
-			JError::raiseWarning(100, 'Component Uninstall: '.JText::sprintf('WARNCORECOMPONENT', $row->name)."<br />".JText::_('WARNCORECOMPONENT2'));
+			JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::sprintf('WARNCORECOMPONENT', $row->name)."<br />".JText::_('WARNCORECOMPONENT2'));
 			return false;
 		}
 
@@ -334,7 +336,14 @@ class JInstallerComponent extends JObject
 			// Make sure we delete the folders if no manifest exists
 			JFolder::delete($this->parent->getPath('extension_administrator'));
 			JFolder::delete($this->parent->getPath('extension_site'));
-			JError::raiseWarning(100, 'Component Uninstall: Package manifest file invalid or not found');
+
+			// Remove the menu
+			$this->_removeAdminMenus($row);
+
+			// Raise a warning
+			JError::raiseWarning(100, JText::_('ERRORREMOVEMANUALLY'));
+
+			// Return
 			return false;
 		}
 
@@ -357,7 +366,7 @@ class JInstallerComponent extends JObject
 				require_once ($this->parent->getPath('extension_administrator').DS.$uninstallfileElement->data());
 				if (function_exists('com_uninstall')) {
 					if (com_uninstall() === false) {
-						JError::raiseWarning(100, 'Component Uninstall: '.JText::_('Custom Uninstall script unsuccessful'));
+						JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('Custom Uninstall script unsuccessful'));
 						$retval = false;
 					}
 				}
@@ -384,7 +393,7 @@ class JInstallerComponent extends JObject
 		$result = $this->parent->parseQueries($this->manifest->getElementByPath('uninstall/queries'));
 		if ($result === false) {
 			// Install failed, rollback changes
-			JError::raiseWarning(100, 'Component Uninstall: '.JText::_('SQL Error')." ".$db->stderr(true));
+			JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('SQL Error')." ".$db->stderr(true));
 			$retval = false;
 		} elseif ($result === 0) {
 			// no backward compatibility queries found - try for Joomla 1.5 type queries
@@ -392,7 +401,7 @@ class JInstallerComponent extends JObject
 			$utfresult = $this->parent->parseSQLFiles($this->manifest->getElementByPath('uninstall/sql'));
 			if ($utfresult === false) {
 				// Install failed, rollback changes
-				JError::raiseWarning(100, 'Component Uninstall: '.JText::_('SQLERRORORFILE')." ".$db->stderr(true));
+				JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('SQLERRORORFILE')." ".$db->stderr(true));
 				$retval = false;
 			}
 		}
@@ -408,7 +417,6 @@ class JInstallerComponent extends JObject
 		// Let's remove language files and media in the JROOT/images/ folder that are
 		// associated with the component we are uninstalling
 		$this->parent->removeFiles($this->manifest->getElementByPath('media'));
-		$this->parent->removeFiles($this->manifest->getElementByPath('media'), 1);
 		$this->parent->removeFiles($this->manifest->getElementByPath('languages'));
 		$this->parent->removeFiles($this->manifest->getElementByPath('administration/languages'), 1);
 
@@ -417,7 +425,7 @@ class JInstallerComponent extends JObject
 			// Delete the component site directory
 			if (is_dir($this->parent->getPath('extension_site'))) {
 				if (!JFolder::delete($this->parent->getPath('extension_site'))) {
-					JError::raiseWarning(100, 'Component Uninstall: '.JText::_('Unable to remove the component site directory'));
+					JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('Unable to remove the component site directory'));
 					$retval = false;
 				}
 			}
@@ -425,7 +433,7 @@ class JInstallerComponent extends JObject
 			// Delete the component admin directory
 			if (is_dir($this->parent->getPath('extension_administrator'))) {
 				if (!JFolder::delete($this->parent->getPath('extension_administrator'))) {
-					JError::raiseWarning(100, 'Component Uninstall: '.JText::_('Unable to remove the component admin directory'));
+					JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('Unable to remove the component admin directory'));
 					$retval = false;
 				}
 			}
@@ -475,7 +483,7 @@ class JInstallerComponent extends JObject
 
 				$db->setQuery($sql);
 				if (!$db->query()) {
-					JError::raiseWarning(100, 'Component Install: '.$db->stderr(true));
+					JError::raiseWarning(100, JText::_('Component').' '.JText::_('Install').': '.$db->stderr(true));
 				}
 			}
 		}
@@ -505,7 +513,7 @@ class JInstallerComponent extends JObject
 			$db->setQuery($query);
 			if (!$db->query()) {
 				// Install failed, rollback changes
-				$this->parent->abort('Component Install: '.$db->stderr(true));
+				$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.$db->stderr(true));
 				return false;
 			}
 			$menuid = $db->insertid();
@@ -551,7 +559,7 @@ class JInstallerComponent extends JObject
 				$db->setQuery($query);
 				if (!$db->query()) {
 					// Install failed, rollback changes
-					$this->parent->abort('Component Install: '.$db->stderr(true));
+					$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.$db->stderr(true));
 					return false;
 				}
 				$menuid = $db->insertid();
@@ -625,7 +633,7 @@ class JInstallerComponent extends JObject
 				// Store the submenu
 				if (!$com->store()) {
 					// Install failed, rollback changes
-					$this->parent->abort('Component Install: '.JText::_('SQL Error')." ".$db->stderr(true));
+					$this->parent->abort(JText::_('Component').' '.JText::_('Install').': '.JText::_('SQL Error')." ".$db->stderr(true));
 					return false;
 				}
 
@@ -659,13 +667,13 @@ class JInstallerComponent extends JObject
 
 		$db->setQuery($sql);
 		if (!$db->query()) {
-			JError::raiseWarning(100, 'Component Uninstall: '.$db->stderr(true));
+			JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.$db->stderr(true));
 			$retval = false;
 		}
 
 		// Next, we will delete the component object
 		if (!$row->delete($row->id)) {
-			JError::raiseWarning(100, 'Component Uninstall: '.JText::_('Unable to delete the component from the database'));
+			JError::raiseWarning(100, JText::_('Component').' '.JText::_('Uninstall').': '.JText::_('Unable to delete the component from the database'));
 			$retval = false;
 		}
 		return $retval;

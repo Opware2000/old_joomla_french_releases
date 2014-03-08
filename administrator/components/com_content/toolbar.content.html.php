@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: toolbar.content.html.php 8180 2007-07-23 05:52:29Z eddieajau $
+* @version		$Id: toolbar.content.html.php 9764 2007-12-30 07:48:11Z ircmaxell $
 * @package		Joomla
 * @subpackage	Content
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -18,18 +18,18 @@
 */
 class TOOLBAR_content
 {
-	function _EDIT()
+	function _EDIT($edit)
 	{
 		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 		$cid = intval($cid[0]);
 
-		$text = ( $cid ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+		$text = ( $edit ? JText::_( 'Edit' ) : JText::_( 'New' ) );
 
 		JToolBarHelper::title( JText::_( 'Article' ).': <small><small>[ '. $text.' ]</small></small>', 'addedit.png' );
 		JToolBarHelper::preview( 'index.php?option=com_content&id='.$cid.'&tmpl=component', true );
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
-		if ( $cid ) {
+		if ( $edit ) {
 			// for existing articles the button is renamed `close`
 			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
@@ -82,4 +82,3 @@ class TOOLBAR_content
 		JToolBarHelper::help( 'screen.content' );
 	}
 }
-?>

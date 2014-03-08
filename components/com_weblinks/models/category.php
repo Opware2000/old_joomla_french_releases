@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Id: category.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: category.php 9893 2008-01-05 21:44:21Z charlvn $
  * @package		Joomla
  * @subpackage	Content
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
@@ -79,6 +79,9 @@ class WeblinksModelCategory extends JModel
 		$this->setState('limit', $mainframe->getUserStateFromRequest('com_weblinks.limit', 'limit', $config->getValue('config.list_limit'), 'int'));
 		$this->setState('limitstart', JRequest::getVar('limitstart', 0, '', 'int'));
 
+		// In case limit has been changed, adjust limitstart accordingly
+		$this->setState('limitstart', ($this->getState('limit') != 0 ? (floor($this->getState('limitstart') / $this->getState('limit')) * $this->getState('limit')) : 0));
+
 		// Get the filter request variables
 		$this->setState('filter_order', JRequest::getCmd('filter_order', 'ordering'));
 		$this->setState('filter_order_dir', JRequest::getCmd('filter_order_Dir', 'ASC'));
@@ -118,7 +121,7 @@ class WeblinksModelCategory extends JModel
 			for($i = 0; $i < $total; $i++)
 			{
 				$item =& $this->_data[$i];
-				$item->slug = $item->id.'-'.$item->alias;
+				$item->slug = $item->id.':'.$item->alias;
 			}
 		}
 

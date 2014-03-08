@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @version		$Id: controller.php 8091 2007-07-19 20:01:35Z willebil $
+ * @version		$Id: controller.php 9764 2007-12-30 07:48:11Z ircmaxell $
  * @package		Joomla
  * @subpackage	Installation
- * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
  * Joomla! is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -77,7 +77,7 @@ class JInstallationController extends JController
 		global $mainframe;
 
 		// Sanity check
-		if ( $task && ( $task != 'lang' ) && ( $task != 'preinstall' ) && ( $task != 'removedir' ) )
+		if ( $task && ( $task != 'lang' ) && ( $task != 'removedir' ) )
 		{
 
 			/**

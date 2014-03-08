@@ -1,9 +1,6 @@
-<?php
-/**
- * @version $Id: default.php 8635 2007-08-30 13:20:35Z friesengeist $
- */
-defined( '_JEXEC' ) or die( 'Restricted access' );
-
+<?php // @version $Id: default.php 9506 2007-12-08 21:00:27Z willebil $
+defined('_JEXEC') or die('Restricted access');
+$cparams = JComponentHelper::getParams ('com_media');
 ?>
 
 <?php if ( $this->params->get( 'show_page_title' ) ) : ?>
@@ -17,7 +14,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 	<div class="contentdescription<?php echo $this->params->get('pageclass_sfx'); ?>">
 
 		<?php if ( $this->category->image ) : ?>
-		<img src="images/stories/<?php echo $this->category->image; ?>" class="image_<?php echo $this->category->image_position; ?>" />
+		<img src="<?php echo $this->baseurl . $cparams->get('image_path').'/'.$this->category->image; ?>" class="image_<?php echo $this->category->image_position; ?>" />
 		<?php endif; ?>
 
 		<?php if ( $this->params->get( 'description' ) ) :

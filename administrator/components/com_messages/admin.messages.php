@@ -1,9 +1,9 @@
 <?php
 /**
-* @version		$Id: admin.messages.php 8030 2007-07-17 22:58:52Z friesengeist $
+* @version		$Id: admin.messages.php 9872 2008-01-05 11:14:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Messages
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
@@ -80,7 +80,7 @@ function showMessages( $option )
 	$where[] = ' a.user_id_to='.(int) $user->get('id');
 
 	if ($search != '') {
-		$searchEscaped = $db->Quote('%'.$search.'%');
+		$searchEscaped = $db->Quote( '%'.$db->getEscaped( $search, true ).'%', false );
 		$where[] = '( u.username LIKE '.$searchEscaped.' OR email LIKE '.$searchEscaped.' OR u.name LIKE '.$searchEscaped.' )';
 	}
 	if ( $filter_state ) {
@@ -167,6 +167,9 @@ function saveConfig( $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db		=& JFactory::getDBO();
 	$user	=& JFactory::getUser();
 
@@ -218,6 +221,9 @@ function saveMessage( $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	require_once(dirname(__FILE__).DS.'tables'.DS.'message.php');
 
 	$db =& JFactory::getDBO();
@@ -264,6 +270,9 @@ function removeMessage( $cid, $option )
 {
 	global $mainframe;
 
+	// Check for request forgeries
+	JRequest::checkToken() or die( 'Invalid Token' );
+
 	$db =& JFactory::getDBO();
 
 	JArrayHelper::toInteger($cid);
@@ -289,4 +298,3 @@ function removeMessage( $cid, $option )
 
 	$mainframe->redirect( 'index.php?option='.$option.'&limit='.$limit.'&limitstart='.$limitstart );
 }
-?>
