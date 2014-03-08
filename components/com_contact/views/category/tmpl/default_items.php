@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_items.php 20982 2011-03-17 16:12:00Z chdemko $
+ * @version		$Id: default_items.php 21687 2011-06-26 23:41:41Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -19,7 +19,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 	<p> <?php echo JText::_('COM_CONTACT_NO_ARTICLES'); ?>	 </p>
 <?php else : ?>
 
-<form action="<?php echo JFilterOutput::ampReplace(JFactory::getURI()->toString()); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo htmlspecialchars(JFactory::getURI()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 <?php if ($this->params->get('show_pagination_limit')) : ?>
 	<fieldset class="filters">
 	<legend class="hidelabeltxt"><?php echo JText::_('JGLOBAL_FILTER_LABEL'); ?></legend>

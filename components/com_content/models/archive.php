@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: archive.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: archive.php 21603 2011-06-21 18:31:49Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -55,7 +55,7 @@ class ContentModelArchive extends ContentModelArticles
 		// Get list limit
 		$app = JFactory::getApplication();
 		$itemid = JRequest::getInt('Itemid', 0);
-		$limit = $app->getUserStateFromRequest('com_content.archive.list' . $itemid . '.limit', 'limit', $params->get('display_num'));
+		$limit = $app->getUserStateFromRequest('com_content.archive.list' . $itemid . '.limit', 'limit', $params->get('display_num'), 'UINT');
 		$this->setState('list.limit', $limit);
 	}
 

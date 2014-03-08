@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: newsfeed.php 21148 2011-04-14 17:30:08Z ian $
+ * @version		$Id: newsfeed.php 21603 2011-06-21 18:31:49Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -118,8 +118,8 @@ class NewsfeedsModelNewsfeed extends JModelAdmin
 			// The controller has already verified this is a record you can edit.
 			$form->setFieldAttribute('ordering', 'filter', 'unset');
 			$form->setFieldAttribute('published', 'filter', 'unset');
-			$form->setFieldAttribute('publish_up', 'filter', 'true');
-			$form->setFieldAttribute('publish_down', 'filter', 'true');
+			$form->setFieldAttribute('publish_up', 'filter', 'unset');
+			$form->setFieldAttribute('publish_down', 'filter', 'unset');
 		}
 
 		return $form;

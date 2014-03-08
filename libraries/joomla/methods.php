@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: methods.php 20815 2011-02-21 21:22:03Z dextercowley $
+ * @version		$Id: methods.php 21603 2011-06-21 18:31:49Z dextercowley $
  * @package		Joomla.Framework
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -80,7 +80,7 @@ class JRoute
 		}
 
 		if ($xhtml) {
-			$url = str_replace('&', '&amp;', $url);
+			$url = htmlspecialchars($url);
 		}
 
 		return $url;

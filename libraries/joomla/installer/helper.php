@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: helper.php 21693 2011-06-27 16:44:53Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -78,7 +78,7 @@ abstract class JInstallerHelper
 		while (!feof($inputHandle))
 		{
 			$contents .= fread($inputHandle, 4096);
-			if ($contents == false)
+			if ($contents === false)
 			{
 				JError::raiseWarning(44, JText::sprintf('JLIB_INSTALLER_ERROR_FAILED_READING_NETWORK_RESOURCES', $php_errormsg));
 				return false;
@@ -93,6 +93,9 @@ abstract class JInstallerHelper
 
 		// restore error tracking to what it was before
 		ini_set('track_errors',$track_errors);
+
+		// bump the max execution time because not using built in php zip libs are slow
+		set_time_limit(ini_get('max_execution_time'));
 
 		// Return the name of the downloaded package
 		return basename($target);

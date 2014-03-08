@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 21145 2011-04-12 23:21:04Z dextercowley $
+ * @version		$Id: articles.php 21603 2011-06-21 18:31:49Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -67,11 +67,11 @@ class ContentModelArticles extends JModelList
 
 		// List state information
 		//$value = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'));
-		$value = JRequest::getInt('limit', $app->getCfg('list_limit', 0));
+		$value = JRequest::getUInt('limit', $app->getCfg('list_limit', 0));
 		$this->setState('list.limit', $value);
 
 		//$value = $app->getUserStateFromRequest($this->context.'.limitstart', 'limitstart', 0);
-		$value = JRequest::getInt('limitstart', 0);
+		$value = JRequest::getUInt('limitstart', 0);
 		$this->setState('list.start', $value);
 
 		$orderCol	= JRequest::getCmd('filter_order', 'a.ordering');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: defines.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: defines.php 21602 2011-06-21 17:18:18Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -21,6 +21,7 @@ define('JPATH_SITE',			JPATH_ROOT);
 define('JPATH_CONFIGURATION',	JPATH_ROOT);
 define('JPATH_ADMINISTRATOR',	JPATH_ROOT.DS.'administrator');
 define('JPATH_LIBRARIES',		JPATH_ROOT.DS.'libraries');
+define('JPATH_PLATFORM',		JPATH_ROOT.DS.'libraries');
 define('JPATH_PLUGINS',			JPATH_ROOT.DS.'plugins');
 define('JPATH_INSTALLATION',	JPATH_ROOT.DS.'installation');
 define('JPATH_THEMES',			JPATH_BASE.DS.'templates');

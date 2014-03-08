@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: file.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: file.php 21687 2011-06-26 23:41:41Z dextercowley $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -394,8 +394,8 @@ class JFile
 				$dest = JPath::clean(str_replace(JPATH_ROOT, $FTPOptions['root'], $dest), '/');
 
 				// Copy the file to the destination directory
-				if ($ftp->store($src, $dest)) {
-					$ftp->chmod($dest, 0777);
+				if (is_uploaded_file($src) && $ftp->store($src, $dest)) {
+					unlink($src);
 					$ret = true;
 				} else {
 					JError::raiseWarning(21, JText::_('JLIB_FILESYSTEM_ERROR_WARNFS_ERR02'));

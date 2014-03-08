@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 20810 2011-02-21 20:01:22Z dextercowley $
+ * @version		$Id: article.php 21603 2011-06-21 18:31:49Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -43,7 +43,7 @@ class ContentModelArticle extends JModelItem
 		$pk = JRequest::getInt('id');
 		$this->setState('article.id', $pk);
 
-		$offset = JRequest::getInt('limitstart');
+		$offset = JRequest::getUInt('limitstart');
 		$this->setState('list.offset', $offset);
 
 		// Load the parameters.

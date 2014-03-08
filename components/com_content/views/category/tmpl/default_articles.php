@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_articles.php 21135 2011-04-11 16:58:22Z dextercowley $
+ * @version		$Id: default_articles.php 21687 2011-06-26 23:41:41Z dextercowley $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -29,7 +29,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 
 <?php else : ?>
 
-<form action="<?php echo JFilterOutput::ampReplace(JFactory::getURI()->toString()); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo htmlspecialchars(JFactory::getURI()->toString()); ?>" method="post" name="adminForm" id="adminForm">
 	<?php if ($this->params->get('show_headings') || $this->params->get('filter_field') != 'hide' || $this->params->get('show_pagination_limit')) :?>
 	<fieldset class="filters">
 		<?php if ($this->params->get('filter_field') != 'hide') :?>	
