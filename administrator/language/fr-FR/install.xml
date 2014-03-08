@@ -2,8 +2,8 @@
 <install version="1.5" client="administrator" type="language">
     <name>French (FR)</name>
     <tag>fr-FR</tag>
-    <version>1.5.5</version>
-    <creationDate>July 2008</creationDate>
+    <version>1.5.7</version>
+    <creationDate>September 2008</creationDate>
     <author>French translation team : Joomla!fr</author>
     <authoremail>opware.joomla@gmail.com</authoremail>
     <authorurl>www.joomla.fr</authorurl>
