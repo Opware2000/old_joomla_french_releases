@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: wrapper.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Wrapper
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: wrapper.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Wrapper
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,54 +13,75 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-/** load the html drawing class */
-require_once( $mainframe->getPath( 'front_html' ) );
+/*
+ * This is our main control structure for the component
+ *
+ * Each view is determined by the $task variable
+ */
+switch (JRequest::getCmd('task'))
+{
+	default:
+		WrapperController::display();
+		break;
+}
 
-showWrap( $option );
+/**
+ * Static class to hold controller functions for the Wrapper component
+ *
+ * @static
+ * @author		Johan Janssens <johan.janssens@joomla.org>
+ * @package		Joomla
+ * @subpackage	Wrapper
+ * @since		1.5
+ */
+class WrapperController
+{
+	function display()
+	{
+		global $mainframe, $option;
+		
+		$document =& JFactory::getDocument();
 
-function showWrap( $option ) {
-	global $database, $Itemid, $mainframe;
+		$menus	= &JMenu::getInstance();
+		$menu	= $menus->getActive();
 
-	$menu = new mosMenu( $database );
-	$menu->load( $Itemid );
-	$params = new mosParameters( $menu->params );
-	$params->def( 'back_button', $mainframe->getCfg( 'back_button' ) );
-	$params->def( 'scrolling', 'auto' );
-	$params->def( 'page_title', '1' );
-	$params->def( 'pageclass_sfx', '' );
-	$params->def( 'header', $menu->name );
-	$params->def( 'height', '500' );
-	$params->def( 'height_auto', '1' );
-	$params->def( 'width', '100%' );
-	$params->def( 'add', '1' );
-	$url = $params->def( 'url', '' );
+		// Get the page/component configuration
+		$params = &$mainframe->getPageParameters();
+		
+		//set page title
+		$document->setTitle($menu->name);
 
-	$row = new stdClass();
-	if ( $params->get( 'add' ) ) {
-		// adds 'http://' if none is set
-		if ( substr( $url, 0, 1 ) == '/' ) {
-			// relative url in component. use server http_host.
-			$row->url = 'http://'. $_SERVER['HTTP_HOST'] . $url;
-		} elseif ( !strstr( $url, 'http' ) && !strstr( $url, 'https' ) ) {
-			$row->url = 'http://'. $url;
-		} else {
+		$url = $params->def( 'url', '' );
+
+		$row = new stdClass();
+		if ( $params->def( 'add_scheme', 1 ) )
+		{
+			// adds 'http://' if none is set
+			if ( substr( $url, 0, 1 ) == '/' )
+			{
+				// relative url in component. use server http_host.
+				$row->url = 'http://'. $_SERVER['HTTP_HOST'] . $url;
+			}
+			elseif ( !strstr( $url, 'http' ) && !strstr( $url, 'https' ) ) {
+				$row->url = 'http://'. $url;
+			}
+			else {
+				$row->url = $url;
+			}
+		}
+		else {
 			$row->url = $url;
 		}
-	} else {
-		$row->url = $url;
+
+		require_once (JPATH_COMPONENT.DS.'views'.DS.'wrapper'.DS.'view.php');
+		$view = new WrapperViewWrapper();
+
+		$view->assignRef('params'  , $params);
+		$view->assignRef('wrapper' , $row);
+
+		$view->display();
 	}
-
-	// auto height control
-	if ( $params->def( 'height_auto' ) ) {
-		$row->load = 'onload="iFrameHeight()"';
-	} else {
-		$row->load = '';
-	}
-
-	$mainframe->SetPageTitle($menu->name);
-
-	HTML_wrapper::displayWrap( $row, $params, $menu );
 }
 ?>

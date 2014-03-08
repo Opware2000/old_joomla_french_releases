@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.frontpage.php 393 2005-10-08 13:37:52Z akede $
-* @package Joomla
-* @subpackage Content
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.frontpage.php 8020 2007-07-17 16:42:27Z friesengeist $
+* @package		Joomla
+* @subpackage	Content
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,25 +13,25 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-// ensure user has access to this function
-if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'components', 'all' )
-		| $acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'components', 'com_frontpage' ))) {
-	mosRedirect( 'index2.php', _NOT_AUTH );
+// Make sure the user is authorized to view this page
+$user = & JFactory::getUser();
+if (!$user->authorize( 'com_frontpage', 'manage' )) {
+	$mainframe->redirect( 'index.php', JText::_('ALERTNOTAUTH') );
 }
 
-// call
-require_once( $mainframe->getPath( 'admin_html' ) );
-require_once( $mainframe->getPath( 'class' ) );
+// Set the table directory
+JTable::addIncludePath(JPATH_COMPONENT.DS.DS.'tables');
 
-$task 	= mosGetParam( $_REQUEST, 'task', array(0) );
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+// Set the helper directory
+JHTML::addIncludePath( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helper' );
 
-switch ($task) {
+$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+JArrayHelper::toInteger($cid, array(0));
+
+switch ( JRequest::getCmd( 'task' ) )
+{
 	case 'publish':
 		changeFrontPage( $cid, 1, $option );
 		break;
@@ -81,102 +81,133 @@ switch ($task) {
 /**
 * Compiles a list of frontpage items
 */
-function viewFrontPage( $option ) {
-	global $database, $mainframe, $mosConfig_list_limit;
+function viewFrontPage( $option )
+{
+	global $mainframe;
 
-	$catid 				= $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 );
-	$filter_authorid 	= $mainframe->getUserStateFromRequest( "filter_authorid{$option}", 'filter_authorid', 0 );
-	$filter_sectionid 	= $mainframe->getUserStateFromRequest( "filter_sectionid{$option}", 'filter_sectionid', 0 );
+	$db					=& JFactory::getDBO();
+	$filter_order		= $mainframe->getUserStateFromRequest( $option.'.filter_order',		'filter_order',		'fpordering',	'cmd' );
+	$filter_order_Dir	= $mainframe->getUserStateFromRequest( $option.'.filter_order_Dir',	'filter_order_Dir',	'',				'word' );
+	$filter_state		= $mainframe->getUserStateFromRequest( $option.'.filter_state',		'filter_state',		'',				'word' );
+	$catid				= $mainframe->getUserStateFromRequest( $option.'.catid',			'catid',			0,				'int' );
+	$filter_authorid	= $mainframe->getUserStateFromRequest( $option.'.filter_authorid',	'filter_authorid',	0,				'int' );
+	$filter_sectionid	= $mainframe->getUserStateFromRequest( $option.'.filter_sectionid',	'filter_sectionid',	0,				'int' );
+	$search				= $mainframe->getUserStateFromRequest( $option.'.search',			'search',			'',				'string' );
+	$search				= JString::strtolower( $search );
 
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
-	$search 	= $mainframe->getUserStateFromRequest( "search{$option}", 'search', '' );
-	$search 	= $database->getEscaped( trim( strtolower( $search ) ) );
+	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
+	$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+
+	JToolBarHelper::title( JText::_( 'Frontpage Manager' ), 'frontpage.png' );
+	JToolBarHelper::archiveList();
+	JToolBarHelper::publishList();
+	JToolBarHelper::unpublishList();
+	JToolBarHelper::custom('remove','delete.png','delete_f2.png','Remove', true);
+	JToolBarHelper::help( 'screen.frontpage' );
 
 	$where = array(
-	"c.state >= 0"
+		"c.state >= 0"
 	);
 
 	// used by filter
 	if ( $filter_sectionid > 0 ) {
-		$where[] = "c.sectionid = '$filter_sectionid'";
+		$where[] = 'c.sectionid = '.(int) $filter_sectionid;
 	}
 	if ( $catid > 0 ) {
-		$where[] = "c.catid = '$catid'";
+		$where[] = 'c.catid = '.(int) $catid;
 	}
 	if ( $filter_authorid > 0 ) {
-		$where[] = "c.created_by = $filter_authorid";
+		$where[] = 'c.created_by = '. (int) $filter_authorid;
+	}
+	if ( $filter_state ) {
+		if ( $filter_state == 'P' ) {
+			$where[] = 'c.state = 1';
+		} else if ($filter_state == 'U' ) {
+			$where[] = 'c.state = 0';
+		}
 	}
 
 	if ($search) {
-		$where[] = "LOWER( c.title ) LIKE '%$search%'";
+		$where[] = 'LOWER( c.title ) LIKE '.$db->Quote('%'.$search.'%');
 	}
 
+	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+	$orderby 	= ' ORDER BY '. $filter_order .' '. $filter_order_Dir .', fpordering';
+
 	// get the total number of records
-	$query = "SELECT count(*)"
-	. "\n FROM #__content AS c"
-	. "\n INNER JOIN #__categories AS cc ON cc.id = c.catid"
-	. "\n INNER JOIN #__sections AS s ON s.id = cc.section AND s.scope='content'"
-	. "\n INNER JOIN #__content_frontpage AS f ON f.content_id = c.id"
-	. (count( $where ) ? "\n WHERE " . implode( ' AND ', $where ) : '' )
+	$query = 'SELECT count(*)'
+	. ' FROM #__content AS c'
+	. ' LEFT JOIN #__categories AS cc ON cc.id = c.catid'
+	. ' LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope="content"'
+	. ' INNER JOIN #__content_frontpage AS f ON f.content_id = c.id'
+	. $where
 	;
-	$database->setQuery( $query );
-	$total = $database->loadResult();
+	$db->setQuery( $query );
+	$total = $db->loadResult();
 
-	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
-	$pageNav = new mosPageNav( $total, $limitstart, $limit );
+	jimport('joomla.html.pagination');
+	$pageNav = new JPagination( $total, $limitstart, $limit );
 
-	$query = "SELECT c.*, g.name AS groupname, cc.name, s.name AS sect_name, u.name AS editor, f.ordering AS fpordering, v.name AS author"
-	. "\n FROM #__content AS c"
-	. "\n INNER JOIN #__categories AS cc ON cc.id = c.catid"
-	. "\n INNER JOIN #__sections AS s ON s.id = cc.section AND s.scope='content'"
-	. "\n INNER JOIN #__content_frontpage AS f ON f.content_id = c.id"
-	. "\n INNER JOIN #__groups AS g ON g.id = c.access"
-	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
-	. "\n LEFT JOIN #__users AS v ON v.id = c.created_by"
-	. (count( $where ) ? "\nWHERE " . implode( ' AND ', $where ) : "")
-	. "\n ORDER BY f.ordering"
-	. "\n LIMIT $pageNav->limitstart,$pageNav->limit"
+	$query = 'SELECT c.*, g.name AS groupname, cc.title as name, s.title AS sect_name, u.name AS editor, f.ordering AS fpordering, v.name AS author'
+	. ' FROM #__content AS c'
+	. ' LEFT JOIN #__categories AS cc ON cc.id = c.catid'
+	. ' LEFT JOIN #__sections AS s ON s.id = cc.section AND s.scope="content"'
+	. ' INNER JOIN #__content_frontpage AS f ON f.content_id = c.id'
+	. ' INNER JOIN #__groups AS g ON g.id = c.access'
+	. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
+	. ' LEFT JOIN #__users AS v ON v.id = c.created_by'
+	. $where
+	. $orderby
 	;
-	$database->setQuery( $query );
-
-	$rows = $database->loadObjectList();
-	if ($database->getErrorNum()) {
-		echo $database->stderr();
+	$db->setQuery( $query, $pageNav->limitstart,$pageNav->limit );
+	$rows = $db->loadObjectList();
+	if ($db->getErrorNum()) {
+		echo $db->stderr();
 		return false;
 	}
 
 	// get list of categories for dropdown filter
-	$query = "SELECT cc.id AS value, cc.title AS text, section"
-	. "\n FROM #__categories AS cc"
-	. "\n INNER JOIN #__sections AS s ON s.id = cc.section "
-	. "\n ORDER BY s.ordering, cc.ordering"
+	$query = 'SELECT cc.id AS value, cc.title AS text, section'
+	. ' FROM #__categories AS cc'
+	. ' INNER JOIN #__sections AS s ON s.id = cc.section '
+	. ' ORDER BY s.ordering, cc.ordering'
 	;
-	$categories[] = mosHTML::makeOption( '0', _SEL_CATEGORY );
-	$database->setQuery( $query );
-	$categories = array_merge( $categories, $database->loadObjectList() );
-	$lists['catid'] = mosHTML::selectList( $categories, 'catid', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', $catid );
+	$db->setQuery( $query );
+	$categories[] 	= JHTML::_('select.option',  '0', '- '. JText::_( 'Select Category' ) .' -' );
+	$categories 	= array_merge( $categories, $db->loadObjectList() );
+	$lists['catid'] = JHTML::_('select.genericlist',   $categories, 'catid', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', $catid );
 
 	// get list of sections for dropdown filter
-	$javascript = 'onchange="document.adminForm.submit();"';
-	$lists['sectionid']	= mosAdminMenus::SelectSection( 'filter_sectionid', $filter_sectionid, $javascript );
+	$javascript			= 'onchange="document.adminForm.submit();"';
+	$lists['sectionid']	= JHTML::_('list.section',  'filter_sectionid', $filter_sectionid, $javascript );
 
 	// get list of Authors for dropdown filter
-	$query = "SELECT c.created_by, u.name"
-	. "\n FROM #__content AS c"
-	. "\n INNER JOIN #__sections AS s ON s.id = c.sectionid"
-	. "\n LEFT JOIN #__users AS u ON u.id = c.created_by"
-	. "\n WHERE c.state != -1"
-	. "\n AND c.state != -2"
-	. "\n GROUP BY u.name"
-	. "\n ORDER BY u.name"
+	$query = 'SELECT c.created_by, u.name'
+	. ' FROM #__content AS c'
+	. ' INNER JOIN #__sections AS s ON s.id = c.sectionid'
+	. ' LEFT JOIN #__users AS u ON u.id = c.created_by'
+	. ' WHERE c.state <> -1'
+	. ' AND c.state <> -2'
+	. ' GROUP BY u.name'
+	. ' ORDER BY u.name'
 	;
-	$authors[] = mosHTML::makeOption( '0', _SEL_AUTHOR, 'created_by', 'name' );
-	$database->setQuery( $query );
-	$authors = array_merge( $authors, $database->loadObjectList() );
-	$lists['authorid']	= mosHTML::selectList( $authors, 'filter_authorid', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'created_by', 'name', $filter_authorid );
+	$db->setQuery( $query );
+	$authors[] 			= JHTML::_('select.option',  '0', '- '. JText::_( 'Select Author' ) .' -', 'created_by', 'name' );
+	$authors 			= array_merge( $authors, $db->loadObjectList() );
+	$lists['authorid']	= JHTML::_('select.genericlist',   $authors, 'filter_authorid', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'created_by', 'name', $filter_authorid );
 
-	HTML_content::showList( $rows, $search, $pageNav, $option, $lists );
+	// state filter
+	$lists['state']	= JHTML::_('grid.state',  $filter_state );
+
+	// table ordering
+	$lists['order_Dir']	= $filter_order_Dir;
+	$lists['order']		= $filter_order;
+
+	// search filter
+	$lists['search']= $search;
+
+	require_once(JPATH_COMPONENT.DS.'views'.DS.'frontpage.php');
+	FrontpageView::showList( $rows, $pageNav, $option, $lists );
 }
 
 /**
@@ -184,85 +215,102 @@ function viewFrontPage( $option ) {
 * @param array An array of unique category id numbers
 * @param integer 0 if unpublishing, 1 if publishing
 */
-function changeFrontPage( $cid=null, $state=0, $option ) {
-	global $database, $my;
+function changeFrontPage( $cid=null, $state=0, $option )
+{
+	global $mainframe;
+
+	$db 	=& JFactory::getDBO();
+	$user 	=& JFactory::getUser();
+
+	JArrayHelper::toInteger($cid);
 
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
-		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
-		exit;
+		JError::raiseError(500, JText::_( 'Select an item to '.$action, true ) );
 	}
 
 	$cids = implode( ',', $cid );
 
-	$query = "UPDATE #__content"
-	. "\n SET state = $state"
-	. "\n WHERE id IN ( $cids )"
-	. "\n AND ( checked_out = 0 OR ( checked_out = $my->id ) )"
+	$query = 'UPDATE #__content'
+	. ' SET state = '.(int) $state
+	. ' WHERE id IN ( '. $cids .' )'
+	. ' AND ( checked_out = 0 OR ( checked_out = ' .(int) $user->get('id'). ' ) )'
 	;
-	$database->setQuery( $query );
-	if (!$database->query()) {
-		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-		exit();
+	$db->setQuery( $query );
+	if (!$db->query()) {
+		JError::raiseError(500, $db->getErrorMsg() );
 	}
 
 	if (count( $cid ) == 1) {
-		$row = new mosContent( $database );
+		$row =& JTable::getInstance('content');
 		$row->checkin( $cid[0] );
 	}
 
-	mosRedirect( "index2.php?option=$option" );
+	$cache = & JFactory::getCache('com_content');
+	$cache->clean();
+
+	$mainframe->redirect( 'index.php?option='.$option );
 }
 
-function removeFrontPage( &$cid, $option ) {
-	global $database;
+function removeFrontPage( &$cid, $option )
+{
+	global $mainframe;
 
+	$db =& JFactory::getDBO();
 	if (!is_array( $cid ) || count( $cid ) < 1) {
-		echo "<script> alert('Select an item to delete'); window.history.go(-1);</script>\n";
-		exit;
+		JError::raiseError(500, JText::_( 'Select an item to delete', true ) );
 	}
-	$fp = new mosFrontPage( $database );
+	$fp =& JTable::getInstance('frontpage', 'Table');
 	foreach ($cid as $id) {
 		if (!$fp->delete( $id )) {
-			echo "<script> alert('".$fp->getError()."'); </script>\n";
-			exit();
+			JError::raiseError(500, $fp->getError() );
 		}
-		$obj = new mosContent( $database );
+		$obj =& JTable::getInstance('content');
 		$obj->load( $id );
 		$obj->mask = 0;
 		if (!$obj->store()) {
-			echo "<script> alert('".$fp->getError()."'); </script>\n";
-			exit();
+			JError::raiseError(500, $fp->getError() );
 		}
 	}
-	$fp->updateOrder();
+	$fp->reorder();
 
-	mosRedirect( "index2.php?option=$option" );
+	$cache = & JFactory::getCache('com_content');
+	$cache->clean();
+
+	$mainframe->redirect( 'index.php?option='.$option );
 }
 
 /**
 * Moves the order of a record
 * @param integer The increment to reorder by
 */
-function orderFrontPage( $uid, $inc, $option ) {
-	global $database;
+function orderFrontPage( $uid, $inc, $option )
+{
+	global $mainframe;
 
-	$fp = new mosFrontPage( $database );
+	$db =& JFactory::getDBO();
+
+	$fp =& JTable::getInstance('frontpage','Table');
 	$fp->load( $uid );
 	$fp->move( $inc );
 
-	mosRedirect( "index2.php?option=$option" );
+	$cache = & JFactory::getCache('com_content');
+	$cache->clean();
+
+	$mainframe->redirect( 'index.php?option='.$option );
 }
 
 /**
-* @param integer The id of the content item
+* @param integer The id of the article
 * @param integer The new access level
 * @param string The URL option
 */
-function accessMenu( $uid, $access ) {
-	global $database;
+function accessMenu( $uid, $access )
+{
+	global $mainframe;
 
-	$row = new mosContent( $database );
+	$db = & JFactory::getDBO();
+	$row =& JTable::getInstance('content');
 	$row->load( $uid );
 	$row->access = $access;
 
@@ -273,32 +321,40 @@ function accessMenu( $uid, $access ) {
 		return $row->getError();
 	}
 
-	mosRedirect( 'index2.php?option=com_frontpage' );
+	$cache = & JFactory::getCache('com_content');
+	$cache->clean();
+
+	$mainframe->redirect( 'index.php?option=com_frontpage' );
 }
 
-function saveOrder( &$cid ) {
-	global $database;
+function saveOrder( &$cid )
+{
+	global $mainframe;
 
-	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
+	$db 	=& JFactory::getDBO();
+	$total	= count( $cid );
+	$order 	= JRequest::getVar( 'order', array(0), 'post', 'array' );
 
-	for( $i=0; $i < $total; $i++ ) {
-		$query = "UPDATE #__content_frontpage"
-		. "\n SET ordering = $order[$i]"
-		. "\n WHERE content_id = $cid[$i]";
-		$database->setQuery( $query );
-		if (!$database->query()) {
-			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-			exit();
+	for( $i=0; $i < $total; $i++ )
+	{
+		$query = 'UPDATE #__content_frontpage'
+		. ' SET ordering = ' . (int) $order[$i]
+		. ' WHERE content_id = ' . (int) $cid[$i];
+		$db->setQuery( $query );
+		if (!$db->query()) {
+			JError::raiseError(500, $db->getErrorMsg() );
 		}
 
 		// update ordering
-		$row = new mosFrontPage( $database );
+		$row =& JTable::getInstance('frontpage','Table');
 		$row->load( $cid[$i] );
-		$row->updateOrder();
+		$row->reorder();
 	}
 
-	$msg 	= 'New ordering saved';
-	mosRedirect( 'index2.php?option=com_frontpage', $msg );
+	$cache = & JFactory::getCache('com_content');
+	$cache->clean();
+
+	$msg 	= JText::_( 'New ordering saved' );
+	$mainframe->redirect( 'index.php?option=com_frontpage', $msg );
 }
 ?>

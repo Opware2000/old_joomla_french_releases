@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.media.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Massmail
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.media.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Media
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,11 +13,14 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-require_once( $mainframe->getPath( 'toolbar_html' ) );
+require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 
 switch ( $task ) {
+	case 'popupUpload':
+		TOOLBAR_media::_UPLOAD();
+		break;
 	default:
 		TOOLBAR_media::_DEFAULT();
 		break;

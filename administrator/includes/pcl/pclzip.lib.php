@@ -1,11 +1,9 @@
 <?php
 /**
-* @version $Id: pclzip.lib.php 47 2005-09-15 02:55:27Z rhuk $
-* @package Joomla
+* @version $Id: pclzip.lib.php 7890 2007-07-07 12:52:33Z friesengeist $
+* @package		Joomla
 */
 
-// no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 // --------------------------------------------------------------------------------
 // PhpConcept Library - Zip Module 2.1
@@ -30,7 +28,7 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 //	The use of this software is at the risk of the user.
 //
 // --------------------------------------------------------------------------------
-// $Id: pclzip.lib.php 47 2005-09-15 02:55:27Z rhuk $
+// $Id: pclzip.lib.php 7890 2007-07-07 12:52:33Z friesengeist $
 // --------------------------------------------------------------------------------
 
   // ----- Constants
@@ -649,7 +647,7 @@ $v_options[PCLZIP_OPT_EXTRACT_AS_STRING] = FALSE;
 // ----- Look for arguments
 if ($v_size > 0) {
   // ----- Get the arguments
-  $v_arg_list = &func_get_args();
+  $v_arg_list = func_get_args();
 
   // ----- Look for first arg
   if ((is_integer($v_arg_list[0])) && ($v_arg_list[0] > 77000)) {
@@ -4310,7 +4308,12 @@ if (($v_result = $this->privDirCheck($p_parent_dir)) != 1)
 
 // ----- Create the directory
 //--(MAGIC-PclTrace)--//PclTraceFctMessage(__FILE__, __LINE__, 3, "Create directory '$p_dir'");
-if (!@mkdir($p_dir, 0777))
+/*
+ * MODIFIED FOR JOOMLA
+ * @since 1.5 December 12, 2005
+ */
+jimport('joomla.filesystem.folder');
+if (!JFolder::create($p_dir, 0777))
 {
   // ----- Error log
   PclZip::privErrorLog(PCLZIP_ERR_DIR_CREATE_FAIL, "Unable to create directory '$p_dir'");

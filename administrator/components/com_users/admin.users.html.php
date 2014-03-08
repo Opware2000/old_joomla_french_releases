@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.users.html.php 197 2005-09-20 11:13:25Z stingrey $
-* @package Joomla
-* @subpackage Users
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.users.html.php 8053 2007-07-18 13:01:17Z humvee $
+* @package		Joomla
+* @subpackage	Users
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,142 +13,174 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Users
+* @package		Joomla
+* @subpackage	Users
 */
 class HTML_users {
 
-	function showUsers( &$rows, $pageNav, $search, $option, $lists ) {
+	/**
+	 * Display list of users
+	 */
+	function showUsers( &$rows, &$page, $option, &$lists )
+	{
+		$limitstart = JRequest::getVar('limitstart', '0', '', 'int');
+
+		$user =& JFactory::getUser();
+
+		JHTML::_('behavior.tooltip');
 		?>
-		<form action="index2.php" method="post" name="adminForm">
+		<form action="index.php?option=com_users" method="post" name="adminForm">
 
-		<table class="adminheading">
-		<tr>
-			<th class="user">
-			User Manager
-			</th>
-			<td>
-			Filter:
-			</td>
-			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="inputbox" onChange="document.adminForm.submit();" />
-			</td>
-			<td width="right">
-			<?php echo $lists['type'];?>
-			</td>
-			<td width="right">
-			<?php echo $lists['logged'];?>
-			</td>
-		</tr>
-		</table>
-
-		<table class="adminlist">
-		<tr>
-			<th width="2%" class="title">
-			#
-			</th>
-			<th width="3%" class="title">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count($rows); ?>);" />
-			</th>
-			<th class="title">
-			Name
-			</th>
-			<th width="15%" class="title" >
-			Username
-			</th>
-			<th width="5%" class="title" nowrap="nowrap">
-			Logged In
-			</th>
-			<th width="5%" class="title">
-			Enabled
-			</th>
-			<th width="15%" class="title">
-			Group
-			</th>
-			<th width="15%" class="title">
-			E-Mail
-			</th>
-			<th width="10%" class="title">
-			Last Visit
-			</th>
-			<th width="1%" class="title">
-			ID
-			</th>			
-		</tr>
-		<?php
-		$k = 0;
-		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
-			$row 	=& $rows[$i];
-
-			$img 	= $row->block ? 'publish_x.png' : 'tick.png';
-			$task 	= $row->block ? 'unblock' : 'block';
-			$alt 	= $row->block ? 'Enabled' : 'Blocked';
-			$link 	= 'index2.php?option=com_users&amp;task=editA&amp;id='. $row->id. '&amp;hidemainmenu=1';
-			?>
-			<tr class="<?php echo "row$k"; ?>">
-				<td>
-				<?php echo $i+1+$pageNav->limitstart;?>
-				</td>
-				<td>
-				<?php echo mosHTML::idBox( $i, $row->id ); ?>
-				</td>
-				<td>
-				<a href="<?php echo $link; ?>">
-				<?php echo $row->name; ?>
-				</a>
-				<td>
-				<?php echo $row->username; ?>
-				</td>
-				</td>
-				<td align="center">
-				<?php echo $row->loggedin ? '<img src="images/tick.png" width="12" height="12" border="0" alt="" />': ''; ?>
-				</td>
-				<td>
-				<a href="javascript: void(0);" onClick="return listItemTask('cb<?php echo $i;?>','<?php echo $task;?>')">
-				<img src="images/<?php echo $img;?>" width="12" height="12" border="0" alt="<?php echo $alt; ?>" />
-				</a>
-				</td>
-				<td>
-				<?php echo $row->groupname; ?>
-				</td>
-				<td>
-				<a href="mailto:<?php echo $row->email; ?>">
-				<?php echo $row->email; ?>
-				</a>
+		<table>
+			<tr>
+				<td width="100%">
+					<?php echo JText::_( 'Filter' ); ?>:
+					<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+					<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+					<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_type').value='0';this.form.getElementById('filter_logged').value='0';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 				</td>
 				<td nowrap="nowrap">
-				<?php echo mosFormatDate( $row->lastvisitDate, "%Y-%m-%d %H:%M:%S" ); ?>
-				</td>
-				<td>
-				<?php echo $row->id; ?>
+					<?php echo $lists['type'];?>
+					<?php echo $lists['logged'];?>
 				</td>
 			</tr>
-			<?php
-			$k = 1 - $k;
-		}
-		?>
 		</table>
-		<?php echo $pageNav->getListFooter(); ?>
+
+		<table class="adminlist" cellpadding="1">
+			<thead>
+				<tr>
+					<th width="2%" class="title">
+						<?php echo JText::_( 'NUM' ); ?>
+					</th>
+					<th width="3%" class="title">
+						<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($rows); ?>);" />
+					</th>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort',   'Name', 'a.name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="15%" class="title" >
+						<?php echo JHTML::_('grid.sort',   'Username', 'a.username', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="5%" class="title" nowrap="nowrap">
+						<?php echo JText::_( 'Logged In' ); ?>
+					</th>
+					<th width="5%" class="title" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Enabled', 'a.block', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="15%" class="title">
+						<?php echo JHTML::_('grid.sort',   'Group', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="15%" class="title">
+						<?php echo JHTML::_('grid.sort',   'E-Mail', 'a.email', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="10%" class="title">
+						<?php echo JHTML::_('grid.sort',   'Last Visit', 'a.lastvisitDate', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="1%" class="title" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'ID', 'a.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+				<td colspan="10">
+					<?php echo $page->getListFooter(); ?>
+				</td>
+				</tr>
+			</tfoot>
+			<tbody>
+			<?php
+			$k = 0;
+			for ($i=0, $n=count( $rows ); $i < $n; $i++) {
+				$row 	=& $rows[$i];
+
+				$img 	= $row->block ? 'publish_x.png' : 'tick.png';
+				$task 	= $row->block ? 'unblock' : 'block';
+				$alt 	= $row->block ? JText::_( 'Enabled' ) : JText::_( 'Blocked' );
+				$link 	= 'index.php?option=com_users&amp;task=edit&amp;cid[]='. $row->id. '';
+
+				if ($row->lastvisitDate == "0000-00-00 00:00:00") {
+					$lvisit = "Never";
+				} else {
+					$lvisit	= $row->lastvisitDate; //= JHTML::_('date',  $row->lastvisitDate, JText::_('DATE_FORMAT_LC4'));
+				}
+				?>
+				<tr class="<?php echo "row$k"; ?>">
+					<td>
+						<?php echo $i+1+$page->limitstart;?>
+					</td>
+					<td>
+						<?php echo JHTML::_('grid.id', $i, $row->id ); ?>
+					</td>
+					<td>
+						<a href="<?php echo $link; ?>">
+							<?php echo $row->name; ?></a>
+					</td>
+					<td>
+						<?php echo $row->username; ?>
+					</td>
+					<td align="center">
+						<?php echo $row->loggedin ? '<img src="images/tick.png" width="16" height="16" border="0" alt="" />': ''; ?>
+					</td>
+					<td align="center">
+						<a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i;?>','<?php echo $task;?>')">
+							<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt; ?>" /></a>
+					</td>
+					<td>
+						<?php echo JText::_( $row->groupname ); ?>
+					</td>
+					<td>
+						<a href="mailto:<?php echo $row->email; ?>">
+							<?php echo $row->email; ?></a>
+					</td>
+					<td nowrap="nowrap">
+						<?php echo $lvisit; ?>
+					</td>
+					<td>
+						<?php echo $row->id; ?>
+					</td>
+				</tr>
+				<?php
+				$k = 1 - $k;
+			}
+			?>
+			</tbody>
+			</table>
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="hidemainmenu" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
 		</form>
 		<?php
 	}
 
-	function edituser( &$row, &$contact, &$lists, $option, $uid, &$params ) {
-		global $my, $acl;
-		global $mosConfig_live_site;
-		$tabs = new mosTabs( 0 );
+	/**
+	 * Form for editing a user
+	 */
+	function edituser( &$user, &$contact, &$lists, $option )
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
 
-		mosCommonHTML::loadOverlib();
-		$canBlockUser 	= $acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'user properties', 'block_user' );
-		$canEmailEvents = $acl->acl_check( 'workflow', 'email_events', 'users', $acl->get_group_name( $row->gid, 'ARO' ) );
+		global $mainframe;
+
+		/*
+		 * Initialize variables
+		 */
+		$acl = & JFactory::getACL();
+
+		JHTML::_('behavior.tooltip');
+		$canBlockUser 	= $user->authorize( 'com_user', 'block user' );
+		$canEmailEvents = $acl->acl_check( 'workflow', 'email_events', 'users', $acl->get_group_name( $user->get('gid'), 'ARO' ) );
+
+		$lvisit = $user->get('lastvisitDate');
+		if ($lvisit == "0000-00-00 00:00:00") {
+			$lvisit = "Never";
+		}
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
@@ -161,21 +193,21 @@ class HTML_users {
 
 			// do field validation
 			if (trim(form.name.value) == "") {
-				alert( "You must provide a name." );
+				alert( "<?php echo JText::_( 'You must provide a name.', true ); ?>" );
 			} else if (form.username.value == "") {
-				alert( "You must provide a user login name." );
-			} else if (r.exec(form.username.value) || form.username.value.length < 3) {
-				alert( "You login name contains invalid characters or is too short." );
+				alert( "<?php echo JText::_( 'You must provide a user login name.', true ); ?>" );
+			} else if (r.exec(form.username.value) || form.username.value.length < 2) {
+				alert( "<?php echo JText::_( 'WARNLOGININVALID', true ); ?>" );
 			} else if (trim(form.email.value) == "") {
-				alert( "You must provide an email address." );
+				alert( "<?php echo JText::_( 'You must provide an email address.', true ); ?>" );
 			} else if (form.gid.value == "") {
-				alert( "You must assign user to a group." );
+				alert( "<?php echo JText::_( 'You must assign user to a group.', true ); ?>" );
 			} else if (trim(form.password.value) != "" && form.password.value != form.password2.value){
-				alert( "Password do not match." );
+				alert( "<?php echo JText::_( 'Password do not match.', true ); ?>" );
 			} else if (form.gid.value == "29") {
-				alert( "Please Select another group as `Public Frontend` is not a selectable option" );
+				alert( "<?php echo JText::_( 'WARNSELECTPF', true ); ?>" );
 			} else if (form.gid.value == "30") {
-				alert( "Please Select another group as `Public Backend` is not a selectable option" );
+				alert( "<?php echo JText::_( 'WARNSELECTPB', true ); ?>" );
 			} else {
 				submitform( pressbutton );
 			}
@@ -187,246 +219,247 @@ class HTML_users {
 			submitform( 'contact' );
 		}
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
+		<form action="index.php" method="post" name="adminForm" autocomplete="off">
 
-		<table class="adminheading">
-		<tr>
-			<th class="user">
-			User: <small><?php echo $row->id ? 'Edit' : 'Add';?></small>
-			</th>
-		</tr>
-		</table>
+		<div class="col50">
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'User Details' ); ?></legend>
 
-		<table width="100%">
-		<tr>
-			<td width="60%" valign="top">
-				<table class="adminform">
-				<tr>
-					<th colspan="2">
-					User Details
-					</th>
-				</tr>
-				<tr>
-					<td width="100">
-					Name:
-					</td>
-					<td width="85%">
-					<input type="text" name="name" class="inputbox" size="40" value="<?php echo $row->name; ?>" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Username:
-					</td>
-					<td>
-					<input type="text" name="username" class="inputbox" size="40" value="<?php echo $row->username; ?>" />
-					</td>
-				<tr>
-					<td>
-					Email:
-					</td>
-					<td>
-					<input class="inputbox" type="text" name="email" size="40" value="<?php echo $row->email; ?>" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-					New Password:
-					</td>
-					<td>
-					<input class="inputbox" type="password" name="password" size="40" value="" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Verify Password:
-					</td>
-					<td>
-					<input class="inputbox" type="password" name="password2" size="40" value="" />
-					</td>
-				</tr>
-				<tr>
-					<td valign="top">
-					Group:
-					</td>
-					<td>
-					<?php echo $lists['gid']; ?>
-					</td>
-				</tr>
-				<?php
-				if ($canBlockUser) {
-					?>
+				<table class="admintable" cellspacing="1">
 					<tr>
-						<td>
-						Block User
+						<td width="150" class="key">
+							<label for="name">
+								<?php echo JText::_( 'Name' ); ?>
+							</label>
 						</td>
 						<td>
-						<?php echo $lists['block']; ?>
+							<input type="text" name="name" id="name" class="inputbox" size="40" value="<?php echo $user->get('name'); ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="username">
+								<?php echo JText::_( 'Username' ); ?>
+							</label>
+						</td>
+						<td>
+							<input type="text" name="username" id="username" class="inputbox" size="40" value="<?php echo $user->get('username'); ?>" autocomplete="off" />
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="email">
+								<?php echo JText::_( 'Email' ); ?>
+							</label>
+						</td>
+						<td>
+							<input class="inputbox" type="text" name="email" id="email" size="40" value="<?php echo $user->get('email'); ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="password">
+								<?php echo JText::_( 'New Password' ); ?>
+							</label>
+						</td>
+						<td>
+							<input class="inputbox" type="password" name="password" id="password" size="40" value="" />
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="password2">
+								<?php echo JText::_( 'Verify Password' ); ?>
+							</label>
+						</td>
+						<td>
+							<input class="inputbox" type="password" name="password2" id="password2" size="40" value="" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" class="key">
+							<label for="gid">
+								<?php echo JText::_( 'Group' ); ?>
+							</label>
+						</td>
+						<td>
+							<?php echo $lists['gid']; ?>
 						</td>
 					</tr>
 					<?php
-				}
-				if ($canEmailEvents) {
-					?>
-					<tr>
-						<td>
-						Receive Submission Emails
-						</td>
-						<td>
-						<?php echo $lists['sendEmail']; ?>
-						</td>
-					</tr>
-					<?php
-				}
-				if( $uid ) {
-					?>
-					<tr>
-						<td>
-						Register Date
-						</td>
-						<td>
-						<?php echo $row->registerDate;?>
-						</td>
-					</tr>
-				<tr>
-					<td>
-					Last Visit Date
-					</td>
-					<td>
-					<?php echo $row->lastvisitDate;?>
-					</td>
-				</tr>
-					<?php
-				}
-				?>
-				<tr>
-					<td colspan="2">&nbsp;
-
-					</td>
-				</tr>
-				</table>
-			</td>
-			<td width="40%" valign="top">
-				<table class="adminform">
-				<tr>
-					<th colspan="1">
-					<?php echo 'Parameters'; ?>
-					</th>
-				</tr>
-				<tr>
-					<td>
-					<?php echo $params->render( 'params' );?>
-					</td>
-				</tr>
-				</table>
-
-				<?php
-				if ( !$contact ) {
-					?>
-					<table class="adminform">
-					<tr>
-						<th>
-						Contact Information
-						</th>
-					</tr>
-					<tr>
-						<td>
-						<br />
-						No Contact details linked to this User:
-						<br />
-						See 'Components -> Contact -> Manage Contacts' for details.
-						<br /><br />
-						</td>
-					</tr>
-					</table>
-					<?php
-				} else {
-					?>
-					<table class="adminform">
-					<tr>
-						<th colspan="2">
-						Contact Information
-						</th>
-					</tr>
-					<tr>
-						<td width="15%">
-						Name:
-						</td>
-						<td>
-						<strong>
-						<?php echo $contact[0]->name;?>
-						</strong>
-						</td>
-					</tr>
-					<tr>
-						<td>
-						Position:
-						</td>
-						<td >
-						<strong>
-						<?php echo $contact[0]->con_position;?>
-						</strong>
-						</td>
-					</tr>
-					<tr>
-						<td>
-						Telephone:
-						</td>
-						<td >
-						<strong>
-						<?php echo $contact[0]->telephone;?>
-						</strong>
-						</td>
-					</tr>
-					<tr>
-						<td>
-						Fax:
-						</td>
-						<td >
-						<strong>
-						<?php echo $contact[0]->fax;?>
-						</strong>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td >
-						<strong>
-						<?php echo $contact[0]->misc;?>
-						</strong>
-						</td>
-					</tr>
-					<?php
-					if ($contact[0]->image) {
+					if ($canBlockUser) {
 						?>
 						<tr>
-							<td></td>
-							<td valign="top">
-							<img src="<?php echo $mosConfig_live_site;?>/images/stories/<?php echo $contact[0]->image; ?>" align="middle" alt="Contact" />
+							<td class="key">
+								<?php echo JText::_( 'Block User' ); ?>
+							</td>
+							<td>
+								<?php echo $lists['block']; ?>
+							</td>
+						</tr>
+						<?php
+					}
+					if ($canEmailEvents) {
+						?>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Receive System Emails' ); ?>
+							</td>
+							<td>
+								<?php echo $lists['sendEmail']; ?>
+							</td>
+						</tr>
+						<?php
+					}
+					if( $user->get('id') ) {
+						?>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Register Date' ); ?>
+							</td>
+							<td>
+								<?php echo $user->get('registerDate');?>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Last Visit Date' ); ?>
+							</td>
+							<td>
+								<?php echo $lvisit; ?>
 							</td>
 						</tr>
 						<?php
 					}
 					?>
-					<tr>
-						<td colspan="2">
-						<br /><br />
-						<input class="button" type="button" value="change Contact Details" onclick="javascript: gotocontact( '<?php echo $contact[0]->id; ?>' )">
-						<i>
-						<br />
-						'Components -> Contact -> Manage Contacts'.
-						</i>
-						</td>
-					</tr>
+				</table>
+
+			</div>
+			<div class="col50">
+				<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Parameters' ); ?></legend>
+					<table class="admintable">
+						<tr>
+							<td>
+								<?php
+									$params = $user->getParameters();
+									$params->loadSetupFile(JApplicationHelper::getPath( 'com_xml', 'com_users' ));
+									echo $params->render( 'params' );
+								?>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset class="adminform">
+					<legend><?php echo JText::_( 'Contact Information' ); ?></legend>
+					<?php
+					if ( !$contact ) {
+						?>
+
+						<table class="admintable">
+						<tr>
+							<td>
+								<br />
+								<span class="note">
+								<?php echo JText::_( 'No Contact details linked to this User' ); ?>:
+								<br />
+								<?php echo JText::_( 'SEECOMPCONTACTFORDETAILS' ); ?>.
+								</span>
+								<br /><br />
+							</td>
+						</tr>
+						</table>
+						<?php
+					} else {
+						?>
+						<table class="admintable">
+						<tr>
+							<td width="120" class="key">
+								<?php echo JText::_( 'Name' ); ?>
+							</td>
+							<td>
+							<strong>
+								<?php echo $contact[0]->name;?>
+							</strong>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Position' ); ?>
+							</td>
+							<td >
+								<strong>
+									<?php echo $contact[0]->con_position;?>
+								</strong>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Telephone' ); ?>
+							</td>
+							<td >
+								<strong>
+									<?php echo $contact[0]->telephone;?>
+								</strong>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+								<?php echo JText::_( 'Fax' ); ?>
+							</td>
+							<td >
+								<strong>
+									<?php echo $contact[0]->fax;?>
+								</strong>
+							</td>
+						</tr>
+						<tr>
+							<td class="key">
+									<?php echo JText::_( 'Misc' ); ?>
+							</td>
+							<td >
+								<strong>
+									<?php echo $contact[0]->misc;?>
+								</strong>
+							</td>
+						</tr>
+						<?php
+						if ($contact[0]->image) {
+							?>
+							<tr>
+								<td class="key">
+								<?php echo JText::_( 'Image' ); ?>
+								</td>
+								<td valign="top">
+									<img src="<?php echo $mainframe->getSiteURL();?>/images/stories/<?php echo $contact[0]->image; ?>" align="middle" alt="<?php echo JText::_( 'Contact' ); ?>" />
+								</td>
+							</tr>
+							<?php
+						}
+						?>
+						<tr>
+							<td class="key">&nbsp;</td>
+							<td>
+								<div >
+									<br />
+									<input class="button" type="button" value="<?php echo JText::_( 'change Contact Details' ); ?>" onclick="gotocontact( '<?php echo $contact[0]->id; ?>' )" />
+									<i>
+									<br /><br />
+									'<?php echo JText::_( 'Components -> Contact -> Manage Contacts' ); ?>'
+									</i>
+								</div>
+							</td>
+						</tr>
 					</table>
 					<?php
 				}
 				?>
-			</td>
-		</tr>
-		</table>
+			</fieldset>
+		</div>
+		<div class="clr"></div>
 
-		<input type="hidden" name="id" value="<?php echo $row->id; ?>" />
+		<input type="hidden" name="id" value="<?php echo $user->get('id'); ?>" />
+		<input type="hidden" name="cid[]" value="<?php echo $user->get('id'); ?>" />
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="contact_id" value="" />

@@ -1,11 +1,21 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version $Id: joomla.javascript.js 199 2005-09-20 13:29:10Z stingrey $
-* @package Joomla
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @version		$Id: joomla.javascript.js 7729 2007-06-12 15:15:16Z tcp $
+* @package		Joomla
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL
 * Joomla! is Free Software
 */
+
+/**
+ * Overlib Styling Declarations to allow CSS class override of styles
+ *
+ */
+var ol_fgclass='ol-foreground';
+var ol_bgclass='ol-background';
+var ol_textfontclass='ol-textfont';
+var ol_captionfontclass='ol-captionfont';
+var ol_closefontclass='ol-closefont';
 
 // general utility for browsing a named array or object
 function xshow(o) {
@@ -175,19 +185,30 @@ function getSelectedRadio( frmName, srcGroupName ) {
 	var form = eval( 'document.' + frmName );
 	var srcGroup = eval( 'form.' + srcGroupName );
 
-	if (srcGroup[0]) {
-		for (var i=0, n=srcGroup.length; i < n; i++) {
-			if (srcGroup[i].checked) {
-				return srcGroup[i].value;
-			}
-		}
-	} else {
-		if (srcGroup.checked) {
-			return srcGroup.value;
-		} // if the one button is checked, return zero
+	return radioGetCheckedValue( srcGroup );
+}
+
+// return the value of the radio button that is checked
+// return an empty string if none are checked, or
+// there are no radio buttons
+function radioGetCheckedValue(radioObj) {
+	if (!radioObj) {
+		return '';
 	}
-   // if we get to this point, no radio button is selected
-   return null;
+	var n = radioObj.length;
+	if (n == undefined) {
+		if (radioObj.checked) {
+			return radioObj.value;
+		} else {
+			return '';
+		}
+	}
+	for (var i = 0; i < n; i++) {
+		if(radioObj[i].checked) {
+			return radioObj[i].value;
+		}
+	}
+	return '';
 }
 
 function getSelectedValue( frmName, srcListName ) {
@@ -224,56 +245,6 @@ function chgSelectedValue( frmName, srcListName, value ) {
 		return true;
 	} else {
 		return false;
-	}
-}
-
-// Form specific functions for editting content images
-
-function showImageProps(base_path) {
-	form = document.adminForm;
-	value = getSelectedValue( 'adminForm', 'imagelist' );
-	parts = value.split( '|' );
-	form._source.value = parts[0];
-	setSelectedValue( 'adminForm', '_align', parts[1] || '' );
-	form._alt.value = parts[2] || '';
-	form._border.value = parts[3] || '0';
-	form._caption.value = parts[4] || '';
-	setSelectedValue( 'adminForm', '_caption_position', parts[5] || '' );
-	setSelectedValue( 'adminForm', '_caption_align', parts[6] || '' );
-	form._width.value = parts[7] || '';
-
-	//previewImage( 'imagelist', 'view_imagelist', base_path );
-	srcImage = eval( "document." + 'view_imagelist' );
-	srcImage.src = base_path + parts[0];
-}
-
-function applyImageProps() {
-	form = document.adminForm;
-	if (!getSelectedValue( 'adminForm', 'imagelist' )) {
-		alert( "Select and image from the list" );
-		return;
-	}
-	value = form._source.value + '|'
-	+ getSelectedValue( 'adminForm', '_align' ) + '|'
-	+ form._alt.value + '|'
-	+ parseInt( form._border.value ) + '|'
-	+ form._caption.value + '|'
-	+ getSelectedValue( 'adminForm', '_caption_position' ) + '|'
-	+ getSelectedValue( 'adminForm', '_caption_align' ) + '|'
-	+ form._width.value;
-	chgSelectedValue( 'adminForm', 'imagelist', value );
-}
-
-function previewImage( list, image, base_path ) {
-	form = document.adminForm;
-	srcList = eval( "form." + list );
-	srcImage = eval( "document." + image );
-	var fileName = srcList.options[srcList.selectedIndex].text;
-	var fileName2 = srcList.options[srcList.selectedIndex].value;
-	if (fileName.length == 0 || fileName2.length == 0) {
-		srcImage.src = 'images/blank.gif';
-	} else {
-		srcImage.src = base_path + fileName2;
 	}
 }
 
@@ -321,9 +292,10 @@ function listItemTask( id, task ) {
     return false;
 }
 
-function hideMainMenu()
-{
-	document.adminForm.hidemainmenu.value=1;
+function hideMainMenu() {
+	if (document.adminForm.hidemainmenu) {
+		document.adminForm.hidemainmenu.value=1;
+	}
 }
 
 function isChecked(isitchecked){
@@ -346,7 +318,9 @@ function submitbutton(pressbutton) {
 * Submit the admin form
 */
 function submitform(pressbutton){
-	document.adminForm.task.value=pressbutton;
+	if (pressbutton) {
+		document.adminForm.task.value=pressbutton;
+	}
 	try {
 		document.adminForm.onsubmit();
 		}
@@ -412,7 +386,7 @@ function checkCalendar(ev) {
 // This function shows the calendar under the element having the given id.
 // It takes care of catching "mousedown" signals on document and hiding the
 // calendar if the click was outside.
-function showCalendar(id) {
+function showCalendar(id, dateFormat) {
 	var el = document.getElementById(id);
 	if (calendar != null) {
 		// we already have one created, so just update it.
@@ -423,7 +397,14 @@ function showCalendar(id) {
 		var cal = new Calendar(true, null, selected, closeHandler);
 		calendar = cal;		// remember the calendar in the global
 		cal.setRange(1900, 2070);	// min/max year allowed
+		
+		if ( dateFormat )	// optional date format
+		{
+			cal.setDateFormat(dateFormat);
+		}
+		
 		calendar.create();		// create a popup calendar
+		calendar.parseDate(el.value); // set it to a new date
 	}
 	calendar.sel = el;		// inform it about the input field in use
 	calendar.showAtElement(el);	// show the calendar next to the input field
@@ -525,53 +506,38 @@ function mosDHTML(){
 }
 var dhtml = new mosDHTML();
 
-function MM_findObj(n, d) { //v4.01
-	var p,i,x;
-	if(!d) d=document;
-	if((p=n.indexOf("?"))>0&&parent.frames.length) {
-		d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);
-	}
-	if(!(x=d[n])&&d.all) x=d.all[n];
-	for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
-	for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
-	if(!x && d.getElementById) x=d.getElementById(n);
-	return x;
-}
-function MM_swapImage() { //v3.0
-	var i,j=0,x,a=MM_swapImage.arguments;
-	document.MM_sr=new Array;
-	for(i=0;i<(a.length-2);i+=3)
-	if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x;
-	if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
-}
-function MM_swapImgRestore() { //v3.0
-	var i,x,a=document.MM_sr;
-	for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+// needed for Table Column ordering
+function tableOrdering( order, dir, task ) {
+	var form = document.adminForm;
+
+	form.filter_order.value 	= order;
+	form.filter_order_Dir.value	= dir;
+	submitform( task );
 }
 
-function MM_preloadImages() { //v3.0
-	var d=document;
-	if(d.images){
-	if(!d.MM_p) d.MM_p=new Array();
-	var i,j=d.MM_p.length,a=MM_preloadImages.arguments;
-	for(i=0; i<a.length; i++)
-	if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
-}
-
-
-function saveorder( n ) {
-	checkAll_button( n );
-	submitform('saveorder');
+function saveorder( n,  task ) {
+	checkAll_button( n, task );
 }
 
 //needed by saveorder function
-function checkAll_button( n ) {
+function checkAll_button( n, task ) {
+    
+    if (!task ) {
+		task = 'saveorder';
+	}
+
 	for ( var j = 0; j <= n; j++ ) {
 		box = eval( "document.adminForm.cb" + j );
-		if ( box.checked == false ) {
-			box.checked = true;
+		if ( box ) {
+			if ( box.checked == false ) {
+				box.checked = true;
+			}
+		} else {
+			alert("You cannot change the order of items, as an item in the list is `Checked Out`");
+			return;
 		}
 	}
+	submitform(task);
 }
 /**
 * @param object A form element
@@ -586,4 +552,41 @@ function getElementByName( f, name ) {
 		}
 	}
 	return null;
+}
+
+function go2( pressbutton, menu, id ) {
+	var form = document.adminForm;
+
+	if (form.imagelist && form.images) {
+		// assemble the images back into one field
+		var temp = new Array;
+		for (var i=0, n=form.imagelist.options.length; i < n; i++) {
+			temp[i] = form.imagelist.options[i].value;
+		}
+		form.images.value = temp.join( '\n' );
+	}
+
+	if (pressbutton == 'go2menu') {
+		form.menu.value = menu;
+		submitform( pressbutton );
+		return;
+	}
+
+	if (pressbutton == 'go2menuitem') {
+		form.menu.value 	= menu;
+		form.menuid.value 	= id;
+		submitform( pressbutton );
+		return;
+	}
+}
+/**
+ * Verifies if the string is in a valid email format
+ * @param	string
+ * @return	boolean
+ */
+function isEmail( text )
+{
+	var pattern = "^[\\w-_\.]*[\\w-_\.]\@[\\w]\.+[\\w]+[\\w]$";
+	var regex = new RegExp( pattern );
+	return regex.test( text );
 }

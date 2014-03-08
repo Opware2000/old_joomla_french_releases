@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.categories.html.php 393 2005-10-08 13:37:52Z akede $
-* @package Joomla
-* @subpackage Categories
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.categories.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @package		Joomla
+* @subpackage	Categories
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,200 +13,179 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Categories
+* @package		Joomla
+* @subpackage	Categories
 */
-class categories_html {
+class categories_html
+{
 
 	/**
 	* Writes a list of the categories for a section
 	* @param array An array of category objects
 	* @param string The name of the category section
 	*/
-	function show( &$rows, $section, $section_name, &$pageNav, &$lists, $type ) {
-		global $my;
+	function show( &$rows, $section, $section_name, &$page, &$lists, $type )
+	{
+		$limitstart = JRequest::getVar('limitstart', '0', '', 'int');
+		$user =& JFactory::getUser();
 
-		mosCommonHTML::loadOverlib();
+		//Ordering allowed ?
+		$ordering = ($lists['order'] == 'c.ordering');
+
+		JHTML::_('behavior.tooltip');
 		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<?php
-			if ( $section == 'content') {
-				?>
-				<th class="categories">
-				Category Manager <small><small>[ Content: All ]</small></small>
-				</th>
-				<td width="right">
-				<?php echo $lists['sectionid'];?>
+		<form action="index.php?option=com_categories&amp;section=<?php echo $section; ?>" method="post" name="adminForm">
+
+		<table>
+			<tr>
+				<td align="left" width="100%">
+					<?php echo JText::_( 'Filter' ); ?>:
+					<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+					<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+					<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 				</td>
-				<?php
-			} else {
-				if ( is_numeric( $section ) ) {
-					$query = 'com_content&sectionid=' . $section;
-				} else {
-					if ( $section == 'com_contact_details' ) {
-						$query = 'com_contact';
-					} else {
-						$query = $section;
+				<td nowrap="nowrap">
+					<?php
+					if ( $section == 'com_content') {
+						echo $lists['sectionid'];
 					}
-				}
-				?>
-				<th class="categories">
-				Category Manager <small><small>[ <?php echo $section_name;?> ]</small></small>
-				</th>
-				<?php
-			}
-			?>
-		</tr>
+					?>
+					<?php
+					echo $lists['state'];
+					?>
+				</td>
+			</tr>
 		</table>
 
 		<table class="adminlist">
+		<thead>
+			<tr>
+				<th width="10" align="left">
+					<?php echo JText::_( 'Num' ); ?>
+				</th>
+				<th width="20">
+					<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows );?>);" />
+				</th>
+				<th class="title">
+					<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="10%">
+					<?php echo JHTML::_('grid.sort',   'Published', 'c.published', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="80" nowrap="nowrap">
+					<?php echo JHTML::_('grid.sort',   'Order by', 'c.ordering', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="1%">
+					<?php echo JHTML::_('grid.order',  $rows ); ?>
+				</th>
+				<th width="7%">
+					<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="2%" nowrap="nowrap">
+					<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<?php
+				if ( $section == 'com_content') {
+					?>
+					<th width="20%"  class="title">
+						<?php echo JHTML::_('grid.sort',   'Section', 'section_name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<?php
+				}
+				?>
+				<?php
+				if ( $type == 'content') {
+					?>
+					<th width="5%">
+						<?php echo JText::_( 'Num Active' ); ?>
+					</th>
+					<th width="5%">
+						<?php echo JText::_( 'Num Trash' ); ?>
+					</th>
+					<?php
+				}
+				?>
+			</tr>
+		</thead>
+		<tfoot>
 		<tr>
-			<th width="10" align="left">
-			#
-			</th>
-			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows );?>);" />
-			</th>
-			<th class="title">
-			Category Name
-			</th>
-			<th width="10%">
-			Published
-			</th>
-			<?php
-			if ( $section != 'content') {
-				?>
-				<th colspan="2" width="5%">
-				Reorder
-				</th>
-				<?php
-			}
-			?>
-			<th width="2%">
-			Order
-			</th>
-			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
-			</th>
-			<th width="10%">
-			Access
-			</th>
-			<?php
-			if ( $section == 'content') {
-				?>
-				<th width="12%" align="left">
-				Section
-				</th>
-				<?php
-			}
-			?>
-			<th width="5%" nowrap>
-			Category ID
-			</th>
-			<?php
-			if ( $type == 'content') {
-				?>
-				<th width="5%">
-				# Active
-				</th>
-				<th width="5%">
-				# Trash
-				</th>
-				<?php
-			} else {
-				?>
-				<th width="20%">
-				</th>
-				<?php
-			}
-			?>
+			<td colspan="13">
+				<?php echo $page->getListFooter(); ?>
+			</td>
 		</tr>
+		</tfoot>
+		<tbody>
 		<?php
 		$k = 0;
+		if( count( $rows ) ) {
 		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 			$row 	= &$rows[$i];
 
-			$row->sect_link = 'index2.php?option=com_sections&task=editA&hidemainmenu=1&id='. $row->section;
+			$row->sect_link = JRoute::_( 'index.php?option=com_sections&task=edit&cid[]='. $row->section );
 
-			$link = 'index2.php?option=com_categories&section='. $section .'&task=editA&hidemainmenu=1&id='. $row->id;
+			$link = 'index.php?option=com_categories&section='. $section .'&task=edit&cid[]='. $row->id .'&type='.$type;
 
-			$access 	= mosCommonHTML::AccessProcessing( $row, $i );
-			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
-			$published 	= mosCommonHTML::PublishedProcessing( $row, $i );
+			$access 	= JHTML::_('grid.access',   $row, $i );
+			$checked 	= JHTML::_('grid.checkedout',   $row, $i );
+			$published 	= JHTML::_('grid.published', $row, $i );
 			?>
 			<tr class="<?php echo "row$k"; ?>">
 				<td>
-				<?php echo $pageNav->rowNumber( $i ); ?>
+					<?php echo $page->getRowOffset( $i ); ?>
 				</td>
 				<td>
-				<?php echo $checked; ?>
+					<?php echo $checked; ?>
 				</td>
 				<td>
-				<?php
-				if ( $row->checked_out_contact_category && ( $row->checked_out_contact_category != $my->id ) ) {
-					echo $row->name .' ( '. $row->title .' )';
-				} else {
-					?>
-					<a href="<?php echo $link; ?>">
-					<?php echo $row->name .' ( '. $row->title .' )'; ?>
-					</a>
+					<span class="editlinktip hasTip" title="<?php echo JText::_( 'Title' );?>::<?php echo $row->title; ?>">
 					<?php
-				}
-				?>
+					if (  JTable::isCheckedOut($user->get ('id'), $row->checked_out )  ) {
+						echo $row->title;
+					} else {
+						?>
+						<a href="<?php echo JRoute::_( $link ); ?>">
+							<?php echo $row->title; ?></a>
+						<?php
+					}
+					?></span>
 				</td>
 				<td align="center">
-				<?php echo $published;?>
+					<?php echo $published;?>
+				</td>
+				<td class="order" colspan="2">
+					<span><?php echo $page->orderUpIcon( $i, ($row->section == @$rows[$i-1]->section), 'orderup', 'Move Up', $ordering ); ?></span>
+					<span><?php echo $page->orderDownIcon( $i, $n, ($row->section == @$rows[$i+1]->section), 'orderdown', 'Move Down', $ordering ); ?></span>
+					<?php $disabled = $ordering ?  '' : 'disabled="disabled"'; ?>
+					<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" <?php echo $disabled ?> class="text_area" style="text-align: center" />
+				</td>
+				<td align="center">
+					<?php echo $access;?>
+				</td>
+				<td align="center">
+					<?php echo $row->id; ?>
 				</td>
 				<?php
-				if ( $section != 'content' ) {
+				if ( $section == 'com_content' ) {
 					?>
 					<td>
-					<?php echo $pageNav->orderUpIcon( $i ); ?>
-					</td>
-					<td>
-					<?php echo $pageNav->orderDownIcon( $i, $n ); ?>
-					</td>
-					<?php
-				}
-				?>
-				<td align="center" colspan="2">
-				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" class="text_area" style="text-align: center" />
-				</td>
-				<td align="center">
-				<?php echo $access;?>
-				</td>
-				<?php
-				if ( $section == 'content' ) {
-					?>
-					<td align="left">
-					<a href="<?php echo $row->sect_link; ?>" title="Edit Section">
-					<?php echo $row->section_name; ?>
-					</a>
+						<a href="<?php echo $row->sect_link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+							<?php echo $row->section_name; ?>
+						</a>
 					</td>
 					<?php
 				}
 				?>
-				<td align="center">
-				<?php echo $row->id; ?>
-				</td>
 				<?php
 				if ( $type == 'content') {
 					?>
 					<td align="center">
-					<?php echo $row->active; ?>
+						<?php echo $row->active; ?>
 					</td>
 					<td align="center">
-					<?php echo $row->trash; ?>
-					</td>
-					<?php
-				} else {
-					?>
-					<td>
+						<?php echo $row->trash; ?>
 					</td>
 					<?php
 				}
@@ -215,10 +194,20 @@ class categories_html {
 			</tr>
 			<?php
 		}
+		} else {
+			if( $type == 'content') {
+				?>
+				<tr><td colspan="10"><?php echo JText::_('There are no Categories'); ?></td></tr>
+				<?php
+			} else {
+				?>
+				<tr><td colspan="8"><?php echo JText::_('There are no Categories'); ?></td></tr>
+				<?php
+			}
+		}
 		?>
+		</tbody>
 		</table>
-
-		<?php echo $pageNav->getListFooter(); ?>
 
 		<input type="hidden" name="option" value="com_categories" />
 		<input type="hidden" name="section" value="<?php echo $section;?>" />
@@ -227,19 +216,25 @@ class categories_html {
 		<input type="hidden" name="act" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="type" value="<?php echo $type; ?>" />
-		<input type="hidden" name="hidemainmenu" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
 		</form>
 		<?php
 	}
 
 	/**
 	* Writes the edit form for new and existing categories
-	* @param mosCategory The category object
+	* @param JTableCategory The category object
 	* @param string
 	* @param array
 	*/
-	function edit( &$row, &$lists, $redirect, $menus ) {
-		if ($row->image == "") {
+	function edit( &$row, &$lists, $redirect )
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
+
+		$editor =& JFactory::getEditor();
+
+		if ($row->image == '') {
 			$row->image = 'blank.png';
 		}
 
@@ -251,7 +246,9 @@ class categories_html {
 				$component = 'Contact';
 			}
 		}
-		mosMakeHtmlSafe( $row, ENT_QUOTES, 'description' );
+
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'description' );
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton, section) {
@@ -263,219 +260,145 @@ class categories_html {
 
 			if ( pressbutton == 'menulink' ) {
 				if ( form.menuselect.value == "" ) {
-					alert( "Please select a Menu" );
+					alert( "<?php echo JText::_( 'Please select a Menu', true ); ?>" );
 					return;
 				} else if ( form.link_type.value == "" ) {
-					alert( "Please select a menu type" );
+					alert( "<?php echo JText::_( 'Please select a menu type', true ); ?>" );
 					return;
 				} else if ( form.link_name.value == "" ) {
-					alert( "Please enter a Name for this menu item" );
+					alert( "<?php echo JText::_( 'Please enter a Name for this menu item', true ); ?>" );
 					return;
 				}
 			}
 
-			if ( form.name.value == "" ) {
-				alert("Category must have a name");
+			if ( form.title.value == "" ) {
+				alert("<?php echo JText::_( 'Category must have a title', true ); ?>");
 			} else {
-				<?php getEditorContents( 'editor1', 'description' ) ; ?>
+				<?php
+				echo $editor->save( 'description' ) ; ?>
 				submitform(pressbutton);
 			}
 		}
 		</script>
 
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<th class="categories">
-			Category:
-			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
-			</small>
-			<small><small>
-			[ <?php echo $component; ?>: <?php echo $row->name; ?> ]
-			</small></small>
-			</th>
-		</tr>
-		</table>
+		<form action="index.php" method="post" name="adminForm">
 
-		<table width="100%">
-		<tr>
-			<td valign="top" width="60%">
-				<table class="adminform">
-				<tr>
-					<th colspan="3">
-					Category Details
-					</th>
-				<tr>
-				<tr>
-					<td>
-					Category Title:
-					</td>
-					<td colspan="2">
-					<input class="text_area" type="text" name="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="A short name to appear in menus" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Category Name:
-					</td>
-					<td colspan="2">
-					<input class="text_area" type="text" name="name" value="<?php echo $row->name; ?>" size="50" maxlength="255" title="A long name to be displayed in headings" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Section:
-					</td>
-					<td colspan="2">
-					<?php echo $lists['section']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Image:
-					</td>
-					<td>
-					<?php echo $lists['image']; ?>
-					</td>
-					<td rowspan="4" width="50%">
-					<script language="javascript" type="text/javascript">
-					if (document.forms[0].image.options.value!=''){
-					  jsimg='../images/stories/' + getSelectedValue( 'adminForm', 'image' );
-					} else {
-					  jsimg='../images/M_images/blank.png';
-					}
-					document.write('<img src=' + jsimg + ' name="imagelib" width="80" height="80" border="2" alt="Preview" />');
-					</script>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Image Position:
-					</td>
-					<td>
-					<?php echo $lists['image_position']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Ordering:
-					</td>
-					<td>
-					<?php echo $lists['ordering']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Access Level:
-					</td>
-					<td>
-					<?php echo $lists['access']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					Published:
-					</td>
-					<td>
-					<?php echo $lists['published']; ?>
-					</td>
-				</tr>
-				<tr>
-					<td valign="top">
-					Description:
-					</td>
-					<td colspan="2">
-					<?php
-					// parameters : areaname, content, hidden field, width, height, rows, cols
-					editorArea( 'editor1',  $row->description , 'description', '100%;', '300', '60', '20' ) ; ?>
-					</td>
-				</tr>
-				</table>
-			</td>
-			<td valign="top" width="40%">
-			<?php
-			if ( $row->id > 0 ) {
-			?>
-				<table class="adminform">
-				<tr>
-					<th colspan="2">
-					Link to Menu
-					</th>
-				<tr>
-				<tr>
-					<td colspan="2">
-					This will create a new menu item in the menu you select
-					<br /><br />
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100px">
-					Select a Menu
-					</td>
-					<td>
-					<?php echo $lists['menuselect']; ?>
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100px">
-					Select Menu Type
-					</td>
-					<td>
-					<?php echo $lists['link_type']; ?>
-					</td>
-				<tr>
-				<tr>
-					<td valign="top" width="100px">
-					Menu Item Name
-					</td>
-					<td>
-					<input type="text" name="link_name" class="inputbox" value="" size="25" />
-					</td>
-				<tr>
-				<tr>
-					<td>
-					</td>
-					<td>
-					<input name="menu_link" type="button" class="button" value="Link to Menu" onClick="submitbutton('menulink');" />
-					</td>
-				<tr>
-				<tr>
-					<th colspan="2">
-					Existing Menu Links
-					</th>
-				</tr>
-				<?php
-				if ( $menus == NULL ) {
-					?>
+		<div class="col60">
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Details' ); ?></legend>
+
+					<table class="admintable">
 					<tr>
+						<td class="key">
+							<label for="title" width="100">
+								<?php echo JText::_( 'Title' ); ?>:
+							</label>
+						</td>
 						<td colspan="2">
-						None
+							<input class="text_area" type="text" name="title" id="title" value="<?php echo $row->title; ?>" size="50" maxlength="50" title="<?php echo JText::_( 'A short name to appear in menus' ); ?>" />
 						</td>
 					</tr>
-					<?php
-				} else {
-					mosCommonHTML::menuLinksSecCat( $menus );
-				}
-				?>
-				<tr>
-					<td colspan="2">
-					</td>
-				</tr>
+					<tr>
+						<td class="key">
+							<label for="alias">
+								<?php echo JText::_( 'Alias' ); ?>:
+							</label>
+						</td>
+						<td colspan="2">
+							<input class="text_area" type="text" name="alias" id="alias" value="<?php echo $row->alias; ?>" size="50" maxlength="255" title="<?php echo JText::_( 'A long name to be displayed in headings' ); ?>" />
+						</td>
+					</tr>
+					<tr>
+						<td width="120" class="key">
+							<?php echo JText::_( 'Published' ); ?>:
+						</td>
+						<td>
+							<?php echo $lists['published']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="section">
+								<?php echo JText::_( 'Section' ); ?>:
+							</label>
+						</td>
+						<td colspan="2">
+							<?php echo $lists['section']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="ordering">
+								<?php echo JText::_( 'Ordering' ); ?>:
+							</label>
+						</td>
+						<td colspan="2">
+							<?php echo $lists['ordering']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" class="key">
+							<label for="access">
+								<?php echo JText::_( 'Access Level' ); ?>:
+							</label>
+						</td>
+						<td>
+							<?php echo $lists['access']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="image">
+								<?php echo JText::_( 'Image' ); ?>:
+							</label>
+						</td>
+						<td>
+							<?php echo $lists['image']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td class="key">
+							<label for="image_position">
+								<?php echo JText::_( 'Image Position' ); ?>:
+							</label>
+						</td>
+						<td>
+							<?php echo $lists['image_position']; ?>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+						<script language="javascript" type="text/javascript">
+						if (document.forms.adminForm.image.options.value!=''){
+							jsimg='../images/stories/' + getSelectedValue( 'adminForm', 'image' );
+						} else {
+							jsimg='../images/M_images/blank.png';
+						}
+						document.write('<img src=' + jsimg + ' name="imagelib" width="80" height="80" border="2" alt="<?php echo JText::_( 'Preview', true ); ?>" />');
+						</script>
+						</td>
+					</tr>
+
 				</table>
-			<?php
-			} else {
-			?>
-			<table class="adminform" width="40%">
-				<tr><th>&nbsp;</th></tr>
-				<tr><td>Menu links available when saved</td></tr>
-			</table>
-			<?php
-			}
-			?>
-			</td>
-		</tr>
-		</table>
+			</fieldset>
+
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Description' ); ?></legend>
+
+				<table class="admintable">
+					<tr>
+						<td valign="top" colspan="3">
+							<?php
+							// parameters : areaname, content, width, height, cols, rows, show xtd buttons
+							echo $editor->display( 'description',  $row->description, '100%', '300', '60', '20', false ) ;
+							?>
+						</td>
+					</tr>
+					</table>
+			</fieldset>
+		</div>
+		<div class="clr"></div>
 
 		<input type="hidden" name="option" value="com_categories" />
 		<input type="hidden" name="oldtitle" value="<?php echo $row->title ; ?>" />
@@ -483,7 +406,6 @@ class categories_html {
 		<input type="hidden" name="sectionid" value="<?php echo $row->section; ?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		</form>
 		<?php
 	}
@@ -494,39 +416,31 @@ class categories_html {
 	*/
 	function moveCategorySelect( $option, $cid, $SectionList, $items, $sectionOld, $contents, $redirect ) {
 		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<br />
-		<table class="adminheading">
-		<tr>
-			<th class="categories">
-			Move Category
-			</th>
-		</tr>
-		</table>
+		<form action="index.php" method="post" name="adminForm">
 
 		<br />
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>
-			<td align="left" valign="top" width="30%">
-			<strong>Move to Section:</strong>
+			<td  valign="top" width="30%">
+			<strong><?php echo JText::_( 'Move to Section' ); ?>:</strong>
 			<br />
 			<?php echo $SectionList ?>
 			<br /><br />
 			</td>
-			<td align="left" valign="top" width="20%">
-			<strong>Categories being moved:</strong>
+			<td  valign="top" width="20%">
+			<strong><?php echo JText::_( 'Categories being moved' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
 			foreach ( $items as $item ) {
-				echo "<li>". $item->name ."</li>";
+				echo "<li>". $item->title ."</li>";
 			}
 			echo "</ol>";
 			?>
 			</td>
 			<td valign="top" width="20%">
-			<strong>Content Items being moved:</strong>
+			<strong><?php echo JText::_( 'Articles being moved' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -537,11 +451,11 @@ class categories_html {
 			?>
 			</td>
 			<td valign="top">
-			This will move the Categories listed
+			<?php echo JText::_( 'This will move the Categories listed' ); ?>
 			<br />
-			and all the items within the category (also listed)
+			<?php echo JText::_( 'and all the items within the category (also listed)' ); ?>
 			<br />
-			to the selected Section.
+			<?php echo JText::_( 'to the selected Section' ); ?>.
 			</td>.
 		</tr>
 		</table>
@@ -567,39 +481,31 @@ class categories_html {
 	*/
 	function copyCategorySelect( $option, $cid, $SectionList, $items, $sectionOld, $contents, $redirect ) {
 		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<br />
-		<table class="adminheading">
-		<tr>
-			<th class="categories">
-			Copy Category
-			</th>
-		</tr>
-		</table>
+		<form action="index.php" method="post" name="adminForm">
 
 		<br />
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>
-			<td align="left" valign="top" width="30%">
-			<strong>Copy to Section:</strong>
+			<td  valign="top" width="30%">
+			<strong><?php echo JText::_( 'Copy to Section' ); ?>:</strong>
 			<br />
 			<?php echo $SectionList ?>
 			<br /><br />
 			</td>
-			<td align="left" valign="top" width="20%">
-			<strong>Categories being copied:</strong>
+			<td  valign="top" width="20%">
+			<strong><?php echo JText::_( 'Categories being copied' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
 			foreach ( $items as $item ) {
-				echo "<li>". $item->name ."</li>";
+				echo "<li>". $item->title ."</li>";
 			}
 			echo "</ol>";
 			?>
 			</td>
 			<td valign="top" width="20%">
-			<strong>Content Items being copied:</strong>
+			<strong><?php echo JText::_( 'Articles being copied' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -611,11 +517,11 @@ class categories_html {
 			?>
 			</td>
 			<td valign="top">
-			This will copy the Categories listed
+			<?php echo JText::_( 'This will copy the Categories listed' ); ?>
 			<br />
-			and all the items within the category (also listed)
+			<?php echo JText::_( 'and all the items within the category (also listed)' ); ?>
 			<br />
-			to the selected Section.
+			<?php echo JText::_( 'to the selected Section' ); ?>.
 			</td>.
 		</tr>
 		</table>

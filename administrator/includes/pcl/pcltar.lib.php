@@ -1,11 +1,9 @@
 <?php
 /**
-* @version $Id: pcltar.lib.php 47 2005-09-15 02:55:27Z rhuk $
-* @package Joomla
+* @version $Id: pcltar.lib.php 7890 2007-07-07 12:52:33Z friesengeist $
+* @package		Joomla
 */
 
-// no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 // --------------------------------------------------------------------------------
 // PhpConcept Library - Tar Module 1.3
@@ -37,11 +35,6 @@ if (!defined("PCL_TAR"))
 {
   define( "PCL_TAR", 1 );
 
-  // ----- Configuration variable
-  // Theses values may be changed by the user of PclTar library
-  if (!isset($g_pcltar_lib_dir))
-	$g_pcltar_lib_dir = "lib";
-
   // ----- Error codes
   //	-1 : Unable to open file in binary write mode
   //	-2 : Unable to open file in binary read mode
@@ -65,21 +58,17 @@ if (!defined("PCL_TAR"))
   // ----- Global variables
   $g_pcltar_version = "1.3";
 
-  // ----- Extract extension type (.php3/.php/...)
-//  $g_pcltar_extension = substr(strrchr(basename($PATH_TRANSLATED), '.'), 1);
-  $g_pcltar_extension = substr(strrchr(basename(@$_SERVER["PATH_TRANSLATED"]), '.'), 1);
-
   // ----- Include other libraries
   // This library should be called by each script before the include of PhpZip
   // Library in order to limit the potential 'lib' directory path problem.
 
   if (!defined("PCLERROR_LIB"))
   {
-	include($g_pcltar_lib_dir."/pclerror.lib.".$g_pcltar_extension);
+	include(dirname(__FILE__).DIRECTORY_SEPARATOR.'pclerror.lib.php');
   }
   if (!defined("PCLTRACE_LIB"))
   {
-	include($g_pcltar_lib_dir."/pcltrace.lib.".$g_pcltar_extension);
+	include(dirname(__FILE__).DIRECTORY_SEPARATOR.'pcltrace.lib.php');
   }
 
   // --------------------------------------------------------------------------------
@@ -3467,7 +3456,12 @@ if (!defined("PCL_TAR"))
 
 	// ----- Create the directory
 	TrFctMessage(__FILE__, __LINE__, 3, "Create directory '$p_dir'");
-	if (!@mkdir($p_dir, 0777))
+	/*
+	 * MODIFIED FOR JOOMLA
+	 * @since 1.5 December 12, 2005
+	 */
+	jimport('joomla.filesystem.folder');
+	if (!JFolder::create($p_dir, 0777))
 	{
 	  // ----- Error log
 	  PclErrorLog(-8, "Unable to create directory '$p_dir'");

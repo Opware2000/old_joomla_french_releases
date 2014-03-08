@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.messages.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Messages
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.messages.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Messages
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,51 +13,43 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Messages
+* @package		Joomla
+* @subpackage	Messages
 */
-class TOOLBAR_messages {
+class TOOLBAR_messages
+{
 	function _VIEW() {
-		mosMenuBar::startTable();
-		mosMenuBar::customX('reply', 'restore.png', 'restore_f2.png', 'Reply', false );
-		mosMenuBar::spacer();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title(  JText::_( 'View Private Message' ), 'inbox.png' );
+		JToolBarHelper::customX('reply', 'restore.png', 'restore_f2.png', 'Reply', false );
+		JToolBarHelper::deleteList();
+		JToolBarHelper::cancel();
 	}
 
 	function _EDIT() {
-		mosMenuBar::startTable();
-		mosMenuBar::save( 'save', 'Send' );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.messages.edit' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title(  JText::_( 'Write Private Message' ), 'inbox.png' );
+		JToolBarHelper::save( 'save', 'Send' );
+		JToolBarHelper::cancel();
+		JToolBarHelper::help( 'screen.messages.edit' );
 	}
 
 	function _CONFIG() {
-		mosMenuBar::startTable();
-		mosMenuBar::save( 'saveconfig' );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel( 'cancelconfig' );
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.messages.conf' );
-		mosMenuBar::endTable();
+		JToolBarHelper::title(  JText::_( 'Private Messaging Configuration' ), 'inbox.png' );
+		JToolBarHelper::save( 'saveconfig' );
+		JToolBarHelper::cancel( 'cancelconfig' );
+		JToolBarHelper::help( 'screen.messages.conf' );
 	}
 
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.messages.inbox' );
-		mosMenuBar::endTable();
+		JToolBarHelper::title(  JText::_( 'Private Messaging' ), 'inbox.png' );
+		JToolBarHelper::deleteList();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::custom('config', 'config.png', 'config_f2.png', 'Settings', false, false);
+		JToolBarHelper::help( 'screen.messages.inbox' );
 	}
 }
 ?>

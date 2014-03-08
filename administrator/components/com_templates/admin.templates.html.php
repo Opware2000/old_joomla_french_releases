@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.templates.html.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Templates
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.templates.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @package		Joomla
+* @subpackage	Templates
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,404 +13,603 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 /**
-* @package Joomla
-* @subpackage Templates
+* @package		Joomla
+* @subpackage	Templates
 */
-class HTML_templates {
+class TemplatesView
+{
 	/**
 	* @param array An array of data objects
 	* @param object A page navigation object
 	* @param string The option
 	*/
-	function showTemplates( &$rows, &$pageNav, $option, $client ) {
-		global $my, $mosConfig_live_site;
+	function showTemplates(& $rows, & $lists, & $page, $option, & $client)
+	{
+		global $mainframe;
 
-		if ( isset( $row->authorUrl) && $row->authorUrl != '' ) {
-			$row->authorUrl = str_replace( 'http://', '', $row->authorUrl );
+		$limitstart = JRequest :: getVar('limitstart', '0', '', 'int');
+
+		$user = & JFactory :: getUser();
+
+		if (isset ($row->authorUrl) && $row->authorUrl != '') {
+			$row->authorUrl = str_replace('http://', '', $row->authorUrl);
 		}
 
-		mosCommonHTML::loadOverlib();
-		?>
-		<script language="Javascript">
-		<!--
-		function showInfo(name) {
-			var pattern = /\b \b/ig;
-			name = name.replace(pattern,'_');
-			name = name.toLowerCase();
-			if (document.adminForm.doPreview.checked) {
-				var src = '<?php echo $mosConfig_live_site . ($client == 'admin' ? '/administrator' : '');?>/templates/'+name+'/template_thumbnail.png';
-				var html=name;
-				html = '<br /><img border="1" src="'+src+'" name="imagelib" alt="No preview available" width="206" height="145" />';
-				return overlib(html, CAPTION, name)
+		JHTML::_('behavior.tooltip');
+?>
+		<form action="index.php" method="post" name="adminForm">
+
+			<table class="adminlist">
+			<thead>
+				<tr>
+					<th width="5" class="title">
+						<?php echo JText::_( 'Num' ); ?>
+					</th>
+					<th class="title" colspan="2">
+						<?php echo JText::_( 'Template Name' ); ?>
+					</th>
+					<?php
+
+		if ($client->id == 1) {
+?>
+						<th width="5%">
+							<?php echo JText::_( 'Default' ); ?>
+						</th>
+						<?php
+
+		} else {
+?>
+						<th width="5%">
+							<?php echo JText::_( 'Default' ); ?>
+						</th>
+						<th width="5%">
+							<?php echo JText::_( 'Assigned' ); ?>
+						</th>
+						<?php
+
+		}
+?>
+					<th width="10%" align="center">
+						<?php echo JText::_( 'Version' ); ?>
+					</th>
+					<th width="15%" class="title">
+						<?php echo JText::_( 'Date' ); ?>
+					</th>
+					<th width="25%"  class="title">
+						<?php echo JText::_( 'Author' ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td colspan="8">
+						<?php echo $page->getListFooter(); ?>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
+			<?php
+
+		$k = 0;
+		for ($i = 0, $n = count($rows); $i < $n; $i++) {
+			$row = & $rows[$i];
+
+			$author_info = @ $row->authorEmail . '<br />' . @ $row->authorUrl;
+?>
+				<tr class="<?php echo 'row'. $k; ?>">
+					<td>
+						<?php echo $page->getRowOffset( $i ); ?>
+					</td>
+					<td width="5">
+					<?php
+
+			if ( JTable::isCheckedOut($user->get ('id'), $row->checked_out )) {
+?>
+							&nbsp;
+							<?php
+
 			} else {
-				return false;
-			}
-		}
-		-->
-		</script>
+?>
+							<input type="radio" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->directory; ?>" onclick="isChecked(this.checked);" />
+							<?php
 
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
+			}
+?>
+					</td>
+					<td><?php $img_path = ($client->id == 1 ? $mainframe->getSiteURL().'/administrator' : $mainframe->getSiteURL() ).'/templates/'.$row->directory.'/template_thumbnail.png'; ?>
+						<span class="editlinktip hasTip" title="<?php echo $row->name;?>::
+<img border=&quot;1&quot; src=&quot;<?php echo $img_path; ?>&quot; name=&quot;imagelib&quot; alt=&quot;<?php echo JText::_( 'No preview available' ); ?>&quot; width=&quot;206&quot; height=&quot;145&quot; />"><a href="index.php?option=com_templates&amp;task=edit&amp;cid[]=<?php echo $row->directory;?>&amp;client=<?php echo $client->id;?>">
+							<?php echo $row->name;?></a></span>
+					</td>
+					<?php
+
+			if ($client->id == 1) {
+?>
+						<td align="center">
+							<?php
+
+				if ($row->published == 1) {
+?>
+							<img src="templates/khepri/images/menu/icon-16-default.png" alt="<?php echo JText::_( 'Published' ); ?>" />
+								<?php
+
+				} else {
+?>
+								&nbsp;
+								<?php
+
+				}
+?>
+						</td>
+						<?php
+
+			} else {
+?>
+						<td align="center">
+							<?php
+
+				if ($row->published == 1) {
+?>
+								<img src="templates/khepri/images/menu/icon-16-default.png" alt="<?php echo JText::_( 'Default' ); ?>" />
+								<?php
+
+				} else {
+?>
+								&nbsp;
+								<?php
+
+				}
+?>
+						</td>
+						<td align="center">
+							<?php
+
+				if ($row->assigned == 1) {
+?>
+								<img src="images/tick.png" alt="<?php echo JText::_( 'Assigned' ); ?>" />
+								<?php
+
+				} else {
+?>
+								&nbsp;
+								<?php
+
+				}
+?>
+						</td>
+						<?php
+
+			}
+?>
+					<td align="center">
+						<?php echo $row->version; ?>
+					</td>
+					<td>
+						<?php echo $row->creationdate; ?>
+					</td>
+					<td>
+						<span class="editlinktip hasTip" title="<?php echo JText::_( 'Author Information' );?>::<?php echo $author_info; ?>">
+							<?php echo @$row->author != '' ? $row->author : '&nbsp;'; ?>
+						</span>
+					</td>
+				</tr>
+				<?php
+
+		}
+?>
+			</tbody>
+			</table>
+
+	<input type="hidden" name="option" value="<?php echo $option;?>" />
+	<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="boxchecked" value="0" />
+	</form>
+	<?php
+
+	}
+
+	function previewTemplate($template, $showPositions, $client, $option)
+	{
+		global $mainframe;
+
+		$tp = intval($showPositions);
+		$url = $client->id ? JURI::base() : $mainframe->getSiteURL();
+?>
+		<style type="text/css">
+		.previewFrame {
+			border: none;
+			width: 95%;
+			height: 600px;
+			padding: 0px 5px 0px 10px;
+		}
+		</style>
+
+		<table class="adminform">
+			<tr>
+				<th width="50%" class="title">
+					<?php echo JText::_( 'Site Preview' ); ?>
+				</th>
+				<th width="50%" style="text-align:right">
+					<?php echo JHTML::_('link', $url.'index.php?tp='.$tp.'&amp;template='.$template, JText::_( 'Open in new window' ), array('target' => '_blank')); ?>
+				</th>
+			</tr>
+			<tr>
+				<td width="100%" valign="top" colspan="2">
+					<?php echo JHTML::_('iframe', $url.'index.php?tp='.$tp.'&amp;template='.$template,'previewFrame',  array('class' => 'previewFrame')) ?>
+				</td>
+			</tr>
+		</table>
+		<?php
+
+	}
+
+	/**
+	* @param string Template name
+	* @param string Source code
+	* @param string The option
+	*/
+	function editTemplate($row, $lists, & $params, $option, & $client, & $ftp)
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
+
+		JHTML::_('behavior.tooltip');
+?>
+		<form action="index.php" method="post" name="adminForm">
+
+		<?php if($ftp): ?>
+		<fieldset title="<?php echo JText::_('DESCFTPTITLE'); ?>" class="adminform">
+			<legend><?php echo JText::_('DESCFTPTITLE'); ?></legend>
+
+			<?php echo JText::_('DESCFTP'); ?>
+
+			<?php if(JError::isError($ftp)): ?>
+				<p><?php echo JText::_($ftp->message); ?></p>
+			<?php endif; ?>
+
+			<table class="adminform nospace">
+			<tbody>
+			<tr>
+				<td width="120">
+					<label for="username"><?php echo JText::_('Username'); ?>:</label>
+				</td>
+				<td>
+					<input type="text" id="username" name="username" class="input_box" size="70" value="" />
+				</td>
+			</tr>
+			<tr>
+				<td width="120">
+					<label for="password"><?php echo JText::_('Password'); ?>:</label>
+				</td>
+				<td>
+					<input type="password" id="password" name="password" class="input_box" size="70" value="" />
+				</td>
+			</tr>
+			</tbody>
+			</table>
+		</fieldset>
+		<?php endif; ?>
+
+		<div class="col50">
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Details' ); ?></legend>
+
+				<table class="admintable">
+				<tr>
+					<td valign="top" class="key">
+						<?php echo JText::_( 'Name' ); ?>:
+					</td>
+					<td>
+						<strong>
+							<?php echo JText::_($row->name); ?>
+						</strong>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top" class="key">
+						<?php echo JText::_( 'Description' ); ?>:
+					</td>
+					<td>
+						<?php echo JText::_($row->description); ?>
+					</td>
+				</tr>
+				</table>
+			</fieldset>
+
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Menu Assignment' ); ?></legend>
+				<script type="text/javascript">
+					function allselections() {
+						var e = document.getElementById('selections');
+							e.disabled = true;
+						var i = 0;
+						var n = e.options.length;
+						for (i = 0; i < n; i++) {
+							e.options[i].disabled = true;
+							e.options[i].selected = true;
+						}
+					}
+					function disableselections() {
+						var e = document.getElementById('selections');
+							e.disabled = true;
+						var i = 0;
+						var n = e.options.length;
+						for (i = 0; i < n; i++) {
+							e.options[i].disabled = true;
+							e.options[i].selected = false;
+						}
+					}
+					function enableselections() {
+						var e = document.getElementById('selections');
+							e.disabled = false;
+						var i = 0;
+						var n = e.options.length;
+						for (i = 0; i < n; i++) {
+							e.options[i].disabled = false;
+						}
+					}
+				</script>
+				<table class="admintable" cellspacing="1">
+					<tr>
+						<td valign="top" class="key">
+							<?php echo JText::_( 'Menus' ); ?>:
+						</td>
+						<td>
+							<?php if ($client->id == 1) {
+									echo JText::_('Cannot assign administrator template');
+								  } elseif ($row->pages == 'all') {
+									echo JText::_('Cannot assign default template');
+									echo '<input type="hidden" name="default" value="1" />';
+								  } elseif ($row->pages == 'none') { ?>
+							<label for="menus-none"><input id="menus-none" type="radio" name="menus" value="none" onclick="disableselections();" checked="checked" /><?php echo JText::_( 'None' ); ?></label>
+							<label for="menus-select"><input id="menus-select" type="radio" name="menus" value="select" onclick="enableselections();" /><?php echo JText::_( 'Select From List' ); ?></label>
+							<?php } else { ?>
+							<label for="menus-none"><input id="menus-none" type="radio" name="menus" value="none" onclick="disableselections();" /><?php echo JText::_( 'None' ); ?></label>
+							<label for="menus-select"><input id="menus-select" type="radio" name="menus" value="select" onclick="enableselections();" checked="checked" /><?php echo JText::_( 'Select From List' ); ?></label>
+							<?php } ?>
+						</td>
+					</tr>
+					<?php if ($row->pages != 'all' && $client->id != 1) : ?>
+					<tr>
+						<td valign="top" class="key">
+							<?php echo JText::_( 'Menu Selection' ); ?>:
+						</td>
+						<td>
+							<?php echo $lists['selections']; ?>
+							<?php if ($row->pages == 'none') { ?>
+							<script type="text/javascript">disableselections();</script>
+							<?php } ?>
+						</td>
+					</tr>
+					<?php endif; ?>
+				</table>
+			</fieldset>
+		</div>
+
+		<div class="col50">
+			<fieldset class="adminform">
+				<legend><?php echo JText::_( 'Parameters' ); ?></legend>
+
+				<table class="admintable">
+				<tr>
+					<td>
+						<?php
+
+		if (!is_null($params)) {
+			echo $params->render();
+		} else {
+			echo '<i>' . JText :: _('No Parameters') . '</i>';
+		}
+?>
+					</td>
+				</tr>
+				</table>
+			</fieldset>
+		</div>
+		<div class="clr"></div>
+
+		<input type="hidden" name="id" value="<?php echo $row->directory; ?>" />
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+		</form>
+		<?php
+	}
+
+	function editTemplateSource($template, & $content, $option, & $client, & $ftp)
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
+
+		$template_path = $client->path .DS. 'templates' .DS. $template .DS. 'index.php';
+?>
+		<form action="index.php" method="post" name="adminForm">
+
+		<?php if($ftp): ?>
+		<fieldset title="<?php echo JText::_('DESCFTPTITLE'); ?>">
+			<legend><?php echo JText::_('DESCFTPTITLE'); ?></legend>
+
+			<?php echo JText::_('DESCFTP'); ?>
+
+			<?php if(JError::isError($ftp)): ?>
+				<p><?php echo JText::_($ftp->message); ?></p>
+			<?php endif; ?>
+
+			<table class="adminform nospace">
+			<tbody>
+			<tr>
+				<td width="120">
+					<label for="username"><?php echo JText::_('Username'); ?>:</label>
+				</td>
+				<td>
+					<input type="text" id="username" name="username" class="input_box" size="70" value="" />
+				</td>
+			</tr>
+			<tr>
+				<td width="120">
+					<label for="password"><?php echo JText::_('Password'); ?>:</label>
+				</td>
+				<td>
+					<input type="password" id="password" name="password" class="input_box" size="70" value="" />
+				</td>
+			</tr>
+			</tbody>
+			</table>
+		</fieldset>
+		<?php endif; ?>
+
+		<table class="adminform">
 		<tr>
-			<th class="templates">
-			Template Manager <small><small>[ <?php echo $client == 'admin' ? 'Administrator' : 'Site';?> ]</small></small>
+			<th>
+				<?php echo $template_path; ?>
 			</th>
-			<td align="right" nowrap="true">
-			Preview Template
+		</tr>
+		<tr>
+			<td>
+				<textarea style="width:100%;height:500px" cols="110" rows="25" name="filecontent" class="inputbox"><?php echo $content; ?></textarea>
 			</td>
-			<td align="right">
-			<input type="checkbox" name="doPreview" checked="checked"/>
+		</tr>
+		</table>
+
+		<div class="clr"></div>
+
+		<input type="hidden" name="id" value="<?php echo $template; ?>" />
+		<input type="hidden" name="cid[]" value="<?php echo $template; ?>" />
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
+		</form>
+		<?php
+	}
+
+	function chooseCSSFiles($template, $t_dir, $t_files, $option, & $client)
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
+?>
+		<form action="index.php" method="post" name="adminForm">
+
+		<table cellpadding="1" cellspacing="1" border="0" width="100%">
+		<tr>
+			<td width="220">
+				<span class="componentheading">&nbsp;</span>
 			</td>
 		</tr>
 		</table>
 		<table class="adminlist">
 		<tr>
-			<th width="5%">#</th>
-			<th width="5%">&nbsp;</th>
-			<th width="25%" class="title">
-			Name
+			<th width="5%" align="left">
+				<?php echo JText::_( 'Num' ); ?>
 			</th>
-			<?php
-			if ( $client == 'admin' ) {
-				?>
-				<th width="10%">
-				Default
-				</th>
-				<?php
-			} else {
-				?>
-				<th width="5%">
-				Default
-				</th>
-				<th width="5%">
-				Assigned
-				</th>
-				<?php
-			}
-			?>
-			<th width="20%" align="left">
-			Author
+			<th width="85%" align="left">
+				<?php echo $t_dir; ?>
 			</th>
-			<th width="5%" align="center">
-			Version
-			</th>
-			<th width="10%" align="center">
-			Date
-			</th>
-			<th width="20%" align="left">
-			Author URL
+			<th width="10%">
+				<?php echo JText::_( 'Writeable' ); ?>/<?php echo JText::_( 'Unwriteable' ); ?>
 			</th>
 		</tr>
 		<?php
+
 		$k = 0;
-		for ( $i=0, $n = count( $rows ); $i < $n; $i++ ) {
-			$row = &$rows[$i];
-			?>
+		for ($i = 0, $n = count($t_files); $i < $n; $i++) {
+			$file = & $t_files[$i];
+?>
 			<tr class="<?php echo 'row'. $k; ?>">
-				<td>
-				<?php echo $pageNav->rowNumber( $i ); ?>
+				<td width="5%">
+					<input type="radio" id="cb<?php echo $i;?>" name="filename" value="<?php echo $file; ?>" onClick="isChecked(this.checked);" />
 				</td>
-				<td>
-				<?php
-				if ( $row->checked_out && $row->checked_out != $my->id ) {
-					?>
-					&nbsp;
-					<?php
-				} else {
-					?>
-					<input type="radio" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->directory; ?>" onClick="isChecked(this.checked);" />
-					<?php
-				}
-				?>
+				<td width="85%">
+					<?php echo $file; ?>
 				</td>
-				<td>
-				<a href="#info" onmouseover="showInfo('<?php echo $row->name;?>')" onmouseout="return nd();">
-				<?php echo $row->name;?>
-				</a>
-				</td>
-				<?php
-				if ( $client == 'admin' ) {
-					?>
-					<td align="center">
-					<?php
-					if ( $row->published == 1 ) {
-						?>
-					<img src="images/tick.png" alt="Published">
-						<?php
-					} else {
-						?>
-						&nbsp;
-						<?php
-					}
-					?>
-					</td>
-					<?php
-				} else {
-					?>
-					<td align="center">
-					<?php
-					if ( $row->published == 1 ) {
-						?>
-						<img src="images/tick.png" alt="Default">
-						<?php
-					} else {
-						?>
-						&nbsp;
-						<?php
-					}
-					?>
-					</td>
-					<td align="center">
-					<?php
-					if ( $row->assigned == 1 ) {
-						?>
-						<img src="images/tick.png" alt="Assigned" />
-						<?php
-					} else {
-						?>
-						&nbsp;
-						<?php
-					}
-					?>
-					</td>
-					<?php
-				}
-				?>
-				<td>
-				<?php echo $row->authorEmail ? '<a href="mailto:'. $row->authorEmail .'">'. $row->author .'</a>' : $row->author; ?>
-				</td>
-				<td align="center">
-				<?php echo $row->version; ?>
-				</td>
-				<td align="center">
-				<?php echo $row->creationdate; ?>
-				</td>
-				<td>
-				<a href="<?php echo substr( $row->authorUrl, 0, 7) == 'http://' ? $row->authorUrl : 'http://'.$row->authorUrl; ?>" target="_blank">
-				<?php echo $row->authorUrl; ?>
-				</a>
+				<td width="10%">
+					<?php echo is_writable($t_dir.DS.$file) ? '<font color="green"> '. JText::_( 'Writeable' ) .'</font>' : '<font color="red"> '. JText::_( 'Unwriteable' ) .'</font>' ?>
 				</td>
 			</tr>
-			<?php
-		}
-		?>
-		</table>
-		<?php echo $pageNav->getListFooter(); ?>
+		<?php
 
+			$k = 1 - $k;
+		}
+?>
+		</table>
+		<input type="hidden" name="id" value="<?php echo $template; ?>" />
+		<input type="hidden" name="cid[]" value="<?php echo $template; ?>" />
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="hidemainmenu" value="0" />
-		<input type="hidden" name="client" value="<?php echo $client;?>" />
+		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
 		</form>
 		<?php
-	}
 
+	}
 
 	/**
 	* @param string Template name
 	* @param string Source code
 	* @param string The option
 	*/
-	function editTemplateSource( $template, &$content, $option, $client ) {
-		global $mosConfig_absolute_path;
-		$template_path =
-			$mosConfig_absolute_path . ($client == 'admin' ? '/administrator':'') .
-			'/templates/' . $template . '/index.php';
-		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table cellpadding="1" cellspacing="1" border="0" width="100%">
-		<tr>
-			<td width="290"><table class="adminheading"><tr><th class="templates">Template HTML Editor</th></tr></table></td>
-			<td width="220">
-				<span class="componentheading">index.php is :
-				<b><?php echo is_writable($template_path) ? '<font color="green"> Writeable</font>' : '<font color="red"> Unwriteable</font>' ?></b>
-				</span>
-			</td>
-<?php
-			if (mosIsChmodable($template_path)) {
-				if (is_writable($template_path)) {
+	function editCSSSource($template, $filename, & $content, $option, & $client, & $ftp)
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
+
+		$css_path = $client->path . $filename;
+
 ?>
-			<td>
-				<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-				<label for="disable_write">Make unwriteable after saving</label>
-			</td>
-<?php
-				} else {
-?>
-			<td>
-				<input type="checkbox" id="enable_write" name="enable_write" value="1"/>
-				<label for="enable_write">Override write protection while saving</label>
-			</td>
-<?php
-				} // if
-			} // if
-?>
-		</tr>
-		</table>
-		<table class="adminform">
-			<tr><th><?php echo $template_path; ?></th></tr>
-			<tr><td><textarea style="width:100%;height:500px" cols="110" rows="25" name="filecontent" class="inputbox"><?php echo $content; ?></textarea></td></tr>
-		</table>
-		<input type="hidden" name="template" value="<?php echo $template; ?>" />
-		<input type="hidden" name="option" value="<?php echo $option;?>" />
-		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="client" value="<?php echo $client;?>" />
-		</form>
-		<?php
-	}
+		<form action="index.php" method="post" name="adminForm">
 
+		<?php if($ftp): ?>
+		<fieldset title="<?php echo JText::_('DESCFTPTITLE'); ?>">
+			<legend><?php echo JText::_('DESCFTPTITLE'); ?></legend>
 
-	/**
-	* @param string Template name
-	* @param string Source code
-	* @param string The option
-	*/
-	function editCSSSource( $template, &$content, $option, $client ) {
-		global $mosConfig_absolute_path;
-		$css_path =
-			$mosConfig_absolute_path . ($client == 'admin' ? '/administrator' : '')
-			. '/templates/' . $template . '/css/template_css.css';
-		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table cellpadding="1" cellspacing="1" border="0" width="100%">
-		<tr>
-			<td width="280"><table class="adminheading"><tr><th class="templates">Template CSS Editor</th></tr></table></td>
-			<td width="260">
-				<span class="componentheading">template_css.css is :
-				<b><?php echo is_writable($css_path) ? '<font color="green"> Writeable</font>' : '<font color="red"> Unwriteable</font>' ?></b>
-				</span>
-			</td>
-<?php
-			if (mosIsChmodable($css_path)) {
-				if (is_writable($css_path)) {
-?>
-			<td>
-				<input type="checkbox" id="disable_write" name="disable_write" value="1"/>
-				<label for="disable_write">Make unwriteable after saving</label>
-			</td>
-<?php
-				} else {
-?>
-			<td>
-				<input type="checkbox" id="enable_write" name="enable_write" value="1"/>
-				<label for="enable_write">Override write protection while saving</label>
-			</td>
-<?php
-				} // if
-			} // if
-?>
-		</tr>
-		</table>
-		<table class="adminform">
-			<tr><th><?php echo $css_path; ?></th></tr>
-			<tr><td><textarea style="width:100%;height:500px" cols="110" rows="25" name="filecontent" class="inputbox"><?php echo $content; ?></textarea></td></tr>
-		</table>
-		<input type="hidden" name="template" value="<?php echo $template; ?>" />
-		<input type="hidden" name="option" value="<?php echo $option;?>" />
-		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="client" value="<?php echo $client;?>" />
-		</form>
-		<?php
-	}
+			<?php echo JText::_('DESCFTP'); ?>
 
+			<?php if(JError::isError($ftp)): ?>
+				<p><?php echo JText::_($ftp->message); ?></p>
+			<?php endif; ?>
 
-	/**
-	* @param string Template name
-	* @param string Menu list
-	* @param string The option
-	*/
-	function assignTemplate( $template, &$menulist, $option ) {
-		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminform">
-		<tr>
-			<th class="left" colspan="2">
-			Assign template <?php echo $template; ?> to menu items
-			</th>
-		</tr>
-		<tr>
-			<td valign="top" align="left">
-			Page(s):
-			</td>
-			<td width="90%">
-			<?php echo $menulist; ?>
-			</td>
-		</tr>
-		</table>
-		<input type="hidden" name="template" value="<?php echo $template; ?>" />
-		<input type="hidden" name="option" value="<?php echo $option;?>" />
-		<input type="hidden" name="task" value="" />
-		</form>
-		<?php
-	}
-
-
-	/**
-	* @param array
-	* @param string The option
-	*/
-	function editPositions( &$positions, $option ) {
-		$rows = 25;
-		$cols = 2;
-		$n = $rows * $cols;
-		?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<th class="templates">
-			Module Positions
-			</th>
-		</tr>
-		</table>
-
-		<table class="adminlist">
-		<tr>
-		<?php
-		for ( $c = 0; $c < $cols; $c++ ) {
-			?>
-			<th width="25">
-			#
-			</th>
-			<th align="left">
-			Position
-			</th>
-			<th align="left">
-			Description
-			</th>
-			<?php
-		}
-		?>
-		</tr>
-		<?php
-		$i = 1;
-		for ( $r = 0; $r < $rows; $r++ ) {
-			?>
+			<table class="adminform nospace">
+			<tbody>
 			<tr>
-			<?php
-			for ( $c = 0; $c < $cols; $c++ ) {
-				?>
-				<td>(<?php echo $i; ?>)</td>
-				<td>
-				<input type="text" name="position[<?php echo $i; ?>]" value="<?php echo @$positions[$i-1]->position; ?>" size="10" maxlength="10" />
+				<td width="120">
+					<label for="username"><?php echo JText::_('Username'); ?>:</label>
 				</td>
 				<td>
-				<input type="text" name="description[<?php echo $i; ?>]" value="<?php echo htmlspecialchars( @$positions[$i-1]->description ); ?>" size="50" maxlength="255" />
+					<input type="text" id="username" name="username" class="input_box" size="70" value="" />
 				</td>
-				<?php
-				$i++;
-			}
-			?>
 			</tr>
-			<?php
-		}
-		?>
+			<tr>
+				<td width="120">
+					<label for="password"><?php echo JText::_('Password'); ?>:</label>
+				</td>
+				<td>
+					<input type="password" id="password" name="password" class="input_box" size="70" value="" />
+				</td>
+			</tr>
+			</tbody>
+			</table>
+		</fieldset>
+		<?php endif; ?>
+
+		<table class="adminform">
+		<tr>
+			<th>
+				<?php echo $css_path; ?>
+			</th>
+		</tr>
+		<tr>
+			<td>
+				<textarea style="width:100%;height:500px" cols="110" rows="25" name="filecontent" class="inputbox"><?php echo $content; ?></textarea>
+			</td>
+		</tr>
 		</table>
+
+
+		<input type="hidden" name="id" value="<?php echo $template; ?>" />
+		<input type="hidden" name="cid[]" value="<?php echo $template; ?>" />
+		<input type="hidden" name="filename" value="<?php echo $filename; ?>" />
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="client" value="<?php echo $client->id;?>" />
 		</form>
 		<?php
 	}

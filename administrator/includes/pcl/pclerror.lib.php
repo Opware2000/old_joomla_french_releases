@@ -1,11 +1,9 @@
 <?php
 /**
-* @version $Id: pclerror.lib.php 47 2005-09-15 02:55:27Z rhuk $
-* @package Joomla
+* @version $Id: pclerror.lib.php 7890 2007-07-07 12:52:33Z friesengeist $
+* @package		Joomla
 */
 
-// no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 // --------------------------------------------------------------------------------
 // PhpConcept Library (PCL) Error 1.0

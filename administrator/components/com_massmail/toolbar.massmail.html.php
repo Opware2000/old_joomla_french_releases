@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.massmail.html.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Massmail
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.massmail.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Massmail
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,24 +13,23 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Massmail
+* @package		Joomla
+* @subpackage	Massmail
 */
 class TOOLBAR_massmail {
 	/**
 	* Draws the menu for a New Contact
 	*/
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::custom('send','publish.png','publish_f2.png','Send Mail',false);
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.users.massmail' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Mass Mail' ), 'massemail.png' );
+		JToolBarHelper::custom('send','send.png','send_f2.png','Send Mail',false);
+		JToolBarHelper::cancel();
+		JToolBarHelper::preferences('com_massmail', 200);
+		JToolBarHelper::help( 'screen.users.massmail' );
 	}
 }
 ?>

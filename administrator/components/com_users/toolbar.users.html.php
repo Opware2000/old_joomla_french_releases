@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.users.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Users
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.users.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Users
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,47 +13,40 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Users
+* @package		Joomla
+* @subpackage	Users
 */
 class TOOLBAR_users {
 	/**
 	* Draws the menu to edit a user
 	*/
 	function _EDIT() {
-		global $id;
+		$cid = JRequest::getVar( 'cid', array(0) );
+		$text = intval($cid[0]) ? JText::_( 'Edit' ) : JText::_( 'Add' );
 
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::apply();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		JToolBarHelper::title( JText::_( 'User Manager' ) .' - <span>'. $text.'</span>', 'user.png' );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ( $cid[0] ) {
+			// for existing items the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.users.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.users.edit' );
 	}
 
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::custom( 'logout', 'cancel.png', 'cancel_f2.png', '&nbsp;Logout' );
-		mosMenuBar::spacer();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.users' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'User Manager' ), 'user.png' );
+		JToolBarHelper::custom( 'logout', 'cancel.png', 'cancel_f2.png', 'Logout' );
+		JToolBarHelper::deleteList();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::help( 'screen.users' );
 	}
 }
 ?>

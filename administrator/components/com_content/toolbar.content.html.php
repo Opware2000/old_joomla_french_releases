@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.content.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Content
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.content.html.php 7676 2007-06-07 23:33:01Z jinx $
+* @package		Joomla
+* @subpackage	Content
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,79 +13,73 @@
 */
 
 /**
-* @package Joomla
-* @subpackage Content
+* @package		Joomla
+* @subpackage	Content
 */
-class TOOLBAR_content {
-	function _EDIT() {
-		global $id;
+class TOOLBAR_content
+{
+	function _EDIT()
+	{
+		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
+		$cid = intval($cid[0]);
 
-		mosMenuBar::startTable();
-		mosMenuBar::preview( 'contentwindow', true );
-		mosMenuBar::spacer();
-		mosMenuBar::media_manager();
-		mosMenuBar::spacer();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::apply();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		$text = ( $cid ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+
+		JToolBarHelper::title( JText::_( 'Article' ).': <small><small>[ '. $text.' ]</small></small>', 'addedit.png' );
+		JToolBarHelper::preview( 'index.php?option=com_content&id='.$cid.'&tmpl=component', true );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ( $cid ) {
+			// for existing articles the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.content.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.content.edit' );
+	}
+/*
+	function _ARCHIVE() 
+	{
+		JToolBarHelper::title( JText::_( 'Archive Manager' ), 'addedit.png' );
+		JToolBarHelper::unarchiveList();
+		JToolBarHelper::custom( 'remove', 'delete.png', 'delete_f2.png', 'Trash', false );
+		JToolBarHelper::help( 'screen.content.archive' );
+	}
+*/
+	function _MOVE() 
+	{
+		JToolBarHelper::title( JText::_( 'Move Articles' ), 'move_f2.png' );
+		JToolBarHelper::custom( 'movesectsave', 'save.png', 'save_f2.png', 'Save', false );
+		JToolBarHelper::cancel();
 	}
 
-	function _ARCHIVE() {
-		mosMenuBar::startTable();
-		mosMenuBar::unarchiveList();
-		mosMenuBar::spacer();
-		mosMenuBar::custom( 'remove', 'delete.png', 'delete_f2.png', 'Trash', false );
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.content.archive' );
-		mosMenuBar::endTable();
+	function _COPY() 
+	{
+		JToolBarHelper::title( JText::_( 'Copy Articles' ), 'copy_f2.png' );
+		JToolBarHelper::custom( 'copysave', 'save.png', 'save_f2.png', 'Save', false );
+		JToolBarHelper::cancel();
 	}
 
-	function _MOVE() {
-		mosMenuBar::startTable();
-		mosMenuBar::custom( 'movesectsave', 'save.png', 'save_f2.png', 'Save', false );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
-	}
+	function _DEFAULT() 
+	{
+		global $filter_state;
 
-	function _COPY() {
-		mosMenuBar::startTable();
-		mosMenuBar::custom( 'copysave', 'save.png', 'save_f2.png', 'Save', false );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
-	}
-
-	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::archiveList();
-		mosMenuBar::spacer();
-		mosMenuBar::publishList();
-		mosMenuBar::spacer();
-		mosMenuBar::unpublishList();
-		mosMenuBar::spacer();
-		mosMenuBar::customX( 'movesect', 'move.png', 'move_f2.png', 'Move' );
-		mosMenuBar::spacer();
-		mosMenuBar::customX( 'copy', 'copy.png', 'copy_f2.png', 'Copy' );
-		mosMenuBar::spacer();
-		mosMenuBar::trash();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX( 'editA' );
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.content' );
-		mosMenuBar::endTable();
+		JToolBarHelper::title( JText::_( 'Article Manager' ), 'addedit.png' );
+		if ($filter_state == 'A' || $filter_state == NULL) {
+			JToolBarHelper::unarchiveList();
+		}
+		if ($filter_state != 'A') {
+			JToolBarHelper::archiveList();
+		}
+		JToolBarHelper::publishList();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::customX( 'movesect', 'move.png', 'move_f2.png', 'Move' );
+		JToolBarHelper::customX( 'copy', 'copy.png', 'copy_f2.png', 'Copy' );
+		JToolBarHelper::trash();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::preferences('com_content', '550');
+		JToolBarHelper::help( 'screen.content' );
 	}
 }
 ?>

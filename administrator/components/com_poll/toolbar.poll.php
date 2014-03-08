@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.poll.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Polls
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.poll.php 7796 2007-06-26 22:52:22Z friesengeist $
+* @package		Joomla
+* @subpackage	Polls
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,46 +13,24 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-require_once( $mainframe->getPath( 'toolbar_html' ) );
+require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 
-switch ($task) {
-	case 'new':
-		TOOLBAR_poll::_NEW();
-		break;
-
+switch ($task)
+{
 	case 'edit':
-		$cid = mosGetParam( $_REQUEST, 'cid', array(0) );
-		if (!is_array( $cid )) {
-			$cid = array(0);
-		}
+		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
+		JArrayHelper::toInteger($cid, array(0));
 
-		$query = "SELECT published"
-		. "\n FROM #__polls"
-		. "\n WHERE id = $cid[0]"
-		;
-		$database->setQuery( $query );
-		$published = $database->loadResult();
-
-		$cur_template = $mainframe->getTemplate();
-
-		TOOLBAR_poll::_EDIT( $cid[0], $cur_template );
+		TOOLBAR_poll::_EDIT( $cid[0] );
 		break;
 
+	case 'add'  :
 	case 'editA':
-		$id = mosGetParam( $_REQUEST, 'id', 0 );
+		$id = JRequest::getVar( 'id', 0, '', 'int' );
 
-		$query = "SELECT published"
-		. "\n FROM #__polls"
-		. "\n WHERE id = $id"
-		;
-		$database->setQuery( $query );
-		$published = $database->loadResult();
-
-		$cur_template = $mainframe->getTemplate();
-
-		TOOLBAR_poll::_EDIT( $id, $cur_template );
+		TOOLBAR_poll::_EDIT( $id );
 		break;
 
 	default:

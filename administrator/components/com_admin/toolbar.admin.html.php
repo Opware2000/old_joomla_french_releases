@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.admin.html.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Admin
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.admin.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Admin
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,33 +13,37 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Admin
+* @package		Joomla
+* @subpackage	Admin
 */
-class TOOLBAR_admin {
+class TOOLBAR_admin
+{
 	function _SYSINFO() {
-		mosMenuBar::startTable();
-		mosMenuBar::help( 'screen.system.info' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Information' ), 'systeminfo.png' );
+		JToolBarHelper::help( 'screen.system.info' );
 	}
-	/**
-	* Draws the menu for a New category
-	*/
+
 	function _CPANEL() {
-		mosMenuBar::startTable();
-		mosMenuBar::help( 'screen.cpanel' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Control Panel' ), 'cpanel.png' );
+		JToolBarHelper::help( 'screen.cpanel' );
 	}
-	/**
-	* Draws the menu for a New category
-	*/
+
+	function _HELP() {
+
+		JToolBarHelper::title( JText::_( 'Help' ), 'help_header.png' );
+	}
+
+	function _PREVIEW() {
+
+		JToolBarHelper::title( JText::_( 'Preview' ) );
+	}
+
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		//mosMenuBar::help( 'screen.cpanel' );
-		mosMenuBar::endTable();
 	}
 }
 ?>

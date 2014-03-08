@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.sections.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Sections
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.sections.html.php 7801 2007-06-27 23:52:53Z friesengeist $
+* @package		Joomla
+* @subpackage	Sections
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,66 +13,54 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Sections
+* @package		Joomla
+* @subpackage	Sections
 */
 class TOOLBAR_sections {
 	/**
 	* Draws the menu for Editing an existing category
 	*/
 	function _EDIT() {
-		global $id;
+		$cid = JRequest::getVar('cid', array(0), '', 'array');
+		JArrayHelper::toInteger($cid, array(0));
 
-		mosMenuBar::startTable();
-		mosMenuBar::media_manager();
-		mosMenuBar::spacer();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::apply();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		$text = ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+
+		JToolBarHelper::title( JText::_( 'Section' ).': <small><small>[ '. $text.' ]</small></small>', 'sections.png' );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ( $cid[0] ) {
+			// for existing items the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.sections.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.sections.edit' );
 	}
 	/**
 	* Draws the menu for Copying existing sections
 	* @param int The published state (to display the inverse button)
 	*/
 	function _COPY() {
-		mosMenuBar::startTable();
-		mosMenuBar::save( 'copysave' );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
+		JToolBarHelper::title( JText::_( 'Copy Section' ), 'sections.png' );
+		JToolBarHelper::save( 'copysave' );
+		JToolBarHelper::cancel();
 	}
 	/**
 	* Draws the menu for Editing an existing category
 	*/
 	function _DEFAULT(){
-		mosMenuBar::startTable();
-		mosMenuBar::publishList();
-		mosMenuBar::spacer();
-		mosMenuBar::unpublishList();
-		mosMenuBar::spacer();
-		mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
-		mosMenuBar::spacer();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.sections' );
-		mosMenuBar::endTable();
+		JToolBarHelper::title( JText::_( 'Section Manager' ), 'sections.png' );
+		JToolBarHelper::publishList();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
+		JToolBarHelper::deleteList();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::help( 'screen.sections' );
 	}
 }
 ?>

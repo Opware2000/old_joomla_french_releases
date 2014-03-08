@@ -1,16 +1,14 @@
 <?php
 /**
-* @version $Id: zip.lib.php 47 2005-09-15 02:55:27Z rhuk $
-* @package Joomla
+* @version $Id: zip.lib.php 8041 2007-07-18 10:25:00Z humvee $
+* @package		Joomla
 */
 
-// no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-// $Id: zip.lib.php 47 2005-09-15 02:55:27Z rhuk $
+// $Id: zip.lib.php 8041 2007-07-18 10:25:00Z humvee $
 //
 // The "GNU General Public License" (GPL) is available at
-// http://www.gnu.org/copyleft/gpl.html.
+// http://www.gnu.org/licenses/gpl-2.0.html.
 //
 //  http://www.zend.com/codex.php?id=535&single=1
 //	By Eric Mueller <eric@themepark.com>
@@ -22,9 +20,6 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 //	date and time of the compressed file
 //
 //	Official ZIP file format: http://www.pkware.com/appnote.txt
-
-// ensure this file is being included by a parent file
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 class zipfile {
 	var $datasec = array();

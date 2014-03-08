@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.trash.html.php 212 2005-09-21 07:50:23Z stingrey $
-* @package Joomla
-* @subpackage Trash
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.trash.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @package		Joomla
+* @subpackage	Trash
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,20 +13,120 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
 * HTML class for all trash component output
-* @package Joomla
-* @subpackage Trash
+* @package		Joomla
+* @subpackage	Trash
 */
-class HTML_trash {
+
+class HTML_trash
+{
 	/**
 	* Writes a list of the Trash items
 	*/
-	function showList( $option, $contents, $menus, $pageNav_content, $pageNav_menu ) {
-		global $my;
-		$tabs = new mosTabs(1);
+	function showListContent( $option, &$contents, &$pageNav, &$lists )
+	{
+		?>
+		<form action="index.php?option=com_trash&amp;task=viewContent" method="post" name="adminForm">
+
+		<table>
+		<tr>
+			<td align="left" width="100%">
+				<?php echo JText::_( 'Filter' ); ?>:
+				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+				<button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+			</td>
+			<td nowrap="nowrap">
+			</td>
+		</tr>
+		</table>
+
+		<div id="tablecell">
+			<table class="adminlist" width="90%">
+			<thead>
+				<tr>
+					<th width="20">
+						<?php echo JText::_( 'NUM' ); ?>
+					</th>
+					<th width="20">
+						<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $contents );?>);" />
+					</th>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="70">
+						<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th class="title" width="25%">
+						<?php echo JHTML::_('grid.sort',   'Section', 'sectname', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th class="title" width="25%">
+						<?php echo JHTML::_('grid.sort',   'Category', 'catname', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td colspan="6">
+						<?php echo $pageNav->getListFooter(); ?>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
+			<?php
+			$k = 0;
+			$i = 0;
+			$n = count( $contents );
+			foreach ( $contents as $row ) {
+				?>
+					<tr class="<?php echo "row". $k; ?>">
+						<td align="center">
+							<?php echo $i + 1 + $pageNav->limitstart;?>
+						</td>
+						<td align="center">
+							<?php echo JHTML::_('grid.id', $i, $row->id ); ?>
+						</td>
+						<td nowrap="nowrap">
+							<?php echo $row->title; ?>
+						</td>
+						<td align="center">
+							<?php echo $row->id; ?>
+						</td>
+						<td>
+							<?php echo $row->sectname; ?>
+						</td>
+						<td>
+							<?php echo $row->catname; ?>
+						</td>
+					</tr>
+				<?php
+				$k = 1 - $k;
+				$i++;
+			}
+			?>
+			</tbody>
+			</table>
+		</div>
+
+		<input type="hidden" name="option" value="<?php echo $option;?>" />
+		<input type="hidden" name="task" value="viewContent" />
+		<input type="hidden" name="return" value="viewContent" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
+		</form>
+		<?php
+	}
+
+
+	/**
+	* Writes a list of the Trash items
+	*/
+	function showListMenu( $option, &$menus, &$pageNav, &$lists )
+	{
 		?>
 		<script language="javascript" type="text/javascript">
 		/**
@@ -53,163 +153,94 @@ class HTML_trash {
 			}
 		}
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
+		<form action="index.php?option=com_trash&amp;task=viewMenu" method="post" name="adminForm">
+
+		<table>
 		<tr>
-			<th class="trash">Trash Manager</th>
+			<td align="left" width="100%">
+				<?php echo JText::_( 'Filter' ); ?>:
+				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+				<button onclick="getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+			</td>
+			<td nowrap="nowrap">
+			</td>
 		</tr>
 		</table>
 
-		<?php
-		$tabs->startPane("content-pane");
-		$tabs->startTab("Content Items","content_items");
-		?>
-		<table class="adminheading" width="90%">
-		<tr>
-			<th><small>Content Items</small></th>
-		</tr>
-		</table>
-
-		<table class="adminlist" width="90%">
-		<tr>
-			<th width="20">#</th>
-			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $contents );?>);" />
-			</th>
-			<th width="20px">&nbsp;</th>
-			<th class="title">
-			Title
-			</th>
-			<th>
-			Section
-			</th>
-			<th>
-			Category
-			</th>
-			<th width="70px">
-			ID
-			</th>
-		</tr>
-		<?php
-		$k = 0;
-		$i = 0;
-		$n = count( $contents );
-		foreach ( $contents as $row ) {
-			?>
-			<tr class="<?php echo "row". $k; ?>">
-				<td align="center" width="30px">
-				<?php echo $i + 1 + $pageNav_content->limitstart;?>
-				</td>
-				<td width="20px" align="center"><?php echo mosHTML::idBox( $i, $row->id ); ?></td>
-				<td width="20px"></td>
-				<td nowrap>
-				<?php
-				echo $row->title;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->sectname;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->catname;
-				?>
-				</td>
-				<td align="center">
-				<?php
-				echo $row->id;
-				?>
-				</td>
-			</tr>
+		<div id="tablecell">
+			<table class="adminlist" width="90%">
+			<thead>
+				<tr>
+					<th width="20">
+						<?php echo JText::_( 'NUM' ); ?>
+					</th>
+					<th width="20">
+						<input type="checkbox" name="toggle1" value="" onclick="checkAll_xtd(<?php echo count( $menus );?>);" />
+					</th>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort',   'Name', 'm.name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="70">
+						<?php echo JHTML::_('grid.sort',   'ID', 'm.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th class="title" width="25%">
+						<?php echo JHTML::_('grid.sort',   'Menu', 'm.menutype', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th class="title" width="25%">
+						<?php echo JHTML::_('grid.sort',   'Type', 'm.type', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td colspan="6">
+						<?php echo $pageNav->getListFooter(); ?>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
 			<?php
-			$k = 1 - $k;
-			$i++;
-		}
-		?>
-		</table>
-		<?php echo $pageNav_content->getListFooter(); ?>
-		<?php
-		$tabs->endTab();
-		$tabs->startTab("Menu Items","menu_items");
-		?>
-		<table class="adminheading" width="90%">
-		<tr>
-			<th><small>Menu Items</small></th>
-		</tr>
-		</table>
-
-		<table class="adminlist" width="90%">
-		<tr>
-			<th width="20">#</th>
-			<th width="20">
-			<input type="checkbox" name="toggle1" value="" onClick="checkAll_xtd(<?php echo count( $menus );?>);" />
-			</th>
-			<th width="20px">&nbsp;</th>
-			<th class="title">
-			Title
-			</th>
-			<th>
-			Menu
-			</th>
-			<th>
-			Type
-			</th>
-			<th width="70px">
-			ID
-			</th>
-		</tr>
-		<?php
-		$k = 0;
-		$i = 0;
-		$n = count( $menus );
-		foreach ( $menus as $row ) {
+			$k = 0;
+			$i = 0;
+			$n = count( $menus );
+			foreach ( $menus as $row ) {
+				?>
+				<tr class="<?php echo "row". $k; ?>">
+					<td align="center">
+						<?php echo $i + 1 + $pageNav->limitstart;?>
+					</td>
+					<td align="center">
+						<input type="checkbox" id="cb1<?php echo $i;?>" name="mid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" />
+					</td>
+					<td nowrap="nowrap">
+						<?php echo $row->name; ?>
+					</td>
+					<td align="center">
+						<?php echo $row->id; ?>
+					</td>
+					<td>
+						<?php echo $row->menutype; ?>
+					</td>
+					<td>
+						<?php echo $row->type; ?>
+					</td>
+				</tr>
+				<?php
+				$k = 1 - $k;
+				$i++;
+			}
 			?>
-			<tr class="<?php echo "row". $k; ?>">
-				<td align="center" width="30px">
-				<?php echo $i + 1 + $pageNav_menu->limitstart;?>
-				</td>
-				<td width="30px" align="center">
-				<input type="checkbox" id="cb1<?php echo $i;?>" name="mid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" />
-				</td>
-				<td width="20px"></td>
-				<td nowrap>
-				<?php
-				echo $row->name;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->menutype;
-				?>
-				</td>
-				<td align="center" width="20%">
-				<?php
-				echo $row->type;
-				?>
-				</td>
-				<td align="center">
-				<?php
-				echo $row->id;
-				?>
-				</td>
-			</tr>
-			<?php
-			$k = 1 - $k;
-			$i++;
-		}
-		?>
-		</table>
-		<?php echo $pageNav_menu->getListFooter(); ?>
-		<?php
-		$tabs->endTab();
-		$tabs->endPane();
-		?>
+			</tbody>
+			</table>
+		</div>
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
-		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="task" value="viewMenu" />
+		<input type="hidden" name="return" value="viewMenu" />
 		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
 		</form>
 		<?php
 	}
@@ -219,27 +250,21 @@ class HTML_trash {
 	* A delete confirmation page
 	* Writes list of the items that have been selected for deletion
 	*/
-	function showDelete( $option, $cid, $items, $type ) {
+	function showDelete( $option, $cid, $items, $type, $return ) {
 	?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<th>Delete Items</th>
-		</tr>
-		</table>
+		<form action="index.php?option=com_trash&amp;task=<?php echo $return; ?>" method="post" name="adminForm">
 
-		<br />
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>
-			<td align="left" valign="top" width="20%">
-			<strong>Number of Items:</strong>
+			<td  valign="top" width="20%">
+			<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
 			<br />
 			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
 			<br /><br />
 			</td>
-			<td align="left" valign="top" width="25%">
-			<strong>Items being Deleted:</strong>
+			<td  valign="top" width="25%">
+			<strong><?php echo JText::_( 'Items being Deleted' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -249,15 +274,11 @@ class HTML_trash {
 			echo "</ol>";
 			?>
 			</td>
-			 <td valign="top">
-			* This will <strong><font color="#FF0000">Permanently Delete</font></strong> <br />these Items from the Database *
+			 <td valign="top"><?php echo JText::_( 'PERMDELETETHESEITEMS' ); ?>
 			<br /><br /><br />
-			<div style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 50px;">
-			<a class="toolbar" href="javascript:if (confirm('Are you sure you want to Deleted the listed items? \nThis will Permanently Delete them from the database.')){ submitbutton('delete');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('remove','','images/delete_f2.png',1);">
-			<img name="remove" src="images/delete.png" alt="Delete" border="0" align="middle" />
-			&nbsp;Delete
+			<a class="icon-32-delete" style="border: 1px dotted gray; width: 70px; padding: 10px; margin-left: 50px; background-repeat: no-repeat; padding-left: 40px; "  href="javascript:void submitbutton('delete')">
+			&nbsp;<?php echo JText::_( 'Delete' ); ?>
 			</a>
-			</div>
 			</td>
 		</tr>
 		<tr>
@@ -270,6 +291,7 @@ class HTML_trash {
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="1" />
 		<input type="hidden" name="type" value="<?php echo $type; ?>" />
+		<input type="hidden" name="return" value="<?php echo $return;?>" />
 		<?php
 		foreach ($cid as $id) {
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";
@@ -284,27 +306,21 @@ class HTML_trash {
 	* A restore confirmation page
 	* Writes list of the items that have been selected for restore
 	*/
-	function showRestore( $option, $cid, $items, $type ) {
-	?>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<th>Restore Items</th>
-		</tr>
-		</table>
+	function showRestore( $option, $cid, $items, $type, $return ) {
+		?>
+		<form action="index.php?option=com_trash&amp;task=<?php echo $return; ?>" method="post" name="adminForm">
 
-		<br />
 		<table class="adminform">
 		<tr>
 			<td width="3%"></td>
-			<td align="left" valign="top" width="20%">
-			<strong>Number of Items:</strong>
+			<td  valign="top" width="20%">
+			<strong><?php echo JText::_( 'Number of Items' ); ?>:</strong>
 			<br />
 			<font color="#000066"><strong><?php echo count( $cid ); ?></strong></font>
 			<br /><br />
 			</td>
-			<td align="left" valign="top" width="25%">
-			<strong>Items being Restored:</strong>
+			<td  valign="top" width="25%">
+			<strong><?php echo JText::_( 'Items being Restored' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -314,13 +330,12 @@ class HTML_trash {
 			echo "</ol>";
 			?>
 			</td>
-			 <td valign="top">
-			* This will <strong><font color="#FF0000">Restore</font></strong> these Items,<br />they will be returned to their orignial places as Unpublished items *
+			 <td valign="top"><?php echo JText::_( 'RESTOREITEMS' ); ?><br /><?php echo JText::_( 'TIPWILLBERETURNED' ); ?>
 			<br /><br /><br />
 			<div style="border: 1px dotted gray; width: 80px; padding: 10px; margin-left: 50px;">
-			<a class="toolbar" href="javascript:if (confirm('Are you sure you want to Restore the listed items?.')){ submitbutton('restore');}" onmouseout="MM_swapImgRestore();"  onmouseover="MM_swapImage('restore','','images/restore_f2.png',1);">
-			<img name="restore" src="images/restore.png" alt="Restore" border="0" align="middle" />
-			&nbsp;Restore
+			<a class="toolbar" href="javascript:if (confirm('<?php echo JText::_( 'WARNRESTORE' ); ?>')){ submitbutton('restore');}">
+			<img name="restore" src="images/restore_f2.png" alt="<?php echo JText::_( 'Restore' ); ?>" border="0" align="middle" />
+			&nbsp;<?php echo JText::_( 'Restore' ); ?>
 			</a>
 			</div>
 			</td>
@@ -335,6 +350,7 @@ class HTML_trash {
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="1" />
 		<input type="hidden" name="type" value="<?php echo $type; ?>" />
+		<input type="hidden" name="return" value="<?php echo $return;?>" />
 		<?php
 		foreach ($cid as $id) {
 			echo "\n<input type=\"hidden\" name=\"cid[]\" value=\"$id\" />";

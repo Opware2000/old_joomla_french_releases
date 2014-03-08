@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.contact.php 393 2005-10-08 13:37:52Z akede $
-* @package Joomla
-* @subpackage Contact
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.contact.php 8004 2007-07-17 00:03:21Z friesengeist $
+* @package		Joomla
+* @subpackage	Contact
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,59 +13,73 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-// ensure user has access to this function
-if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'components', 'all' )
-		| $acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'components', 'com_contact' ))) {
-	mosRedirect( 'index2.php', _NOT_AUTH );
+/*
+ * Make sure the user is authorized to view this page
+ */
+$user = & JFactory::getUser();
+if (!$user->authorize( 'com_contact', 'manage' )) {
+	$mainframe->redirect( 'index.php', JText::_('ALERTNOTAUTH') );
 }
 
-require_once( $mainframe->getPath( 'admin_html' ) );
-require_once( $mainframe->getPath( 'class' ) );
+require_once( JApplicationHelper::getPath( 'admin_html' ) );
+// Set the table directory
+JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_contact'.DS.'tables');
 
-$id 	= mosGetParam( $_GET, 'id', 0 );
-$cid 	= mosGetParam( $_POST, 'cid', array(0) );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$task	= JRequest::getCmd('task');
+$id 	= JRequest::getVar('id', 0, 'get', 'int');
+$cid 	= JRequest::getVar('cid', array(0), 'post', 'array');
+JArrayHelper::toInteger($cid, array(0));
 
-switch ($task) {
-
-	case 'new':
-		editContact( '0', $option);
-		break;
-
+switch ($task)
+{
+	case 'add' :
 	case 'edit':
-		editContact( $cid[0], $option );
+		editContact( );
 		break;
 
-	case 'editA':
-		editContact( $id, $option );
-		break;
-
+	case 'apply':
 	case 'save':
-		saveContact( $option );
+	case 'save2new':
+	case 'save2copy':
+		saveContact( $task );
 		break;
 
 	case 'remove':
-		removeContacts( $cid, $option );
+		removeContacts( $cid );
 		break;
 
 	case 'publish':
-		changeContact( $cid, 1, $option );
+		changeContact( $cid, 1 );
 		break;
 
 	case 'unpublish':
-		changeContact( $cid, 0, $option );
+		changeContact( $cid, 0 );
 		break;
 
 	case 'orderup':
-		orderContacts( $cid[0], -1, $option );
+		orderContacts( $cid[0], -1 );
 		break;
 
 	case 'orderdown':
-		orderContacts( $cid[0], 1, $option );
+		orderContacts( $cid[0], 1 );
+		break;
+
+	case 'accesspublic':
+		changeAccess( $cid[0], 0 );
+		break;
+
+	case 'accessregistered':
+		changeAccess( $cid[0], 1 );
+		break;
+
+	case 'accessspecial':
+		changeAccess( $cid[0], 2 );
+		break;
+
+	case 'saveorder':
+		saveOrder( $cid );
 		break;
 
 	case 'cancel':
@@ -81,56 +95,83 @@ switch ($task) {
 * List the records
 * @param string The current GET/POST option
 */
-function showContacts( $option ) {
-	global $database, $mainframe, $mosConfig_list_limit;
+function showContacts( $option )
+{
+	global $mainframe;
 
-	$catid 		= $mainframe->getUserStateFromRequest( "catid{$option}", 'catid', 0 );
-	$limit 		= $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
-	$search 	= $mainframe->getUserStateFromRequest( "search{$option}", 'search', '' );
-	$search 	= $database->getEscaped( trim( strtolower( $search ) ) );
+	$db					=& JFactory::getDBO();
+	$filter_order		= $mainframe->getUserStateFromRequest( $option.'filter_order', 		'filter_order', 	'cd.ordering',	'cmd' );
+	$filter_order_Dir	= $mainframe->getUserStateFromRequest( $option.'filter_order_Dir',	'filter_order_Dir',	'',				'word' );
+	$filter_state 		= $mainframe->getUserStateFromRequest( $option.'filter_state', 		'filter_state', 	'',				'word' );
+	$filter_catid 		= $mainframe->getUserStateFromRequest( $option.'filter_catid', 		'filter_catid',		0,				'int' );
+	$search 			= $mainframe->getUserStateFromRequest( $option.'search', 			'search', 			'',				'string' );
+	$search 			= JString::strtolower( $search );
+
+	$limit		= $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+	$limitstart	= $mainframe->getUserStateFromRequest($option.'.limitstart', 'limitstart', 0, 'int');
+
+	$where = array();
 
 	if ( $search ) {
-		$where[] = "cd.name LIKE '%$search%'";
+		$where[] = 'cd.name LIKE "%'.$db->getEscaped($search).'%"';
 	}
-	if ( $catid ) {
-		$where[] = "cd.catid = '$catid'";
+	if ( $filter_catid ) {
+		$where[] = 'cd.catid = '.(int) $filter_catid;
 	}
-	if ( isset( $where ) ) {
-		$where = "\n WHERE ". implode( ' AND ', $where );
+	if ( $filter_state ) {
+		if ( $filter_state == 'P' ) {
+			$where[] = 'cd.published = 1';
+		} else if ($filter_state == 'U' ) {
+			$where[] = 'cd.published = 0';
+		}
+	}
+
+	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+	if ($filter_order == 'cd.ordering'){
+		$orderby 	= ' ORDER BY category, cd.ordering';
 	} else {
-		$where = '';
+		$orderby 	= ' ORDER BY '. $filter_order .' '. $filter_order_Dir .', category, cd.ordering';
 	}
 
 	// get the total number of records
-	$query = "SELECT COUNT(*)"
-	. "\n FROM #__contact_details AS cd"
+	$query = 'SELECT COUNT(*)'
+	. ' FROM #__contact_details AS cd'
 	. $where
 	;
-	$database->setQuery( $query );
-	$total = $database->loadResult();
+	$db->setQuery( $query );
+	$total = $db->loadResult();
 
-	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
-	$pageNav = new mosPageNav( $total, $limitstart, $limit  );
+	jimport('joomla.html.pagination');
+	$pageNav = new JPagination( $total, $limitstart, $limit );
 
 	// get the subset (based on limits) of required records
-	$query = "SELECT cd.*, cc.title AS category, u.name AS user, v.name as editor"
-	. "\n FROM #__contact_details AS cd"
-	. "\n LEFT JOIN #__categories AS cc ON cc.id = cd.catid"
-	. "\n LEFT JOIN #__users AS u ON u.id = cd.user_id"
-	. "\n LEFT JOIN #__users AS v ON v.id = cd.checked_out"
+	$query = 'SELECT cd.*, cc.title AS category, u.name AS user, v.name as editor, g.name AS groupname'
+	. ' FROM #__contact_details AS cd'
+	. ' LEFT JOIN #__groups AS g ON g.id = cd.access'
+	. ' LEFT JOIN #__categories AS cc ON cc.id = cd.catid'
+	. ' LEFT JOIN #__users AS u ON u.id = cd.user_id'
+	. ' LEFT JOIN #__users AS v ON v.id = cd.checked_out'
 	. $where
-	. "\n ORDER BY cd.catid, cd.ordering, cd.name ASC"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
+	. $orderby
 	;
-	$database->setQuery( $query );
-	$rows = $database->loadObjectList();
+	$db->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
+	$rows = $db->loadObjectList();
 
 	// build list of categories
 	$javascript = 'onchange="document.adminForm.submit();"';
-	$lists['catid'] = mosAdminMenus::ComponentCategory( 'catid', 'com_contact_details', intval( $catid ), $javascript );
+	$lists['catid'] = JHTML::_('list.category',  'filter_catid', 'com_contact_details', intval( $filter_catid ), $javascript );
 
-	HTML_contact::showcontacts( $rows, $pageNav, $search, $option, $lists );
+	// state filter
+	$lists['state']	= JHTML::_('grid.state',  $filter_state );
+
+	// table ordering
+	$lists['order_Dir']	= $filter_order_Dir;
+	$lists['order']		= $filter_order;
+
+	// search filter
+	$lists['search']= $search;
+
+	HTML_contact::showcontacts( $rows, $pageNav, $option, $lists );
 }
 
 /**
@@ -138,50 +179,56 @@ function showContacts( $option ) {
 * @param int The id of the record, 0 if a new entry
 * @param string The current GET/POST option
 */
-function editContact( $id, $option ) {
-	global $database, $my;
-	global $mosConfig_absolute_path;
+function editContact( )
+{
+	$db		=& JFactory::getDBO();
+	$user 	=& JFactory::getUser();
 
-	$row = new mosContact( $database );
+	$cid 	= JRequest::getVar('cid', array(0), '', 'array');
+	$option = JRequest::getCmd('option');
+
+	JArrayHelper::toInteger($cid, array(0));
+
+	$row =& JTable::getInstance('contact', 'Table');
 	// load the row from the db table
-	$row->load( $id );
+	$row->load( $cid[0] );
 
-	if ($id) {
+	if ($cid[0]) {
 		// do stuff for existing records
-		$row->checkout($my->id);
+		$row->checkout($user->get('id'));
 	} else {
 		// do stuff for new records
-		$row->imagepos = 'top';
-		$row->ordering = 0;
+		$row->imagepos 	= 'top';
+		$row->ordering 	= 0;
 		$row->published = 1;
 	}
 	$lists = array();
 
 	// build the html select list for ordering
-	$query = "SELECT ordering AS value, name AS text"
-	. "\n FROM #__contact_details"
-	. "\n WHERE published >= 0"
-	. "\n AND catid = '$row->catid'"
-	. "\n ORDER BY ordering"
+	$query = 'SELECT ordering AS value, name AS text'
+	. ' FROM #__contact_details'
+	. ' WHERE published >= 0'
+	. ' AND catid = '.(int) $row->catid
+	. ' ORDER BY ordering'
 	;
-	$lists['ordering'] 			= mosAdminMenus::SpecificOrdering( $row, $id, $query, 1 );
+	$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query, 1 );
 
 	// build list of users
-	$lists['user_id'] 			= mosAdminMenus::UserSelect( 'user_id', $row->user_id, 1, NULL, 'name', 0 );
+	$lists['user_id'] 			= JHTML::_('list.users',  'user_id', $row->user_id, 1, NULL, 'name', 0 );
 	// build list of categories
-	$lists['catid'] 			= mosAdminMenus::ComponentCategory( 'catid', 'com_contact_details', intval( $row->catid ) );
+	$lists['catid'] 			= JHTML::_('list.category',  'catid', 'com_contact_details', intval( $row->catid ) );
 	// build the html select list for images
-	$lists['image'] 			= mosAdminMenus::Images( 'image', $row->image );
+	$lists['image'] 			= JHTML::_('list.images',  'image', $row->image );
 	// build the html select list for the group access
-	$lists['access'] 			= mosAdminMenus::Access( $row );
+	$lists['access'] 			= JHTML::_('list.accesslevel',  $row );
 	// build the html radio buttons for published
-	$lists['published'] 		= mosHTML::yesnoradioList( 'published', '', $row->published );
+	$lists['published'] 		= JHTML::_('select.booleanlist',  'published', '', $row->published );
 	// build the html radio buttons for default
-	$lists['default_con'] 		= mosHTML::yesnoradioList( 'default_con', '', $row->default_con );
+	$lists['default_con'] 		= JHTML::_('select.booleanlist',  'default_con', '', $row->default_con );
 
 	// get params definitions
-	$file = $mosConfig_absolute_path .'/administrator/components/com_contact/contact_items.xml';
-	$params = new mosParameters( $row->params, $file, 'component' );
+	$file 	= JPATH_ADMINISTRATOR .'/components/com_contact/contact_items.xml';
+	$params = new JParameter( $row->params, $file, 'component' );
 
 	HTML_contact::editcontact( $row, $lists, $option, $params );
 }
@@ -190,17 +237,20 @@ function editContact( $id, $option ) {
 * Saves the record from an edit form submit
 * @param string The current GET/POST option
 */
-function saveContact( $option ) {
-	global $database;
+function saveContact( $task )
+{
+	global $mainframe;
 
-	$row = new mosContact( $database );
-	if (!$row->bind( $_POST )) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
-		exit();
+	// Initialize variables
+	$db		=& JFactory::getDBO();
+	$row	=& JTable::getInstance('contact', 'Table');
+	$post = JRequest::get( 'post' );
+	$post['misc'] = JRequest::getVar('misc', '', 'POST', 'string', JREQUEST_ALLOWHTML);
+	if (!$row->bind( $post )) {
+		JError::raiseError(500, $row->getError() );
 	}
-
 	// save params
-	$params = mosGetParam( $_POST, 'params', '' );
+	$params = JRequest::getVar( 'params', array(), 'post', 'array' );
 	if (is_array( $params )) {
 		$txt = array();
 		foreach ( $params as $k=>$v) {
@@ -209,30 +259,58 @@ function saveContact( $option ) {
 		$row->params = implode( "\n", $txt );
 	}
 
+	// save to a copy, reset the primary key
+	if ($task == 'save2copy') {
+		$row->id = 0;
+	}
+
 	// pre-save checks
 	if (!$row->check()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
-		exit();
+		JError::raiseError(500, $row->getError() );
+	}
+
+	// if new item, order last in appropriate group
+	if (!$row->id) {
+		$where = "catid = " . (int) $row->catid;
+		$row->ordering = $row->getNextOrder( $where );
 	}
 
 	// save the changes
 	if (!$row->store()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
-		exit();
+		JError::raiseError(500, $row->getError() );
 	}
 	$row->checkin();
-	$row->updateOrder();
 	if ($row->default_con) {
-		$query = "UPDATE #__contact_details"
-		. "\n SET default_con = 0"
-		. "\n WHERE id != $row->id"
-		. "\n AND default_con = 1"
+		$query = 'UPDATE #__contact_details'
+		. ' SET default_con = 0'
+		. ' WHERE id <> '. (int) $row->id
+		. ' AND default_con = 1'
 		;
-		$database->setQuery( $query );
-		$database->query();
+		$db->setQuery( $query );
+		$db->query();
 	}
 
-	mosRedirect( "index2.php?option=$option" );
+	switch ($task)
+	{
+		case 'apply':
+		case 'save2copy':
+			$msg	= JText::sprintf( 'Changes to X saved', 'Contact' );
+			$link	= 'index.php?option=com_contact&task=edit&cid[]='. $row->id .'';
+			break;
+
+		case 'save2new':
+			$msg	= JText::sprintf( 'Changes to X saved', 'Contact' );
+			$link	= 'index.php?option=com_contact&task=edit';
+			break;
+
+		case 'save':
+		default:
+			$msg	= JText::_( 'Contact saved' );
+			$link	= 'index.php?option=com_contact';
+			break;
+	}
+
+	$mainframe->redirect( $link, $msg );
 }
 
 /**
@@ -240,21 +318,26 @@ function saveContact( $option ) {
 * @param array An array of id keys to remove
 * @param string The current GET/POST option
 */
-function removeContacts( &$cid, $option ) {
-	global $database;
+function removeContacts( &$cid )
+{
+	global $mainframe;
+
+	// Initialize variables
+	$db =& JFactory::getDBO();
+	JArrayHelper::toInteger($cid);
 
 	if (count( $cid )) {
 		$cids = implode( ',', $cid );
-		$query = "DELETE FROM #__contact_details"
-		. "\n WHERE id IN ( $cids )"
+		$query = 'DELETE FROM #__contact_details'
+		. ' WHERE id IN ( '. $cids .' )'
 		;
-		$database->setQuery( $query );
-		if (!$database->query()) {
-			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+		$db->setQuery( $query );
+		if (!$db->query()) {
+			echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
 		}
 	}
 
-	mosRedirect( "index2.php?option=$option" );
+	$mainframe->redirect( "index.php?option=com_contact" );
 }
 
 /**
@@ -263,59 +346,134 @@ function removeContacts( &$cid, $option ) {
 * @param integer 0 if unpublishing, 1 if publishing
 * @param string The current option
 */
-function changeContact( $cid=null, $state=0, $option ) {
-	global $database, $my;
+function changeContact( $cid=null, $state=0 )
+{
+	global $mainframe;
 
-	if (!is_array( $cid ) || count( $cid ) < 1) {
-		$action = $publish ? 'publish' : 'unpublish';
-		echo "<script> alert('Select an item to $action'); window.history.go(-1);</script>\n";
-		exit();
+	// Initialize variables
+	$db 	=& JFactory::getDBO();
+	$user 	=& JFactory::getUser();
+	JArrayHelper::toInteger($cid);
+
+	if (count( $cid ) < 1) {
+		$action = $state ? 'publish' : 'unpublish';
+		JError::raiseError(500, JText::_( 'Select an item to '.$action, true ) );
 	}
 
 	$cids = implode( ',', $cid );
 
-	$query = "UPDATE #__contact_details"
-	. "\n SET published = " . intval( $state )
-	. "\n WHERE id IN ( $cids )"
-	. "\n AND ( checked_out = 0 OR ( checked_out = $my->id ) )"
+	$query = 'UPDATE #__contact_details'
+	. ' SET published = ' . (int) $state
+	. ' WHERE id IN ( '. $cids .' )'
+	. ' AND ( checked_out = 0 OR ( checked_out = '. (int) $user->get('id') .' ) )'
 	;
-	$database->setQuery( $query );
-	if (!$database->query()) {
-		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-		exit();
+	$db->setQuery( $query );
+	if (!$db->query()) {
+		JError::raiseError(500, $db->getErrorMsg() );
 	}
 
 	if (count( $cid ) == 1) {
-		$row = new mosContact( $database );
+		$row =& JTable::getInstance('contact', 'Table');
 		$row->checkin( intval( $cid[0] ) );
 	}
 
-	mosRedirect( "index2.php?option=$option" );
+	$mainframe->redirect( 'index.php?option=com_contact' );
 }
 
 /** JJC
 * Moves the order of a record
 * @param integer The increment to reorder by
 */
-function orderContacts( $uid, $inc, $option ) {
-	global $database;
+function orderContacts( $uid, $inc )
+{
+	global $mainframe;
 
-	$row = new mosContact( $database );
+	// Initialize variables
+	$db =& JFactory::getDBO();
+
+	$row =& JTable::getInstance('contact', 'Table');
 	$row->load( $uid );
-	$row->move( $inc, "published >= 0" );
+	$row->move( $inc, 'catid = '. (int) $row->catid .' AND published != 0' );
 
-	mosRedirect( "index2.php?option=$option" );
+	$mainframe->redirect( 'index.php?option=com_contact' );
 }
 
 /** PT
 * Cancels editing and checks in the record
 */
-function cancelContact() {
-	global $database;
+function cancelContact()
+{
+	global $mainframe;
 
-	$row = new mosContact( $database );
-	$row->bind( $_POST );
+	// Initialize variables
+	$db =& JFactory::getDBO();
+	$row =& JTable::getInstance('contact', 'Table');
+	$row->bind( JRequest::get( 'post' ));
 	$row->checkin();
-	mosRedirect('index2.php?option=com_contact');
+
+	$mainframe->redirect('index.php?option=com_contact');
+}
+
+/**
+* changes the access level of a record
+* @param integer The increment to reorder by
+*/
+function changeAccess( $id, $access  )
+{
+	global $mainframe;
+
+	// Initialize variables
+	$db =& JFactory::getDBO();
+
+	$row =& JTable::getInstance('contact', 'Table');
+	$row->load( $id );
+	$row->access = $access;
+
+	if ( !$row->check() ) {
+		return $row->getError();
+	}
+	if ( !$row->store() ) {
+		return $row->getError();
+	}
+
+	$mainframe->redirect( 'index.php?option=com_contact' );
+}
+
+function saveOrder( &$cid )
+{
+	global $mainframe;
+
+	// Initialize variables
+	$db			=& JFactory::getDBO();
+	$total		= count( $cid );
+	$order 		= JRequest::getVar( 'order', array(0), 'post', 'array' );
+	JArrayHelper::toInteger($order, array(0));
+
+	$row =& JTable::getInstance('contact', 'Table');
+	$groupings = array();
+
+	// update ordering values
+	for( $i=0; $i < $total; $i++ ) {
+		$row->load( (int) $cid[$i] );
+		// track categories
+		$groupings[] = $row->catid;
+
+		if ($row->ordering != $order[$i]) {
+			$row->ordering = $order[$i];
+			if (!$row->store()) {
+				//TODO - convert to JError
+				JError::raiseError(500, $db->getErrorMsg() );
+			}
+		}
+	}
+
+	// execute updateOrder for each parent group
+	$groupings = array_unique( $groupings );
+	foreach ($groupings as $group){
+		$row->reorder('catid = '.(int) $group);
+	}
+
+	$msg 	= 'New ordering saved';
+	$mainframe->redirect( 'index.php?option=com_contact', $msg );
 }
 ?>

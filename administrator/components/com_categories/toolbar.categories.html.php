@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.categories.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Categories
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.categories.html.php 7718 2007-06-11 23:00:58Z friesengeist $
+* @package		Joomla
+* @subpackage	Categories
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,81 +13,73 @@
 */
 
 /**
-* @package Joomla
-* @subpackage Categories
+* @package		Joomla
+* @subpackage	Categories
 */
 class TOOLBAR_categories {
 	/**
 	* Draws the menu for Editing an existing category
 	* @param int The published state (to display the inverse button)
 	*/
-	function _EDIT() {
-		global $id;
+	function _EDIT()
+	{
+		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 
-		mosMenuBar::startTable();
-		mosMenuBar::media_manager();
-		mosMenuBar::spacer();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::apply();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		$text = ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+
+		JToolBarHelper::title( JText::_( 'Category' ) .': <small><small>[ '. $text.' ]</small></small>', 'categories.png' );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ($cid[0]) {
+			// for existing articles the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.categories.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.categories.edit' );
 	}
+
 	/**
 	* Draws the menu for Moving existing categories
 	* @param int The published state (to display the inverse button)
 	*/
 	function _MOVE() {
-		mosMenuBar::startTable();
-		mosMenuBar::save( 'movesave' );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Move Category' ) );
+		JToolBarHelper::save( 'movesave' );
+		JToolBarHelper::cancel();
 	}
+
 	/**
 	* Draws the menu for Copying existing categories
 	* @param int The published state (to display the inverse button)
 	*/
 	function _COPY() {
-		mosMenuBar::startTable();
-		mosMenuBar::save( 'copysave' );
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Copy Category' ) );
+		JToolBarHelper::save( 'copysave' );
+		JToolBarHelper::cancel();
 	}
+
 	/**
 	* Draws the menu for Editing an existing category
 	*/
-	function _DEFAULT(){
-		$section = mosGetParam( $_REQUEST, 'section', '' );
+	function _DEFAULT()
+	{
+		$section = JRequest::getCmd( 'section' );
 
-		mosMenuBar::startTable();
-		mosMenuBar::publishList();
-		mosMenuBar::spacer();
-		mosMenuBar::unpublishList();
-		mosMenuBar::spacer();
-		if ( $section == 'content' || ( $section > 0 ) ) {
-			mosMenuBar::customX( 'moveselect', 'move.png', 'move_f2.png', 'Move', true );
-			mosMenuBar::spacer();
-			mosMenuBar::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
-			mosMenuBar::spacer();
+		JToolBarHelper::title( JText::_( 'Category Manager' ) .': <small><small>[ '. JText::_(JString::substr($section, 4)).' ]</small></small>', 'categories.png' );
+		JToolBarHelper::publishList();
+		JToolBarHelper::unpublishList();
+
+		if ( $section == 'com_content' || ( $section > 0 ) ) {
+			JToolBarHelper::customX( 'moveselect', 'move.png', 'move_f2.png', 'Move', true );
+			JToolBarHelper::customX( 'copyselect', 'copy.png', 'copy_f2.png', 'Copy', true );
 		}
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.categories' );
-		mosMenuBar::endTable();
+		JToolBarHelper::deleteList();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::help( 'screen.categories' );
 	}
 }
 ?>

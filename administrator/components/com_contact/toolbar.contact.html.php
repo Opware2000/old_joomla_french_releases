@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.contact.html.php 257 2005-09-29 19:06:43Z jick $
-* @package Joomla
-* @subpackage Contact
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.contact.html.php 7747 2007-06-14 21:53:21Z friesengeist $
+* @package		Joomla
+* @subpackage	Contact
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,47 +13,47 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Contact
+* @package		Joomla
+* @subpackage	Contact
 */
 class TOOLBAR_contact {
 	/**
 	* Draws the menu for a New Contact
 	*/
 	function _EDIT() {
-		global $id;
+		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
 
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		$text = ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
+
+		JToolBarHelper::title( JText::_( 'Contact' ) .': <small><small>[ '. $text .' ]</small></small>', 'generic.png' );
+
+		//JToolBarHelper::custom( 'save2new', 'new.png', 'new_f2.png', 'Save & New', false,  false );
+		//JToolBarHelper::custom( 'save2copy', 'copy.png', 'copy_f2.png', 'Save To Copy', false,  false );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ( $cid[0] ) {
+			// for existing items the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.contactmanager.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.contactmanager.edit' );
 	}
 
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::publishList();
-		mosMenuBar::spacer();
-		mosMenuBar::unpublishList();
-		mosMenuBar::spacer();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.contactmanager' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Contact Manager' ), 'generic.png' );
+		JToolBarHelper::publishList();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::deleteList();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::preferences('com_contact', '650');
+
+		JToolBarHelper::help( 'screen.contactmanager' );
 	}
 }
 ?>

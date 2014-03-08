@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.admin.php 319 2005-10-02 14:07:10Z Jinx $
-* @package Joomla
-* @subpackage Admin
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.admin.php 7893 2007-07-08 11:44:46Z friesengeist $
+* @package		Joomla
+* @subpackage	Admin
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,38 +13,12 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
-require_once( $mainframe->getPath( 'admin_html' ) );
+defined( '_JEXEC' ) or die( 'Restricted access' );
+require_once( JApplicationHelper::getPath( 'admin_html' ) );
 
 switch ($task) {
-
-	case 'clean_cache':
-		mosCache::cleanCache( 'com_content' );
-		mosRedirect( 'index2.php', 'Content caches cleaned' );
-		break;
-
-	case 'clean_all_cache':
-		mosCache::cleanCache();
-		mosRedirect( 'index2.php', 'All caches cleaned' );
-		break;
-
-	case 'redirect':
-		$goto = trim( strtolower( mosGetParam( $_REQUEST, 'link' ) ) );
-		if ($goto == 'null') {
-			$msg = 'There is no link associated with this item';
-			mosRedirect( 'index2.php?option=com_admin&task=listcomponents', $msg );
-			exit();
-		}
-		$goto = str_replace( "'", '', $goto );
-		mosRedirect( $goto );
-		break;
-
-	case 'listcomponents':
-		HTML_admin_misc::ListComponents();
-		break;
-
 	case 'sysinfo':
-		HTML_admin_misc::system_info( $version, $option );
+		HTML_admin_misc::system_info( );
 		break;
 
 	case 'changelog':
@@ -58,7 +32,7 @@ switch ($task) {
 	case 'version':
 		HTML_admin_misc::version();
 		break;
-	
+
 	case 'preview':
 		HTML_admin_misc::preview();
 		break;
@@ -67,10 +41,8 @@ switch ($task) {
 		HTML_admin_misc::preview( 1 );
 		break;
 
-	case 'cpanel':
-	default:
-		HTML_admin_misc::controlPanel();
+	case 'keepalive':
+		return;
 		break;
-
 }
 ?>

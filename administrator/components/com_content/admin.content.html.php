@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.content.html.php 478 2005-10-12 19:36:02Z predator $
-* @package Joomla
-* @subpackage Content
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.content.html.php 8075 2007-07-19 04:47:14Z louis $
+* @package		Joomla
+* @subpackage	Content
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,286 +13,280 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Content
-*/
-class HTML_content {
-
+ * HTML View class for the Content component
+ *
+ * @static
+ * @package		Joomla
+ * @subpackage	Content
+ * @since 1.0
+ */
+class ContentView
+{
 	/**
-	* Writes a list of the content items
-	* @param array An array of content objects
+	* Writes a list of the articles
+	* @param array An array of article objects
 	*/
-	function showContent( &$rows, $section, &$lists, $search, $pageNav, $all=NULL, $redirect ) {
-		global $my, $acl, $database;
+	function showContent( &$rows, &$lists, $page, $redirect )
+	{
+		jimport('joomla.utilities.date');
 
-		mosCommonHTML::loadOverlib();
+		global $mainframe;
+
+		// Initialize variables
+		$db		=& JFactory::getDBO();
+		$user	=& JFactory::getUser();
+		$config	=& JFactory::getConfig();
+		$now	= new JDate();
+
+		//Ordering allowed ?
+		$ordering = ($lists['order'] == 'section_name' || $lists['order'] == 'cc.name');
+		JHTML::_('behavior.tooltip');
 		?>
-		<form action="index2.php" method="post" name="adminForm">
+		<form action="index.php?option=com_content" method="post" name="adminForm">
 
-		<table class="adminheading">
-		<tr>
-			<th class="edit" rowspan="2" nowrap>
-			<?php
-			if ( $all ) {
-				?>
-				Content Items Manager <small><small>[ Section: All ]</small></small>
-				<?php
-			} else {
-				?>
-				Content Items Manager <small><small>[ Section: <?php echo $section->title; ?> ]</small></small>
-				<?php
-			}
-			?>
-			</th>
-			<?php
-			if ( $all ) {
-				?>
-				<td width="right" rowspan="2" valign="top">
-				<?php echo $lists['sectionid'];?>
-				</td>
-				<?php
-			}
-			?>
-			<td width="right" valign="top">
-			<?php echo $lists['catid'];?>
-			</td>
-			<td width="right" valign="top">
-			<?php echo $lists['authorid'];?>
-			</td>
-		</tr>
-		<tr>
-			<td align="right">
-			Filter:
-			</td>
-			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
-			</td>
-		</tr>
-		</table>
-
-		<table class="adminlist">
-		<tr>
-			<th width="5">
-			#
-			</th>
-			<th width="5">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
-			</th>
-			<th class="title">
-			Title
-			</th>
-			<th width="5%">
-			Published
-			</th>
-			<th nowrap="nowrap" width="5%">
-			Front Page
-			</th>
-			<th colspan="2" align="center" width="5%">
-			Reorder
-			</th>
-			<th width="2%">
-			Order
-			</th>
-			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
-			</th>
-			<th >
-			Access
-			</th>
-			<th width="2%">
-			ID
-			</th>
-			<?php
-			if ( $all ) {
-				?>
-				<th align="left">
-				Section
-				</th>
-				<?php
-			}
-			?>
-			<th align="left">
-			Category
-			</th>
-			<th align="left">
-			Author
-			</th>
-			<th align="center" width="10">
-			Date
-			</th>
-		  </tr>
-		<?php
-		$k = 0;
-		$nullDate = $database->getNullDate();
-		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
-			$row = &$rows[$i];
-
-			$link 	= 'index2.php?option=com_content&sectionid='. $redirect .'&task=edit&hidemainmenu=1&id='. $row->id;
-
-			$row->sect_link = 'index2.php?option=com_sections&task=editA&hidemainmenu=1&id='. $row->sectionid;
-			$row->cat_link 	= 'index2.php?option=com_categories&task=editA&hidemainmenu=1&id='. $row->catid;
-
-			$now = date( 'Y-m-d H:i:s' );
-			if ( $now <= $row->publish_up && $row->state == "1" ) {
-				$img = 'publish_y.png';
-				$alt = 'Published';
-			} else if ( ( $now <= $row->publish_down || $row->publish_down == $nullDate ) && $row->state == "1" ) {
-				$img = 'publish_g.png';
-				$alt = 'Published';
-			} else if ( $now > $row->publish_down && $row->state == "1" ) {
-				$img = 'publish_r.png';
-				$alt = 'Expired';
-			} elseif ( $row->state == "0" ) {
-				$img = "publish_x.png";
-				$alt = 'Unpublished';
-			}
-			$times = '';
-			if (isset($row->publish_up)) {
-				if ($row->publish_up == $nullDate) {
-					$times .= "<tr><td>Start: Always</td></tr>";
-				} else {
-					$times .= "<tr><td>Start: $row->publish_up</td></tr>";
-				}
-			}
-			if (isset($row->publish_down)) {
-				if ($row->publish_down == $nullDate) {
-					$times .= "<tr><td>Finish: No Expiry</td></tr>";
-				} else {
-					$times .= "<tr><td>Finish: $row->publish_down</td></tr>";
-				}
-			}
-
-			if ( $acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_users' ) ) {
-				if ( $row->created_by_alias ) {
-					$author = $row->created_by_alias;
-				} else {
-					$linkA 	= 'index2.php?option=com_users&task=editA&hidemainmenu=1&id='. $row->created_by;
-					$author = '<a href="'. $linkA .'" title="Edit User">'. $row->author .'</a>';
-				}
-			} else {
-				if ( $row->created_by_alias ) {
-					$author = $row->created_by_alias;
-				} else {
-					$author = $row->author;
-				}
-			}
-
-			$date = mosFormatDate( $row->created, '%x' );
-
-			$access 	= mosCommonHTML::AccessProcessing( $row, $i );
-			$checked 	= mosCommonHTML::CheckedOutProcessing( $row, $i );
-			?>
-			<tr class="<?php echo "row$k"; ?>">
-				<td>
-				<?php echo $pageNav->rowNumber( $i ); ?>
-				</td>
-				<td align="center">
-				<?php echo $checked; ?>
-				</td>
-				<td>
-				<?php
-				if ( $row->checked_out ) {
-					echo $row->title;
-				} else {
-					?>
-					<a href="<?php echo $link; ?>" title="Edit Content">
-					<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>
-					</a>
-					<?php
-				}
-				?>
-				</td>
-				<?php
-				if ( $times ) {
-					?>
-					<td align="center">
-					<a href="javascript: void(0);" onMouseOver="return overlib('<table><?php echo $times; ?></table>', CAPTION, 'Publish Information', BELOW, RIGHT);" onMouseOut="return nd();" onClick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? "unpublish" : "publish";?>')">
-					<img src="images/<?php echo $img;?>" width="12" height="12" border="0" alt="<?php echo $alt; ?>" />
-					</a>
+			<table>
+				<tr>
+					<td width="100%">
+						<?php echo JText::_( 'Filter' ); ?>:
+						<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_( 'Filter by title or enter article ID' );?>"/>
+						<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+						<button onclick="document.getElementById('search').value='';this.form.getElementById('filter_sectionid').value='-1';this.form.getElementById('catid').value='0';this.form.getElementById('filter_authorid').value='0';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
 					</td>
-					<?php
-				}
-				?>
-				<td align="center">
-				<a href="javascript: void(0);" onClick="return listItemTask('cb<?php echo $i;?>','toggle_frontpage')">
-				<img src="images/<?php echo ( $row->frontpage ) ? 'tick.png' : 'publish_x.png';?>" width="12" height="12" border="0" alt="<?php echo ( $row->frontpage ) ? 'Yes' : 'No';?>" />
-				</a>
-				</td>
-				<td align="right">
-				<?php echo $pageNav->orderUpIcon( $i, ($row->catid == @$rows[$i-1]->catid) ); ?>
-				</td>
-				<td align="left">
-				<?php echo $pageNav->orderDownIcon( $i, $n, ($row->catid == @$rows[$i+1]->catid) ); ?>
-				</td>
-				<td align="center" colspan="2">
-				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" class="text_area" style="text-align: center" />
-				</td>
-				<td align="center">
-				<?php echo $access;?>
-				</td>
-				<td align="left">
-				<?php echo $row->id; ?>
-				</td>
-				<?php
-				if ( $all ) {
-					?>
-					<td align="left">
-					<a href="<?php echo $row->sect_link; ?>" title="Edit Section">
-					<?php echo $row->section_name; ?>
-					</a>
+					<td nowrap="nowrap">
+						<?php
+						echo $lists['sectionid'];
+						echo $lists['catid'];
+						echo $lists['authorid'];
+						echo $lists['state'];
+						?>
 					</td>
-					<?php
-				}
-				?>
-				<td align="left">
-				<a href="<?php echo $row->cat_link; ?>" title="Edit Category">
-				<?php echo $row->name; ?>
-				</a>
-				</td>
-				<td align="left">
-				<?php echo $author; ?>
-				</td>
-				<td align="left">
-				<?php echo $date; ?>
+				</tr>
+			</table>
+
+			<table class="adminlist" cellspacing="1">
+			<thead>
+				<tr>
+					<th width="5">
+						<?php echo JText::_( 'Num' ); ?>
+					</th>
+					<th width="5">
+						<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+					</th>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="1%" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Published', 'c.state', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th nowrap="nowrap" width="1%">
+						<?php echo JHTML::_('grid.sort',   'Front Page', 'frontpage', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="80">
+						<?php echo JHTML::_('grid.sort',   'Order', 'section_name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="1%">
+						<?php echo JHTML::_('grid.order',  $rows ); ?>
+					</th>
+					<th width="7%">
+						<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="2%" class="title">
+						<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th class="title" width="8%" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Section', 'section_name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th  class="title" width="8%" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Category', 'cc.name', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th  class="title" width="8%" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Author', 'author', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th align="center" width="10">
+						<?php echo JHTML::_('grid.sort',   'Date', 'c.created', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th align="center" width="10">
+						<?php echo JHTML::_('grid.sort',   'Hits', 'c.hits', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+			<tr>
+				<td colspan="15">
+					<?php echo $page->getListFooter(); ?>
 				</td>
 			</tr>
+			</tfoot>
+			<tbody>
 			<?php
-			$k = 1 - $k;
-		}
-		?>
-		</table>
+			$k = 0;
+			$nullDate = $db->getNullDate();
+			for ($i=0, $n=count( $rows ); $i < $n; $i++)
+			{
+				$row = &$rows[$i];
 
-		<?php echo $pageNav->getListFooter(); ?>
-		<?php mosCommonHTML::ContentLegend(); ?>
+				$link 	= 'index.php?option=com_content&sectionid='. $redirect .'&task=edit&cid[]='. $row->id;
+
+				$row->sect_link = JRoute::_( 'index.php?option=com_sections&task=edit&cid[]='. $row->sectionid );
+				$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&task=edit&cid[]='. $row->catid );
+
+				$publish_up = new JDate($row->publish_up);
+				$publish_down = new JDate($row->publish_down);
+				$publish_up->setOffset($config->getValue('config.offset'));
+				$publish_down->setOffset($config->getValue('config.offset'));
+				if ( $now->toUnix() <= $publish_up->toUnix() && $row->state == 1 ) {
+					$img = 'publish_y.png';
+					$alt = JText::_( 'Published' );
+				} else if ( ( $now->toUnix() <= $publish_down->toUnix() || $row->publish_down == $nullDate ) && $row->state == 1 ) {
+					$img = 'publish_g.png';
+					$alt = JText::_( 'Published' );
+				} else if ( $now->toUnix() > $publish_down->toUnix() && $row->state == 1 ) {
+					$img = 'publish_r.png';
+					$alt = JText::_( 'Expired' );
+				} else if ( $row->state == 0 ) {
+					$img = 'publish_x.png';
+					$alt = JText::_( 'Unpublished' );
+				} else if ( $row->state == -1 ) {
+					$img = 'disabled.png';
+					$alt = JText::_( 'Archived' );
+				}
+				$times = '';
+				if (isset($row->publish_up)) {
+					if ($row->publish_up == $nullDate) {
+						$times .= JText::_( 'Start: Always' );
+					} else {
+						$times .= JText::_( 'Start' ) .": ". $publish_up->toFormat();
+					}
+				}
+				if (isset($row->publish_down)) {
+					if ($row->publish_down == $nullDate) {
+						$times .= "<br />". JText::_( 'Finish: No Expiry' );
+					} else {
+						$times .= "<br />". JText::_( 'Finish' ) .": ". $publish_down->toFormat();
+					}
+				}
+
+				if ( $user->authorize( 'com_users', 'manage' ) ) {
+					if ( $row->created_by_alias ) {
+						$author = $row->created_by_alias;
+					} else {
+						$linkA 	= 'index.php?option=com_users&task=edit&cid[]='. $row->created_by;
+						$author = '<a href="'. JRoute::_( $linkA ) .'" title="'. JText::_( 'Edit User' ) .'">'. $row->author .'</a>';
+					}
+				} else {
+					if ( $row->created_by_alias ) {
+						$author = $row->created_by_alias;
+					} else {
+						$author = $row->author;
+					}
+				}
+
+				$access 	= JHTML::_('grid.access',   $row, $i, $row->state );
+				$checked 	= JHTML::_('grid.checkedout',   $row, $i );
+				?>
+				<tr class="<?php echo "row$k"; ?>">
+					<td>
+						<?php echo $page->getRowOffset( $i ); ?>
+					</td>
+					<td align="center">
+						<?php echo $checked; ?>
+					</td>
+					<td>
+					<?php
+						if (  JTable::isCheckedOut($user->get ('id'), $row->checked_out ) ) {
+							echo $row->title;
+						} else if ($row->state == -1) {
+							echo htmlspecialchars($row->title, ENT_QUOTES);
+							echo ' [ '. JText::_( 'Archived' ) .' ]';
+						} else {
+							?>
+							<a href="<?php echo JRoute::_( $link ); ?>">
+								<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?></a>
+							<?php
+						}
+						?>
+					</td>
+					<?php
+					if ( $times ) {
+						?>
+						<td align="center">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'Publish Information' );?>::<?php echo $times; ?>"><a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i;?>','<?php echo $row->state ? 'unpublish' : 'publish' ?>')">
+								<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt; ?>" /></a></span>
+						</td>
+						<?php
+					}
+					?>
+					<td align="center">
+						<a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i;?>','toggle_frontpage')" title="<?php echo ( $row->frontpage ) ? JText::_( 'Yes' ) : JText::_( 'No' );?>">
+							<img src="images/<?php echo ( $row->frontpage ) ? 'tick.png' : ( $row->state != -1 ? 'publish_x.png' : 'disabled.png' );?>" width="16" height="16" border="0" alt="<?php echo ( $row->frontpage ) ? JText::_( 'Yes' ) : JText::_( 'No' );?>" /></a>
+					</td>
+					<td class="order" colspan="2">
+						<span><?php echo $page->orderUpIcon( $i, ($row->catid == @$rows[$i-1]->catid), 'orderup', 'Move Up', $ordering); ?></span>
+						<span><?php echo $page->orderDownIcon( $i, $n, ($row->catid == @$rows[$i+1]->catid), 'orderdown', 'Move Down', $ordering ); ?></span>
+						<?php $disabled = $ordering ?  '' : 'disabled="disabled"'; ?>
+						<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" <?php echo $disabled; ?> class="text_area" style="text-align: center" />
+					</td>
+					<td align="center">
+						<?php echo $access;?>
+					</td>
+					<td>
+						<?php echo $row->id; ?>
+					</td>
+						<td>
+							<a href="<?php echo $row->sect_link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+								<?php echo $row->section_name; ?></a>
+						</td>
+					<td>
+						<a href="<?php echo $row->cat_link; ?>" title="<?php echo JText::_( 'Edit Category' ); ?>">
+							<?php echo $row->name; ?></a>
+					</td>
+					<td>
+						<?php echo $author; ?>
+					</td>
+					<td nowrap="nowrap">
+						<?php echo JHTML::_('date',  $row->created, JText::_('DATE_FORMAT_LC4') ); ?>
+					</td>
+					<td nowrap="nowrap" align="center">
+						<?php echo $row->hits ?>
+					</td>
+				</tr>
+				<?php
+				$k = 1 - $k;
+			}
+			?>
+			</tbody>
+			</table>
+			<?php JHTML::_('content.legend'); ?>
 
 		<input type="hidden" name="option" value="com_content" />
-		<input type="hidden" name="sectionid" value="<?php echo $section->id;?>" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
 		</form>
 		<?php
 	}
 
 
 	/**
-	* Writes a list of the content items
-	* @param array An array of content objects
+	* Writes a list of the articles
+	* @param array An array of article objects
 	*/
-	function showArchive( &$rows, $section, &$lists, $search, $pageNav, $option, $all=NULL, $redirect ) {
-		global $my, $acl;
-
+	function showArchive( &$rows, $section, &$lists, $pageNav, $option, $all=NULL, $redirect )
+	{
+		// Initialize variables
+		$user	= &JFactory::getUser();
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
 			if (pressbutton == 'remove') {
 				if (document.adminForm.boxchecked.value == 0) {
-					alert('Please make a selection from the list to send to Trash');
-				} else if ( confirm('Are you sure you want to Trash the selected items? \nThis will not permanently delete the items.')) {
+					alert("<?php echo JText::_( 'VALIDSELECTIONLISTSENDTRASH', true ); ?>");
+				} else if ( confirm("<?php echo JText::_( 'VALIDTRASHSELECTEDITEMS', true ); ?>")) {
 					submitform('remove');
 				}
 			} else {
@@ -300,179 +294,160 @@ class HTML_content {
 			}
 		}
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
+		<form action="index.php?option=com_content&amp;task=showarchive&amp;sectionid=0" method="post" name="adminForm">
 
-		<table class="adminheading">
+		<table>
 		<tr>
-			<th class="edit" rowspan="2">
-			<?php
-			if ( $all ) {
-				?>
-				Archive Manager <small><small>[ Section: All ]</small></small>
-				<?php
-			} else {
-				?>
-				Archive Manager <small><small>[ Section: <?php echo $section->title; ?> ]</small></small>
-				<?php
-			}
-			?>
-			</th>
-			<?php
-			if ( $all ) {
-				?>
-				<td width="right" rowspan="2" valign="top">
-				<?php echo $lists['sectionid'];?>
-				</td>
-				<?php
-			}
-			?>
-			<td width="right">
-			<?php echo $lists['catid'];?>
+			<td align="left" width="100%">
+				<?php echo JText::_( 'Filter' ); ?>:
+				<input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+				<input type="button" value="<?php echo JText::_( 'Go' ); ?>" class="button" onclick="this.form.submit();" />
+				<input type="button" value="<?php echo JText::_( 'Reset' ); ?>" class="button" onclick="getElementById('search').value='';this.form.submit();" />
 			</td>
-			<td width="right">
-			<?php echo $lists['authorid'];?>
-			</td>
-		</tr>
-		<tr>
-			<td align="right">
-			Filter:
-			</td>
-			<td>
-			<input type="text" name="search" value="<?php echo $search;?>" class="text_area" onChange="document.adminForm.submit();" />
+			<td nowrap="nowrap">
+				<?php
+				if ( $all ) {
+					echo $lists['sectionid'];
+				}
+				echo $lists['catid'];
+				echo $lists['authorid'];
+				?>
 			</td>
 		</tr>
 		</table>
 
-		<table class="adminlist">
-		<tr>
-			<th width="5">
-			#
-			</th>
-			<th width="20">
-			<input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $rows ); ?>);" />
-			</th>
-			<th class="title">
-			Title
-			</th>
-			<th width="2%">
-			Order
-			</th>
-			<th width="1%">
-			<a href="javascript: saveorder( <?php echo count( $rows )-1; ?> )"><img src="images/filesave.png" border="0" width="16" height="16" alt="Save Order" /></a>
-			</th>
-			<th width="15%" align="left">
-			Category
-			</th>
-			<th width="15%" align="left">
-			Author
-			</th>
-			<th align="center" width="10">
-			Date
-			</th>
-		</tr>
-		<?php
-		$k = 0;
-		for ($i=0, $n=count( $rows ); $i < $n; $i++) {
-			$row = &$rows[$i];
-
-			$row->cat_link 	= 'index2.php?option=com_categories&task=editA&hidemainmenu=1&id='. $row->catid;
-
-			if ( $acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_users' ) ) {
-				if ( $row->created_by_alias ) {
-					$author = $row->created_by_alias;
-				} else {
-					$linkA 	= 'index2.php?option=com_users&task=editA&hidemainmenu=1&id='. $row->created_by;
-					$author = '<a href="'. $linkA .'" title="Edit User">'. $row->author .'</a>';
-				}
-			} else {
-				if ( $row->created_by_alias ) {
-					$author = $row->created_by_alias;
-				} else {
-					$author = $row->author;
-				}
-			}
-
-			$date = mosFormatDate( $row->created, '%x' );
-			?>
-			<tr class="<?php echo "row$k"; ?>">
-				<td>
-				<?php echo $pageNav->rowNumber( $i ); ?>
-				</td>
-				<td width="20">
-				<?php echo mosHTML::idBox( $i, $row->id ); ?>
-				</td>
-				<td>
-				<?php echo $row->title; ?>
-				</td>
-				<td align="center" colspan="2">
-				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" class="text_area" style="text-align: center" />
-				</td>
-				<td>
-				<a href="<?php echo $row->cat_link; ?>" title="Edit Category">
-				<?php echo $row->name; ?>
-				</a>
-				</td>
-				<td>
-				<?php echo $author; ?>
-				</td>
-				<td>
-				<?php echo $date; ?>
+		<div id="tablecell">
+			<table class="adminlist">
+			<thead>
+			<tr>
+				<th width="5">
+					<?php echo JText::_( 'Num' ); ?>
+				</th>
+				<th width="20">
+					<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+				</th>
+				<th class="title">
+					<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="3%"  class="title">
+					<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="15%"  class="title">
+					<?php echo JHTML::_('grid.sort',   'Section', 'sectname', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="15%"  class="title">
+					<?php echo JHTML::_('grid.sort',   'Category', 'cc.name', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="15%"  class="title">
+					<?php echo JHTML::_('grid.sort',   'Author', 'author', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th align="center" width="10">
+					<?php echo JHTML::_('grid.sort',   'Date', 'c.created', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+			</tr>
+			</thead>
+			<tfoot>
+			<tr>
+				<td colspan="8">
+					<?php echo $pageNav->getListFooter(); ?>
 				</td>
 			</tr>
+			</tfoot>
+			<tbody>
 			<?php
-			$k = 1 - $k;
-		}
-		?>
-		</table>
+			$k = 0;
+			for ($i=0, $n=count( $rows ); $i < $n; $i++) {
+				$row = &$rows[$i];
 
-		<?php echo $pageNav->getListFooter(); ?>
+				$row->cat_link 	= JRoute::_( 'index.php?option=com_categories&task=edit&cid[]='. $row->catid );
+				$row->sec_link 	= JRoute::_( 'index.php?option=com_sections&task=edit&cid[]='. $row->sectionid );
+
+				if ( $user->authorize( 'com_users', 'manage' ) ) {
+					if ( $row->created_by_alias ) {
+						$author = $row->created_by_alias;
+					} else {
+						$linkA 	= JRoute::_( 'index.php?option=com_users&task=edit&cid[]='. $row->created_by );
+						$author = '<a href="'. $linkA .'" title="'. JText::_( 'Edit User' ) .'">'. $row->author .'</a>';
+					}
+				} else {
+					if ( $row->created_by_alias ) {
+						$author = $row->created_by_alias;
+					} else {
+						$author = $row->author;
+					}
+				}
+
+				?>
+				<tr class="<?php echo "row$k"; ?>">
+					<td>
+						<?php echo $pageNav->getRowOffset( $i ); ?>
+					</td>
+					<td width="20">
+						<?php echo JHTML::_('grid.id', $i, $row->id ); ?>
+					</td>
+					<td>
+						<?php echo $row->title; ?>
+					</td>
+					<td>
+						<?php echo $row->id; ?>
+					</td>
+					<td>
+						<a href="<?php echo $row->sec_link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+							<?php echo $row->sectname; ?></a>
+					</td>
+					<td>
+						<a href="<?php echo $row->cat_link; ?>" title="<?php echo JText::_( 'Edit Category' ); ?>">
+							<?php echo $row->name; ?></a>
+					</td>
+					<td>
+						<?php echo $author; ?>
+					</td>
+					<td nowrap="nowrap">
+						<?php echo JHTML::_('date',  $row->created, JText::_( 'DATE_FORMAT_LC4' ) ); ?>
+					</td>
+				</tr>
+				<?php
+				$k = 1 - $k;
+			}
+			?>
+			</tbody>
+			</table>
+		</div>
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="sectionid" value="<?php echo $section->id;?>" />
 		<input type="hidden" name="task" value="showarchive" />
 		<input type="hidden" name="returntask" value="showarchive" />
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
+		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="" />
 		</form>
 		<?php
 	}
 
 
 	/**
-	* Writes the edit form for new and existing content item
+	* Writes the edit form for new and existing article
 	*
 	* A new record is defined when <var>$row</var> is passed with the <var>id</var>
 	* property set to 0.
-	* @param mosContent The category object
+	* @param JTableContent The category object
 	* @param string The html for the groups select list
 	*/
-	function editContent( &$row, $section, &$lists, &$sectioncategories, &$images, &$params, $option, $redirect, &$menus ) {
-		global $mosConfig_live_site;
+	function editContent( &$row, $section, &$lists, &$sectioncategories, $option, &$form )
+	{
+		JRequest::setVar( 'hidemainmenu', 1 );
 
-		mosMakeHtmlSafe( $row );
+		jimport('joomla.html.pane');
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $row );
 
-		$create_date = null;
-		if (intval( $row->created ) != 0) {
-			$create_date 	= mosFormatDate( $row->created, '%A, %d %B %Y %H:%M', '0' );
-		}
-		$mod_date = null;
-		if (intval( $row->modified ) != 0) {
-			$mod_date 		= mosFormatDate( $row->modified, '%A, %d %B %Y %H:%M', '0' );
-		}
+		$db		=& JFactory::getDBO();
+		$editor =& JFactory::getEditor();
+		$pane	=& JPane::getInstance('sliders');
 
-		$tabs = new mosTabs(1);
-
-
-		// used to hide "Reset Hits" when hits = 0
-		if ( !$row->hits ) {
-			$visibility = "style='display: none; visbility: hidden;'";
-		} else {
-			$visibility = "";
-		}
-
-		mosCommonHTML::loadOverlib();
-		mosCommonHTML::loadCalendar();
+		JHTML::_('behavior.tooltip');
 		?>
 		<script language="javascript" type="text/javascript">
 		<!--
@@ -481,30 +456,21 @@ class HTML_content {
 		$i = 0;
 		foreach ($sectioncategories as $k=>$items) {
 			foreach ($items as $v) {
-				echo "sectioncategories[".$i++."] = new Array( '$k','".addslashes( $v->id )."','".addslashes( $v->name )."' );\n\t\t";
+				echo "sectioncategories[".$i++."] = new Array( '$k','".addslashes( $v->id )."','".addslashes( $v->title )."' );\n\t\t";
 			}
 		}
 		?>
 
-		var folderimages = new Array;
-		<?php
-		$i = 0;
-		foreach ($images as $k=>$items) {
-			foreach ($items as $v) {
-				echo "folderimages[".$i++."] = new Array( '$k','".addslashes( $v->value )."','".addslashes( $v->text )."' );\n\t\t";
-			}
-		}
-		?>
-
-		function submitbutton(pressbutton) {
+		function submitbutton(pressbutton)
+		{
 			var form = document.adminForm;
 
 			if ( pressbutton == 'menulink' ) {
 				if ( form.menuselect.value == "" ) {
-					alert( "Please select a Menu" );
+					alert( "<?php echo JText::_( 'Please select a Menu', true ); ?>" );
 					return;
 				} else if ( form.link_name.value == "" ) {
-					alert( "Please enter a Name for this menu item" );
+					alert( "<?php echo JText::_( 'Please enter a Name for this menu item', true ); ?>" );
 					return;
 				}
 			}
@@ -513,534 +479,81 @@ class HTML_content {
 				submitform( pressbutton );
 				return;
 			}
-			// assemble the images back into one field
-			var temp = new Array;
-			for (var i=0, n=form.imagelist.options.length; i < n; i++) {
-				temp[i] = form.imagelist.options[i].value;
-			}
-			form.images.value = temp.join( '\n' );
 
 			// do field validation
+			var text = <?php echo $editor->getContent( 'text' ); ?>
 			if (form.title.value == ""){
-				alert( "Content item must have a title" );
+				alert( "<?php echo JText::_( 'Article must have a title', true ); ?>" );
 			} else if (form.sectionid.value == "-1"){
-				alert( "You must select a Section." );
+				alert( "<?php echo JText::_( 'You must select a Section', true ); ?>" );
 			} else if (form.catid.value == "-1"){
-				alert( "You must select a Category." );
+				alert( "<?php echo JText::_( 'You must select a Category', true ); ?>" );
  			} else if (form.catid.value == ""){
- 				alert( "You must select a Category." );
+ 				alert( "<?php echo JText::_( 'You must select a Category', true ); ?>" );
+			} else if (text == ""){
+				alert( "<?php echo JText::_( 'Article must have some text', true ); ?>" );
 			} else {
-				<?php getEditorContents( 'editor1', 'introtext' ) ; ?>
-				<?php getEditorContents( 'editor2', 'fulltext' ) ; ?>
+				<?php
+				echo $editor->save( 'text' );
+				?>
 				submitform( pressbutton );
 			}
 		}
 		//-->
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
-		<table class="adminheading">
-		<tr>
-			<th class="edit">
-			Content Item:
-			<small>
-			<?php echo $row->id ? 'Edit' : 'New';?>
-			</small>
-			<?php
-			if ( $row->id ) {
-				?>
-				<small><small>
-				[ Section: <?php echo $section?> ]
-				</small></small>
-				<?php
-			}
-			?>
-			</th>
-		</tr>
-		</table>
 
-		<table cellspacing="0" cellpadding="0" width="100%">
+		<form action="index.php" method="post" name="adminForm">
+
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
 		<tr>
-			<td width="60%" valign="top">
-				<table width="100%" class="adminform">
+			<td valign="top">
+				<?php ContentView::_displayArticleDetails( $row, $lists ); ?>
+				<table class="adminform">
 				<tr>
-					<td width="100%">
-						<table cellspacing="0" cellpadding="0" border="0" width="100%">
-						<tr>
-							<th colspan="4">
-							Item Details
-							</th>
-						<tr>
-						<tr>
-							<td>
-							Title:
-							</td>
-							<td>
-							<input class="text_area" type="text" name="title" size="30" maxlength="100" value="<?php echo $row->title; ?>" />
-							</td>
-							<td>
-							Section:
-							</td>
-							<td>
-							<?php echo $lists['sectionid']; ?>
-							</td>
-						</tr>
-						<tr>
-							<td>
-							Title Alias:
-							</td>
-							<td>
-							<input name="title_alias" type="text" class="text_area" id="title_alias" value="<?php echo $row->title_alias; ?>" size="30" maxlength="100" />
-							</td>
-							<td>
-							Category:
-							</td>
-							<td>
-							<?php echo $lists['catid']; ?>
-							</td>
-						</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td width="100%">
-					Intro Text: (required)
-					<br /><?php
-					// parameters : areaname, content, hidden field, width, height, rows, cols
-					editorArea( 'editor1',  $row->introtext , 'introtext', '100%;', '350', '75', '20' ) ; ?>
-					</td>
-				</tr>
-				<tr>
-					<td width="100%">
-					Main Text: (optional)
-					<br /><?php
-					// parameters : areaname, content, hidden field, width, height, rows, cols
-					editorArea( 'editor2',  $row->fulltext , 'fulltext', '100%;', '400', '75', '30' ) ; ?>
+					<td>
+						<?php
+						// parameters : areaname, content, width, height, cols, rows
+						echo $editor->display( 'text',  $row->text , '100%', '550', '75', '20' ) ;
+						?>
 					</td>
 				</tr>
 				</table>
 			</td>
-			<td valign="top" width="40%">
-				<table>
-				<tr>
-					<td>
-					<?php
-					$tabs->startPane("content-pane");
-					$tabs->startTab("Publishing","publish-page");
-					?>
-					<table class="adminform">
-					<tr>
-						<th colspan="2">
-						Publishing Info
-						</th>
-					<tr>
-					<tr>
-						<td valign="top" align="right">
-						Show on Frontpage:
-						</td>
-						<td>
-						<input type="checkbox" name="frontpage" value="1" <?php echo $row->frontpage ? 'checked="checked"' : ''; ?> />
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Published:
-						</td>
-						<td>
-						<input type="checkbox" name="published" value="1" <?php echo $row->state ? 'checked="checked"' : ''; ?> />
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Access Level:
-						</td>
-						<td>
-						<?php echo $lists['access']; ?> </td>
-						</tr>
-					<tr>
-						<td valign="top" align="right">
-						Author Alias:
-						</td>
-						<td>
-						<input type="text" name="created_by_alias" size="30" maxlength="100" value="<?php echo $row->created_by_alias; ?>" class="text_area" />
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Change Creator:
-						</td>
-						<td>
-						<?php echo $lists['created_by']; ?> </td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">Ordering:</td>
-						<td>
-						<?php echo $lists['ordering']; ?> </td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Override Created Date
-						</td>
-						<td>
-						<input class="text_area" type="text" name="created" id="created" size="25" maxlength="19" value="<?php echo $row->created; ?>" />
-						<input name="reset" type="reset" class="button" onClick="return showCalendar('created', 'y-mm-dd');" value="...">
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Start Publishing:
-						</td>
-						<td>
-						<input class="text_area" type="text" name="publish_up" id="publish_up" size="25" maxlength="19" value="<?php echo $row->publish_up; ?>" />
-						<input type="reset" class="button" value="..." onClick="return showCalendar('publish_up', 'y-mm-dd');">
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						Finish Publishing:
-						</td>
-						<td>
-						<input class="text_area" type="text" name="publish_down" id="publish_down" size="25" maxlength="19" value="<?php echo $row->publish_down; ?>" />
-						<input type="reset" class="button" value="..." onClick="return showCalendar('publish_down', 'y-mm-dd');">
-						</td>
-					</tr>
-					</table>
-					<br />
-					<table class="adminform">
-					<?php
-					if ( $row->id ) {
-						?>
-						<tr>
-							<td>
-							<strong>Content ID:</strong>
-							</td>
-							<td>
-							<?php echo $row->id; ?>
-							</td>
-						</tr>
-						<?php
-					}
-					?>
-					<tr>
-						<td width="90px" valign="top" align="right">
-						<strong>State:</strong>
-						</td>
-						<td>
-						<?php echo $row->state > 0 ? 'Published' : ($row->state < 0 ? 'Archived' : 'Draft Unpublished');?>
-						</td>
-					</tr>
-					<tr >
-						<td valign="top" align="right">
-						<strong>
-						Hits
-						</strong>:
-						</td>
-						<td>
-						<?php echo $row->hits;?>
-						<div <?php echo $visibility; ?>>
-						<input name="reset_hits" type="button" class="button" value="Reset Hit Count" onClick="submitbutton('resethits');">
-						</div>
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						<strong>
-						Revised
-						</strong>:
-						</td>
-						<td>
-						<?php echo $row->version;?> times
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						<strong>
-						Created
-						</strong>
-						</td>
-						<td>
-						<?php echo $row->created ? "$create_date</td></tr><tr><td valign='top' align='right'><strong>By</strong></td><td>$row->creator" : "New document"; ?>
-						</td>
-					</tr>
-					<tr>
-						<td valign="top" align="right">
-						<strong>
-						Last Modified
-						</strong>
-						</td>
-						<td>
-						<?php echo $row->modified ? "$mod_date</td></tr><tr><td valign='top' align='right'><strong>By</strong></td><td>$row->modifier" : "Not modified";?>
-						</td>
-					</tr>
-					</table>
-					<?php
-					$tabs->endTab();
-					$tabs->startTab("Images","images-page");
-					?>
-					<table class="adminform" width="100%">
-					<tr>
-						<th colspan="2">
-							MOSImage Control
-						</th>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table width="100%">
-							<tr>
-								<td width="48%">
-									<div align="center">
-										Gallery Images:
-										<br />
-										<?php echo $lists['imagefiles'];?>
-										<br />
-										Sub-folder: <?php echo $lists['folders'];?>
-									</div>
-								</td>
-								<td width="2%">
-									<input class="button" type="button" value=">>" onclick="addSelectedToList('adminForm','imagefiles','imagelist')" title="Add"/>
-									<br/>
-									<input class="button" type="button" value="<<" onclick="delSelectedFromList('adminForm','imagelist')" title="Remove"/>
-								</td>
-								<td width="48%">
-									<div align="center">
-										Content Images:
-										<br />
-										<?php echo $lists['imagelist'];?>
-										<br />
-										<input class="button" type="button" value="Up" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,-1)" />
-										<input class="button" type="button" value="Down" onclick="moveInList('adminForm','imagelist',adminForm.imagelist.selectedIndex,+1)" />
-									</div>
-								</td>
-							</tr>
-							</table>
-						</td>
-					</tr>
-					<tr valign="top">
-						<td>
-							<div align="center">
-								Sample Image:<br/>
-								<img name="view_imagefiles" src="../images/M_images/blank.png" width="100" />
-							</div>
-						</td>
-						<td valign="top">
-							<div align="center">
-								Active Image:<br/>
-								<img name="view_imagelist" src="../images/M_images/blank.png" width="100" />
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							Edit the image selected:
-							<table>
-							<tr>
-								<td align="right">
-								Source:
-								</td>
-								<td>
-								<input class="text_area" type="text" name= "_source" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Image Align:
-								</td>
-								<td>
-								<?php echo $lists['_align']; ?>
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Alt Text:
-								</td>
-								<td>
-								<input class="text_area" type="text" name="_alt" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Border:
-								</td>
-								<td>
-								<input class="text_area" type="text" name="_border" value="" size="3" maxlength="1" />
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Caption:
-								</td>
-								<td>
-								<input class="text_area" type="text" name="_caption" value="" size="30" />
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Caption Position:
-								</td>
-								<td>
-								<?php echo $lists['_caption_position']; ?>
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Caption Align:
-								</td>
-								<td>
-								<?php echo $lists['_caption_align']; ?>
-								</td>
-							</tr>
-							<tr>
-								<td align="right">
-								Caption Width:
-								</td>
-								<td>
-								<input class="text_area" type="text" name="_width" value="" size="5" maxlength="5" />
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2">
-								<input class="button" type="button" value="Apply" onClick="applyImageProps()" />
-								</td>
-							</tr>
-							</table>
-						</td>
-					</tr>
-					</table>
-					<?php
-					$tabs->endTab();
-					$tabs->startTab("Parameters","params-page");
-					?>
-					<table class="adminform">
-					<tr>
-						<th colspan="2">
-						Parameter Control
-						</th>
-					<tr>
-					<tr>
-						<td>
-						* These Parameters only control what you see when you click to view an item fully *
-						<br /><br />
-						</td>
-					</tr>
-					<tr>
-						<td>
-						<?php echo $params->render();?>
-						</td>
-					</tr>
-					</table>
-					<?php
-					$tabs->endTab();
-					$tabs->startTab("Meta Info","metadata-page");
-					?>
-					<table class="adminform">
-					<tr>
-						<th colspan="2">
-						Meta Data
-						</th>
-					<tr>
-					<tr>
-						<td>
-						Description:
-						<br />
-						<textarea class="text_area" cols="30" rows="3" style="width:300px; height:50px" name="metadesc" width="500"><?php echo str_replace('&','&amp;',$row->metadesc); ?></textarea>
-						</td>
-					</tr>
-						<tr>
-						<td>
-						Keywords:
-						<br />
-						<textarea class="text_area" cols="30" rows="3" style="width:300px; height:50px" name="metakey" width="500"><?php echo str_replace('&','&amp;',$row->metakey); ?></textarea>
-						</td>
-					</tr>
-					<tr>
-						<td>
-						<input type="button" class="button" value="Add Sect/Cat/Title" onClick="f=document.adminForm;f.metakey.value=document.adminForm.sectionid.options[document.adminForm.sectionid.selectedIndex].text+', '+getSelectedText('adminForm','catid')+', '+f.title.value+f.metakey.value;" />
-						</td>
-					</tr>
-					</table>
-					<?php
-					$tabs->endTab();
-					$tabs->startTab("Link to Menu","link-page");
-					?>
-					<table class="adminform">
-					<tr>
-						<th colspan="2">
-						Link to Menu
-						</th>
-					<tr>
-					<tr>
-						<td colspan="2">
-						This will create a 'Link - Content Item' in the menu you select
-						<br /><br />
-						</td>
-					<tr>
-					<tr>
-						<td valign="top" width="90px">
-						Select a Menu
-						</td>
-						<td>
-						<?php echo $lists['menuselect']; ?>
-						</td>
-					<tr>
-					<tr>
-						<td valign="top" width="90px">
-						Menu Item Name
-						</td>
-						<td>
-						<input type="text" name="link_name" class="inputbox" value="" size="30" />
-						</td>
-					<tr>
-					<tr>
-						<td>
-						</td>
-						<td>
-						<input name="menu_link" type="button" class="button" value="Link to Menu" onClick="submitbutton('menulink');" />
-						</td>
-					<tr>
-					<tr>
-						<th colspan="2">
-						Existing Menu Links
-						</th>
-					</tr>
-					<?php
-					if ( $menus == NULL ) {
-						?>
-						<tr>
-							<td colspan="2">
-							None
-							</td>
-						</tr>
-						<?php
-					} else {
-						mosCommonHTML::menuLinksContent( $menus );
-					}
-					?>
-					<tr>
-						<td colspan="2">
-						</td>
-					</tr>
-					</table>
-					<?php
-					$tabs->endTab();
-					$tabs->endPane();
-					?>
-					</td>
-				</tr>
-				</table>
+			<td valign="top" width="320" style="padding: 7px 0 0 5px">
+			<?php
+				ContentView::_displayArticleStats($row, $lists);
+
+				$title = JText::_( 'Parameters - Article' );
+				echo $pane->startPane("content-pane");
+				echo $pane->startPanel( $title, "detail-page" );
+				echo $form->render('details');
+
+				$title = JText::_( 'Parameters - Advanced' );
+				echo $pane->endPanel();
+				echo $pane->startPanel( $title, "params-page" );
+				echo $form->render('params', 'advanced');
+
+				$title = JText::_( 'Metadata Information' );
+				echo $pane->endPanel();
+				echo $pane->startPanel( $title, "metadata-page" );
+				echo $form->render('meta', 'metadata');
+
+				echo $pane->endPanel();
+				echo $pane->endPane();
+			?>
 			</td>
 		</tr>
 		</table>
 
 		<input type="hidden" name="id" value="<?php echo $row->id; ?>" />
+		<input type="hidden" name="cid[]" value="<?php echo $row->id; ?>" />
 		<input type="hidden" name="version" value="<?php echo $row->version; ?>" />
 		<input type="hidden" name="mask" value="0" />
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
-		<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
 		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="images" value="" />
-		<input type="hidden" name="hidemainmenu" value="0" />
 		</form>
 		<?php
-
+		echo JHTML::_('behavior.keepalive');
 	}
 
 
@@ -1050,7 +563,8 @@ class HTML_content {
 	* @param int The current section we are looking at
 	* @param array The list of sections and categories to move to
 	*/
-	function moveSection( $cid, $sectCatList, $option, $sectionid, $items ) {
+	function moveSection( $cid, $sectCatList, $option, $sectionid, $items )
+	{
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
@@ -1062,34 +576,25 @@ class HTML_content {
 
 			// do field validation
 			if (!getSelectedValue( 'adminForm', 'sectcat' )) {
-				alert( "Please select something" );
+				alert( "<?php echo JText::_( 'Please select something', true ); ?>" );
 			} else {
 				submitform( pressbutton );
 			}
 		}
 		</script>
 
-		<form action="index2.php" method="post" name="adminForm">
-		<br />
-		<table class="adminheading">
-		<tr>
-			<th class="edit">
-			Move Items
-			</th>
-		</tr>
-		</table>
+		<form action="index.php" method="post" name="adminForm">
 
-		<br />
 		<table class="adminform">
 		<tr>
-			<td align="left" valign="top" width="40%">
-			<strong>Move to Section/Category:</strong>
+			<td  valign="top" width="40%">
+			<strong><?php echo JText::_( 'Move to Section/Category' ); ?>:</strong>
 			<br />
 			<?php echo $sectCatList; ?>
 			<br /><br />
 			</td>
-			<td align="left" valign="top">
-			<strong>Items being Moved:</strong>
+			<td  valign="top">
+			<strong><?php echo JText::_( 'Items being Moved' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -1120,7 +625,8 @@ class HTML_content {
 	/**
 	* Form to select Section/Category to copys item(s) to
 	*/
-	function copySection( $option, $cid, $sectCatList, $sectionid, $items  ) {
+	function copySection( $option, $cid, $sectCatList, $sectionid, $items  )
+	{
 		?>
 		<script language="javascript" type="text/javascript">
 		function submitbutton(pressbutton) {
@@ -1132,33 +638,24 @@ class HTML_content {
 
 			// do field validation
 			if (!getSelectedValue( 'adminForm', 'sectcat' )) {
-				alert( "Please select a Section/Category to copy the items to" );
+				alert( "<?php echo JText::_( 'VALIDSELECTSECTCATCOPYITEMS', true ); ?>" );
 			} else {
 				submitform( pressbutton );
 			}
 		}
 		</script>
-		<form action="index2.php" method="post" name="adminForm">
-		<br />
-		<table class="adminheading">
-		<tr>
-			<th class="edit">
-			Copy Content Items
-			</th>
-		</tr>
-		</table>
+		<form action="index.php" method="post" name="adminForm">
 
-		<br />
 		<table class="adminform">
 		<tr>
-			<td align="left" valign="top" width="40%">
-			<strong>Copy to Section/Category:</strong>
+			<td  valign="top" width="40%">
+			<strong><?php echo JText::_( 'Copy to Section/Category' ); ?>:</strong>
 			<br />
 			<?php echo $sectCatList; ?>
 			<br /><br />
 			</td>
-			<td align="left" valign="top">
-			<strong>Items being copied:</strong>
+			<td  valign="top">
+			<strong><?php echo JText::_( 'Items being copied' ); ?>:</strong>
 			<br />
 			<?php
 			echo "<ol>";
@@ -1181,6 +678,245 @@ class HTML_content {
 		}
 		?>
 		</form>
+		<?php
+	}
+
+	function previewContent()
+	{
+		$document	=& JFactory::getDocument();
+		$editor		=& JFactory::getEditor();
+
+		JHTML::_('behavior.caption');
+
+		?>
+		<script>
+		var form = window.top.document.adminForm
+		var title = form.title.value;
+
+		var alltext = window.top.<?php echo $editor->getContent('text') ?>;
+		alltext = alltext.replace('<hr id=\"system-readmore\" \/>', '');
+		</script>
+
+
+
+		<table align="center" width="90%" cellspacing="2" cellpadding="2" border="0">
+			<tr>
+				<td class="contentheading" colspan="2"><script>document.write(title);</script></td>
+			</tr>
+		<tr>
+			<script>document.write("<td valign=\"top\" height=\"90%\" colspan=\"2\">" + alltext + "</td>");</script>
+		</tr>
+		</table>
+		<?php
+	}
+
+	/**
+	* Renders pagebreak options
+	*
+	*/
+	function insertPagebreak()
+	{
+		?>
+		<script type="text/javascript">
+			function insertPagebreak()
+			{
+				// Get the pagebreak title
+				var title = document.getElementById("title").value;
+				if (title != '') {
+					title = "title=\""+title+"\" ";
+				}
+
+				// Get the pagebreak toc alias -- not inserting for now
+				// don't know which attribute to use...
+				var alt = document.getElementById("alt").value;
+				if (alt != '') {
+					alt = "alt=\""+alt+"\" ";
+				}
+
+				var tag = "<hr class=\"system-pagebreak\" "+title+" "+alt+"/>";
+
+				window.parent.jInsertEditorText(tag);
+				window.parent.document.getElementById('sbox-window').close();
+				return false;
+			}
+		</script>
+
+		<form>
+		<table width="100%" align="center">
+			<tr width="40%">
+				<td class="key" align="right">
+					<label for="title">
+						<?php echo JText::_( 'PGB PAGE TITLE' ); ?>
+					</label>
+				</td>
+				<td>
+					<input type="text" id="title" name="title" />
+				</td>
+			</tr>
+			<tr width="60%">
+				<td class="key" align="right">
+					<label for="alias">
+						<?php echo JText::_( 'PGB TOC ALIAS PROMPT' ); ?>
+					</label>
+				</td>
+				<td>
+					<input type="text" id="alt" name="alt" />
+				</td>
+			</tr>
+		</table>
+		</form>
+		<button onclick="insertPagebreak();"><?php echo JText::_( 'PGB INS PAGEBRK' ); ?></button>
+		<?php
+	}
+
+	function _displayArticleDetails(&$row, &$lists )
+	{
+		?>
+		<table  class="adminform">
+		<tr>
+			<td>
+				<label for="title">
+					<?php echo JText::_( 'Title' ); ?>
+				</label>
+			</td>
+			<td>
+				<input class="inputbox" type="text" name="title" id="title" size="40" maxlength="255" value="<?php echo $row->title; ?>" />
+			</td>
+			<td>
+				<label>
+					<?php echo JText::_( 'Published' ); ?>
+				</label>
+			</td>
+			<td>
+				<?php echo $lists['state']; ?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="alias">
+					<?php echo JText::_( 'Alias' ); ?>
+				</label>
+			</td>
+			<td>
+				<input class="inputbox" type="text" name="alias" id="alias" size="40" maxlength="255" value="<?php echo $row->alias; ?>" />
+			</td>
+			<td>
+				<label>
+				<?php echo JText::_( 'Frontpage' ); ?>
+				</label>
+			</td>
+			<td>
+				<?php echo $lists['frontpage']; ?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="sectionid">
+					<?php echo JText::_( 'Section' ); ?>
+				</label>
+			</td>
+			<td>
+				<?php echo $lists['sectionid']; ?>
+			</td>
+			<td>
+				<label for="catid">
+					<?php echo JText::_( 'Category' ); ?>
+				</label>
+			</td>
+			<td>
+				<?php echo $lists['catid']; ?>
+			</td>
+		</tr>
+		</table>
+		<?php
+	}
+
+	function _displayArticleStats(&$row, &$lists )
+	{
+		$db =& JFactory::getDBO();
+
+		$create_date 	= null;
+		$nullDate 		= $db->getNullDate();
+
+		// used to hide "Reset Hits" when hits = 0
+		if ( !$row->hits ) {
+			$visibility = 'style="display: none; visibility: hidden;"';
+		} else {
+			$visibility = '';
+		}
+
+		?>
+		<table width="100%" style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
+		<?php
+		if ( $row->id ) {
+		?>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'Article ID' ); ?>:</strong>
+			</td>
+			<td>
+				<?php echo $row->id; ?>
+			</td>
+		</tr>
+		<?php
+		}
+		?>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'State' ); ?></strong>
+			</td>
+			<td>
+				<?php echo $row->state > 0 ? JText::_( 'Published' ) : ($row->state < 0 ? JText::_( 'Archived' ) : JText::_( 'Draft Unpublished' ) );?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'Hits' ); ?></strong>
+			</td>
+			<td>
+				<?php echo $row->hits;?>
+				<span <?php echo $visibility; ?>>
+					<input name="reset_hits" type="button" class="button" value="<?php echo JText::_( 'Reset' ); ?>" onclick="submitbutton('resethits');" />
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'Revised' ); ?></strong>
+			</td>
+			<td>
+				<?php echo $row->version;?> <?php echo JText::_( 'times' ); ?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'Created' ); ?></strong>
+			</td>
+			<td>
+				<?php
+				if ( $row->created == $nullDate ) {
+					echo JText::_( 'New document' );
+				} else {
+					echo JHTML::_('date',  $row->created,  JText::_('DATE_FORMAT_LC2') );
+				}
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<strong><?php echo JText::_( 'Modified' ); ?></strong>
+			</td>
+			<td>
+				<?php
+					if ( $row->modified == $nullDate ) {
+						echo JText::_( 'Not modified' );
+					} else {
+						echo JHTML::_('date',  $row->modified, JText::_('DATE_FORMAT_LC2'));
+					}
+				?>
+			</td>
+		</tr>
+		</table>
 		<?php
 	}
 }

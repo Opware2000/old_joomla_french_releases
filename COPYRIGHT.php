@@ -1,9 +1,9 @@
 <?php
 /**
-* @version $Id: COPYRIGHT.php 1642 2006-01-04 01:20:09Z rhuk $
-* @package Joomla
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: COPYRIGHT.php 8081 2007-07-19 07:18:56Z willebil $
+* @package		Joomla
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -12,7 +12,7 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 ?>
 
 Joomla! derives from copyrighted works licensed under the GNU General
@@ -20,108 +20,130 @@ Public License.  This version has been modified pursuant to the
 GNU General Public License as of September 15, 2005, and as distributed,
 it includes or is derivative of works licensed under the GNU General
 Public License or other free or open source software licenses, including
-works copyrighted by any or all of the following, from 2000 through 2005:
-Nick Anies, Brad Baker, Ron Bakker, Shayne Bartlett, Tim Broeker, Levis
-Bisson, Michelle Bisson, Robert Castley, Andrew Eddie, Rey Gigataras,
-Johan Janssens, Alex Kempkens, Peter Koch, James Logan, Andy Miller,
-Mitch Pirtle, Steen Rabol, Peter Russel, Phil Taylor, Brian Teeman, Emir
-Sakic, Jean-Marie Simonet, Andy Stewart, Trijnie Wanders, Arno Zijlstra,
-or Miro International Pty Ltd.
+works copyrighted by any or all of the following, from 2000 through 2007:
+
+
+Code contributers:
+------------------
+Alex Kempkens, Blagovest Dacheb, Chris Davenport, Jason Kendall,
+David Gall, Andrew Eddie, Mateusz Kreszowiec, Enno Klasing,
+Hannes Pappenberg, Johan Janssens, Laurens Vanderput, Levis Bison,
+Louis Landry, Samuel Moffatt, Andy Miller, Rastin Mehr,
+Robin Muilwijk, Rob Schley, Wilco Jansen
+
+Parts of the code copyrighted by the Mambo Foundation under GNU GPL
+
+Documentation Contributers:
+---------------------------
+Andy Wallace, Ian Maclennan
+
+Translation contributers:
+-------------------------
+Translators of Installation Language packs can be found in the individual
+XML files of the translations. A full list of contributers will be added
+in RC2.
+
 
 Joomla! includes or is derivative of works distributed under the following copyright notices:
 
-Cache
----
-Copyright:	Fabien MARTY
+Archive
+------
+Copyright:	Vincent Blavet
+License:	PHP License 3.0
+
+Domit
+-----
+Copyright:	John Heinstein
 License:	GNU Lesser General Public License (LGPL)
 
-DOMIT!
-----
-Copyright:	2004 John Heinstein. All rights reserved
-License:	GNU Lesser General Public License (LGPL)
-
-ezpdf
-----
-Copyright:	Wayne Munro, R&OS Ltd
-License:	Public Domain
-
-feedcreator
-----
+Feedcreator
+-----------
 Copyright:	Kai Blankenhorn
+License:	GNU Lesser General Public License (LGPL)
+
+Geshi:
+------
+Copyright:	Nigel McNie
 License:	GNU General Public License (GPL)
 
 js-calendar
----
+-----------
 Copyright:	Mihai Bazon, 2002
 License:	GNU Lesser General Public License (LGPL)
 
 js-jscook-menu
----
+--------------
 Copyright:	2002-2005 by Heng Yuan
 License:	Custom open source license
 
 js-overlib
----
+----------
 Copyright:	Erik Bosrup 1998-2004
 License:	Artistic (see http://www.bosrup.com/web/overlib/?License)
 
 js-tabs
----
+-------
 Copyright:	1998 - 2003 Erik Arvidsson
 License:	GNU General Public License (GPL)
 
-Mambo
-----
-Copyright:	2000 - 2004 Miro International Pty Ltd
-License:	GNU General Public License (GPL)
+Mootools
+--------
+Copyright:	Valerio Proietti
+License:	MIT-style license
+
+OpenID
+------
+Copyright:	Janrain, Inc.
+License:	GNU Lesser General Public License (LGPL)
 
 patTemplate, patError
 ---
 Copyright:	Stephan Schmidt
+License:	GNU Lesser General PublCopyright:	Daniel Morris
+License:	GNU General Public License (GPL)ic License (LGPL)
+
+Pear
+----
+Copyright:	The PHP Group
+License:	PHP License 3.0
+
+PHPGACL
+-------
+Copyright:	Mike Benoit
 License:	GNU Lesser General Public License (LGPL)
 
-PEAR
-----
-Copyright:	1997-2004 The PHP Group
-License:	PHP license
-
-phpGACL
-----
-Copyright:	2002,2003 Mike Benoit
-License:	GNU Lesser General Public License (LGPL)
-
-phpInputfilter
-----
+PHPInputfilter
+--------------
 Copyright:	Daniel Morris
 License:	GNU General Public License (GPL)
 
-phpMailer
-----
-Copyright:	2001 - 2003  Brent R. Matzelle
-License:	GNU Lesser General Public License (LGPL)
+PHPMailer
+--------
+Copyright:	Brent R. Matzelle
+License:	GNU General Public License (GPL)
 
-tar-archive
-----
-Copyright:	1997-2003 The PHP Group
-License:	PHP License
+PHPXMLRPC
+----------
+Copyright:	Edd Dumbill
+License:	See copyright notice in the sourcecode
 
 TinyMCE:
 ----
-Copyright:	2004 Moxiecode Systems AB
+Copyright:	2005-2006, Moxiecode Systems
 License:	GNU Lesser General Public License (LGPL)
 
-vcard
-----
+VCard
+-----
 Copyright:	Kai Blankenhorn
 License:	GNU General Public License (GPL)
 
-wz-tooltip
-----
-Copyright:	2002-2004 Walter Zorn
-License:	GNU Lesser General Public License (LGPL)
-
 FOOOD Icons (Administrator Toolbar)
-----
+-----------------------------------
 Copyright:	2004 iCandy Junior Icons
 License:	http://www.iconaholic.com/help/joomla.html
 Notes:		Please note these icons are NOT OPEN SOURCE but used with permission
+
+Print & Email Front End Icons
+-----------------------------
+Copyright:  2005 Plone Foundation
+License:	GNU Lesser General Public License (LGPL)

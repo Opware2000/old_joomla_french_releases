@@ -1,9 +1,9 @@
 // <?php !! This fools phpdocumentor into parsing this file
 /**
-* @version $Id: mambojavascript.js 47 2005-09-15 02:55:27Z rhuk $
-* @package Joomla
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @version		$Id: mambojavascript.js 6140 2007-01-02 03:44:18Z eddiea $
+* @package		Joomla
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL
 * Joomla! is Free Software
 */
 
@@ -223,56 +223,6 @@ function chgSelectedValue( frmName, srcListName, value ) {
 		return true;
 	} else {
 		return false;
-	}
-}
-
-// Form specific functions for editting content images
-
-function showImageProps(base_path) {
-	form = document.adminForm;
-	value = getSelectedValue( 'adminForm', 'imagelist' );
-	parts = value.split( '|' );
-	form._source.value = parts[0];
-	setSelectedValue( 'adminForm', '_align', parts[1] || '' );
-	form._alt.value = parts[2] || '';
-	form._border.value = parts[3] || '0';
-	form._caption.value = parts[4] || '';
-	setSelectedValue( 'adminForm', '_caption_position', parts[5] || '' );
-	setSelectedValue( 'adminForm', '_caption_align', parts[6] || '' );
-	form._width.value = parts[7] || '';
-
-	//previewImage( 'imagelist', 'view_imagelist', base_path );
-	srcImage = eval( "document." + 'view_imagelist' );
-	srcImage.src = base_path + parts[0];
-}
-
-function applyImageProps() {
-	form = document.adminForm;
-	if (!getSelectedValue( 'adminForm', 'imagelist' )) {
-		alert( "Select and image from the list" );
-		return;
-	}
-	value = form._source.value + '|'
-	+ getSelectedValue( 'adminForm', '_align' ) + '|'
-	+ form._alt.value + '|'
-	+ parseInt( form._border.value ) + '|'
-	+ form._caption.value + '|'
-	+ getSelectedValue( 'adminForm', '_caption_position' ) + '|'
-	+ getSelectedValue( 'adminForm', '_caption_align' ) + '|'
-	+ form._width.value;
-	chgSelectedValue( 'adminForm', 'imagelist', value );
-}
-
-function previewImage( list, image, base_path ) {
-	form = document.adminForm;
-	srcList = eval( "form." + list );
-	srcImage = eval( "document." + image );
-	var fileName = srcList.options[srcList.selectedIndex].text;
-	var fileName2 = srcList.options[srcList.selectedIndex].value;
-	if (fileName.length == 0 || fileName2.length == 0) {
-		srcImage.src = 'images/blank.gif';
-	} else {
-		srcImage.src = base_path + fileName2;
 	}
 }
 
@@ -560,17 +510,22 @@ function MM_preloadImages() { //v3.0
 
 function saveorder( n ) {
 	checkAll_button( n );
-	submitform('saveorder');
 }
 
 //needed by saveorder function
 function checkAll_button( n ) {
 	for ( var j = 0; j <= n; j++ ) {
 		box = eval( "document.adminForm.cb" + j );
-		if ( box.checked == false ) {
-			box.checked = true;
+		if ( box ) {
+			if ( box.checked == false ) {
+				box.checked = true;
+			}
+		} else {
+			alert("You cannot change the order of items, as an item in the list is `Checked Out`");
+			return;
 		}
 	}
+	submitform('saveorder');
 }
 /**
 * @param object A form element

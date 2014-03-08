@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.config.html.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Config
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.config.html.php 7186 2007-04-23 21:00:47Z jinx $
+* @package		Joomla
+* @subpackage	Config
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,23 +13,21 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Config
+* @package		Joomla
+* @subpackage	Config
 */
-class TOOLBAR_config {
+class TOOLBAR_config
+{
 	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::apply();
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.config' );
-		mosMenuBar::endTable();
+
+		JToolBarHelper::title( JText::_( 'Global Configuration' ), 'config.png' );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		JToolBarHelper::cancel('cancel', 'Close');
+		JToolBarHelper::help( 'screen.config' );
 	}
 }
 ?>

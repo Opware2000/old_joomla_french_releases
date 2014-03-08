@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.sections.php 415 2005-10-09 16:52:44Z stingrey $
-* @package Joomla
-* @subpackage Sections
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.sections.php 8071 2007-07-18 23:23:27Z friesengeist $
+* @package		Joomla
+* @subpackage	Sections
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,34 +13,26 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-require_once( $mainframe->getPath( 'admin_html' ) );
+require_once( JApplicationHelper::getPath( 'admin_html' ) );
 
 // get parameters from the URL or submitted form
-$scope 		= mosGetParam( $_REQUEST, 'scope', '' );
-$cid 		= mosGetParam( $_REQUEST, 'cid', array(0) );
-$section 	= mosGetParam( $_REQUEST, 'scope', '' );
-if (!is_array( $cid )) {
-	$cid = array(0);
-}
+$scope 		= JRequest::getCmd( 'scope' );
+$cid 		= JRequest::getVar( 'cid', array(0), '', 'array' );
+JArrayHelper::toInteger($cid, array(0));
 
-switch ($task) {
-	case 'new':
-		editSection( 0, $scope, $option );
-		break;
+$task = JRequest::getCmd('task');
 
+switch ($task)
+{
+	case 'add' :
 	case 'edit':
-		editSection( $cid[0], '', $option );
-		break;
-
-	case 'editA':
-		editSection( $id, '', $option );
+		editSection( );
 		break;
 
 	case 'go2menu':
 	case 'go2menuitem':
-	case 'menulink':
 	case 'save':
 	case 'apply':
 		saveSection( $option, $scope, $task );
@@ -51,7 +43,7 @@ switch ($task) {
 		break;
 
 	case 'copyselect':
-		copySectionSelect( $option, $cid, $section );
+		copySectionSelect( $option, $cid, $scope );
 		break;
 
 	case 'copysave':
@@ -105,76 +97,110 @@ switch ($task) {
 * @param string The name of the category section
 * @param string The name of the current user
 */
-function showSections( $scope, $option ) {
-	global $database, $my, $mainframe, $mosConfig_list_limit;
+function showSections( $scope, $option )
+{
+	global $mainframe;
 
-	$limit = $mainframe->getUserStateFromRequest( "viewlistlimit", 'limit', $mosConfig_list_limit );
-	$limitstart = $mainframe->getUserStateFromRequest( "view{$option}limitstart", 'limitstart', 0 );
+	$db					=& JFactory::getDBO();
+	$user				=& JFactory::getUser();
+	$filter_order		= $mainframe->getUserStateFromRequest( $option.'.filter_order',		'filter_order',		's.ordering',	'cmd' );
+	$filter_order_Dir	= $mainframe->getUserStateFromRequest( $option.'.filter_order_Dir',	'filter_order_Dir',	'',				'word' );
+	$filter_state		= $mainframe->getUserStateFromRequest( $option.'.filter_state',		'filter_state',		'',				'word' );
+	$search				= $mainframe->getUserStateFromRequest( $option.'.search',			'search',			'',				'string' );
+	$search				= JString::strtolower( $search );
+
+	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
+	$limitstart	= $mainframe->getUserStateFromRequest( $option.'limitstart', 'limitstart', 0, 'int' );
+
+	$where[] = 's.scope = '.$db->Quote($scope);
+
+	if ( $filter_state ) {
+		if ( $filter_state == 'P' ) {
+			$where[] = 's.published = 1';
+		} else if ($filter_state == 'U' ) {
+			$where[] = 's.published = 0';
+		}
+	}
+	if ($search) {
+		$where[] = 'LOWER(s.title) LIKE '.$db->Quote('%'.$search.'%');
+	}
+
+	$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+	$orderby 	= ' ORDER BY '.$filter_order.' '. $filter_order_Dir .', s.ordering';
 
 	// get the total number of records
-	$query = "SELECT COUNT(*)"
-	. "\n FROM #__sections"
-	. "\n WHERE scope = '$scope'"
+	$query = 'SELECT COUNT(*)'
+	. ' FROM #__sections AS s'
+	. $where
 	;
-	$database->setQuery( $query );
-	$total = $database->loadResult();
+	$db->setQuery( $query );
+	$total = $db->loadResult();
 
-	require_once( $GLOBALS['mosConfig_absolute_path'] . '/administrator/includes/pageNavigation.php' );
-	$pageNav = new mosPageNav( $total, $limitstart, $limit );
+	jimport('joomla.html.pagination');
+	$pageNav = new JPagination( $total, $limitstart, $limit );
 
-	$query = "SELECT c.*, g.name AS groupname, u.name AS editor"
-	. "\n FROM #__sections AS c"
-	. "\n LEFT JOIN #__content AS cc ON c.id = cc.sectionid"
-	. "\n LEFT JOIN #__users AS u ON u.id = c.checked_out"
-	. "\n LEFT JOIN #__groups AS g ON g.id = c.access"
-	. "\n WHERE scope = '$scope'"
-	. "\n GROUP BY c.id"
-	. "\n ORDER BY c.ordering, c.name"
-	. "\n LIMIT $pageNav->limitstart, $pageNav->limit"
+	$query = 'SELECT s.*, g.name AS groupname, u.name AS editor'
+	. ' FROM #__sections AS s'
+	. ' LEFT JOIN #__content AS cc ON s.id = cc.sectionid'
+	. ' LEFT JOIN #__users AS u ON u.id = s.checked_out'
+	. ' LEFT JOIN #__groups AS g ON g.id = s.access'
+	. $where
+	. ' GROUP BY s.id'
+	. $orderby
 	;
-	$database->setQuery( $query );
-	$rows = $database->loadObjectList();
-	if ($database->getErrorNum()) {
-		echo $database->stderr();
+	$db->setQuery( $query, $pageNav->limitstart, $pageNav->limit );
+	$rows = $db->loadObjectList();
+	if ($db->getErrorNum()) {
+		echo $db->stderr();
 		return false;
 	}
 
 	$count = count( $rows );
-	// number of Active Items
+	// number of Active Categories
 	for ( $i = 0; $i < $count; $i++ ) {
-		$query = "SELECT COUNT( a.id )"
-		. "\n FROM #__categories AS a"
-		. "\n WHERE a.section = '". $rows[$i]->id ."'"
-		. "\n AND a.published != -2"
+		$query = 'SELECT COUNT( a.id )'
+		. ' FROM #__categories AS a'
+		. ' WHERE a.section = '.$db->Quote($rows[$i]->id)
+		. ' AND a.published <> -2'
 		;
-		$database->setQuery( $query );
-		$active = $database->loadResult();
+		$db->setQuery( $query );
+		$active = $db->loadResult();
 		$rows[$i]->categories = $active;
 	}
 	// number of Active Items
 	for ( $i = 0; $i < $count; $i++ ) {
-		$query = "SELECT COUNT( a.id )"
-		. "\n FROM #__content AS a"
-		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
-		. "\n AND a.state != -2"
+		$query = 'SELECT COUNT( a.id )'
+		. ' FROM #__content AS a'
+		. ' WHERE a.sectionid = '.(int) $rows[$i]->id
+		. ' AND a.state <> -2'
 		;
-		$database->setQuery( $query );
-		$active = $database->loadResult();
+		$db->setQuery( $query );
+		$active = $db->loadResult();
 		$rows[$i]->active = $active;
 	}
 	// number of Trashed Items
 	for ( $i = 0; $i < $count; $i++ ) {
-		$query = "SELECT COUNT( a.id )"
-		. "\n FROM #__content AS a"
-		. "\n WHERE a.sectionid = '". $rows[$i]->id ."'"
-		. "\n AND a.state = -2"
+		$query = 'SELECT COUNT( a.id )'
+		. ' FROM #__content AS a'
+		. ' WHERE a.sectionid = '.(int) $rows[$i]->id
+		. ' AND a.state = -2'
 		;
-		$database->setQuery( $query );
-		$trash = $database->loadResult();
+		$db->setQuery( $query );
+		$trash = $db->loadResult();
 		$rows[$i]->trash = $trash;
 	}
 
-	sections_html::show( $rows, $scope, $my->id, $pageNav, $option );
+	// state filter
+	$lists['state']	= JHTML::_('grid.state',  $filter_state );
+
+	// table ordering
+	$lists['order_Dir']	= $filter_order_Dir;
+	$lists['order']		= $filter_order;
+
+	// search filter
+	$lists['search']= $search;
+
+	sections_html::show( $rows, $scope, $user->get('id'), $pageNav, $option, $lists );
 }
 
 /**
@@ -184,81 +210,53 @@ function showSections( $scope, $option ) {
 * @param integer The unique id of the category to edit (0 if new)
 * @param string The name of the current user
 */
-function editSection( $uid=0, $scope='', $option ) {
-	global $database, $my;
+function editSection( )
+{
+	global $mainframe;
 
-	$row = new mosSection( $database );
+	$db			=& JFactory::getDBO();
+	$user 		=& JFactory::getUser();
+
+	$option		= JRequest::getCmd( 'option');
+	$scope		= JRequest::getCmd( 'scope' );
+	$cid		= JRequest::getVar( 'cid', array(0), '', 'array' );
+	JArrayHelper::toInteger($cid, array(0));
+
+	$row =& JTable::getInstance('section');
 	// load the row from the db table
-	$row->load( $uid );
+	$row->load( $cid[0] );
 
 	// fail if checked out not by 'me'
-	if ($row->isCheckedOut( $my->id )) {
-		$msg = 'The section '. $row->title .' is currently being edited by another administrator';
-		mosRedirect( 'index2.php?option='. $option .'&scope='. $row->scope .'&mosmsg='. $msg );
+	if ($row->isCheckedOut( $user->get('id') )) {
+		$msg = JText::sprintf( 'DESCBEINGEDITTED', JText::_( 'The section' ), $row->title );
+		$mainframe->redirect( 'index.php?option='. $option .'&scope='. $row->scope, $msg );
 	}
 
-	if ( $uid ) {
-		$row->checkout( $my->id );
-		if ( $row->id > 0 ) {
-			$query = "SELECT *"
-			. "\n FROM #__menu"
-			. "\n WHERE componentid = '". $row->id ."'"
-			. "\n AND ( type = 'content_archive_section' OR type = 'content_blog_section' OR type = 'content_section' )"
-			;
-			$database->setQuery( $query );
-			$menus = $database->loadObjectList();
-			$count = count( $menus );
-			for( $i = 0; $i < $count; $i++ ) {
-				switch ( $menus[$i]->type ) {
-					case 'content_section':
-						$menus[$i]->type = 'Section Table';
-						break;
-
-					case 'content_blog_section':
-						$menus[$i]->type = 'Section Blog';
-						break;
-
-					case 'content_archive_section':
-						$menus[$i]->type = 'Section Blog Archive';
-						break;
-				}
-			}
-		} else {
-			$menus = array();
-		}
+	if ( $cid[0] ) {
+		$row->checkout( $user->get('id') );
 	} else {
 		$row->scope 		= $scope;
 		$row->published 	= 1;
-		$menus 			= array();
 	}
 
-	// build the html select list for section types
-	$types[] = mosHTML::makeOption( '', 'Select Type' );
-	$types[] = mosHTML::makeOption( 'content_section', 'Section List' );
-	$types[] = mosHTML::makeOption( 'content_blog_section', 'Section Blog' );
-	$types[] = mosHTML::makeOption( 'content_archive_section', 'Section Archive Blog' );
-	$lists['link_type'] 		= mosHTML::selectList( $types, 'link_type', 'class="inputbox" size="1"', 'value', 'text' );;
-
 	// build the html select list for ordering
-	$query = "SELECT ordering AS value, title AS text"
-	. "\n FROM #__sections"
-	. "\n WHERE scope='$row->scope' ORDER BY ordering"
+	$query = 'SELECT ordering AS value, title AS text'
+	. ' FROM #__sections'
+	. ' WHERE scope='.$db->Quote($row->scope).' ORDER BY ordering'
 	;
-	$lists['ordering'] 			= mosAdminMenus::SpecificOrdering( $row, $uid, $query );
+	$lists['ordering'] 			= JHTML::_('list.specificordering',  $row, $cid[0], $query );
 
 	// build the select list for the image positions
 	$active =  ( $row->image_position ? $row->image_position : 'left' );
-	$lists['image_position'] 	= mosAdminMenus::Positions( 'image_position', $active, NULL, 0 );
+	$lists['image_position'] 	= JHTML::_('list.positions',  'image_position', $active, NULL, 0 );
 	// build the html select list for images
-	$lists['image'] 			= mosAdminMenus::Images( 'image', $row->image );
+	$lists['image'] 			= JHTML::_('list.images',  'image', $row->image );
 	// build the html select list for the group access
-	$lists['access'] 			= mosAdminMenus::Access( $row );
+	$lists['access'] 			= JHTML::_('list.accesslevel',  $row );
 	// build the html radio buttons for published
-	$lists['published'] 		= mosHTML::yesnoRadioList( 'published', 'class="inputbox"', $row->published );
-	// build the html select list for menu selection
-	$lists['menuselect']		= mosAdminMenus::MenuSelect( );
+	$lists['published'] 		= JHTML::_('select.booleanlist',  'published', 'class="inputbox"', $row->published );
 
-	sections_html::edit( $row, $option, $lists, $menus );
+	sections_html::edit( $row, $option, $lists );
 }
 
 /**
@@ -266,63 +264,68 @@ function editSection( $uid=0, $scope='', $option ) {
 * @param database A database connector object
 * @param string The name of the category section
 */
-function saveSection( $option, $scope, $task ) {
-	global $database;
+function saveSection( $option, $scope, $task )
+{
+	global $mainframe;
 
-	$menu 		= mosGetParam( $_POST, 'menu', 'mainmenu' );
-	$menuid		= mosGetParam( $_POST, 'menuid', 0 );
-	$oldtitle 	= mosGetParam( $_POST, 'oldtitle', null );
+	$db			=& JFactory::getDBO();
+	$menu		= JRequest::getVar( 'menu', 'mainmenu', 'post', 'string' );
+	$menuid		= JRequest::getVar( 'menuid', 0, 'post', 'int' );
+	$oldtitle	= JRequest::getVar( 'oldtitle', '', '', 'post', 'string' );
 
-	$row = new mosSection( $database );
-	if (!$row->bind( $_POST )) {
-		echo "<script> alert('".$row->getError()."'); document.location.href='index2.php?option=$option&scope=$scope&task=new'; </script>\n";
-		exit();
+	$post = JRequest::get('post');
+
+	// fix up special html fields
+	$post['description'] = JRequest::getVar( 'description', '', 'post', 'string', JREQUEST_ALLOWHTML );
+
+	$row =& JTable::getInstance('section');
+	if (!$row->bind($post)) {
+		JError::raiseError(500, $row->getError() );
 	}
 	if (!$row->check()) {
-		echo "<script> alert('".$row->getError()."'); document.location.href='index2.php?option=$option&scope=$scope&task=new'; </script>\n";
-		exit();
+		JError::raiseError(500, $row->getError() );
 	}
 	if ( $oldtitle ) {
-		if ( $oldtitle != $row->title ) {
-			$query = "UPDATE #__menu"
-			. "\n SET name = '$row->title'"
-			. "\n WHERE name = '$oldtitle'"
-			. "\n AND type = 'content_section'"
+		if ( $oldtitle <> $row->title ) {
+			$query = 'UPDATE #__menu'
+			. ' SET name = '.$db->Quote($row->title)
+			. ' WHERE name = '.$db->Quote($oldtitle)
+			. ' AND type = "content_section"'
 			;
-			$database->setQuery( $query );
-			$database->query();
+			$db->setQuery( $query );
+			$db->query();
 		}
 	}
 
+	// if new item order last in appropriate group
+	if (!$row->id) {
+		$row->ordering = $row->getNextOrder();
+	}
+
 	if (!$row->store()) {
-		echo "<script> alert('".$row->getErrorMsg()."'); window.history.go(-1); </script>\n";
-		exit();
+		JError::raiseError(500, $row->getError() );
 	}
 	$row->checkin();
-	$row->updateOrder( "scope='$row->scope'" );
 
-	switch ( $task ) {
+	switch ( $task )
+	{
 		case 'go2menu':
-			mosRedirect( 'index2.php?option=com_menus&menutype='. $menu );
+			$mainframe->redirect( 'index.php?option=com_menus&menutype='. $menu );
 			break;
 
 		case 'go2menuitem':
-			mosRedirect( 'index2.php?option=com_menus&menutype='. $menu .'&task=edit&hidemainmenu=1&id='. $menuid );
-			break;
-
-		case 'menulink':
-			menuLink( $row->id );
+			$mainframe->redirect( 'index.php?option=com_menus&menutype='. $menu .'&task=edit&id='. $menuid );
 			break;
 
 		case 'apply':
-			$msg = 'Changes to Section saved';
-			mosRedirect( 'index2.php?option='. $option .'&scope='. $scope .'&task=editA&hidemainmenu=1&id='. $row->id, $msg );
+			$msg = JText::_( 'Changes to Section saved' );
+			$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope .'&task=edit&cid[]='. $row->id, $msg );
 			break;
 
 		case 'save':
 		default:
-			$msg = 'Section saved';
-			mosRedirect( 'index2.php?option='. $option .'&scope='. $scope, $msg );
+			$msg = JText::_( 'Section saved' );
+			$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope, $msg );
 			break;
 	}
 }
@@ -332,58 +335,62 @@ function saveSection( $option, $scope, $task ) {
 * @param string The name of the category section
 * @param array An array of unique category id numbers
 */
-function removeSections( $cid, $scope, $option ) {
-	global $database;
+function removeSections( $cid, $scope, $option )
+{
+	global $mainframe;
 
+	$db =& JFactory::getDBO();
 	if (count( $cid ) < 1) {
-		echo "<script> alert('Select a section to delete'); window.history.go(-1);</script>\n";
-		exit;
+		JError::raiseError(500, JText::_( 'Select a section to delete', true ) );
 	}
 
+	JArrayHelper::toInteger( $cid );
 	$cids = implode( ',', $cid );
 
-	$query = "SELECT s.id, s.name, COUNT(c.id) AS numcat"
-	. "\n FROM #__sections AS s"
-	. "\n LEFT JOIN #__categories AS c ON c.section=s.id"
-	. "\n WHERE s.id IN ( $cids )"
-	. "\n GROUP BY s.id"
+	$query = 'SELECT s.id, s.name, COUNT(c.id) AS numcat'
+	. ' FROM #__sections AS s'
+	. ' LEFT JOIN #__categories AS c ON c.section=s.id'
+	. ' WHERE s.id IN ( '.$cids.' )'
+	. ' GROUP BY s.id'
 	;
-	$database->setQuery( $query );
-	if (!($rows = $database->loadObjectList())) {
-		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+	$db->setQuery( $query );
+	if (!($rows = $db->loadObjectList())) {
+		echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
 	}
 
 	$err = array();
 	$cid = array();
 	foreach ($rows as $row) {
 		if ($row->numcat == 0) {
-			$cid[] = $row->id;
-			$name[] = $row->name;
+			$cid[]	= (int) $row->id;
+			$name[]	= $row->name;
 		} else {
-			$err[] = $row->name;
+			$err[]	= $row->name;
 		}
 	}
 
-	if (count( $cid )) {
+	if (count( $cid ))
+	{
 		$cids = implode( ',', $cid );
-		$query = "DELETE FROM #__sections"
-		. "\n WHERE id IN ( $cids )"
+		$query = 'DELETE FROM #__sections'
+		. ' WHERE id IN ( '.$cids.' )'
 		;
-		$database->setQuery( $query );
-		if (!$database->query()) {
-			echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
+		$db->setQuery( $query );
+		if (!$db->query()) {
+			echo "<script> alert('".$db->getErrorMsg(true)."'); window.history.go(-1); </script>\n";
 		}
 	}
 
-	if (count( $err )) {
+	if (count( $err ))
+	{
 		$cids = implode( ', ', $err );
-		$msg = 'Sections(s): '. $cids .' cannot be removed as they contain categories';
-		mosRedirect( 'index2.php?option='. $option .'&scope='. $scope, $msg );
+		$msg = JText::sprintf( 'DESCCANNOTBEREMOVED', $cids );
+		$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope, $msg );
 	}
 
 	$names = implode( ', ', $name );
-	$msg = 'Section(s): '. $names .' successfully deleted';
-	mosRedirect( 'index2.php?option='. $option .'&scope='. $scope, $msg );
+	$msg = JText::sprintf( 'Sections successfully deleted', $names );
+	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope, $msg );
 }
 
 /**
@@ -395,63 +402,67 @@ function removeSections( $cid, $scope, $option ) {
 * @param integer 0 if unpublishing, 1 if publishing
 * @param string The name of the current user
 */
-function publishSections( $scope, $cid=null, $publish=1, $option ) {
-	global $database, $my;
+function publishSections( $scope, $cid=null, $publish=1, $option )
+{
+	global $mainframe;
 
-	if ( !is_array( $cid ) || count( $cid ) < 1 ) {
+	$db 	=& JFactory::getDBO();
+	$user 	=& JFactory::getUser();
+
+	JArrayHelper::toInteger($cid);
+
+	if ( count( $cid ) < 1 ) {
 		$action = $publish ? 'publish' : 'unpublish';
-		echo "<script> alert('Select a section to $action'); window.history.go(-1);</script>\n";
-		exit;
+		JError::raiseError(500, JText::_( 'Select a section to '.$action, true ) );
 	}
 
 	$cids = implode( ',', $cid );
 	$count = count( $cid );
 	if ( $publish ) {
 		if ( !$count ){
-			echo "<script> alert('Cannot Publish an Empty Section $count'); window.history.go(-1);</script>\n";
+			echo "<script> alert('". JText::_( 'Cannot Publish an Empty Section', true ) .": ". $count ."'); window.history.go(-1);</script>\n";
 			return;
 		}
 	}
 
-	$query = "UPDATE #__sections"
-	. "\n SET published = " . intval( $publish )
-	. "\n WHERE id IN ( $cids )"
-	. "\n AND ( checked_out = 0 OR ( checked_out = $my->id ) )"
+	$query = 'UPDATE #__sections'
+	. ' SET published = '.(int) $publish
+	. ' WHERE id IN ( '.$cids.' )'
+	. ' AND ( checked_out = 0 OR ( checked_out = '.(int) $user->get('id').' ) )'
 	;
-	$database->setQuery( $query );
-	if (!$database->query()) {
-		echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-		exit();
+	$db->setQuery( $query );
+	if (!$db->query()) {
+		JError::raiseError(500, $db->getErrorMsg() );
 	}
 
 	if ( $count == 1 ) {
-		$row = new mosSection( $database );
+		$row =& JTable::getInstance('section');
 		$row->checkin( $cid[0] );
 	}
 
 	// check if section linked to menu items if unpublishing
 	if ( $publish == 0 ) {
-		$query = "SELECT id"
-		. "\n FROM #__menu"
-		. "\n WHERE type = 'content_section'"
-		. "\n AND componentid IN ( $cids )"
+		$query = 'SELECT id'
+		. ' FROM #__menu'
+		. ' WHERE type = "content_section"'
+		. ' AND componentid IN ( '.$cids.' )'
 		;
-		$database->setQuery( $query );
-		$menus = $database->loadObjectList();
+		$db->setQuery( $query );
+		$menus = $db->loadObjectList();
 
 		if ($menus) {
 			foreach ($menus as $menu) {
-				$query = "UPDATE #__menu"
-				. "\n SET published = " . intval( $publish )
-				. "\n WHERE id = $menu->id"
+				$query = 'UPDATE #__menu'
+				. ' SET published = '.(int) $publish
+				. ' WHERE id = '.(int) $menu->id
 				;
-				$database->setQuery( $query );
-				$database->query();
+				$db->setQuery( $query );
+				$db->query();
 			}
 		}
 	}
 
-	mosRedirect( 'index2.php?option='. $option .'&scope='. $scope );
+	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope );
 }
 
 /**
@@ -460,58 +471,67 @@ function publishSections( $scope, $cid=null, $publish=1, $option ) {
 * @param string The name of the category section
 * @param integer A unique category id
 */
-function cancelSection( $option, $scope ) {
-	global $database;
-	$row = new mosSection( $database );
-	$row->bind( $_POST );
+function cancelSection( $option, $scope )
+{
+	global $mainframe;
+
+	$db =& JFactory::getDBO();
+	$row =& JTable::getInstance('section');
+	$row->bind(JRequest::get('post'));
 	$row->checkin();
 
-	mosRedirect( 'index2.php?option='. $option .'&scope='. $scope );
+	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope );
 }
 
 /**
 * Moves the order of a record
 * @param integer The increment to reorder by
 */
-function orderSection( $uid, $inc, $option, $scope ) {
-	global $database;
+function orderSection( $uid, $inc, $option, $scope )
+{
+	global $mainframe;
 
-	$row = new mosSection( $database );
+	$db =& JFactory::getDBO();
+	$row =& JTable::getInstance('section');
 	$row->load( $uid );
-	$row->move( $inc, "scope = '$row->scope'" );
+	$row->move( $inc, 'scope = '.$db->Quote($row->scope) );
 
-	mosRedirect( 'index2.php?option='. $option .'&scope='. $scope );
+	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $scope );
 }
 
 
 /**
 * Form for copying item(s) to a specific menu
 */
-function copySectionSelect( $option, $cid, $section ) {
-	global $database;
+function copySectionSelect( $option, $cid, $section )
+{
+	global $mainframe;
 
-	if (!is_array( $cid ) || count( $cid ) < 1) {
-		echo "<script> alert('Select an item to move'); window.history.go(-1);</script>\n";
-		exit;
+	$db =& JFactory::getDBO();
+
+	JArrayHelper::toInteger($cid);
+
+	if ( count( $cid ) < 1) {
+		JError::raiseError(500, JText::_( 'Select an item to move', true ) );
 	}
 
 	## query to list selected categories
 	$cids = implode( ',', $cid );
-	$query = "SELECT a.name, a.id"
-	. "\n FROM #__categories AS a"
-	. "\n WHERE a.section IN ( $cids )"
+	$query = 'SELECT a.title, a.id'
+	. ' FROM #__categories AS a'
+	. ' WHERE a.section IN ( '.$cids.' )'
 	;
-	$database->setQuery( $query );
-	$categories = $database->loadObjectList();
+	$db->setQuery( $query );
+	$categories = $db->loadObjectList();
 
 	## query to list items from categories
-	$query = "SELECT a.title, a.id"
-	. "\n FROM #__content AS a"
-	. "\n WHERE a.sectionid IN ( $cids )"
-	. "\n ORDER BY a.sectionid, a.catid, a.title"
+	$query = 'SELECT a.title, a.id'
+	. ' FROM #__content AS a'
+	. ' WHERE a.sectionid IN ( '.$cids.' )'
+	. ' ORDER BY a.sectionid, a.catid, a.title'
 	;
-	$database->setQuery( $query );
-	$contents = $database->loadObjectList();
+	$db->setQuery( $query );
+	$contents = $db->loadObjectList();
 
 	sections_html::copySectionSelect( $option, $cid, $categories, $contents, $section );
 }
@@ -520,31 +540,33 @@ function copySectionSelect( $option, $cid, $section ) {
 /**
 * Save the item(s) to the menu selected
 */
-function copySectionSave( $sectionid ) {
-	global $database;
+function copySectionSave( $sectionid )
+{
+	global $mainframe;
 
-	$title 		= mosGetParam( $_REQUEST, 'title', '' );
-	$contentid 	= mosGetParam( $_REQUEST, 'content', '' );
-	$categoryid = mosGetParam( $_REQUEST, 'category', '' );
+	$db			=& JFactory::getDBO();
+	$title		= JRequest::getString( 'title' );
+	$contentid	= JRequest::getVar( 'content' );
+	$categoryid = JRequest::getVar( 'category' );
+	JArrayHelper::toInteger($contentid);
+	JArrayHelper::toInteger($categoryid);
 
 	// copy section
-	$section = new mosSection ( $database );
+	$section =& JTable::getInstance('section');
 	foreach( $sectionid as $id ) {
 		$section->load( $id );
 		$section->id 	= NULL;
 		$section->title = $title;
 		$section->name 	= $title;
 		if ( !$section->check() ) {
-			echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $section->getError() );
 		}
 
 		if ( !$section->store() ) {
-			echo "<script> alert('".$section->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $section->getError() );
 		}
 		$section->checkin();
-		$section->updateOrder( "section = '$section->id'" );
+		$section->reorder( 'scope = '.$db->Quote($section->scope) );
 		// stores original catid
 		$newsectids[]["old"] = $id;
 		// pulls new catid
@@ -553,7 +575,7 @@ function copySectionSave( $sectionid ) {
 	$sectionMove = $section->id;
 
 	// copy categories
-	$category = new mosCategory ( $database );
+	$category =& JTable::getInstance('category');
 	foreach( $categoryid as $id ) {
 		$category->load( $id );
 		$category->id = NULL;
@@ -564,23 +586,21 @@ function copySectionSave( $sectionid ) {
 			}
 		}
 		if (!$category->check()) {
-			echo "<script> alert('".$category->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $category->getError() );
 		}
 
 		if (!$category->store()) {
-			echo "<script> alert('".$category->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $category->getError() );
 		}
 		$category->checkin();
-		$category->updateOrder( "section = '$category->section'" );
+		$category->reorder( 'section = '.$db->Quote($category->section) );
 		// stores original catid
 		$newcatids[]["old"] = $id;
 		// pulls new catid
 		$newcatids[]["new"] = $category->id;
 	}
 
-	$content = new mosContent ( $database );
+	$content =& JTable::getInstance('content');
 	foreach( $contentid as $id) {
 		$content->load( $id );
 		$content->id = NULL;
@@ -596,31 +616,31 @@ function copySectionSave( $sectionid ) {
 			}
 		}
 		if (!$content->check()) {
-			echo "<script> alert('".$content->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $content->getError() );
 		}
 
 		if (!$content->store()) {
-			echo "<script> alert('".$content->getError()."'); window.history.go(-1); </script>\n";
-			exit();
+			JError::raiseError(500, $content->getError() );
 		}
 		$content->checkin();
 	}
-	$sectionOld = new mosSection ( $database );
+	$sectionOld =& JTable::getInstance('section');
 	$sectionOld->load( $sectionMove );
 
-	$msg = 'Section '. $sectionOld-> name .' and all its Categories and Items have been copied as '. $title;
-	mosRedirect( 'index2.php?option=com_sections&scope=content&mosmsg='. $msg );
+	$msg = JText::sprintf( 'DESCCATANDITEMSCOPIED', $sectionOld-> name, $title );
+	$mainframe->redirect( 'index.php?option=com_sections&scope=content', $msg );
 }
 
 /**
 * changes the access level of a record
 * @param integer The increment to reorder by
 */
-function accessMenu( $uid, $access, $option ) {
-	global $database;
+function accessMenu( $uid, $access, $option )
+{
+	global $mainframe;
 
-	$row = new mosSection( $database );
+	$db	=& JFactory::getDBO();
+	$row =& JTable::getInstance('section');
 	$row->load( $uid );
 	$row->access = $access;
 
@@ -631,97 +651,35 @@ function accessMenu( $uid, $access, $option ) {
 		return $row->getError();
 	}
 
-	mosRedirect( 'index2.php?option='. $option .'&scope='. $row->scope );
+	$mainframe->redirect( 'index.php?option='. $option .'&scope='. $row->scope );
 }
 
-function menuLink( $id ) {
-	global $database;
+function saveOrder( &$cid )
+{
+	global $mainframe;
 
-	$section = new mosSection( $database );
-	$section->bind( $_POST );
-	$section->checkin();
-
-	$menu 		= mosGetParam( $_POST, 'menuselect', '' );
-	$name 		= mosGetParam( $_POST, 'link_name', '' );
-	$type 		= mosGetParam( $_POST, 'link_type', '' );
-
-	switch ( $type ) {
-		case 'content_section':
-			$link 		= 'index.php?option=com_content&task=section&id='. $id;
-			$menutype	= 'Section Table';
-			break;
-
-		case 'content_blog_section':
-			$link 		= 'index.php?option=com_content&task=blogsection&id='. $id;
-			$menutype	= 'Section Blog';
-			break;
-
-		case 'content_archive_section':
-			$link 		= 'index.php?option=com_content&task=archivesection&id='. $id;
-			$menutype	= 'Section Blog Archive';
-			break;
-	}
-
-	$row 				= new mosMenu( $database );
-	$row->menutype 		= $menu;
-	$row->name 			= $name;
-	$row->type 			= $type;
-	$row->published		= 1;
-	$row->componentid	= $id;
-	$row->link			= $link;
-	$row->ordering		= 9999;
-
-	if (!$row->check()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
-		exit();
-	}
-	if (!$row->store()) {
-		echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
-		exit();
-	}
-	$row->checkin();
-	$row->updateOrder( "menutype = '$menu'" );
-
-	$msg = $name .' ( '. $menutype .' ) in menu: '. $menu .' successfully created';
-	mosRedirect( 'index2.php?option=com_sections&scope=content&task=editA&hidemainmenu=1&id='. $id,  $msg );
-}
-
-function saveOrder( &$cid ) {
-	global $database;
+	$db			=& JFactory::getDBO();
+	$row		=& JTable::getInstance('section');
 
 	$total		= count( $cid );
-	$order 		= mosGetParam( $_POST, 'order', array(0) );
-	$row 		= new mosSection( $database );
-	$conditions = array();
+	$order		= JRequest::getVar( 'order', array(0), 'post', 'array' );
+	JArrayHelper::toInteger($order, array(0));
 
 	// update ordering values
-	for( $i=0; $i < $total; $i++ ) {
-		$row->load( $cid[$i] );
+	for( $i=0; $i < $total; $i++ )
+	{
+		$row->load( (int) $cid[$i] );
 		if ($row->ordering != $order[$i]) {
 			$row->ordering = $order[$i];
 			if (!$row->store()) {
-				echo "<script> alert('".$database->getErrorMsg()."'); window.history.go(-1); </script>\n";
-				exit();
-			} // if
-			// remember to updateOrder this group
-			$condition = "scope = '$row->scope'";
-			$found = false;
-			foreach ( $conditions as $cond )
-				if ($cond[1]==$condition) {
-					$found = true;
-					break;
-				} // if
-			if (!$found) $conditions[] = array($row->id, $condition);
-		} // if
-	} // for
+				JError::raiseError(500, $db->getErrorMsg() );
+			}
+		}
+	}
 
-	// execute updateOrder for each group
-	foreach ( $conditions as $cond ) {
-		$row->load( $cond[0] );
-		$row->updateOrder( $cond[1] );
-	} // foreach
+	$row->reorder( );
 
-	$msg 	= 'New ordering saved';
-	mosRedirect( 'index2.php?option=com_sections&scope=content', $msg );
-} // saveOrder
+	$msg 	= JText::_( 'New ordering saved' );
+	$mainframe->redirect( 'index.php?option=com_sections&scope=content', $msg );
+}
 ?>

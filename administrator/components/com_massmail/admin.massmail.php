@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: admin.massmail.php 328 2005-10-02 15:39:51Z Jinx $
-* @package Joomla
-* @subpackage Massmail
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: admin.massmail.php 8020 2007-07-17 16:42:27Z friesengeist $
+* @package		Joomla
+* @subpackage	Massmail
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,14 +13,17 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-// ensure user has access to this function
-if (!$acl->acl_check( 'administration', 'manage', 'users', $my->usertype, 'components', 'com_massmail' )) {
-	mosRedirect( 'index2.php', _NOT_AUTH );
+/*
+ * Make sure the user is authorized to view this page
+ */
+$user = & JFactory::getUser();
+if (!$user->authorize( 'com_massmail', 'manage' )) {
+	$mainframe->redirect( 'index.php', JText::_('ALERTNOTAUTH') );
 }
 
-require_once( $mainframe->getPath( 'admin_html' ) );
+require_once( JApplicationHelper::getPath( 'admin_html' ) );
 
 switch ($task) {
 	case 'send':
@@ -28,7 +31,7 @@ switch ($task) {
 		break;
 
 	case 'cancel':
-		mosRedirect( 'index2.php' );
+		$mainframe->redirect( 'index.php' );
 		break;
 
 	default:
@@ -36,77 +39,83 @@ switch ($task) {
 		break;
 }
 
-function messageForm( $option ) {
-	global $acl;
+function messageForm( $option )
+{
+	$acl =& JFactory::getACL();
 
 	$gtree = array(
-	mosHTML::makeOption( 0, '- All User Groups -' )
+		JHTML::_('select.option',  0, '- '. JText::_( 'All User Groups' ) .' -' )
 	);
 
 	// get list of groups
 	$lists = array();
-	$gtree = array_merge( $gtree, $acl->get_group_children_tree( null, 'USERS', false ) );
-	$lists['gid'] = mosHTML::selectList( $gtree, 'mm_group', 'size="10"', 'value', 'text', 0 );
+	$gtree = array_merge( $gtree, $acl->get_group_children_tree( null, 'users', false ) );
+	$lists['gid'] = JHTML::_('select.genericlist',   $gtree, 'mm_group', 'size="10"', 'value', 'text', 0 );
 
 	HTML_massmail::messageForm( $lists, $option );
 }
 
-function sendMail() {
-	global $database, $my, $acl;
-	global $mosConfig_sitename;
-	global $mosConfig_mailfrom, $mosConfig_fromname;
+function sendMail()
+{
+	global $mainframe;
 
-	$mode				= mosGetParam( $_POST, 'mm_mode', 0 );
-	$subject			= mosGetParam( $_POST, 'mm_subject', '' );
-	$gou				= mosGetParam( $_POST, 'mm_group', NULL );
-	$recurse			= mosGetParam( $_POST, 'mm_recurse', 'NO_RECURSE' );
+	$db					=& JFactory::getDBO();
+	$user 				=& JFactory::getUser();
+	$acl 				=& JFactory::getACL();
+
+	$mode				= JRequest::getVar( 'mm_mode', 0, 'post', 'int' );
+	$subject			= JRequest::getVar( 'mm_subject', '', 'post', 'string' );
+	$gou				= JRequest::getVar( 'mm_group', '0', 'post', 'int' );
+	$recurse			= JRequest::getVar( 'mm_recurse', 'NO_RECURSE', 'post', 'word' );
 	// pulls message inoformation either in text or html format
 	if ( $mode ) {
-		$message_body	= $_POST['mm_message'];
+		$message_body	= JRequest::getVar( 'mm_message', '', 'post', 'string', JREQUEST_ALLOWRAW );
 	} else {
 		// automatically removes html formatting
-		$message_body	= mosGetParam( $_POST, 'mm_message', '' );
+		$message_body	= JRequest::getVar( 'mm_message', '', 'post', 'string' );
 	}
-	$message_body 		= stripslashes( $message_body );
 
-	if (!$message_body || !$subject || $gou === null) {
-		mosRedirect( 'index2.php?option=com_massmail&mosmsg=Please fill in the form correctly' );
+	if (!$message_body || !$subject) {
+		$mainframe->redirect( 'index.php?option=com_massmail', JText::_( 'Please fill in the form correctly' ) );
 	}
 
 	// get users in the group out of the acl
 	$to = $acl->get_group_objects( $gou, 'ARO', $recurse );
+	JArrayHelper::toInteger($to['users']);
 
 	$rows = array();
-	if ( count( $to['users'] ) || $gou === '0' ) {
+	if ( count( $to['users'] ) || $gou === 0 ) {
 		// Get sending email address
-		$query = "SELECT email"
-		. "\n FROM #__users"
-		. "\n WHERE id = $my->id"
+		$query = 'SELECT email'
+		. ' FROM #__users'
+		. ' WHERE id = '.(int) $user->get('id')
 		;
-		$database->setQuery( $query );
-		$my->email = $database->loadResult();
+		$db->setQuery( $query );
+		$user->set( 'email', $db->loadResult() );
 
 		// Get all users email and group except for senders
-		$query = "SELECT email"
-		. "\n FROM #__users"
-		. "\n WHERE id != $my->id"
-		. ( $gou !== '0' ? " AND id IN (" . implode( ',', $to['users'] ) . ")" : '' )
+		$query = 'SELECT email'
+		. ' FROM #__users'
+		. ' WHERE id != '.(int) $user->get('id')
+		. ( $gou !== 0 ? ' AND id IN (' . implode( ',', $to['users'] ) . ')' : '' )
 		;
-		$database->setQuery( $query );
-		$rows = $database->loadObjectList();
+		$db->setQuery( $query );
+		$rows = $db->loadObjectList();
 
+		$mailer =& JFactory::getMailer();
+		$params =& JComponentHelper::getParams( 'com_massmail' );
 		// Build e-mail message format
-		$message_header 	= sprintf( _MASSMAIL_MESSAGE, $mosConfig_sitename );
-		$message 			= $message_header . $message_body;
-		$subject 			= $mosConfig_sitename. ' / '. stripslashes( $subject);
+		$mailer->setSender(array($mainframe->getCfg('mailfrom'), $mainframe->getCfg('fromname')));
+		$mailer->setSubject($params->get('mailSubjectPrefix') . stripslashes( $subject));
+		$mailer->setBody($message_body . $params->get('mailBodySuffix'));
 
-		//Send email
 		foreach ($rows as $row) {
-			mosMail( $mosConfig_mailfrom, $mosConfig_fromname, $row->email, $subject, $message, $mode );
+			$mailer->addRecipient($row->email);
 		}
+		$mailer->Send();
 	}
 
-	$msg = 'E-mail sent to '. count( $rows ) .' users';
-	mosRedirect( 'index2.php?option=com_massmail', $msg );
+	$msg = JText::sprintf( 'E-mail sent to', count( $rows ) );
+	$mainframe->redirect( 'index.php?option=com_massmail', $msg );
 }
 ?>

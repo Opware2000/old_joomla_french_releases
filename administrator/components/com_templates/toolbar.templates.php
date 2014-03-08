@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.templates.php 85 2005-09-15 23:12:03Z eddieajau $
-* @package Joomla
-* @subpackage Templates
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.templates.php 7692 2007-06-08 20:41:29Z tcp $
+* @package		Joomla
+* @subpackage	Templates
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,32 +13,33 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-require_once( $mainframe->getPath( 'toolbar_html' ) );
+require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 
-$client = mosGetParam( $_REQUEST, 'client', '' );
+$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
-switch ($task) {
-
-	case 'view':
-		TOOLBAR_templates::_VIEW();
+switch ($task)
+{
+	case 'view'   :
+	case 'preview':
+		TOOLBAR_templates::_VIEW($client);
 		break;
 
 	case 'edit_source':
-		TOOLBAR_templates::_EDIT_SOURCE();
+		TOOLBAR_templates::_EDIT_SOURCE($client);
+		break;
+
+	case 'edit':
+		TOOLBAR_templates::_EDIT($client);
+		break;
+
+	case 'choose_css':
+		TOOLBAR_templates::_CHOOSE_CSS($client);
 		break;
 
 	case 'edit_css':
-		TOOLBAR_templates::_EDIT_CSS();
-		break;
-
-	case 'assign':
-		TOOLBAR_templates::_ASSIGN();
-		break;
-
-	case 'positions':
-		TOOLBAR_templates::_POSITIONS();
+		TOOLBAR_templates::_EDIT_CSS($client);
 		break;
 
 	default:

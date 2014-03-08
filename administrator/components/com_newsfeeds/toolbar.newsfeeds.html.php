@@ -1,10 +1,10 @@
 <?php
 /**
-* @version $Id: toolbar.newsfeeds.html.php 108 2005-09-16 17:39:25Z stingrey $
-* @package Joomla
-* @subpackage Newsfeeds
-* @copyright Copyright (C) 2005 Open Source Matters. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+* @version		$Id: toolbar.newsfeeds.html.php 7796 2007-06-26 22:52:22Z friesengeist $
+* @package		Joomla
+* @subpackage	Newsfeeds
+* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+* @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
@@ -13,54 +13,42 @@
 */
 
 // no direct access
-defined( '_VALID_MOS' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
-* @package Joomla
-* @subpackage Newsfeeds
+* @package		Joomla
+* @subpackage	Newsfeeds
 */
-class TOOLBAR_newsfeeds  {
-	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::publishList();
-		mosMenuBar::spacer();
-		mosMenuBar::unpublishList();
-		mosMenuBar::spacer();
-		mosMenuBar::deleteList();
-		mosMenuBar::spacer();
-		mosMenuBar::editListX();
-		mosMenuBar::spacer();
-		mosMenuBar::addNewX();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.newsfeeds' );
-		mosMenuBar::endTable();
+class TOOLBAR_newsfeeds
+{
+	function _DEFAULT()
+	{
+		JToolBarHelper::title(  JText::_( 'Newsfeed Manager' ) );
+		JToolBarHelper::publishList();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::deleteList();
+		JToolBarHelper::editListX();
+		JToolBarHelper::addNewX();
+		JToolBarHelper::help( 'screen.newsfeeds' );
 	}
 
-	function _NEW() {
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.newsfeeds.edit' );
-		mosMenuBar::endTable();
-	}
+	function _EDIT()
+	{
+		$cid = JRequest::getVar( 'cid', array(0), '', 'array' );
+		JArrayHelper::toInteger($cid, array(0));
 
-	function _EDIT() {
-		global $id;
+		$text 	= ( $cid[0] ? JText::_( 'Edit' ) : JText::_( 'New' ) );
 
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		if ( $id ) {
-			// for existing content items the button is renamed `close`
-			mosMenuBar::cancel( 'cancel', 'Close' );
+		JToolBarHelper::title(  JText::_( 'Newsfeed' ).': <small><small>[ '. $text.' ]</small></small>' );
+		JToolBarHelper::save();
+		JToolBarHelper::apply();
+		if ($cid[0]) {
+			// for existing items the button is renamed `close`
+			JToolBarHelper::cancel( 'cancel', 'Close' );
 		} else {
-			mosMenuBar::cancel();
+			JToolBarHelper::cancel();
 		}
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.newsfeeds.edit' );
-		mosMenuBar::endTable();
+		JToolBarHelper::help( 'screen.newsfeeds.edit' );
 	}
 }
 ?>
