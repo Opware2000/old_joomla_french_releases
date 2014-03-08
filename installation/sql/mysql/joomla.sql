@@ -1,4 +1,4 @@
-# $Id: joomla.sql 18130 2010-07-14 11:21:35Z louis $
+# $Id: joomla.sql 21041 2011-03-31 15:56:06Z dextercowley $
 
 # --------------------------------------------------------
 
@@ -34,7 +34,7 @@ CREATE TABLE `#__banner` (
   PRIMARY KEY  (`bid`),
   KEY `viewbanner` (`showBanner`),
   INDEX `idx_banner_catid`(`catid`)
-) TYPE=MyISAM CHARACTER SET `utf8`;
+) ENGINE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
 
@@ -52,7 +52,7 @@ CREATE TABLE `#__bannerclient` (
   `checked_out_time` time default NULL,
   `editor` varchar(50) default NULL,
   PRIMARY KEY  (`cid`)
-) TYPE=MyISAM CHARACTER SET `utf8`;
+) ENGINE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE  `#__bannertrack` (
   `track_date` date NOT NULL,
   `track_type` int(10) unsigned NOT NULL,
   `banner_id` int(10) unsigned NOT NULL
-) TYPE=MyISAM CHARACTER SET `utf8`;
+) ENGINE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
 
@@ -94,7 +94,7 @@ CREATE TABLE `#__categories` (
   KEY `cat_idx` (`section`,`published`,`access`),
   KEY `idx_access` (`access`),
   KEY `idx_checkout` (`checked_out`)
-) TYPE=MyISAM CHARACTER SET `utf8`;
+) ENGINE=MyISAM CHARACTER SET `utf8`;
 
 # --------------------------------------------------------
 
@@ -118,7 +118,7 @@ CREATE TABLE `#__components` (
   `enabled` tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `parent_option` (`parent`, `option`(32))
-) TYPE=MyISAM CHARACTER SET `utf8`;
+) ENGINE=MyISAM CHARACTER SET `utf8`;
 
 #
 # Dumping data for table `#__components`
@@ -347,7 +347,7 @@ INSERT INTO `#__plugins` VALUES (15, 'Content - Code Hightlighter (GeSHi)', 'ges
 INSERT INTO `#__plugins` VALUES (16, 'Content - Load Module', 'loadmodule', 'content', 0, 6, 1, 0, 0, 0, '0000-00-00 00:00:00', 'enabled=1\nstyle=0\n\n');
 INSERT INTO `#__plugins` VALUES (17, 'Content - Page Navigation','pagenavigation','content',0,2,1,1,0,0,'0000-00-00 00:00:00','position=1\n\n');
 INSERT INTO `#__plugins` VALUES (18, 'Editor - No Editor','none','editors',0,0,1,1,0,0,'0000-00-00 00:00:00','');
-INSERT INTO `#__plugins` VALUES (19, 'Editor - TinyMCE', 'tinymce', 'editors', 0, 0, 1, 1, 0, 0, '0000-00-00 00:00:00', 'mode=extended\nskin=0\ncompressed=0\ncleanup_startup=0\ncleanup_save=2\nentity_encoding=raw\nlang_mode=0\nlang_code=fr\ntext_direction=ltr\ncontent_css=1\ncontent_css_custom=\nrelative_urls=1\nnewlines=0\ninvalid_elements=applet\nextended_elements=\ntoolbar=top\ntoolbar_align=left\nhtml_height=550\nhtml_width=750\nelement_path=1\nfonts=1\npaste=1\nsearchreplace=1\ninsertdate=1\nformat_date=%Y-%m-%d\ninserttime=1\nformat_time=%H:%M:%S\ncolors=1\ntable=1\nsmilies=1\nmedia=1\nhr=1\ndirectionality=1\nfullscreen=1\nstyle=1\nlayer=1\nxhtmlxtras=0\nvisualchars=1\nnonbreaking=1\ntemplate=0\ntinybrowser=1\nadvimage=1\nadvlink=1\nautosave=0\ncontextmenu=1\ninlinepopups=1\nsafari=0\ncustom_plugin=\ncustom_button=\n\n');
+INSERT INTO `#__plugins` VALUES (19, 'Editor - TinyMCE', 'tinymce', 'editors', 0, 0, 1, 1, 0, 0, '0000-00-00 00:00:00', 'mode=advanced\nskin=0\ncompressed=0\ncleanup_startup=0\ncleanup_save=2\nentity_encoding=raw\nlang_mode=0\nlang_code=en\ntext_direction=ltr\ncontent_css=1\ncontent_css_custom=\nrelative_urls=1\nnewlines=0\ninvalid_elements=applet\nextended_elements=\ntoolbar=top\ntoolbar_align=left\nhtml_height=550\nhtml_width=750\nelement_path=1\nfonts=1\npaste=1\nsearchreplace=1\ninsertdate=1\nformat_date=%Y-%m-%d\ninserttime=1\nformat_time=%H:%M:%S\ncolors=1\ntable=1\nsmilies=1\nmedia=1\nhr=1\ndirectionality=1\nfullscreen=1\nstyle=1\nlayer=1\nxhtmlxtras=1\nvisualchars=1\nnonbreaking=1\ntemplate=0\nadvimage=1\nadvlink=1\nautosave=1\ncontextmenu=1\ninlinepopups=1\nsafari=1\ncustom_plugin=\ncustom_button=\n\n');
 INSERT INTO `#__plugins` VALUES (20, 'Editor - XStandard Lite 2.0', 'xstandard', 'editors', 0, 0, 0, 1, 0, 0, '0000-00-00 00:00:00', '');
 INSERT INTO `#__plugins` VALUES (21, 'Editor Button - Image','image','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
 INSERT INTO `#__plugins` VALUES (22, 'Editor Button - Pagebreak','pagebreak','editors-xtd',0,0,1,0,0,0,'0000-00-00 00:00:00','');
