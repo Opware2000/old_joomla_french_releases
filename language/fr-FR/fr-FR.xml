@@ -3,11 +3,11 @@
 	<tag>fr-FR</tag>
 	<name>French (Fr)</name>
 	<description>French language file for Joomla 1.5.17</description>
-	<version>1.5.17</version>
-	<creationDate>2009-08-01</creationDate>
+	<version>1.5.19</version>
+	<creationDate>2010-07-16</creationDate>
 	<author>French translation team : Joomla!fr</author>
 	<authorUrl>www.joomla.fr</authorUrl>
-	<authorEmail>opware2000@joomla.fr</authorEmail>
+	<authorEmail>traduction@joomla.fr</authorEmail>
 	<copyright>Copyright (C) 2005 - 2010 Open Source Matters. Tous droits réservés</copyright>
 	<copyright>Copyright (C) 2005 - 2010 Joomla.fr</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
