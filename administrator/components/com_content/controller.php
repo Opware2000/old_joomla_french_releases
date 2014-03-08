@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 22338 2011-11-04 17:24:53Z github_bot $
+ * @version		$Id: controller.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -35,8 +35,6 @@ class ContentController extends JController
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT.'/helpers/content.php';
-
 		// Load the submenu.
 		ContentHelper::addSubmenu(JRequest::getCmd('view', 'articles'));
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: list.php 21566 2011-06-19 12:56:14Z chdemko $
+ * @version		$Id: list.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -96,9 +96,14 @@ class MediaModelList extends JModel
 		$folders	= array ();
 		$docs		= array ();
 
-		// Get the list of files and folders from the given folder
-		$fileList	= JFolder::files($basePath);
-		$folderList = JFolder::folders($basePath);
+		$fileList = false;
+		$folderList = false;
+		if (file_exists($basePath))
+		{
+			// Get the list of files and folders from the given folder
+			$fileList	= JFolder::files($basePath);
+			$folderList = JFolder::folders($basePath);
+		}
 
 		// Iterate over the files if they exist
 		if ($fileList !== false) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 22355 2011-11-07 05:11:58Z github_bot $
+ * @version		$Id: controller.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -58,8 +58,6 @@ class UsersController extends JController
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT.'/helpers/users.php';
-
 		// Load the submenu.
 		UsersHelper::addSubmenu(JRequest::getCmd('view', 'users'));
 

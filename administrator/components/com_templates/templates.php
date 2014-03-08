@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: templates.php 22338 2011-11-04 17:24:53Z github_bot $
+ * @version		$Id: templates.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_templates
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -14,6 +14,9 @@ defined('_JEXEC') or die;
 if (!JFactory::getUser()->authorise('core.manage', 'com_templates')) {
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
+
+// Register helper
+JLoader::register('TemplatesHelper', dirname(__FILE__) . '/helpers/templates.php');
 
 // Include dependancies
 jimport('joomla.application.component.controller');

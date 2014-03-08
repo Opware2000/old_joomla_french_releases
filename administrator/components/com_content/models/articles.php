@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 22355 2011-11-07 05:11:58Z github_bot $
+ * @version		$Id: articles.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -224,8 +224,8 @@ class ContentModelArticles extends JModelList
 		}
 
 		// Add the list ordering clause.
-		$orderCol	= $this->state->get('list.ordering');
-		$orderDirn	= $this->state->get('list.direction');
+		$orderCol	= $this->state->get('list.ordering', 'a.title');
+		$orderDirn	= $this->state->get('list.direction', 'asc');
 		if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
 			$orderCol = 'category_title '.$orderDirn.', a.ordering';
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: styles.php 21650 2011-06-23 05:29:17Z chdemko $
+ * @version		$Id: styles.php 22828 2012-02-02 00:18:06Z dextercowley $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -147,7 +147,7 @@ class TemplatesModelStyles extends JModelList
 		}
 
 		// Add the list ordering clause.
-		$query->order($db->getEscaped($this->getState('list.ordering', 'a.name')).' '.$db->getEscaped($this->getState('list.direction', 'ASC')));
+		$query->order($db->getEscaped($this->getState('list.ordering', 'a.title')).' '.$db->getEscaped($this->getState('list.direction', 'ASC')));
 
 		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
