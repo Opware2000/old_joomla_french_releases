@@ -2,12 +2,12 @@
 <install version="1.5" client="site" type="language">
     <name>French (Fr)</name>
     <tag>fr-FR</tag>
-    <version>1.5.8</version>
-    <creationDate>2008-11-10</creationDate>
+    <version>1.5.9</version>
+    <creationDate>2009-01-10</creationDate>
     <author>French translation team : Joomla!fr</author>
     <authoremail>opware2000@joomla.fr</authoremail>
     <authorurl>www.joomla.fr</authorurl>
-    <copyright>Copyright (C) 2005 - 2008 Joomla.fr et Open Source Matters. Tous droits réservés</copyright>
+    <copyright>Copyright (C) 2005 - 2009 Joomla.fr et Open Source Matters. Tous droits réservés</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
     <description>French language file for Joomla 1.5.5</description>
     <files>
