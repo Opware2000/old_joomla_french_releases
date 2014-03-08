@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: folder.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: folder.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -88,7 +88,7 @@ class MediaControllerFolder extends JController
 						$dispatcher->trigger('onContentAfterDelete', array('com_media.file', &$object_file));
 						$this->setMessage(JText::sprintf('COM_MEDIA_DELETE_COMPLETE', substr($fullPath, strlen(COM_MEDIA_BASE))));
 					}
-					else if (is_dir($fullPath))
+					elseif (is_dir($fullPath))
 					{
 						if (count(JFolder::files($fullPath, '.', true, false, array('.svn', 'CVS','.DS_Store','__MACOSX'), array('index.html', '^\..*','.*~'))) == 0)
 						{

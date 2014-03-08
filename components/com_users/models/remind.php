@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: remind.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: remind.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -95,8 +95,8 @@ class UsersModelRemind extends JModelForm
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('*');
-		$query->from('`#__users`');
-		$query->where('`email` = '.$db->Quote($data['email']));
+		$query->from($db->nameQuote('#__users'));
+		$query->where($db->nameQuote('email').' = '.$db->Quote($data['email']));
 
 		// Get the user id.
 		$db->setQuery((string) $query);

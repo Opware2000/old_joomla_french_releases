@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: content.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: content.php 22359 2011-11-07 16:31:03Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -225,7 +225,7 @@ class plgSearchContent extends JPlugin
 			foreach($rows as $row)
 			{
 				$new_row = array();
-				foreach($row AS $key => $article) {
+				foreach($row as $key => $article) {
 					if (searchHelper::checkNoHTML($article, $searchText, array('text', 'title', 'metadesc', 'metakey'))) {
 						$new_row[] = $article;
 					}

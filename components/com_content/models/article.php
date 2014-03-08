@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 21700 2011-06-28 04:32:41Z dextercowley $
+ * @version		$Id: article.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -179,7 +179,7 @@ class ContentModelArticle extends JModelItem
 						$data->params->set('access-edit', true);
 					}
 					// Now check if edit.own is available.
-					else if (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
+					elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
 						// Check for a valid user and that they are the owner.
 						if ($userId == $data->created_by) {
 							$data->params->set('access-edit', true);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: featured.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: featured.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -106,7 +106,7 @@ class ContentModelFeatured extends ContentModelArticles
 		$published = $this->getState('filter.published');
 		if (is_numeric($published)) {
 			$query->where('a.state = ' . (int) $published);
-		} else if ($published === '') {
+		} elseif ($published === '') {
 			$query->where('(a.state = 0 OR a.state = 1)');
 		}
 

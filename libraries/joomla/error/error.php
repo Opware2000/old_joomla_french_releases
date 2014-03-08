@@ -58,7 +58,7 @@ abstract class JError
 	protected static $handlers = array(
 		E_NOTICE	=> array('mode' => 'message'),
 		E_WARNING	=> array('mode' => 'message'),
-		E_ERROR	=> array('mode' => 'callback', 'options' => array('JError','customErrorPage'))
+		E_ERROR	=> array('mode' => 'callback', 'options' => array('JError', 'customErrorPage'))
 	);
 
 	protected static $stack = array();
@@ -79,7 +79,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::isError() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		// Supports PHP 5 exception handling
 		return $object instanceof Exception;
 	}
@@ -99,7 +99,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::getError() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		if (!isset(JError::$stack[0])) {
 			return false;
 		}
@@ -126,7 +126,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::getErrors() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return JError::$stack;
 	}
 
@@ -144,7 +144,7 @@ abstract class JError
 	public static function addToStack(JException &$e) {
 		// Deprecation warning.
 		JLog::add('JError::addToStack() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		JError::$stack[] = &$e;
 	}
 
@@ -168,7 +168,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::raise() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		jimport('joomla.error.exception');
 
 		// Build error object
@@ -192,7 +192,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::throwError() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		static $thrown = false;
 
 		// If thrown is hit again, we've come back to JError in the middle of throwing another JError, so die!
@@ -209,7 +209,7 @@ abstract class JError
 
 		$function = 'handle'.ucfirst($handler['mode']);
 		if (is_callable(array('JError', $function))) {
-			$reference = call_user_func_array(array('JError',$function), array(&$exception, (isset($handler['options'])) ? $handler['options'] : array()));
+			$reference = call_user_func_array(array('JError', $function), array(&$exception, (isset($handler['options'])) ? $handler['options'] : array()));
 		}
 		else {
 			// This is required to prevent a very unhelpful white-screen-of-death
@@ -246,7 +246,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::raiseError() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return JError::raise(E_ERROR, $code, $msg, $info, true);
 	}
 
@@ -270,7 +270,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::raiseWarning() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return JError::raise(E_WARNING, $code, $msg, $info);
 	}
 
@@ -285,7 +285,7 @@ abstract class JError
 	 * @return  object   The configured JError object
 	 *
 	 * @since   11.1
-	 * 
+	 *
 	 * @deprecated       12.1   Use PHP Exception
 	 * @see     raise()
 	 */
@@ -293,26 +293,26 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::raiseNotice() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return JError::raise(E_NOTICE, $code, $msg, $info);
 	}
 
 	/**
-	* Method to get the current error handler settings for a specified error level.
-	*
-	* @param   integer  $level  The error level to retrieve. This can be any of PHP's own error levels, e.g. E_ALL, E_NOTICE...
-	*
-	* @return  array  All error handling details
-	*
-	* @since   11.1
-	*
-	* @deprecated   12.1  Use PHP Exception
-	*/
+	 * Method to get the current error handler settings for a specified error level.
+	 *
+	 * @param   integer  $level  The error level to retrieve. This can be any of PHP's own error levels, e.g. E_ALL, E_NOTICE...
+	 *
+	 * @return  array  All error handling details
+	 *
+	 * @since   11.1
+	 *
+	 * @deprecated   12.1  Use PHP Exception
+	 */
 	public static function getErrorHandling($level)
 	{
 		// Deprecation warning.
 		JLog::add('JError::getErrorHandling() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return JError::$handlers[$level];
 	}
 
@@ -341,19 +341,19 @@ abstract class JError
 	 * @return  mixed  True on success or a JException object if failed.
 	 *
 	 * @since   11.1
-	 * 
+	 *
 	 * @deprecated  12.1  Use PHP Exception
 	 */
 	public static function setErrorHandling($level, $mode, $options = null)
 	{
 		// Deprecation warning.
 		JLog::add('JError::setErrorHandling() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$levels = JError::$levels;
 
 		$function = 'handle'.ucfirst($mode);
 
-		if (!is_callable(array ('JError',$function))) {
+		if (!is_callable(array ('JError', $function))) {
 			return JError::raiseError(E_ERROR, 'JError:'.JERROR_ILLEGAL_MODE, 'Error Handling mode is not known', 'Mode: '.$mode.' is not implemented.');
 		}
 
@@ -406,7 +406,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::getErrorHandling() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		set_error_handler(array('JError', 'customErrorHandler'));
 	}
 
@@ -422,30 +422,30 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::detachHandler() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		restore_error_handler();
 	}
 
 	/**
-	* Method to register a new error level for handling errors
-	*
-	* This allows you to add custom error levels to the built-in
-	* - E_NOTICE
-	* - E_WARNING
-	* - E_NOTICE
-	*
-	* @param   integer  $level    Error level to register
-	* @param   string   $name     Human readable name for the error level
-	* @param   string   $handler  Error handler to set for the new error level [optional]
-	*
-	* @return  boolean  True on success; false if the level already has been registered
-	* @since   11.1
-	*/
+	 * Method to register a new error level for handling errors
+	 *
+	 * This allows you to add custom error levels to the built-in
+	 * - E_NOTICE
+	 * - E_WARNING
+	 * - E_NOTICE
+	 *
+	 * @param   integer  $level    Error level to register
+	 * @param   string   $name     Human readable name for the error level
+	 * @param   string   $handler  Error handler to set for the new error level [optional]
+	 *
+	 * @return  boolean  True on success; false if the level already has been registered
+	 * @since   11.1
+	 */
 	public static function registerErrorLevel($level, $name, $handler = 'ignore')
 	{
 		// Deprecation warning.
 		JLog::add('JError::registerErrorLevel() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		if (isset(JError::$levels[$level])) {
 			return false;
 		}
@@ -457,21 +457,21 @@ abstract class JError
 	}
 
 	/**
-	* Translate an error level integer to a human readable string
-	* e.g. E_ERROR will be translated to 'Error'
-	*
-	* @param   integer  $level  Error level to translate
-	*
-	* @return  mixed  Human readable error level name or boolean false if it doesn't exist
-	*
-	* @deprecated
-	* @since   11.1
-	*/
+	 * Translate an error level integer to a human readable string
+	 * e.g. E_ERROR will be translated to 'Error'
+	 *
+	 * @param   integer  $level  Error level to translate
+	 *
+	 * @return  mixed  Human readable error level name or boolean false if it doesn't exist
+	 *
+	 * @deprecated
+	 * @since   11.1
+	 */
 	public static function translateErrorLevel($level)
 	{
 		// Deprecation warning.
 		JLog::add('JError::translateErrorLevel() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		if (isset(JError::$levels[$level])) {
 			return JError::$levels[$level];
 		}
@@ -495,7 +495,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleIgnore() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return $error;
 	}
 
@@ -516,7 +516,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleEcho() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$level_human = JError::translateErrorLevel($error->get('level'));
 
 		if (isset ($_SERVER['HTTP_HOST'])) {
@@ -553,7 +553,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleVerbose() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$level_human = JError::translateErrorLevel($error->get('level'));
 		$info = $error->get('info');
 
@@ -596,7 +596,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleDie() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$level_human = JError::translateErrorLevel($error->get('level'));
 
 		if (isset ($_SERVER['HTTP_HOST'])) {
@@ -634,7 +634,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::hanleMessage() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$appl = JFactory::getApplication();
 		$type = ($error->get('level') == E_NOTICE) ? 'notice' : 'error';
 		$appl->enqueueMessage($error->get('message'), $type);
@@ -659,7 +659,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleLog() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		static $log;
 
 		if ($log == null) {
@@ -671,7 +671,7 @@ abstract class JError
 
 		$entry['level'] = $error->get('level');
 		$entry['code'] = $error->get('code');
-		$entry['message'] = str_replace(array ("\r","\n"), array ('','\\n'), $error->get('message'));
+		$entry['message'] = str_replace(array ("\r", "\n"), array ('', '\\n'), $error->get('message'));
 		$log->addEntry($entry);
 
 		return $error;
@@ -694,7 +694,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::handleCallback() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		return call_user_func($options, $error);
 	}
 
@@ -713,7 +713,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::customErrorPage() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		// Initialise variables.
 		jimport('joomla.document.document');
 		$app		= JFactory::getApplication();
@@ -729,10 +729,10 @@ abstract class JError
 		@ob_end_clean();
 		$document->setTitle(JText::_('Error').': '.$error->get('code'));
 		$data = $document->render(false, array (
-			'template' => $template,
-			'directory' => JPATH_THEMES,
-			'debug' => $config->get('debug')
-		));
+				'template' => $template,
+				'directory' => JPATH_THEMES,
+				'debug' => $config->get('debug')
+			));
 
 		// Do not allow cache
 		JResponse::allowCache(false);
@@ -758,7 +758,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::customErrorHandler() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		JError::raise($level, '', $msg);
 	}
 
@@ -777,7 +777,7 @@ abstract class JError
 	{
 		// Deprecation warning.
 		JLog::add('JError::renderBacktrace() is deprecated.', JLog::WARNING, 'deprecated');
-		
+
 		$contents	= null;
 		$backtrace	= $error->getTrace();
 
@@ -800,17 +800,17 @@ abstract class JError
 				echo	'				<td class="TD">'.$j.'</td>';
 
 				if (isset($backtrace[$i]['class'])) {
-						echo	'		<td class="TD">'.$backtrace[$i]['class'].$backtrace[$i]['type'].$backtrace[$i]['function'].'()</td>';
+					echo	'		<td class="TD">'.$backtrace[$i]['class'].$backtrace[$i]['type'].$backtrace[$i]['function'].'()</td>';
 				}
 				else {
-						echo	'		<td class="TD">'.$backtrace[$i]['function'].'()</td>';
+					echo	'		<td class="TD">'.$backtrace[$i]['function'].'()</td>';
 				}
 
 				if (isset($backtrace[$i]['file'])) {
-						echo	'				<td class="TD">'.$backtrace[$i]['file'].':'.$backtrace[$i]['line'].'</td>';
+					echo	'				<td class="TD">'.$backtrace[$i]['file'].':'.$backtrace[$i]['line'].'</td>';
 				}
 				else {
-						echo	'				<td class="TD">&#160;</td>';
+					echo	'				<td class="TD">&#160;</td>';
 				}
 
 				echo	'		</tr>';

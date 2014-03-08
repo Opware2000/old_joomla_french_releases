@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: router.php 21957 2011-08-12 21:50:32Z dextercowley $
+ * @version		$Id: router.php 22363 2011-11-08 12:09:34Z github_bot $
  * @package		Joomla.Site
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -46,7 +46,7 @@ class JRouterSite extends JRouter
 		$path = substr_replace($path, '', 0, strlen(JURI::base(true)));
 
 		// Check to see if a request to a specific entry point has been made.
-		if (preg_match("#.*\.php#u", $path, $matches)) {
+		if (preg_match("#.*?\.php#u", $path, $matches)) {
 
 			// Get the current entry point path relative to the site path.
 			$scriptPath = realpath($_SERVER['SCRIPT_FILENAME'] ? $_SERVER['SCRIPT_FILENAME'] : str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']));
@@ -99,7 +99,14 @@ class JRouterSite extends JRouter
 
 			if ($app->getCfg('sef_rewrite')) {
 				//Transform the route
-				$route = str_replace('index.php/', '', $route);
+				if ($route == 'index.php')
+				{
+					$route = '';
+				}
+				else
+				{
+					$route = str_replace('index.php/', '', $route);
+				}
 			}
 		}
 

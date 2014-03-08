@@ -19,7 +19,7 @@ jimport('joomla.form.formfield');
  * @package     Joomla.Platform
  * @subpackage  Form
  * @since       11.1
- * 
+ *
  * @see         JFormfieldEditors
  * @see         JEditor
  */
@@ -64,19 +64,19 @@ class JFormFieldEditor extends JFormField
 		if ($buttons == 'true' || $buttons == 'yes' || $buttons == '1') {
 			$buttons = true;
 		}
-		else if ($buttons == 'false' || $buttons == 'no' || $buttons == '0') {
+		elseif ($buttons == 'false' || $buttons == 'no' || $buttons == '0') {
 			$buttons = false;
 		}
 		else {
 			$buttons = explode(',', $buttons);
 		}
 
-		$hide = ((string) $this->element['hide']) ? explode(',',(string) $this->element['hide']) : array();
+		$hide = ((string) $this->element['hide']) ? explode(',', (string) $this->element['hide']) : array();
 
 		// Get an editor object.
 		$editor = $this->getEditor();
 
-		return $editor->display($this->name, htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8'), $width, $height, $cols, $rows, $buttons ? (is_array($buttons) ? array_merge($buttons,$hide) : $hide) : false, $this->id, $asset, $this->form->getValue($authorField));
+		return $editor->display($this->name, htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8'), $width, $height, $cols, $rows, $buttons ? (is_array($buttons) ? array_merge($buttons, $hide) : $hide) : false, $this->id, $asset, $this->form->getValue($authorField));
 	}
 
 	/**

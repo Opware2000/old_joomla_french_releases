@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20338 2011-01-18 08:44:38Z infograf768 $
+ * @version		$Id: default.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_breadcrumbs
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -31,7 +31,7 @@ defined('_JEXEC') or die;
 		if($i < $count -2){
 			echo ' '.$separator.' ';
 		}
-	}  else if ($params->get('showLast', 1)) { // when $i == $count -1 and 'showLast' is true
+	}  elseif ($params->get('showLast', 1)) { // when $i == $count -1 and 'showLast' is true
 		if($i > 0){
 			echo ' '.$separator.' ';
 		}

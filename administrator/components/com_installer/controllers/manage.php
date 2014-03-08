@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: manage.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: manage.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -60,7 +60,7 @@ class InstallerControllerManage extends JController
 			} else {
 				if ($value == 1) {
 					$ntext = 'COM_INSTALLER_N_EXTENSIONS_PUBLISHED';
-				} else if ($value == 0) {
+				} elseif ($value == 0) {
 					$ntext = 'COM_INSTALLER_N_EXTENSIONS_UNPUBLISHED';
 				}
 				$this->setMessage(JText::plural($ntext, count($ids)));

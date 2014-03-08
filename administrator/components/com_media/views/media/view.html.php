@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21320 2011-05-11 01:01:37Z dextercowley $
+ * @version		$Id: view.html.php 22359 2011-11-07 16:31:03Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -57,7 +57,7 @@ class MediaViewMedia extends JView
 			$displayTypes = '';		// this is what the user sees
 			$filterTypes = '';		// this is what controls the logic
 			$firstType = true;
-			foreach($types AS $type) {
+			foreach($types as $type) {
 				if(!$firstType) {
 					$displayTypes .= ', ';
 					$filterTypes .= '; ';

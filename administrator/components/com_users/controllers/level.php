@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: level.php 20232 2011-01-10 01:52:10Z eddieajau $
+ * @version		$Id: level.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -57,7 +57,7 @@ class UsersControllerLevel extends JControllerForm
 			JError::raiseError(500, JText::_('JERROR_ALERTNOAUTHOR'));
 			jexit();
 		}
-		else if (empty($ids)) {
+		elseif (empty($ids)) {
 			JError::raiseWarning(500, JText::_('COM_USERS_NO_LEVELS_SELECTED'));
 		}
 		else {

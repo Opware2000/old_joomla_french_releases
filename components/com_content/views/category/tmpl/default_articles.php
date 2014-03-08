@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_articles.php 21700 2011-06-28 04:32:41Z dextercowley $
+ * @version		$Id: default_articles.php 22287 2011-10-26 05:32:17Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -67,7 +67,13 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 
 				<?php if ($date = $this->params->get('list_show_date')) : ?>
 				<th class="list-date" id="tableOrdering2">
-					<?php echo JHtml::_('grid.sort', 'COM_CONTENT_'.$date.'_DATE', 'a.created', $listDirn, $listOrder); ?>
+					<?php if ($date == "created") : ?>
+						<?php echo JHtml::_('grid.sort', 'COM_CONTENT_'.$date.'_DATE', 'a.created', $listDirn, $listOrder); ?>
+					<?php elseif ($date == "modified") : ?>
+						<?php echo JHtml::_('grid.sort', 'COM_CONTENT_'.$date.'_DATE', 'a.modified', $listDirn, $listOrder); ?>
+					<?php elseif ($date == "published") : ?>
+						<?php echo JHtml::_('grid.sort', 'COM_CONTENT_'.$date.'_DATE', 'a.publish_up', $listDirn, $listOrder); ?>
+					<?php endif; ?>
 				</th>
 				<?php endif; ?>
 

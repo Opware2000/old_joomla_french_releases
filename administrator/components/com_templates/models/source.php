@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: source.php 21320 2011-05-11 01:01:37Z dextercowley $
+ * @version		$Id: source.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_templates
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -228,7 +228,7 @@ class TemplatesModelSource extends JModelForm
 		if (!$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0444')) {
 			$this->setError(JText::_('COM_TEMPLATES_ERROR_SOURCE_FILE_NOT_UNWRITABLE'));
 			return false;
-		} else if (!$return) {
+		} elseif (!$return) {
 			$this->setError(JText::sprintf('COM_TEMPLATES_ERROR_FAILED_TO_SAVE_FILENAME', $fileName));
 			return false;
 		}

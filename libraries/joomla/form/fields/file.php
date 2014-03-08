@@ -37,9 +37,9 @@ class JFormFieldFile extends JFormField
 	 * of accepted file extensions.
 	 *
 	 * @return  string  The field input markup.
-	 * 
+	 *
 	 * @since   11.1
-	 * 
+	 *
 	 * @note    The field does not include an upload mechanism.
 	 * @see     JFormFieldMedia
 	 */
@@ -55,7 +55,7 @@ class JFormFieldFile extends JFormField
 		$onchange	= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
 
 		return '<input type="file" name="'.$this->name.'" id="'.$this->id.'"' .
-				' value=""' .
-				$accept.$disabled.$class.$size.$onchange.' />';
+			' value=""' .
+			$accept.$disabled.$class.$size.$onchange.' />';
 	}
 }

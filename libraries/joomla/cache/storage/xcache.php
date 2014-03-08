@@ -63,7 +63,7 @@ class JCacheStorageXcache extends JCacheStorage
 
 		foreach ($keys as $key) {
 
-			$namearr = explode('-',$key['name']);
+			$namearr = explode('-', $key['name']);
 
 			if ($namearr !== false && $namearr[0]==$secret &&  $namearr[1]=='cache') {
 				$group = $namearr[2];
@@ -144,8 +144,8 @@ class JCacheStorageXcache extends JCacheStorage
 		$secret = $this->_hash;
 		foreach ($keys as $key) {
 
-		if (strpos($key['name'], $secret.'-cache-'.$group.'-')===0 xor $mode != 'group')
-			xcache_unset($key['name']);
+			if (strpos($key['name'], $secret.'-cache-'.$group.'-')===0 xor $mode != 'group')
+				xcache_unset($key['name']);
 		}
 		return true;
 	}

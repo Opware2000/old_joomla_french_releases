@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 21389 2011-05-26 17:28:26Z dextercowley $
+ * @version		$Id: banner.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -39,4 +39,3 @@ abstract class BannerHelper
 		return $result;
 	}
 }
-

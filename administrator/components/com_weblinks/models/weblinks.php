@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: weblinks.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: weblinks.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -170,7 +170,7 @@ class WeblinksModelWeblinks extends JModelList
 		$published = $this->getState('filter.state');
 		if (is_numeric($published)) {
 			$query->where('a.state = '.(int) $published);
-		} else if ($published === '') {
+		} elseif ($published === '') {
 			$query->where('(a.state IN (0, 1))');
 		}
 

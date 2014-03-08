@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: users.php 20228 2011-01-10 00:52:54Z eddieajau $
+ * @version		$Id: users.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -77,7 +77,7 @@ class UsersControllerUsers extends JControllerAdmin
 			} else {
 				if ($value == 1){
 					$this->setMessage(JText::plural('COM_USERS_N_USERS_BLOCKED', count($ids)));
-				} else if ($value == 0){
+				} elseif ($value == 0){
 					$this->setMessage(JText::plural('COM_USERS_N_USERS_UNBLOCKED', count($ids)));
 				}
 			}

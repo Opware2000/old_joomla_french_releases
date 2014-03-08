@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 21484 2011-06-08 00:57:51Z dextercowley $
+ * @version		$Id: view.html.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -113,7 +113,7 @@ class ContentViewArticle extends JView
 		if ($item->params->get('show_intro','1')=='1') {
 			$item->text = $item->introtext.' '.$item->fulltext;
 		}
-		else if ($item->fulltext) {
+		elseif ($item->fulltext) {
 			$item->text = $item->fulltext;
 		}
 		else  {

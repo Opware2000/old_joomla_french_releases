@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: user.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: user.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -276,7 +276,7 @@ class UsersModelUser extends JModelAdmin
 				JError::raiseWarning(403, JText::_('COM_USERS_USERS_ERROR_CANNOT_BLOCK_SELF'));
 
 			}
-			else if ($table->load($pk)) {
+			elseif ($table->load($pk)) {
 				$old	= $table->getProperties();
 				$allow	= $user->authorise('core.edit.state', 'com_users');
 				// Don't allow non-super-admin to delete a super admin
@@ -376,7 +376,7 @@ class UsersModelUser extends JModelAdmin
 					// Ignore activated accounts.
 					unset($pks[$i]);
 				}
-				else if ($allow) {
+				elseif ($allow) {
 					$table->block		= 0;
 					$table->activation	= '';
 
@@ -437,7 +437,7 @@ class UsersModelUser extends JModelAdmin
 
 			return false;
 		}
-		else if (!empty($config)) {
+		elseif (!empty($config)) {
 			// Only run operations if a config array is present.
 			// Ensure there is a valid group.
 			$group_id = JArrayHelper::getValue($config, 'group_id', 0, 'int');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: languagefilter.php 21744 2011-07-06 08:40:23Z chdemko $
+ * @version		$Id: languagefilter.php 22363 2011-11-08 12:09:34Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -91,7 +91,7 @@ class plgSystemLanguageFilter extends JPlugin
 		$app = JFactory::getApplication();
 		$app->set('menu_associations', $this->params->get('menu_associations', 0));
 		if ($app->isSite()) {
-			self::$tag 			= JFactory::getLanguage()->getTag();
+			self::$tag = JFactory::getLanguage()->getTag();
 
 			$router = $app->getRouter();
 			// attach build rules for language SEF
@@ -99,6 +99,12 @@ class plgSystemLanguageFilter extends JPlugin
 
 			// attach parse rules for language SEF
 			$router->attachParseRule(array($this, 'parseRule'));
+
+			// Adding custom site name
+			$languages = JLanguageHelper::getLanguages('lang_code');
+			if (isset($languages[self::$tag]) && $languages[self::$tag]->sitename) {
+				JFactory::getConfig()->set('sitename', $languages[self::$tag]->sitename) ;
+			}
 		}
 	}
 
@@ -152,7 +158,14 @@ class plgSystemLanguageFilter extends JPlugin
 
 		if (self::$mode_sef) {
 			$uri->delVar('lang');
-			$uri->setPath($uri->getPath().'/'.$sef.'/');
+			if ($this->params->get('remove_default_prefix', 0) == 0 || $sef != self::$default_sef || $sef != self::$lang_codes[self::$tag]->sef)
+			{
+				$uri->setPath($uri->getPath().'/'.$sef.'/');
+			}
+			else
+			{
+				$uri->setPath($uri->getPath());
+			}
 		}
 		else {
 			$uri->setVar('lang', $sef);
@@ -177,23 +190,64 @@ class plgSystemLanguageFilter extends JPlugin
 
 			$sef = $parts[0];
 
-			if (!isset(self::$sefs[$sef])) {
-				$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
-				$uri->setPath($sef . '/' . $path);
+			$app = JFactory::getApplication();
 
-				$post = JRequest::get('POST');
-				if (JRequest::getMethod() != "POST" || count($post) == 0)
+			// Redirect only if not in post
+			$post = JRequest::get('POST');
+			if (JRequest::getMethod() != "POST" || count($post) == 0)
+			{
+				if ($this->params->get('remove_default_prefix', 0) == 0)
 				{
-					$app = JFactory::getApplication();
-					if ($app->getCfg('sef_rewrite')) {
-						$app->redirect($uri->base().$uri->toString(array('path', 'query', 'fragment')));
+					// redirect if sef does not exists
+					if (!isset(self::$sefs[$sef]))
+					{
+						// Use the current language sef or the default one
+						$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
+						$uri->setPath($sef . '/' . $path);
+
+						if ($app->getCfg('sef_rewrite')) {
+							$app->redirect($uri->base().$uri->toString(array('path', 'query', 'fragment')));
+						}
+						else {
+							$path = $uri->toString(array('path', 'query', 'fragment'));
+							$app->redirect($uri->base().'index.php'.($path ? ('/' . $path) : ''));
+						}
 					}
-					else {
-						$app->redirect($uri->base().'index.php/'.$uri->toString(array('path', 'query', 'fragment')));
+				}
+				else
+				{
+					// redirect if sef does not exists and language is not the default one
+					if (!isset(self::$sefs[$sef]) && $lang_code != self::$default_lang)
+					{
+						$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
+						$uri->setPath($sef . '/' . $path);
+
+						if ($app->getCfg('sef_rewrite')) {
+							$app->redirect($uri->base().$uri->toString(array('path', 'query', 'fragment')));
+						}
+						else {
+							$path = $uri->toString(array('path', 'query', 'fragment'));
+							$app->redirect($uri->base().'index.php'.($path ? ('/' . $path) : ''));
+						}
+					}
+					// redirect if sef is the default one
+					elseif ($sef == self::$default_sef)
+					{
+						array_shift($parts);
+						$uri->setPath(implode('/' , $parts));
+
+						if ($app->getCfg('sef_rewrite')) {
+							$app->redirect($uri->base().$uri->toString(array('path', 'query', 'fragment')));
+						}
+						else {
+							$path = $uri->toString(array('path', 'query', 'fragment'));
+							$app->redirect($uri->base().'index.php'.($path ? ('/' . $path) : ''));
+						}
 					}
 				}
 			}
-			$lang_code = self::$sefs[$sef]->lang_code;
+
+			$lang_code = isset(self::$sefs[$sef]) ? self::$sefs[$sef]->lang_code : '';
 			if ($lang_code && JLanguage::exists($lang_code)) {
 				array_shift($parts);
 				$uri->setPath(implode('/', $parts));

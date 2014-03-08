@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: item.php 21744 2011-07-06 08:40:23Z chdemko $
+ * @version		$Id: item.php 22362 2011-11-08 10:09:46Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -263,7 +263,7 @@ class MenusControllerItem extends JControllerForm
 	}
 
 	/**
-	 * Sets the type of the menu item currently being editted.
+	 * Sets the type of the menu item currently being edited.
 	 *
 	 * @return	void
 	 * @since	1.6
@@ -300,7 +300,7 @@ class MenusControllerItem extends JControllerForm
 			}
 		}
 		// If the type is alias you just need the item id from the menu item referenced.
-		else if ($title == 'alias') {
+		elseif ($title == 'alias') {
 			$app->setUserState('com_menus.edit.item.link', 'index.php?Itemid=');
 		}
 

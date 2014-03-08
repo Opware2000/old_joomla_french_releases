@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21837 2011-07-12 18:12:35Z dextercowley $
+ * @version		$Id: edit.php 22264 2011-10-20 04:52:17Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_languages
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -68,6 +68,16 @@ $canDo = LanguagesHelper::getActions();
 		<?php echo JHtml::_('sliders.panel',JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'metadata'); ?>
 			<fieldset class="adminform">
 				<?php foreach($this->form->getFieldset('metadata') as $field): ?>
+					<?php if (!$field->hidden): ?>
+						<?php echo $field->label; ?>
+					<?php endif; ?>
+					<?php echo $field->input; ?>
+				<?php endforeach; ?>
+			</fieldset>
+
+		<?php echo JHtml::_('sliders.panel',JText::_('COM_LANGUAGES_FIELDSET_SITE_NAME_LABEL'), 'site_name'); ?>
+			<fieldset class="adminform">
+				<?php foreach($this->form->getFieldset('site_name') as $field): ?>
 					<?php if (!$field->hidden): ?>
 						<?php echo $field->label; ?>
 					<?php endif; ?>

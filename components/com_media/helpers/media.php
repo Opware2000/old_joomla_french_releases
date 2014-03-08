@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: media.php 21389 2011-05-26 17:28:26Z dextercowley $
+ * @version		$Id: media.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_media
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -74,7 +74,7 @@ class MediaHelper
 		if ($size < 1024) {
 			return JText::sprintf('COM_MEDIA_FILESIZE_BYTES', $size);
 		}
-		else if ($size < 1024 * 1024) {
+		elseif ($size < 1024 * 1024) {
 			return JText::sprintf('COM_MEDIA_FILESIZE_KILOBYTES', sprintf('%01.2f', $size / 1024.0));
 		}
 		else {

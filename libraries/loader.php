@@ -9,7 +9,7 @@
 defined('JPATH_PLATFORM') or die;
 
 // Register JLoader::load as an autoload class handler.
-spl_autoload_register(array('JLoader','load'));
+spl_autoload_register(array('JLoader', 'load'));
 
 /**
  * Static class to handle loading of libraries.
@@ -193,7 +193,7 @@ abstract class JLoader
 
 		// If the class already exists do nothing.
 		if (class_exists($class)) {
-			  return;
+			return;
 		}
 
 		// If the class is registered include the file.
@@ -219,7 +219,7 @@ abstract class JLoader
  */
 function jexit($message = 0)
 {
-    exit($message);
+	exit($message);
 }
 
 /**

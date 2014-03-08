@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 22095 2011-09-17 16:07:07Z infograf768 $
+ * @version		$Id: modules.php 22338 2011-11-04 17:24:53Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -105,7 +105,7 @@ abstract class ModulesHelper
 			if (!$position)
 			{
 				$options[]	= JHtml::_('select.option', 'none', ':: '.JText::_('JNONE').' ::');
-				
+
 			}
 			else
 			{

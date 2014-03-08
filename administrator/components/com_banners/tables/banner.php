@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 21320 2011-05-11 01:01:37Z dextercowley $
+ * @version		$Id: banner.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -70,7 +70,7 @@ class BannersTableBanner extends JTable
 		if ($this->state < 0) {
 			// Set ordering to 0 if state is archived or trashed
 			$this->ordering = 0;
-		} else if (empty($this->ordering)) {
+		} elseif (empty($this->ordering)) {
 			// Set ordering to last if ordering was 0
 			$this->ordering = self::getNextOrder('`catid`=' . $this->_db->Quote($this->catid).' AND state>=0');
 		}
@@ -325,4 +325,3 @@ class BannersTableBanner extends JTable
 		return count($this->getErrors())==0;
 	}
 }
-

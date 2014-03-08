@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 21999 2011-08-23 09:52:16Z infograf768 $
+ * @version		$Id: helper.php 22363 2011-11-08 12:09:34Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_languages
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -49,8 +49,8 @@ abstract class modLanguagesHelper
 				unset($languages[$i]);
 			}
 			else {
+				$language->active = $language->lang_code == $lang->getTag();
 				if ($app->getLanguageFilter()) {
-					$language->active =  $language->lang_code == $lang->getTag();
 					if (isset($associations[$language->lang_code]) && $menu->getItem($associations[$language->lang_code])) {
 						$itemid = $associations[$language->lang_code];
 						if ($app->getCfg('sef')=='1') {
@@ -71,7 +71,7 @@ abstract class modLanguagesHelper
 					}
 				}
 				else {
-					$language->link = 'index.php';
+					$language->link = JRoute::_('&Itemid='.$homes['*']->id);
 				}
 			}
 		}

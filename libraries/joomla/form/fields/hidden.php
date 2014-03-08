@@ -18,7 +18,7 @@ jimport('joomla.form.formfield');
  * @package     Joomla.Platform
  * @subpackage  Form
  * @since       11.1
- * 
+ *
  * @link        http://www.w3.org/TR/html-markup/input.hidden.html#input.hidden
  */
 class JFormFieldHidden extends JFormField
@@ -47,7 +47,7 @@ class JFormFieldHidden extends JFormField
 		$onchange	= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
 
 		return '<input type="hidden" name="'.$this->name.'" id="'.$this->id.'"' .
-				' value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'"' .
-				$class.$disabled.$onchange.' />';
+			' value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'"' .
+			$class.$disabled.$onchange.' />';
 	}
 }

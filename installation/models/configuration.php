@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: configuration.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: configuration.php 22183 2011-09-30 09:04:32Z infograf768 $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -52,6 +52,7 @@ class JInstallationModelConfiguration extends JModel
 		/* Site Settings */
 		$registry->set('offline', 0);
 		$registry->set('offline_message', JText::_('INSTL_STD_OFFLINE_MSG'));
+		$registry->set('display_offline_message', 1);
 		$registry->set('sitename', $options->site_name);
 		$registry->set('editor', 'tinymce');
 		$registry->set('list_limit', 20);
@@ -73,7 +74,7 @@ class JInstallationModelConfiguration extends JModel
 		$registry->set('live_site', '');
 		$registry->set('secret', JUserHelper::genRandomPassword(16));
 		$registry->set('gzip', 0);
-		$registry->set('error_reporting', -1);
+		$registry->set('error_reporting', 'default');
 		$registry->set('helpurl', 'http://help.joomla.org/proxy/index.php?option=com_help&amp;keyref=Help{major}{minor}:{keyref}');
 		$registry->set('ftp_host', $options->ftp_host);
 		$registry->set('ftp_port', $options->ftp_port);
@@ -120,7 +121,7 @@ class JInstallationModelConfiguration extends JModel
 		$registry->set('tmp_path', JPATH_ROOT . '/tmp');
 
 		/* Session Setting */
-		$registry->set('lifetime', 30);
+		$registry->set('lifetime', 15);
 		$registry->set('session_handler', 'database');
 
 		// Generate the configuration class string buffer.

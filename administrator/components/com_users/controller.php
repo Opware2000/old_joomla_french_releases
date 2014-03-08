@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: controller.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -82,7 +82,7 @@ class UsersController extends JController
 
 			return false;
 		}
-		else if ($view == 'group' && $layout == 'edit' && !$this->checkEditId('com_users.edit.group', $id)) {
+		elseif ($view == 'group' && $layout == 'edit' && !$this->checkEditId('com_users.edit.group', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
 			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
 			$this->setMessage($this->getError(), 'error');
@@ -90,7 +90,7 @@ class UsersController extends JController
 
 			return false;
 		}
-		else if ($view == 'level' && $layout == 'edit' && !$this->checkEditId('com_users.edit.level', $id)) {
+		elseif ($view == 'level' && $layout == 'edit' && !$this->checkEditId('com_users.edit.level', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
 			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
 			$this->setMessage($this->getError(), 'error');

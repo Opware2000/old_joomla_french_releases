@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: item.php 22141 2011-09-23 21:51:30Z chdemko $
+ * @version		$Id: item.php 22371 2011-11-09 16:38:06Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modeladmin');
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
+jimport('joomla.tablenested');
 require_once JPATH_COMPONENT.'/helpers/menus.php';
 
 /**
@@ -131,7 +132,7 @@ class MenusModelItem extends JModelAdmin
 					return false;
 				}
 			}
-			else if ($cmd == 'm' && !$this->batchMove($commands['menu_id'], $pks))
+			elseif ($cmd == 'm' && !$this->batchMove($commands['menu_id'], $pks))
 			{
 				return false;
 			}
@@ -146,8 +147,18 @@ class MenusModelItem extends JModelAdmin
 			$done = true;
 		}
 
+		if (!empty($commands['language_id']))
+		{
+			if (!$this->batchLanguage($commands['language_id'], $pks))
+			{
+				return false;
+			}
+
+			$done = true;
+		}
+
 		if (!$done) {
-			$this->setError(JText::_('JGLOBAL_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+			$this->setError(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 			return false;
 		}
 
@@ -501,12 +512,12 @@ class MenusModelItem extends JModelAdmin
 		// Modify the form based on access controls.
 		if (!$this->canEditState((object) $data)) {
 			// Disable fields for display.
-			$form->setFieldAttribute('ordering', 'disabled', 'true');
+			$form->setFieldAttribute('menuordering', 'disabled', 'true');
 			$form->setFieldAttribute('published', 'disabled', 'true');
 
 			// Disable fields while saving.
 			// The controller has already verified this is an article you can edit.
-			$form->setFieldAttribute('ordering', 'filter', 'unset');
+			$form->setFieldAttribute('menuordering', 'filter', 'unset');
 			$form->setFieldAttribute('published', 'filter', 'unset');
 		}
 
@@ -670,6 +681,7 @@ class MenusModelItem extends JModelAdmin
 				$result->associations = array();
 			}
 		}
+		$result->menuordering = $pk;
 
 		return $result;
 	}
@@ -854,14 +866,18 @@ class MenusModelItem extends JModelAdmin
 			}
 
 			//Now check for a view manifest file
-			if (!$formFile) {
-				$path = JPath::clean($base.'/views/metadata.xml');
-				if (JFile::exists($path)) {
+			if (!$formFile)
+			{
+				if (isset($view) && JFile::exists($path = JPath::clean($base.'/views/'.$view.'/metadata.xml')))
+				{
 					$formFile = $path;
-				} else {
+				}
+				else
+				{
 					//Now check for a component manifest file
 					$path = JPath::clean($base.'/metadata.xml');
-					if (JFile::exists($path)) {
+					if (JFile::exists($path))
+					{
 						$formFile = $path;
 					}
 				}
@@ -1029,9 +1045,27 @@ class MenusModelItem extends JModelAdmin
 			$isNew = false;
 		}
 
-		// Set the new parent id if parent id not matched OR while New/Save as Copy .
-		if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {
+		// This is a new menu
+		if ($data['id'] == 0) {
 			$table->setLocation($data['parent_id'], 'last-child');
+		}
+		// The menu type has changed, set the parent to be the root menu item
+		elseif ($table->menutype != $data['menutype']) {
+			$table->setLocation(1, 'last-child');
+		}
+		// Set the new parent id if parent id not matched
+		elseif ($table->parent_id != $data['parent_id']) {
+			$table->setLocation($data['parent_id'], 'last-child');
+		}
+		// If menuordering is -1 put the item at the beginning
+		elseif ($data['menuordering'] == -1)
+		{
+			$table->setLocation($data['parent_id'], 'first-child');
+		}
+		// Don't try to put an item after itself, just leave it where it is.
+		elseif ($table->id != $data['menuordering'])
+		{
+			$table->setLocation($data['menuordering'], 'after');
 		}
 
 		// Bind the data.
@@ -1201,12 +1235,12 @@ class MenusModelItem extends JModelAdmin
 							unset($pks[$i]);
 							JError::raiseWarning(403, JText::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'));
 						}
-						else if (!$table->check()) {
+						elseif (!$table->check()) {
 							// Prune the items that failed pre-save checks.
 							unset($pks[$i]);
 							JError::raiseWarning(403, $table->getError());
 						}
-						else if (!$table->store()) {
+						elseif (!$table->store()) {
 							// Prune the items that could not be stored.
 							unset($pks[$i]);
 							JError::raiseWarning(403, $table->getError());

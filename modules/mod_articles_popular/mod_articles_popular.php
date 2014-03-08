@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mod_articles_popular.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: mod_articles_popular.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_articles_popular
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

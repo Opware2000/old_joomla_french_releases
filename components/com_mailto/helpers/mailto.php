@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mailto.php 21389 2011-05-26 17:28:26Z dextercowley $
+ * @version		$Id: mailto.php 22359 2011-11-07 16:31:03Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_mailto
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -26,7 +26,7 @@ abstract class MailtoHelper
 		$hash = sha1($url);
 		self::cleanHashes();
 		$session = JFactory::getSession();
-		$mailto_links = $session->get('com_mailto.links', Array());
+		$mailto_links = $session->get('com_mailto.links', array());
 		if(!isset($mailto_links[$hash]))
 		{
 			$mailto_links[$hash] = new stdClass();
@@ -48,7 +48,7 @@ abstract class MailtoHelper
 		$retval = false;
 		$session = JFactory::getSession();
 		self::cleanHashes();
-		$mailto_links = $session->get('com_mailto.links', Array());
+		$mailto_links = $session->get('com_mailto.links', array());
 		if(isset($mailto_links[$hash]))
 		{
 			$retval = $mailto_links[$hash]->link;
@@ -69,7 +69,7 @@ abstract class MailtoHelper
 		{
 			$past = time() - $lifetime;
 			$session = JFactory::getSession();
-			$mailto_links = $session->get('com_mailto.links', Array());
+			$mailto_links = $session->get('com_mailto.links', array());
 			foreach($mailto_links as $index=>$link)
 			{
 				if($link->expiry < $past)
@@ -84,4 +84,3 @@ abstract class MailtoHelper
 
 	}
 }
-

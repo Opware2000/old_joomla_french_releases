@@ -65,8 +65,8 @@ class JFormFieldRadio extends JFormField
 			$onclick	= !empty($option->onclick) ? ' onclick="'.$option->onclick.'"' : '';
 
 			$html[] = '<input type="radio" id="'.$this->id.$i.'" name="'.$this->name.'"' .
-					' value="'.htmlspecialchars($option->value, ENT_COMPAT, 'UTF-8').'"'
-					.$checked.$class.$onclick.$disabled.'/>';
+				' value="'.htmlspecialchars($option->value, ENT_COMPAT, 'UTF-8').'"'
+				.$checked.$class.$onclick.$disabled.'/>';
 
 			$html[] = '<label for="'.$this->id.$i.'"'.$class.'>'.JText::alt($option->text, preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname)).'</label>';
 		}
@@ -81,7 +81,7 @@ class JFormFieldRadio extends JFormField
 	 * Method to get the field options for radio buttons.
 	 *
 	 * @return  array  The field option objects.
-	 * 
+	 *
 	 * @since   11.1
 	 */
 	protected function getOptions()

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: registration.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: registration.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -71,12 +71,12 @@ class UsersControllerRegistration extends UsersController
 			$this->setMessage(JText::_('COM_USERS_REGISTRATION_SAVE_SUCCESS'));
 			$this->setRedirect(JRoute::_('index.php?option=com_users&view=login', false));
 		}
-		else if ($useractivation == 1)
+		elseif ($useractivation == 1)
 		{
 			$this->setMessage(JText::_('COM_USERS_REGISTRATION_ACTIVATE_SUCCESS'));
 			$this->setRedirect(JRoute::_('index.php?option=com_users&view=login', false));
 		}
-		else if ($return->getParam('activate'))
+		elseif ($return->getParam('activate'))
 		{
 			$this->setMessage(JText::_('COM_USERS_REGISTRATION_VERIFY_SUCCESS'));
 			$this->setRedirect(JRoute::_('index.php?option=com_users&view=registration&layout=complete', false));
@@ -164,7 +164,7 @@ class UsersControllerRegistration extends UsersController
 		if ($return === 'adminactivate'){
 			$this->setMessage(JText::_('COM_USERS_REGISTRATION_COMPLETE_VERIFY'));
 			$this->setRedirect(JRoute::_('index.php?option=com_users&view=registration&layout=complete', false));
-		} else if ($return === 'useractivate') {
+		} elseif ($return === 'useractivate') {
 			$this->setMessage(JText::_('COM_USERS_REGISTRATION_COMPLETE_ACTIVATE'));
 			$this->setRedirect(JRoute::_('index.php?option=com_users&view=registration&layout=complete', false));
 		} else {

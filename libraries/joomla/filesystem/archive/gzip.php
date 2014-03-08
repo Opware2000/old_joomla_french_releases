@@ -47,16 +47,16 @@ class JArchiveGzip extends JObject
 	var $_data = null;
 
 	/**
-	* Extract a Gzip compressed file to a given path
-	*
-	* @param   string   $archive      Path to ZIP archive to extract
-	* @param   string   $destination  Path to extract archive to
-	* @param   array    $options      Extraction options [unused]
-	*
-	* @return  boolean  True if successful
-	*
-	* @since   11.1
-	*/
+	 * Extract a Gzip compressed file to a given path
+	 *
+	 * @param   string   $archive      Path to ZIP archive to extract
+	 * @param   string   $destination  Path to extract archive to
+	 * @param   array    $options      Extraction options [unused]
+	 *
+	 * @return  boolean  True if successful
+	 *
+	 * @since   11.1
+	 */
 	public function extract($archive, $destination, $options = array ())
 	{
 		// Initialise variables.
@@ -91,7 +91,7 @@ class JArchiveGzip extends JObject
 		{
 			// New style! streams!
 			$input = JFactory::getStream();
-			$input->set('processingmethod','gz'); // use gz
+			$input->set('processingmethod', 'gz'); // use gz
 
 			if (!$input->open($archive)) {
 				$this->set('error.message', JText::_('JLIB_FILESYSTEM_GZIP_UNABLE_TO_READ'));

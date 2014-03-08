@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 	<!--
-		$Id: article.xml 21521 2011-06-10 22:21:18Z chdemko $
+		$Id: article.xml 22370 2011-11-09 16:18:06Z github_bot $
 	-->
 <form>
 	<fieldset>
@@ -334,9 +334,14 @@
 				useglobal="true"
 				extension="com_content" view="article" />
 
-		</fieldset>
 
+		</fieldset>
 	</fields>
+			<field name="xreference" type="text"
+				label="JFIELD_KEY_REFERENCE_LABEL"
+				description="JFIELD_KEY_REFERENCE_DESC" 
+				class="inputbox" size="20" />
+
 
 	<fields name="metadata">
 

@@ -22,7 +22,7 @@ class JInstallerModule extends JAdapterInstance
 {
 	/**
 	 * Install function routing
-	 * 
+	 *
 	 * @var    string
 	 * @since 11.1
 	 */
@@ -30,41 +30,41 @@ class JInstallerModule extends JAdapterInstance
 	protected $route = 'Install';
 
 	/**
-	 * 
-	 * 
-	 * @var    
+	 *
+	 *
+	 * @var
 	 * @since 11.1
 	 */
 	protected $manifest = null;
 
 	/**
-	 * 
-	 * 
-	 * @var    
+	 *
+	 *
+	 * @var
 	 * @since 11.1
 	 */
-	
+
 	protected $manifest_script = null;
 
 	/**
 	 * Extension name
-	 * 
-	 * @var    
+	 *
+	 * @var
 	 * @since   11.1
 	 */
 	protected $name = null;
 
 	/**
-	 * 
-	 * 
-	 * @var    
+	 *
+	 *
+	 * @var
 	 * @since  11.1
 	 */
 	protected $element = null;
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @var    string
 	 * @since 11.1
 	 */
@@ -112,9 +112,9 @@ class JInstallerModule extends JAdapterInstance
 
 				$client = (string)$this->manifest->attributes()->client;
 				$lang->load($extension . '.sys', $source, null, false, false)
-				||	$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), null, false, false)
-				||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
-				||	$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), $lang->getDefault(), false, false);
+					||	$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), null, false, false)
+					||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
+					||	$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), $lang->getDefault(), false, false);
 			}
 		}
 	}
@@ -179,7 +179,7 @@ class JInstallerModule extends JAdapterInstance
 			{
 				if ((string)$file->attributes()->module) {
 					$element = (string)$file->attributes()->module;
-					$this->set('element',$element);
+					$this->set('element', $element);
 
 					break;
 				}
@@ -199,9 +199,9 @@ class JInstallerModule extends JAdapterInstance
 		// we can assume that it was (badly) uninstalled
 		// If it isn't, add an entry to extensions
 		$query = 'SELECT `extension_id`' .
-				' FROM `#__extensions` ' .
-				' WHERE element = '.$db->Quote($element) .
-				' AND client_id = '.(int)$clientId;
+			' FROM `#__extensions` ' .
+			' WHERE element = '.$db->Quote($element) .
+			' AND client_id = '.(int)$clientId;
 		$db->setQuery($query);
 
 		try
@@ -229,9 +229,9 @@ class JInstallerModule extends JAdapterInstance
 			// Look for an update function or update tag
 			$updateElement = $this->manifest->update;
 			// Upgrade manually set or
- 			// Update function available or
+			// Update function available or
 			// Update tag detected
-			if ($this->parent->getUpgrade() || ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'update')) || is_a($updateElement, 'JXMLElement')) {
+			if ($this->parent->getUpgrade() || ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'update')) || is_a($updateElement, 'JXMLElement')) {
 				// Force this one
 				$this->parent->setOverwrite(true);
 				$this->parent->setUpgrade(true);
@@ -241,7 +241,7 @@ class JInstallerModule extends JAdapterInstance
 					$this->route = 'Update';
 				}
 			}
-			else if (!$this->parent->getOverwrite()) {
+			elseif (!$this->parent->getOverwrite()) {
 				// Overwrite is set
 				// We didn't have overwrite set, find an udpate function or find an update tag so lets call it safe
 				$this->parent->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_DIRECTORY', JText::_('JLIB_INSTALLER_'.$this->route), $this->parent->getPath('extension_root')));
@@ -280,7 +280,7 @@ class JInstallerModule extends JAdapterInstance
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'preflight')) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'preflight')) {
 			if ($this->parent->manifestClass->preflight($this->route, $this) === false) {
 				// Install failed, rollback changes
 				$this->parent->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
@@ -345,7 +345,7 @@ class JInstallerModule extends JAdapterInstance
 		// Parse deprecated tags
 		$this->parent->parseFiles($this->manifest->images, -1);
 
-		 // Database Processing Section
+		// Database Processing Section
 
 		$row = JTable::getInstance('extension');
 
@@ -424,7 +424,7 @@ class JInstallerModule extends JAdapterInstance
 				$this->parent->setSchemaVersion($this->manifest->update->schemas, $row->extension_id);
 			}
 		}
-		else if (strtolower($this->route) == 'update') {
+		elseif (strtolower($this->route) == 'update') {
 			if ($this->manifest->update) {
 				$result = $this->parent->parseSchemaUpdates($this->manifest->update->schemas, $row->extension_id);
 				if ($result === false) {
@@ -439,7 +439,7 @@ class JInstallerModule extends JAdapterInstance
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,$this->route)) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, $this->route)) {
 			if ($this->parent->manifestClass->{$this->route}($this) === false) {
 				// Install failed, rollback changes
 				$this->parent->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
@@ -466,7 +466,7 @@ class JInstallerModule extends JAdapterInstance
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'postflight')) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'postflight')) {
 			$this->parent->manifestClass->postflight($this->route, $this);
 		}
 
@@ -509,7 +509,7 @@ class JInstallerModule extends JAdapterInstance
 	 */
 	public function discover()
 	{
-		$results = Array();
+		$results = array();
 		$site_list = JFolder::folders(JPATH_SITE . '/modules');
 		$admin_list = JFolder::folders(JPATH_ADMINISTRATOR . '/modules');
 		$site_info = JApplicationHelper::getClientInfo('site', true);
@@ -587,7 +587,7 @@ class JInstallerModule extends JAdapterInstance
 
 	/**
 	 * Refreshes the extension table cache
-	 * 
+	 *
 	 * @return  boolean  Result of operation, true if updated, false on failure
 	 * @since   11.1
 	 */
@@ -692,7 +692,7 @@ class JInstallerModule extends JAdapterInstance
 		ob_implicit_flush(false);
 
 		// Run uninstall if possible
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'uninstall')) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'uninstall')) {
 			$this->parent->manifestClass->uninstall($this);
 		}
 
@@ -734,9 +734,9 @@ class JInstallerModule extends JAdapterInstance
 
 		// Let's delete all the module copies for the type we are uninstalling
 		$query = 'SELECT `id`' .
-				' FROM `#__modules`' .
-				' WHERE module = '.$db->Quote($row->element) .
-				' AND client_id = '.(int)$row->client_id;
+			' FROM `#__modules`' .
+			' WHERE module = '.$db->Quote($row->element) .
+			' AND client_id = '.(int)$row->client_id;
 		$db->setQuery($query);
 
 		try
@@ -757,8 +757,8 @@ class JInstallerModule extends JAdapterInstance
 
 			// Wipe out any items assigned to menus
 			$query = 'DELETE' .
-					' FROM #__modules_menu' .
-					' WHERE moduleid IN ('.$modID.')';
+				' FROM #__modules_menu' .
+				' WHERE moduleid IN ('.$modID.')';
 			$db->setQuery($query);
 			try
 			{
@@ -772,8 +772,8 @@ class JInstallerModule extends JAdapterInstance
 
 			// Wipe out any instances in the modules table
 			$query = 'DELETE' .
-					' FROM #__modules' .
-					' WHERE id IN ('.$modID.')';
+				' FROM #__modules' .
+				' WHERE id IN ('.$modID.')';
 			$db->setQuery($query);
 
 			try
@@ -830,8 +830,8 @@ class JInstallerModule extends JAdapterInstance
 
 		// Remove the entry from the #__modules_menu table
 		$query = 'DELETE' .
-				' FROM `#__modules_menu`' .
-				' WHERE moduleid='.(int)$arg['id'];
+			' FROM `#__modules_menu`' .
+			' WHERE moduleid='.(int)$arg['id'];
 		$db->setQuery($query);
 
 		try
@@ -861,8 +861,8 @@ class JInstallerModule extends JAdapterInstance
 
 		// Remove the entry from the #__modules table
 		$query = 'DELETE' .
-				' FROM `#__modules`' .
-				' WHERE id='.(int)$arg['id'];
+			' FROM `#__modules`' .
+			' WHERE id='.(int)$arg['id'];
 		$db->setQuery($query);
 		try
 		{

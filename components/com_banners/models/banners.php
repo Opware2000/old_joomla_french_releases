@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banners.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * @version		$Id: banners.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_banners
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -118,7 +118,7 @@ class BannersModelBanners extends JModelList
 				$query->where($categoryEquals);
 			}
 		}
-		else if ((is_array($categoryId)) && (count($categoryId) > 0)) {
+		elseif ((is_array($categoryId)) && (count($categoryId) > 0)) {
 			JArrayHelper::toInteger($categoryId);
 			$categoryId = implode(',', $categoryId);
 			if($categoryId != '0') {

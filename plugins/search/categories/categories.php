@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: categories.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: categories.php 22359 2011-11-07 16:31:03Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -128,7 +128,7 @@ class plgSearchCategories extends JPlugin
 				}
 
 				$return = array();
-				foreach($rows AS $key => $category) {
+				foreach($rows as $key => $category) {
 					if (searchHelper::checkNoHTML($category, $searchText, array('name', 'title', 'text'))) {
 						$return[] = $category;
 					}

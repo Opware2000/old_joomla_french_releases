@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21321 2011-05-11 01:05:59Z dextercowley $
+ * @version		$Id: edit.php 22357 2011-11-07 08:41:08Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -22,7 +22,7 @@ $lang->load( 'plg_user_profile', JPATH_ADMINISTRATOR );
 	<h1><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
 <?php endif; ?>
 
-<form id="member-profile" action="<?php echo JRoute::_('index.php?option=com_users&task=profile.save'); ?>" method="post" class="form-validate">
+<form id="member-profile" action="<?php echo JRoute::_('index.php?option=com_users&task=profile.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
 <?php foreach ($this->form->getFieldsets() as $group => $fieldset):// Iterate through the form fieldsets and display each one.?>
 	<?php $fields = $this->form->getFieldset($group);?>
 	<?php if (count($fields)):?>

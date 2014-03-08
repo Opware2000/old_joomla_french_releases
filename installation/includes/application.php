@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: application.php 22359 2011-11-07 16:31:03Z github_bot $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -333,9 +333,9 @@ class JInstallation extends JApplication
 
  		if ($db) {
  			$langfiles_disk = $langfiles;
- 			$langfiles = Array();
- 			$langfiles['admin'] = Array();
- 			$langfiles['site'] = Array();
+ 			$langfiles = array();
+ 			$langfiles['admin'] = array();
+ 			$langfiles['site'] = array();
  			$query = $db->getQuery(true);
  			$query->select('element,client_id');
  			$query->from('#__extensions');

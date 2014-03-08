@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_items.php 21834 2011-07-12 18:03:40Z dextercowley $
+ * @version		$Id: default_items.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_articles_categories
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

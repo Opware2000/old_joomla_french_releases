@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * @version		$Id: category.php 22375 2011-11-11 06:25:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -137,6 +137,8 @@ class WeblinksModelCategory extends JModelList
 		if (is_numeric($state)) {
 			$query->where('a.state = '.(int) $state);
 		}
+		// do not show trashed links on the front-end
+		$query->where('a.state != -2');
 
 		// Filter by start and end dates.
 		$nullDate = $db->Quote($db->getNullDate());
@@ -192,7 +194,7 @@ class WeblinksModelCategory extends JModelList
 
 		$id = JRequest::getVar('id', 0, '', 'int');
 		$this->setState('category.id', $id);
-
+		
 		$user = JFactory::getUser();
 		if ((!$user->authorise('core.edit.state', 'com_weblinks')) &&  (!$user->authorise('core.edit', 'com_weblinks'))){
 			// limit to published for people who can't edit or edit.state.
@@ -201,7 +203,7 @@ class WeblinksModelCategory extends JModelList
 			// Filter by start and end dates.
 			$this->setState('filter.publish_date', true);
 		}
-
+		
 		$this->setState('filter.language',$app->getLanguageFilter());
 
 		// Load the parameters.

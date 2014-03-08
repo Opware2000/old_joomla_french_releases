@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: articles.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: articles.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -180,7 +180,7 @@ class ContentModelArticles extends JModelList
 		if (is_numeric($published)) {
 			$query->where('a.state = ' . (int) $published);
 		}
-		else if ($published === '') {
+		elseif ($published === '') {
 			$query->where('(a.state = 0 OR a.state = 1)');
 		}
 
@@ -189,7 +189,7 @@ class ContentModelArticles extends JModelList
 		if (is_numeric($categoryId)) {
 			$query->where('a.catid = '.(int) $categoryId);
 		}
-		else if (is_array($categoryId)) {
+		elseif (is_array($categoryId)) {
 			JArrayHelper::toInteger($categoryId);
 			$categoryId = implode(',', $categoryId);
 			$query->where('a.catid IN ('.$categoryId.')');
@@ -208,7 +208,7 @@ class ContentModelArticles extends JModelList
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			}
-			else if (stripos($search, 'author:') === 0) {
+			elseif (stripos($search, 'author:') === 0) {
 				$search = $db->Quote('%'.$db->getEscaped(substr($search, 7), true).'%');
 				$query->where('(ua.name LIKE '.$search.' OR ua.username LIKE '.$search.')');
 			}

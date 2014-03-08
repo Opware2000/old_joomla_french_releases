@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 21097 2011-04-07 15:38:03Z dextercowley $
+ * @version		$Id: contact.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -62,7 +62,7 @@ class ContactHelper
 		if (empty($contactId) && empty($categoryId)) {
 			$assetName = 'com_contact';
 		}
-		else if (empty($contactId)) {
+		elseif (empty($contactId)) {
 			$assetName = 'com_contact.category.'.(int) $categoryId;
 		}
 		else {

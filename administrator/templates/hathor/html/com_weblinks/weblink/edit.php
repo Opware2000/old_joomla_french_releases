@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21529 2011-06-11 22:17:15Z chdemko $
+ * @version		$Id: edit.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -122,4 +122,3 @@ JHtml::_('behavior.formvalidation');
 	<div class="clr"></div>
 </form>
 </div>
-

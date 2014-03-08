@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banners.php 22249 2011-10-16 17:19:28Z dextercowley $
+ * @version		$Id: banners.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -120,7 +120,7 @@ class BannersModelBanners extends JModelList
 		$published = $this->getState('filter.state');
 		if (is_numeric($published)) {
 			$query->where('a.state = '.(int) $published);
-		} else if ($published === '') {
+		} elseif ($published === '') {
 			$query->where('(a.state IN (0, 1))');
 		}
 

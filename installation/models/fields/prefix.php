@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: prefix.php 21718 2011-07-01 07:52:13Z chdemko $
+ * @version		$Id: prefix.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Framework
  * @subpackage	Form
  * @copyright	Copyright (C) 2005 - 2010 Open Source Matters, Inc. All rights reserved.
@@ -108,4 +108,3 @@ class JFormFieldPrefix extends JFormField
 				$class.$disabled.$readonly.$onchange.$maxLength.'/>';
 	}
 }
-

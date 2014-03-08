@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: index.php 22010 2011-08-28 14:52:17Z infograf768 $
+ * @version		$Id: index.php 22198 2011-10-01 20:28:52Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.bluestork
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -74,10 +74,6 @@ if ($this->params->get('highContrast')) {
 				$output[] = '<span class="viewsite"><a href="'.JURI::root().'" target="_blank">'.JText::_('JGLOBAL_VIEW_SITE').'</a></span>';
 				// Print the logout link.
 				$output[] = '<span class="logout">' .($hideLinks ? '' : '<a href="'.$logoutLink.'">').JText::_('JLOGOUT').($hideLinks ? '' : '</a>').'</span>';
-				// Reverse rendering order for rtl display.
-				if ($this->direction == "rtl") :
-					$output = array_reverse($output);
-				endif;
 				// Output the items.
 				foreach ($output as $item) :
 				echo $item;

@@ -275,6 +275,12 @@ class JLanguage extends JObject
 	 */
 	public function _($string, $jsSafe = false, $interpretBackSlashes = true)
 	{
+		// Detect empty string
+		if ($string == '')
+		{
+			return '';
+		}
+
 		$key = strtoupper($string);
 
 		if (isset ($this->strings[$key])) {
@@ -310,9 +316,9 @@ class JLanguage extends JObject
 			// Javascript filter
 			$string = addslashes($string);
 		}
-		else if ($interpretBackSlashes) {
+		elseif ($interpretBackSlashes) {
 			// Interpret \n and \t characters
-			$string = str_replace(array('\\\\','\t','\n'),array("\\", "\t","\n"),$string);
+			$string = str_replace(array('\\\\', '\t', '\n'), array("\\", "\t", "\n"), $string);
 		}
 
 		return $string;
@@ -772,7 +778,7 @@ class JLanguage extends JObject
 
 		if ($version >= '5.3.1') {
 			$contents = file_get_contents($filename);
-			$contents = str_replace('_QQ_','"\""',$contents);
+			$contents = str_replace('_QQ_', '"\""', $contents);
 			$strings = @parse_ini_string($contents);
 		}
 		else {
@@ -781,13 +787,13 @@ class JLanguage extends JObject
 			if ($version == '5.3.0' && is_array($strings)) {
 				foreach($strings as $key => $string)
 				{
-					$strings[$key]=str_replace('_QQ_','"',$string);
+					$strings[$key]=str_replace('_QQ_', '"', $string);
 				}
 			}
 		}
 
 		// Restore error tracking to what it was before.
-		ini_set('track_errors',$track_errors);
+		ini_set('track_errors', $track_errors);
 
 		if (!is_array($strings)) {
 			$strings = array();
@@ -795,7 +801,7 @@ class JLanguage extends JObject
 
 		if ($this->debug) {
 			// Initialise variables for manually parsing the file for common errors.
-			$blacklist	= array('YES','NO','NULL','FALSE','ON','OFF','NONE','TRUE');
+			$blacklist	= array('YES', 'NO', 'NULL', 'FALSE', 'ON', 'OFF', 'NONE', 'TRUE');
 			$regex		= '/^(|(\[[^\]]*\])|([A-Z][A-Z0-9_\-]*\s*=(\s*(("[^"]*")|(_QQ_)))+))\s*(;.*)?$/';
 			$this->debug = false;
 			$errors		= array();
@@ -829,7 +835,7 @@ class JLanguage extends JObject
 					$this->errorfiles[$filename] = $filename . '&#160;: error(s) in line(s) ' . implode(', ', $errors);
 				}
 			}
-			else if ($php_errormsg) {
+			elseif ($php_errormsg) {
 				// We didn't find any errors but there's probably a parse notice.
 				$this->errorfiles['PHP'.$filename] = 'PHP parser errors :'.$php_errormsg;
 			}

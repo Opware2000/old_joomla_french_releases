@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 21518 2011-06-10 21:38:12Z chdemko $
+ * @version		$Id: application.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_config
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -152,7 +152,7 @@ class ConfigControllerApplication extends JController
 
 		if (($data = file_get_contents('http://help.joomla.org/helpsites.xml')) === false) {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_ERROR_HELPREFRESH_FETCH'), 'error');
-		} else if (!JFile::write(JPATH_BASE . '/help/helpsites.xml', $data)) {
+		} elseif (!JFile::write(JPATH_BASE . '/help/helpsites.xml', $data)) {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_ERROR_HELPREFRESH_ERROR_STORE'), 'error');
 		} else {
 			$this->setRedirect('index.php?option=com_config', JText::_('COM_CONFIG_HELPREFRESH_SUCCESS'));

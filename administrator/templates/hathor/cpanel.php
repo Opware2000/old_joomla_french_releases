@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: cpanel.php 21721 2011-07-01 08:48:47Z chdemko $
+ * @version		$Id: cpanel.php 22198 2011-10-01 20:28:52Z chdemko $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -109,10 +109,6 @@ $file = 'language/'.$lang->getTag().'/'.$lang->getTag().'.css';
 			$output[] = '<span class="viewsite"><a href="'.JURI::root().'" target="_blank">'.JText::_('JGLOBAL_VIEW_SITE').'</a></span>';
 			// Print the logout link.
 			$output[] = '<span class="logout">' .($hideLinks ? '' : '<a href="'.$logoutLink.'">').JText::_('JLOGOUT').($hideLinks ? '' : '</a>').'</span>';
-			// Reverse rendering order for rtl display.
-			if ($this->direction == "rtl") :
-				$output = array_reverse($output);
-			endif;
 			// Output the items.
 			foreach ($output as $item) :
 			echo $item;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: registration.php 22039 2011-09-06 14:23:17Z infograf768 $
+ * @version		$Id: registration.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -43,10 +43,10 @@ class UsersModelRegistration extends JModelForm
 
 		// Get the user id based on the token.
 		$db->setQuery(
-			'SELECT `id` FROM `#__users`' .
-			' WHERE `activation` = '.$db->Quote($token) .
-			' AND `block` = 1' .
-			' AND `lastvisitDate` = '.$db->Quote($db->getNullDate())
+			'SELECT '.$db->nameQuote('id').' FROM '.$db->nameQuote('#__users') .
+			' WHERE '.$db->nameQuote('activation').' = '.$db->Quote($token) .
+			' AND '.$db->nameQuote('block').' = 1' .
+			' AND '.$db->nameQuote('lastvisitDate').' = '.$db->Quote($db->getNullDate())
 		);
 		$userId = (int) $db->loadResult();
 
@@ -116,7 +116,7 @@ class UsersModelRegistration extends JModelForm
 		}
 
 		//Admin activation is on and admin is activating the account
-		else if (($userParams->get('useractivation') == 2) && $user->getParam('activate', 0))
+		elseif (($userParams->get('useractivation') == 2) && $user->getParam('activate', 0))
 		{
 			$user->set('activation', '');
 			$user->set('block', '0');
@@ -263,9 +263,9 @@ class UsersModelRegistration extends JModelForm
 	protected function preprocessForm(JForm $form, $data, $group = 'user')
 	{
 		$userParams	= JComponentHelper::getParams('com_users');
-		
+
 		//Add the choice for site language at registration time
-		if ($userParams->get('site_language') == 1 && $userParams->get('frontend_userparams') == 1) 
+		if ($userParams->get('site_language') == 1 && $userParams->get('frontend_userparams') == 1)
 		{
 			$form->loadFile('sitelang',false);
 		}
@@ -368,7 +368,7 @@ class UsersModelRegistration extends JModelForm
 				$data['password_clear']
 			);
 		}
-		else if ($useractivation == 1)
+		elseif ($useractivation == 1)
 		{
 			// Set the link to activate the user account.
 			$uri = JURI::getInstance();
@@ -424,11 +424,12 @@ class UsersModelRegistration extends JModelForm
 			if (count($sendEmail) > 0) {
 				$jdate = new JDate();
 				// Build the query to add the messages
-				$q = "INSERT INTO `#__messages` (`user_id_from`, `user_id_to`, `date_time`, `subject`, `message`)
-					VALUES ";
+				$q = "INSERT INTO ".$db->nameQuote('#__messages')." (".$db->nameQuote('user_id_from').
+				", ".$db->nameQuote('user_id_to').", ".$db->nameQuote('date_time').
+				", ".$db->nameQuote('subject').", ".$db->nameQuote('message').") VALUES ";
 				$messages = array();
 				foreach ($sendEmail as $userid) {
-					$messages[] = "(".$userid.", ".$userid.", '".$jdate->toMySQL()."', '".JText::_('COM_USERS_MAIL_SEND_FAILURE_SUBJECT')."', '".JText::sprintf('COM_USERS_MAIL_SEND_FAILURE_BODY', $return, $data['username'])."')";
+					$messages[] = "(".$userid.", ".$userid.", '".$db->toSQLDate($jdate)."', '".JText::_('COM_USERS_MAIL_SEND_FAILURE_SUBJECT')."', '".JText::sprintf('COM_USERS_MAIL_SEND_FAILURE_BODY', $return, $data['username'])."')";
 				}
 				$q .= implode(',', $messages);
 				$db->setQuery($q);
@@ -439,7 +440,7 @@ class UsersModelRegistration extends JModelForm
 
 		if ($useractivation == 1)
 			return "useractivate";
-		else if ($useractivation == 2)
+		elseif ($useractivation == 2)
 			return "adminactivate";
 		else
 			return $user->id;

@@ -1,6 +1,6 @@
 <?php
 /**
- * version $Id: view.html.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * version $Id: view.html.php 22359 2011-11-07 16:31:03Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_newsfeeds
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -142,7 +142,7 @@ class NewsfeedsViewNewsfeed extends JView
 		// Check the access to the newsfeed
 		$levels = $user->getAuthorisedViewLevels();
 
-		if (!in_array($item->access, $levels) OR ((in_array($item->access,$levels) AND (!in_array($item->category_access, $levels))))) {
+		if (!in_array($item->access, $levels) or ((in_array($item->access,$levels) and (!in_array($item->category_access, $levels))))) {
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}

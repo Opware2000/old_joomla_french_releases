@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: offline.php 20717 2011-02-15 16:50:33Z infograf768 $
+ * @version		$Id: offline.php 22183 2011-09-30 09:04:32Z infograf768 $
  * @package		Joomla.Site
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
@@ -26,9 +26,15 @@ $app = JFactory::getApplication();
 		<h1>
 			<?php echo $app->getCfg('sitename'); ?>
 		</h1>
-	<p>
-		<?php echo $app->getCfg('offline_message'); ?>
-	</p>
+	<?php if ($app->getCfg('display_offline_message', 1) == 1 && str_replace(' ', '', $app->getCfg('offline_message')) != ''): ?>
+		<p>
+			<?php echo $app->getCfg('offline_message'); ?>
+		</p>
+	<?php elseif ($app->getCfg('display_offline_message', 1) == 2 && str_replace(' ', '', JText::_('JOFFLINE_MESSAGE')) != ''): ?>
+		<p>
+			<?php echo JText::_('JOFFLINE_MESSAGE'); ?>
+		</p>
+	<?php  endif; ?>
 	<form action="<?php echo JRoute::_('index.php', true); ?>" method="post" id="form-login">
 	<fieldset class="input">
 		<p id="form-login-username">

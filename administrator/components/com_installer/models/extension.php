@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: extension.php 22054 2011-09-08 16:40:23Z chdemko $
+ * @version		$Id: extension.php 22258 2011-10-18 09:02:07Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -167,8 +167,9 @@ class InstallerModel extends JModelList
 			if (!in_array($item->type, array('language', 'template', 'library'))) {
 				$item->name = JText::_($item->name);
 			}
+			settype($item->description, 'string');
 			if (!in_array($item->type, array('language'))) {
-				$item->description = JText::_(@$item->description);
+				$item->description = JText::_($item->description);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: group.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: group.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -45,10 +45,10 @@ class JFormFieldGroup extends JFormField
 
 		$dbo = JFactory::getDbo();
 		$query = $dbo->getQuery(true);
-		$query->select('DISTINCT `folder`');
+		$query->select('DISTINCT folder');
 		$query->from('#__extensions');
-		$query->where('`folder` != '.$dbo->quote(''));
-		$query->order('`folder`');
+		$query->where('folder != '.$dbo->quote(''));
+		$query->order('folder');
 		$dbo->setQuery((string)$query);
 		$folders = $dbo->loadResultArray();
 

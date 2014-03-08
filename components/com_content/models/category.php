@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 21822 2011-07-12 10:40:17Z infograf768 $
+ * @version		$Id: category.php 22367 2011-11-08 18:19:16Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -81,6 +81,7 @@ class ContentModelCategory extends JModelList
 				'access', 'a.access', 'access_level',
 				'created', 'a.created',
 				'created_by', 'a.created_by',
+				'modified', 'a.modified',
 				'ordering', 'a.ordering',
 				'featured', 'a.featured',
 				'language', 'a.language',
@@ -137,6 +138,9 @@ class ContentModelCategory extends JModelList
 
 			$query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')');
 			$query->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
+		}
+		else {
+			$this->setState('filter.published', array(0, 1, 2));
 		}
 
 		// process show_noauth parameter
@@ -409,7 +413,7 @@ class ContentModelCategory extends JModelList
 				JArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
 			}
 		}
-		
+
 		return $this->_children;
 	}
 }

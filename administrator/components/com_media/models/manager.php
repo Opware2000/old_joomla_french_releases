@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: manager.php 22155 2011-09-25 21:04:08Z dextercowley $
+ * @version		$Id: manager.php 22379 2011-11-13 23:12:49Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -79,10 +79,13 @@ class MediaModelManager extends JModel
 			sort($options);
 		}
 
+		// Get asset and author id (use integer filter)
+		$input = JFactory::getApplication()->input;
+		$asset = $input->get('asset', 0, 'integer');
+		$author = $input->get('author', 0, 'integer');
+
 		// Create the drop-down folder select list
-		$asset = JRequest::getVar('asset');
-		$author = JRequest::getVar('author');
-		$list = JHtml::_('select.genericlist',  $options, 'folderlist', 'class="inputbox" size="1" onchange="ImageManager.setFolder(this.options[this.selectedIndex].value, "'.htmlspecialchars($asset).'","'.htmlspecialchars($author).'")" ', 'value', 'text', $base);
+		$list = JHtml::_('select.genericlist',  $options, 'folderlist', 'class="inputbox" size="1" onchange="ImageManager.setFolder(this.options[this.selectedIndex].value, "'.$asset.'","'.$author.'")" ', 'value', 'text', $base);
 
 		return $list;
 	}

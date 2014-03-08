@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 22066 2011-09-13 09:03:39Z infograf768 $
+ * @version		$Id: default.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_login
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 
 // Get the login modules
-// If you want to use a completely different login module change the value of name 
+// If you want to use a completely different login module change the value of name
 // in your layout override.
 
 $loginmodule =LoginModelLogin::getLoginModule('mod_login');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: module.php 21670 2011-06-24 08:11:47Z chdemko $
+ * @version		$Id: module.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_modules
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -366,7 +366,7 @@ class ModulesModelModule extends JModelAdmin
 				// If this is a new module, assign to all pages.
 				$assignment = 0;
 			}
-			else if (empty($assigned)) {
+			elseif (empty($assigned)) {
 				// For an existing module it is assigned to none.
 				$assignment = '-';
 			}
@@ -374,7 +374,7 @@ class ModulesModelModule extends JModelAdmin
 				if ($assigned[0] > 0) {
 					$assignment = +1;
 				}
-				else if ($assigned[0] < 0) {
+				elseif ($assigned[0] < 0) {
 					$assignment = -1;
 				}
 				else {
@@ -640,7 +640,7 @@ class ModulesModelModule extends JModelAdmin
 					return false;
 				}
 			}
-			else if (!empty($data['assigned'])) {
+			elseif (!empty($data['assigned'])) {
 				// Get the sign of the number.
 				$sign = $assignment < 0 ? -1 : +1;
 

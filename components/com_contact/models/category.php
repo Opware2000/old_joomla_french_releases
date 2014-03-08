@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 22092 2011-09-17 05:31:40Z infograf768 $
+ * @version		$Id: category.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_contact
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -150,14 +150,14 @@ class ContactModelCategory extends JModelList
 		// Add the list ordering clause.
 		$app	= JFactory::getApplication();
 		$params	= JComponentHelper::getParams('com_contact');
-		
+
 
 		$menuParams = new JRegistry;
 
 		if ($menu = $app->getMenu()->getActive()) {
 			$menuParams->loadJSON($menu->params);
 		}
-		
+
 		$mergedParams = clone $params;
 		$mergedParams->merge($menuParams);
 
@@ -167,7 +167,7 @@ class ContactModelCategory extends JModelList
 		{
 			$query->order($db->getEscaped($this->getState('list.ordering', 'a.ordering')).' '.$db->getEscaped($this->getState('list.direction', 'ASC')));
 		}
-		else if ($initialSort != 'sortname'){
+		elseif ($initialSort != 'sortname'){
 			$query->order('a.'.$initialSort);
 		}
 		else {
@@ -176,7 +176,7 @@ class ContactModelCategory extends JModelList
 			$query->order('a.sortname3');
 			// Fall back to ordering if the data are not complete or there are matches.
 			$query->order('a.ordering');
-			
+
 		}
 		return $query;
 	}

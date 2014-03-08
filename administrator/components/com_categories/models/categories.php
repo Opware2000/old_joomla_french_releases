@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: categories.php 21766 2011-07-08 12:20:23Z eddieajau $
+ * @version		$Id: categories.php 22379 2011-11-13 23:12:49Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_categories
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -69,7 +69,7 @@ class CategoriesModelCategories extends JModelList
 		$app		= JFactory::getApplication();
 		$context	= $this->context;
 
-		$extension = $app->getUserStateFromRequest('com_categories.categories.filter.extension', 'extension', 'com_content');
+		$extension = $app->getUserStateFromRequest('com_categories.categories.filter.extension', 'extension', 'com_content', 'cmd');
 
 		$this->setState('filter.extension', $extension);
 		$parts = explode('.',$extension);
@@ -188,7 +188,7 @@ class CategoriesModelCategories extends JModelList
 		if (is_numeric($published)) {
 			$query->where('a.published = ' . (int) $published);
 		}
-		else if ($published === '') {
+		elseif ($published === '') {
 			$query->where('(a.published IN (0, 1))');
 		}
 
@@ -198,7 +198,7 @@ class CategoriesModelCategories extends JModelList
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			}
-			else if (stripos($search, 'author:') === 0) {
+			elseif (stripos($search, 'author:') === 0) {
 				$search = $db->Quote('%'.$db->getEscaped(substr($search, 7), true).'%');
 				$query->where('(ua.name LIKE '.$search.' OR ua.username LIKE '.$search.')');
 			}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 20196 2011-01-09 02:40:25Z ian $
+ * @version		$Id: default.php 22359 2011-11-07 16:31:03Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -21,7 +21,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers');
 	</h1>
 	<?php endif; ?>
 
-	<?php if ($this->params->get('show_category_title', 1) OR $this->params->get('page_subheading')) : ?>
+	<?php if ($this->params->get('show_category_title', 1) or $this->params->get('page_subheading')) : ?>
 	<h2>
 		<?php echo $this->escape($this->params->get('page_subheading')); ?>
 		<?php if ($this->params->get('show_category_title')) : ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_batch.php 21447 2011-06-04 17:39:55Z dextercowley $
+ * @version		$Id: default_batch.php 22234 2011-10-13 09:28:17Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_menus
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -18,7 +18,9 @@ $published = $this->state->get('filter.published');
 ?>
 <fieldset class="batch">
 	<legend><?php echo JText::_('COM_MENUS_BATCH_OPTIONS');?></legend>
+	<p><?php echo JText::_('COM_MENUS_BATCH_TIP'); ?></p>
 	<?php echo JHtml::_('batch.access');?>
+	<?php echo JHtml::_('batch.language'); ?>
 
 	<?php if ($published >= 0) : ?>
 		<label id="batch-choose-action-lbl" for="batch-choose-action">
@@ -32,10 +34,11 @@ $published = $this->state->get('filter.published');
 			<?php echo JHtml::_( 'select.radiolist', $options, 'batch[move_copy]', '', 'value', 'text', 'm'); ?>
 		</fieldset>
 	<?php endif; ?>
+
 	<button type="submit" onclick="Joomla.submitbutton('item.batch');">
 		<?php echo JText::_('JGLOBAL_BATCH_PROCESS'); ?>
 	</button>
-	<button type="button" onclick="document.id('batch-menu-id').value='';document.id('batch-access').value=''">
+	<button type="button" onclick="document.id('batch-menu-id').value='';document.id('batch-access').value='';document.id('batch-language-id').value=''">
 		<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>
 	</button>
 </fieldset>

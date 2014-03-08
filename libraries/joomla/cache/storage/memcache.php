@@ -132,7 +132,7 @@ class JCacheStorageMemcache extends JCacheStorage
 				if (empty($key)) {
 					continue;
 				}
-				$namearr=explode('-',$key->name);
+				$namearr=explode('-', $key->name);
 
 				if ($namearr !== false && $namearr[0]==$secret &&  $namearr[1]=='cache') {
 
@@ -253,7 +253,7 @@ class JCacheStorageMemcache extends JCacheStorage
 		foreach ($index as $key=>$value) {
 
 			if (strpos($value->name, $secret.'-cache-'.$group.'-')===0 xor $mode != 'group') {
-				self::$_db->delete($value->name,0);
+				self::$_db->delete($value->name, 0);
 				unset ($index[$key]);
 			}
 		}
@@ -280,11 +280,11 @@ class JCacheStorageMemcache extends JCacheStorage
 		$memcache = new Memcache;
 		$memcachetest = @$memcache->connect($host, $port);
 
-		 if (!$memcachetest) {
-		 	return false;
-		 } else {
-		 	return true;
-		 }
+		if (!$memcachetest) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -298,7 +298,7 @@ class JCacheStorageMemcache extends JCacheStorage
 	 *
 	 * @since   11.1
 	 */
-	public function lock($id,$group,$locktime)
+	public function lock($id, $group, $locktime)
 	{
 		$returning = new stdClass;
 		$returning->locklooped = false;
@@ -334,8 +334,8 @@ class JCacheStorageMemcache extends JCacheStorage
 			while ($data_lock === FALSE) {
 
 				if ($lock_counter > $looptime) {
-						$returning->locked 		= false;
-						$returning->locklooped 	= true;
+					$returning->locked 		= false;
+					$returning->locklooped 	= true;
 					break;
 				}
 
@@ -361,7 +361,7 @@ class JCacheStorageMemcache extends JCacheStorage
 	 *
 	 * @since   11.1
 	 */
-	public function unlock($id,$group=null)
+	public function unlock($id, $group=null)
 	{
 		$unlock = false;
 
@@ -373,8 +373,8 @@ class JCacheStorageMemcache extends JCacheStorage
 		if ($index === false) {$index = array();}
 
 		foreach ($index as $key=>$value){
-		if ($value->name == $cache_id) unset ($index[$key]);
-		break;
+			if ($value->name == $cache_id) unset ($index[$key]);
+			break;
 		}
 		self::$_db->replace($this->_hash.'-index', $index, 0, 0);
 		$this->unlockindex();

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version		$Id: default_items.php 20788 2011-02-20 05:54:44Z infograf768 $
+ * @version		$Id: default_items.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

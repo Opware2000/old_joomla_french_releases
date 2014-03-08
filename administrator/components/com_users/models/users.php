@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: users.php 21320 2011-05-11 01:01:37Z dextercowley $
+ * @version		$Id: users.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -236,7 +236,7 @@ class UsersModelUsers extends JModelList
 			if ($active == '0') {
 				$query->where('a.activation = '.$db->quote(''));
 			}
-			else if ($active == '1') {
+			elseif ($active == '1') {
 				$query->where('LENGTH(a.activation) = 32');
 			}
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: links.php 20230 2011-01-10 01:43:49Z eddieajau $
+ * @version		$Id: links.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_redirect
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: ldap.php 21322 2011-05-11 01:10:29Z dextercowley $
+ * @version		$Id: ldap.php 22359 2011-11-07 16:31:03Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -35,7 +35,7 @@ class plgAuthenticationLdap extends JPlugin
 		// Initialise variables.
 		$userdetails = null;
 		$success = 0;
-		$userdetails = Array();
+		$userdetails = array();
 
 		// For JLog
 		$response->type = 'LDAP';

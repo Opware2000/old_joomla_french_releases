@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default_navigation.php 21553 2011-06-17 14:28:21Z chdemko $
+ * @version		$Id: default_navigation.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_admin
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -40,4 +40,3 @@ defined('_JEXEC') or die;
 	</div>
 	<div class="clr"></div>
 </div>
-

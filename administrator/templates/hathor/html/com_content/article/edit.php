@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: edit.php 21529 2011-06-11 22:17:15Z chdemko $
+ * @version		$Id: edit.php 22370 2011-11-09 16:18:06Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	Templates.hathor
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -138,6 +138,13 @@ JHtml::_('behavior.keepalive');
 					</ul>
 				</fieldset>
 			<?php endforeach; ?>
+				<fieldset class="panelform">
+				<ul class="adminformlist">
+						<li><?php echo $this->form->getLabel('xreference'); ?>
+						<?php echo $this->form->getInput('xreference'); ?></li>
+				</ul>
+				</fieldset>
+			
 
 			<?php echo JHtml::_('sliders.panel',JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
 			<fieldset class="panelform">

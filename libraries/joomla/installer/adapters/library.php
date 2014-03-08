@@ -39,10 +39,10 @@ class JInstallerLibrary extends JAdapterInstance
 		$name = strtolower((string)$this->manifest->libraryname);
 		$lang = JFactory::getLanguage();
 		$source = $path ? $path : JPATH_PLATFORM . "/$name";
-			$lang->load($extension . '.sys', $source, null, false, false)
-		||	$lang->load($extension . '.sys', JPATH_SITE, null, false, false)
-		||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
-		||	$lang->load($extension . '.sys', JPATH_SITE, $lang->getDefault(), false, false);
+		$lang->load($extension . '.sys', $source, null, false, false)
+			||	$lang->load($extension . '.sys', JPATH_SITE, null, false, false)
+			||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
+			||	$lang->load($extension . '.sys', JPATH_SITE, $lang->getDefault(), false, false);
 	}
 
 	/**
@@ -57,11 +57,11 @@ class JInstallerLibrary extends JAdapterInstance
 		// Get the extension manifest object
 		$this->manifest = $this->parent->getManifest();
 
-		 // Manifest Document Setup Section
+		// Manifest Document Setup Section
 
 		// Set the extensions name
 		$name = JFilterInput::getInstance()->clean((string)$this->manifest->name, 'string');
-		$element = str_replace('.xml','',basename($this->parent->getPath('manifest')));
+		$element = str_replace('.xml', '', basename($this->parent->getPath('manifest')));
 		$this->set('name', $name);
 		$this->set('element', $element);
 
@@ -103,10 +103,10 @@ class JInstallerLibrary extends JAdapterInstance
 		}
 		else
 		{
-			$this->parent->setPath('extension_root', JPATH_PLATFORM . '/' . implode(DS,explode('/',$group)));
+			$this->parent->setPath('extension_root', JPATH_PLATFORM . '/' . implode(DS, explode('/', $group)));
 		}
 
-		 // Filesystem Processing Section
+		// Filesystem Processing Section
 
 		// If the plugin directory does not exist, let's create it
 		$created = false;
@@ -162,7 +162,7 @@ class JInstallerLibrary extends JAdapterInstance
 		// Finalization and Cleanup Section
 
 		// Lastly, we will copy the manifest file to its appropriate place.
-		$manifest = Array();
+		$manifest = array();
 		$manifest['src'] = $this->parent->getPath('manifest');
 		$manifest['dest'] = JPATH_MANIFESTS . '/libraries/' . basename($this->parent->getPath('manifest'));
 		if (!$this->parent->copyFiles(array($manifest), true))
@@ -192,7 +192,7 @@ class JInstallerLibrary extends JAdapterInstance
 		// Set the extensions name
 		$name = (string)$this->manifest->name;
 		$name = JFilterInput::getInstance()->clean($name, 'string');
-		$element = str_replace('.xml','',basename($this->parent->getPath('manifest')));
+		$element = str_replace('.xml', '', basename($this->parent->getPath('manifest')));
 		$this->set('name', $name);
 		$this->set('element', $element);
 		$installer = new JInstaller; // we don't want to compromise this instance!
@@ -309,8 +309,8 @@ class JInstallerLibrary extends JAdapterInstance
 	 */
 	public function discover()
 	{
-		$results = Array();
-		$file_list = JFolder::files(JPATH_MANIFESTS . '/libraries','\.xml$');
+		$results = array();
+		$file_list = JFolder::files(JPATH_MANIFESTS . '/libraries', '\.xml$');
 		foreach ($file_list as $file)
 		{
 			$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_MANIFESTS.'/libraries/'.$file);

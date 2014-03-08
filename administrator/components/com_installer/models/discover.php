@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: discover.php 21909 2011-07-20 16:33:40Z infograf768 $
+ * @version		$Id: discover.php 22359 2011-11-07 16:31:03Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -75,11 +75,11 @@ class InstallerModelDiscover extends InstallerModel
 		$dbo = JFactory::getDBO();
 		$dbo->setQuery($query);
 		$installedtmp = $dbo->loadObjectList();
-		$extensions = Array();
+		$extensions = array();
 
 		foreach($installedtmp as $install)
 		{
-			$key = implode(':', Array($install->type, $install->element, $install->folder, $install->client_id));
+			$key = implode(':', array($install->type, $install->element, $install->folder, $install->client_id));
 			$extensions[$key] = $install;
 		}
 		unset($installedtmp);
@@ -87,7 +87,7 @@ class InstallerModelDiscover extends InstallerModel
 
 		foreach($results as $result) {
 			// check if we have a match on the element
-			$key = implode(':', Array($result->type, $result->element, $result->folder, $result->client_id));
+			$key = implode(':', array($result->type, $result->element, $result->folder, $result->client_id));
 			if(!array_key_exists($key, $extensions))
 			{
 				$result->store(); // put it into the table
@@ -107,7 +107,7 @@ class InstallerModelDiscover extends InstallerModel
 		$eid = JRequest::getVar('cid',0);
 		if (is_array($eid) || $eid) {
 			if (!is_array($eid)) {
-				$eid = Array($eid);
+				$eid = array($eid);
 			}
 			JArrayHelper::toInteger($eid);
 			$app = JFactory::getApplication();

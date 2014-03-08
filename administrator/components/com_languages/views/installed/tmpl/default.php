@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21529 2011-06-11 22:17:15Z chdemko $
+ * @version		$Id: default.php 22295 2011-10-28 06:32:25Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_languages
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -33,6 +33,9 @@ $clientId	= $this->state->get('filter.client_id', 0);
 				</th>
 				<th width="25%" class="title">
 					<?php echo JText::_('COM_LANGUAGES_HEADING_LANGUAGE'); ?>
+				</th>
+				<th>
+					<?php echo JText::_('COM_LANGUAGES_FIELD_LANG_TAG_LABEL'); ?>
 				</th>
 				<th>
 					<?php echo JText::_('JCLIENT'); ?>
@@ -76,6 +79,9 @@ $clientId	= $this->state->get('filter.client_id', 0);
 				</td>
 				<td width="25%">
 					<?php echo $this->escape($row->name); ?>
+				</td>
+				<td align="center">
+					<?php echo $this->escape($row->language); ?>
 				</td>
 				<td align="center">
 					<?php echo $client;?>

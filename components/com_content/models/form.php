@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: form.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * @version		$Id: form.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -90,7 +90,7 @@ class ContentModelForm extends ContentModelArticle
 			$value->params->set('access-edit', true);
 		}
 		// Now check if edit.own is available.
-		else if (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
+		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
 			// Check for a valid user and that they are the owner.
 			if ($userId == $value->created_by) {
 				$value->params->set('access-edit', true);

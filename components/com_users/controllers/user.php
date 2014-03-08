@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: user.php 20899 2011-03-07 20:56:09Z ian $
+ * @version		$Id: user.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	com_users
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

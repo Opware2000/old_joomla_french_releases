@@ -28,7 +28,7 @@ class JUpdaterExtension extends JUpdateAdapter
 	 *
 	 * @since   11.1
 	 */
-	protected function _startElement($parser, $name, $attrs = Array()) {
+	protected function _startElement($parser, $name, $attrs = array()) {
 		array_push($this->_stack, $name);
 		$tag = $this->_getStackLocation();
 		// reset the data
@@ -39,6 +39,8 @@ class JUpdaterExtension extends JUpdateAdapter
 				$this->current_update = JTable::getInstance('update');
 				$this->current_update->update_site_id = $this->_update_site_id;
 				$this->current_update->detailsurl = $this->_url;
+				$this->current_update->folder = "";
+				$this->current_update->client_id = 1;
 				break;
 			// Don't do anything
 			case 'UPDATES':
@@ -72,7 +74,7 @@ class JUpdaterExtension extends JUpdateAdapter
 				$ver = new JVersion;
 				$product = strtolower(JFilterInput::getInstance()->clean($ver->PRODUCT, 'cmd')); // lower case and remove the exclamation mark
 				// Check that the product matches and that the version matches (optionally a regexp)
-				if($product == $this->current_update->targetplatform['NAME'] && preg_match('/'.$this->current_update->targetplatform['VERSION'].'/',$ver->RELEASE)) {
+				if($product == $this->current_update->targetplatform['NAME'] && preg_match('/'.$this->current_update->targetplatform['VERSION'].'/', $ver->RELEASE)) {
 					// Target platform isn't a valid field in the update table so unset it to prevent J! from trying to store it
 					unset($this->current_update->targetplatform);
 					if(isset($this->latest)) {
@@ -144,16 +146,16 @@ class JUpdaterExtension extends JUpdateAdapter
 		while ($data = fread($fp, 8192)) {
 			if (!xml_parse($this->xml_parser, $data, feof($fp))) {
 				die(sprintf("XML error: %s at line %d",
-							xml_error_string(xml_get_error_code($this->xml_parser)),
-							xml_get_current_line_number($this->xml_parser)));
+						xml_error_string(xml_get_error_code($this->xml_parser)),
+						xml_get_current_line_number($this->xml_parser)));
 			}
 		}
 		xml_parser_free($this->xml_parser);
 		if(isset($this->latest)) {
-			$updates = Array($this->latest);
+			$updates = array($this->latest);
 		} else {
-			$updates = Array();
+			$updates = array();
 		}
-		return Array('update_sites'=>Array(),'updates'=>$updates);
+		return array('update_sites'=>array(), 'updates'=>$updates);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: manage.php 21650 2011-06-23 05:29:17Z chdemko $
+ * @version		$Id: manage.php 22234 2011-10-13 09:28:17Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

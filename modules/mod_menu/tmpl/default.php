@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21726 2011-07-02 05:46:46Z infograf768 $
+ * @version		$Id: default.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_menu
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -65,7 +65,7 @@ foreach ($list as $i => &$item) :
 		echo '<ul>';
 	}
 	// The next item is shallower.
-	else if ($item->shallower) {
+	elseif ($item->shallower) {
 		echo '</li>';
 		echo str_repeat('</ul></li>', $item->level_diff);
 	}

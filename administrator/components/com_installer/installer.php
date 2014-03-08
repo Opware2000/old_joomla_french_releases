@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: installer.php 22228 2011-10-10 18:03:36Z dextercowley $
+ * @version		$Id: installer.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_installer
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -11,7 +11,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-// Access check
+// Access check.
 if (!JFactory::getUser()->authorise('core.manage', 'com_installer')) {
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }

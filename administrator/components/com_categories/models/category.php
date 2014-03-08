@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 22141 2011-09-23 21:51:30Z chdemko $
+ * @version		$Id: category.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -61,7 +61,7 @@ class CategoriesModelCategory extends JModelAdmin
 			return $user->authorise('core.edit.state', $record->extension.'.category.'.(int) $record->id);
 		}
 		// New category, so check against the parent.
-		else if (!empty($record->parent_id)) {
+		elseif (!empty($record->parent_id)) {
 			return $user->authorise('core.edit.state', $record->extension.'.category.'.(int) $record->parent_id);
 		}
 		// Default to component settings if neither category nor parent known.

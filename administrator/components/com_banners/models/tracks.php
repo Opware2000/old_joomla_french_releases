@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: tracks.php 20267 2011-01-11 03:44:44Z eddieajau $
+ * @version		$Id: tracks.php 22355 2011-11-07 05:11:58Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -447,7 +447,7 @@ class BannersModelTracks extends JModelList
 				if (!$packager = JArchive::getAdapter('zip')) {
 					$this->setError(JText::_('COM_BANNERS_ERR_ZIP_ADAPTER_FAILURE'));
 					return false;
-				} else if (!$packager->create($ziproot, $files)) {
+				} elseif (!$packager->create($ziproot, $files)) {
 					$this->setError(JText::_('COM_BANNERS_ERR_ZIP_CREATE_FAILURE'));
 					return false;
 				}

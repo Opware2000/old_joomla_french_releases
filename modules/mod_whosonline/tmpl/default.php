@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: default.php 21322 2011-05-11 01:10:29Z dextercowley $
+ * @version		$Id: default.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_whosonline
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

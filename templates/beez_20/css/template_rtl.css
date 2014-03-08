@@ -1,5 +1,5 @@
 /**
- * @version $Id: template_rtl.css 21331 2011-05-11 04:28:32Z eddieajau $
+ * @version $Id: template_rtl.css 22221 2011-10-10 08:09:17Z github_bot $
  * @author Design & Accessible Team ( Angie Radtke  )
  * @package Joomla
  * @subpackage Accessible-Template-Beez
@@ -459,4 +459,20 @@ ul.pagenav li.pagenav-prev {
 
 ul.menu li ul li ul li ul li ul {
 	padding-right: 7px;
+}
+
+#system-message dd.notice ul,
+#system-message dd.error ul,
+#system-message dd.message  ul {
+        background-position: 100% 0!important;
+        padding: 10px 40px 10px 10px!important;
+}
+#system-message dd.message  ul {
+        background-image:url(../images/system/notice-info_rtl.png)!important;
+}
+#system-message dd.notice ul {
+        background-image:url("../images/system/notice-note_rtl.png")!important;
+}
+#system-message dd.error ul {
+        background-image:url(../images/system/notice-alert_rtl.png)!important;
 }

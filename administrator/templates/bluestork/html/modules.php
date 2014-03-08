@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: modules.php 21475 2011-06-07 22:49:07Z chdemko $
+ * @version		$Id: modules.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	Templates.bluestork
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

@@ -266,7 +266,7 @@ class JDocument extends JObject
 					require_once $path;
 				}
 				else {
-					JError::raiseError(500,JText::_('JLIB_DOCUMENT_ERROR_UNABLE_LOAD_DOC_CLASS'));
+					JError::raiseError(500, JText::_('JLIB_DOCUMENT_ERROR_UNABLE_LOAD_DOC_CLASS'));
 				}
 			}
 
@@ -347,7 +347,7 @@ class JDocument extends JObject
 		if ($name == 'generator') {
 			$result = $this->getGenerator();
 		}
-		else if ($name == 'description') {
+		elseif ($name == 'description') {
 			$result = $this->getDescription();
 		}
 		else {
@@ -380,7 +380,7 @@ class JDocument extends JObject
 		if ($name == 'generator') {
 			$this->setGenerator($content);
 		}
-		else if ($name == 'description') {
+		elseif ($name == 'description') {
 			$this->setDescription($content);
 		}
 		else {
@@ -763,13 +763,13 @@ class JDocument extends JObject
 	}
 
 	/**
-	* Load a renderer
-	*
-	* @param   string  $type  The renderer type
-	*
-	* @return  mixed  Object or null if class does not exist
-	* @since   11.1
-	*/
+	 * Load a renderer
+	 *
+	 * @param   string  $type  The renderer type
+	 *
+	 * @return  mixed  Object or null if class does not exist
+	 * @since   11.1
+	 */
 	public function loadRenderer($type)
 	{
 		$class	= 'JDocumentRenderer'.$type;
@@ -781,7 +781,7 @@ class JDocument extends JObject
 				require_once $path;
 			}
 			else {
-				JError::raiseError(500,JText::_('Unable to load renderer class'));
+				JError::raiseError(500, JText::_('Unable to load renderer class'));
 			}
 		}
 

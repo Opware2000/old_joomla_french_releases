@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: mod_whosonline.php 21084 2011-04-05 00:49:22Z dextercowley $
+ * @version		$Id: mod_whosonline.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Site
  * @subpackage	mod_whosonline
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.

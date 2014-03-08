@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: redirect.php 21020 2011-03-27 06:52:01Z infograf768 $
+ * @version		$Id: redirect.php 22338 2011-11-04 17:24:53Z github_bot $
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */

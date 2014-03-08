@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: setup.php 21463 2011-06-06 15:28:10Z dextercowley $
+ * @version		$Id: setup.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Installation
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt

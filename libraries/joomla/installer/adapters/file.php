@@ -33,13 +33,13 @@ class JInstallerFile extends JAdapterInstance
 	public function loadLanguage($path)
 	{
 		$this->manifest = $this->parent->getManifest();
-		$extension = 'files_'. str_replace('files_','',strtolower(JFilterInput::getInstance()->clean((string)$this->manifest->name, 'cmd')));
+		$extension = 'files_'. str_replace('files_', '', strtolower(JFilterInput::getInstance()->clean((string)$this->manifest->name, 'cmd')));
 		$lang = JFactory::getLanguage();
 		$source = $path;
-			$lang->load($extension . '.sys', $source, null, false, false)
-		||	$lang->load($extension . '.sys', JPATH_SITE, null, false, false)
-		||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
-		||	$lang->load($extension . '.sys', JPATH_SITE, $lang->getDefault(), false, false);
+		$lang->load($extension . '.sys', $source, null, false, false)
+			||	$lang->load($extension . '.sys', JPATH_SITE, null, false, false)
+			||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
+			||	$lang->load($extension . '.sys', JPATH_SITE, $lang->getDefault(), false, false);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class JInstallerFile extends JAdapterInstance
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'preflight')) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'preflight')) {
 			if ($this->parent->manifestClass->preflight($this->route, $this) === false) {
 				// Install failed, rollback changes
 				$this->parent->abort(JText::_('JLIB_INSTALLER_ABORT_FILE_INSTALL_CUSTOM_INSTALL_FAILURE'));
@@ -157,8 +157,8 @@ class JInstallerFile extends JAdapterInstance
 					return false;
 				}
 
-				 // Since we created a directory and will want to remove it if we have to roll back.
-				 // the installation due to some errors, let's add it to the installation step stack.
+				// Since we created a directory and will want to remove it if we have to roll back.
+				// the installation due to some errors, let's add it to the installation step stack.
 
 				if ($created) {
 					$this->parent->pushStep(array ('type' => 'folder', 'path' => $folder));
@@ -173,7 +173,7 @@ class JInstallerFile extends JAdapterInstance
 		// Parse optional tags
 		$this->parent->parseLanguages($this->manifest->languages);
 
-		 // Finalization and Cleanup Section
+		// Finalization and Cleanup Section
 
 		// Get a database connector object
 		$db = $this->parent->getDbo();
@@ -183,8 +183,8 @@ class JInstallerFile extends JAdapterInstance
 		// we can assume that it was (badly) uninstalled
 		// If it isn't, add an entry to extensions
 		$query = 'SELECT `extension_id`' .
-				' FROM `#__extensions` ' .
-				' WHERE type = '. $db->Quote('file') .' AND element = '.$db->Quote($element);
+			' FROM `#__extensions` ' .
+			' WHERE type = '. $db->Quote('file') .' AND element = '.$db->Quote($element);
 		$db->setQuery($query);
 		try {
 			$db->Query();
@@ -226,7 +226,7 @@ class JInstallerFile extends JAdapterInstance
 			$row->set('client_id', 0);
 			$row->set('params', '');
 			$row->set('system_data', '');
-			$row->set('manifest_cache', '');
+			$row->set('manifest_cache', $this->parent->generateManifestCache());
 
 			if (!$row->store())
 			{
@@ -262,7 +262,7 @@ class JInstallerFile extends JAdapterInstance
 				$this->parent->setSchemaVersion($this->manifest->update->schemas, $row->extension_id);
 			}
 		}
-		else if (strtolower($this->route) == 'update') {
+		elseif (strtolower($this->route) == 'update') {
 			if ($this->manifest->update) {
 				$result = $this->parent->parseSchemaUpdates($this->manifest->update->schemas, $row->extension_id);
 				if ($result === false) {
@@ -277,7 +277,7 @@ class JInstallerFile extends JAdapterInstance
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,$this->route)) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, $this->route)) {
 			if ($this->parent->manifestClass->{$this->route}($this) === false) {
 				// Install failed, rollback changes
 				$this->parent->abort(JText::_('JLIB_INSTALLER_ABORT_FILE_INSTALL_CUSTOM_INSTALL_FAILURE'));
@@ -290,7 +290,7 @@ class JInstallerFile extends JAdapterInstance
 		ob_end_clean();
 
 		// Lastly, we will copy the manifest file to its appropriate place.
-		$manifest = Array();
+		$manifest = array();
 		$manifest['src'] = $this->parent->getPath('manifest');
 		$manifest['dest'] = JPATH_MANIFESTS . '/files/' . basename($this->parent->getPath('manifest'));
 		if (!$this->parent->copyFiles(array($manifest), true))
@@ -300,26 +300,26 @@ class JInstallerFile extends JAdapterInstance
 			return false;
 		}
 
-        // Clobber any possible pending updates
-        $update = JTable::getInstance('update');
-        $uid = $update->find(
-                array(
-                        'element'       => $this->get('element'),
-                        'type'          => 'file',
-                        'client_id'     => '',
-                        'folder'        => ''
-                )
-        );
+		// Clobber any possible pending updates
+		$update = JTable::getInstance('update');
+		$uid = $update->find(
+			array(
+				'element'       => $this->get('element'),
+				'type'          => 'file',
+				'client_id'     => '',
+				'folder'        => ''
+			)
+		);
 
-        if ($uid) {
-            $update->delete($uid);
-        }
+		if ($uid) {
+			$update->delete($uid);
+		}
 
 		// And now we run the postflight
 		ob_start();
 		ob_implicit_flush(false);
 
-		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'postflight')) {
+		if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'postflight')) {
 			$this->parent->manifestClass->postflight($this->route, $this);
 		}
 
@@ -429,7 +429,7 @@ class JInstallerFile extends JAdapterInstance
 			ob_implicit_flush(false);
 
 			// Run uninstall if possible
-			if ($this->parent->manifestClass && method_exists($this->parent->manifestClass,'uninstall')) {
+			if ($this->parent->manifestClass && method_exists($this->parent->manifestClass, 'uninstall')) {
 				$this->parent->manifestClass->uninstall($this);
 			}
 
@@ -465,43 +465,43 @@ class JInstallerFile extends JAdapterInstance
 			// Loop through all elements and get list of files and folders
 			foreach ($xml->fileset->files as $eFiles)
 			{
-					$folder = (string)$eFiles->attributes()->folder;
-					$target = (string)$eFiles->attributes()->target;
-					// Create folder path
-					if(empty($target))
-					{
-						$targetFolder = JPATH_ROOT;
-					}
-					else
-					{
-						$targetFolder = JPATH_ROOT . '/' . $target;
-					}
+				$folder = (string)$eFiles->attributes()->folder;
+				$target = (string)$eFiles->attributes()->target;
+				// Create folder path
+				if(empty($target))
+				{
+					$targetFolder = JPATH_ROOT;
+				}
+				else
+				{
+					$targetFolder = JPATH_ROOT . '/' . $target;
+				}
 
-					$folderList = array();
-					// Check if all children exists
-					if (count($eFiles->children()) > 0)
+				$folderList = array();
+				// Check if all children exists
+				if (count($eFiles->children()) > 0)
+				{
+					// Loop through all filenames elements
+					foreach ($eFiles->children() as $eFileName)
 					{
-						// Loop through all filenames elements
-						foreach ($eFiles->children() as $eFileName)
-						{
-							if ($eFileName->getName() == 'folder') {
-								$folderList[] = $targetFolder . '/' . $eFileName;
+						if ($eFileName->getName() == 'folder') {
+							$folderList[] = $targetFolder . '/' . $eFileName;
 
-							} else {
-								$fileName = $targetFolder . '/' . $eFileName;
-								JFile::delete($fileName);
-							}
+						} else {
+							$fileName = $targetFolder . '/' . $eFileName;
+							JFile::delete($fileName);
 						}
 					}
+				}
 
-					// Delete any folders that don't have any content in them.
-					foreach($folderList as $folder)
-					{
-						$files = JFolder::files($folder);
-						if(!count($files)) {
-							JFolder::delete($folder);
-						}
+				// Delete any folders that don't have any content in them.
+				foreach($folderList as $folder)
+				{
+					$files = JFolder::files($folder);
+					if(!count($files)) {
+						JFolder::delete($folder);
 					}
+				}
 			}
 
 			JFile::delete($manifestFile);
@@ -537,9 +537,9 @@ class JInstallerFile extends JAdapterInstance
 		$db = $this->parent->getDBO();
 
 		$query = 'SELECT `extension_id`' .
-				' FROM `#__extensions`' .
-				' WHERE element = '.$db->Quote($extension) .
-				' AND type = "file"';
+			' FROM `#__extensions`' .
+			' WHERE element = '.$db->Quote($extension) .
+			' AND type = "file"';
 
 		$db->setQuery($query);
 
@@ -553,7 +553,7 @@ class JInstallerFile extends JAdapterInstance
 		$id = $db->loadResult();
 
 		if (empty($id))
-		return false;
+			return false;
 
 		return true;
 

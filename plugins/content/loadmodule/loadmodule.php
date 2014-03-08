@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: loadmodule.php 22102 2011-09-19 05:09:56Z infograf768 $
+ * @version		$Id: loadmodule.php 22338 2011-11-04 17:24:53Z github_bot $
  * @package		Joomla.Plugin
  * @subpackage	Content.loadmodule
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -47,7 +47,7 @@ class plgContentLoadmodule extends JPlugin
 			foreach ($matches as $match) {
 
 			$matcheslist =  explode(',',$match[1]);
-			
+
 			if (!array_key_exists(1, $matcheslist)) {
 				$matcheslist[1] = null;
 			}
@@ -80,7 +80,7 @@ class plgContentLoadmodule extends JPlugin
 				if (!array_key_exists(2, $matchesmodlist)) {
 					$matchesmodlist[2] = $stylemod;
 				}
-	
+
 				$module = trim($matchesmodlist[0]);
 				$name   = trim($matchesmodlist[1]);
 				$style  = trim($matchesmodlist[2]);

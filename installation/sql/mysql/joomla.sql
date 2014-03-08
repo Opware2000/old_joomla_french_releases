@@ -1,4 +1,4 @@
-# $Id: joomla.sql 22158 2011-09-26 01:06:57Z dextercowley $
+# $Id: joomla.sql 22379 2011-11-13 23:12:49Z github_bot $
 
 
 #
@@ -81,7 +81,7 @@ CREATE TABLE `#__banners` (
   `cid` INTEGER NOT NULL DEFAULT '0',
   `type` INTEGER NOT NULL DEFAULT '0',
   `name` VARCHAR(255) NOT NULL DEFAULT '',
-  `alias` VARCHAR(255) NOT NULL DEFAULT '',
+  `alias` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `imptotal` INTEGER NOT NULL DEFAULT '0',
   `impmade` INTEGER NOT NULL DEFAULT '0',
   `clicks` INTEGER NOT NULL DEFAULT '0',
@@ -173,7 +173,7 @@ CREATE TABLE `#__categories` (
   `path` varchar(255) NOT NULL default '',
   `extension` varchar(50) NOT NULL default '',
   `title` varchar(255) NOT NULL,
-  `alias` varchar(255) NOT NULL default '',
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '',
   `note` varchar(255) NOT NULL default '',
   `description` mediumtext NOT NULL default '',
   `published` tinyint(1) NOT NULL default '0',
@@ -217,7 +217,7 @@ INSERT INTO `#__categories` VALUES
 CREATE TABLE `#__contact_details` (
   `id` integer NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `alias` varchar(255) NOT NULL default '',
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '',
   `con_position` varchar(255) default NULL,
   `address` text,
   `suburb` varchar(100) default NULL,
@@ -278,8 +278,8 @@ CREATE TABLE `#__content` (
   `id` integer unsigned NOT NULL auto_increment,
   `asset_id` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'FK to the #__assets table.',
   `title` varchar(255) NOT NULL default '',
-  `alias` varchar(255) NOT NULL default '',
-  `title_alias` varchar(255) NOT NULL default '',
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '',
+  `title_alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '' COMMENT 'Deprecated in Joomla! 3.0',
   `introtext` mediumtext NOT NULL,
   `fulltext` mediumtext NOT NULL,
   `state` tinyint(3) NOT NULL default '0',
@@ -386,7 +386,7 @@ CREATE TABLE `#__extensions` (
   INDEX `element_clientid`(`element`, `client_id`),
   INDEX `element_folder_clientid`(`element`, `folder`, `client_id`),
   INDEX `extension`(`type`,`element`,`folder`,`client_id`)
-) AUTO_INCREMENT=10000 CHARACTER SET utf8;
+) AUTO_INCREMENT=10000 CHARSET=utf8;
 
 # Components
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
@@ -508,7 +508,7 @@ INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`
 
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
 (500, 'atomic', 'template', 'atomic', '', 0, 1, 1, 0, '{"legacy":false,"name":"atomic","type":"template","creationDate":"10\\/10\\/09","author":"Ron Severdia","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"contact@kontentdesign.com","authorUrl":"http:\\/\\/www.kontentdesign.com","version":"1.6.0","description":"TPL_ATOMIC_XML_DESCRIPTION","group":""}', '{}', '', '', 0, '0000-00-00 00:00:00', 0, 0),
-(502, 'bluestork', 'template', 'bluestork', '', 1, 1, 1, 0, '{"legacy":false,"name":"bluestork","type":"template","creationDate":"07\\/02\\/09","author":"Ron Severdia","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"contact@kontentdesign.com","authorUrl":"http:\\/\\/www.kontentdesign.com","version":"1.6.0","description":"TPL_BLUESTORK_XML_DESCRIPTION","group":""}', '{"useRoundedCorners":"1","showSiteName":"0","textBig":"0","highContrast":"0"}', '', '', 0, '0000-00-00 00:00:00', 0, 0),
+(502, 'bluestork', 'template', 'bluestork', '', 1, 1, 1, 0, '{"legacy":false,"name":"bluestork","type":"template","creationDate":"07\\/02\\/09","author":"Joomla! Project","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"admin@joomla.org","authorUrl":"http:\\/\\/www.joomla.org","version":"1.6.0","description":"TPL_BLUESTORK_XML_DESCRIPTION","group":""}', '{"useRoundedCorners":"1","showSiteName":"0","textBig":"0","highContrast":"0"}', '', '', 0, '0000-00-00 00:00:00', 0, 0),
 (503, 'beez_20', 'template', 'beez_20', '', 0, 1, 1, 0, '{"legacy":false,"name":"beez_20","type":"template","creationDate":"25 November 2009","author":"Angie Radtke","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"a.radtke@derauftritt.de","authorUrl":"http:\\/\\/www.der-auftritt.de","version":"1.6.0","description":"TPL_BEEZ2_XML_DESCRIPTION","group":""}', '{"wrapperSmall":"53","wrapperLarge":"72","sitetitle":"","sitedescription":"","navposition":"center","templatecolor":"nature"}', '', '', 0, '0000-00-00 00:00:00', 0, 0),
 (504, 'hathor', 'template', 'hathor', '', 1, 1, 1, 0, '{"legacy":false,"name":"hathor","type":"template","creationDate":"May 2010","author":"Andrea Tarr","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"hathor@tarrconsulting.com","authorUrl":"http:\\/\\/www.tarrconsulting.com","version":"1.6.0","description":"TPL_HATHOR_XML_DESCRIPTION","group":""}', '{"showSiteName":"0","colourChoice":"0","boldText":"0"}', '', '', 0, '0000-00-00 00:00:00', 0, 0),
 (505, 'beez5', 'template', 'beez5', '', 0, 1, 1, 0, '{"legacy":false,"name":"beez5","type":"template","creationDate":"21 May 2010","author":"Angie Radtke","copyright":"Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.","authorEmail":"a.radtke@derauftritt.de","authorUrl":"http:\\/\\/www.der-auftritt.de","version":"1.6.0","description":"TPL_BEEZ5_XML_DESCRIPTION","group":""}', '{"wrapperSmall":"53","wrapperLarge":"72","sitetitle":"","sitedescription":"","navposition":"center","html5":"0"}', '', '', 0, '0000-00-00 00:00:00', 0, 0);
@@ -521,7 +521,7 @@ INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`
 (603, 'Français', 'language', 'fr-FR', '', 1, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
 
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
-(700, 'Joomla! CMS', 'file', 'joomla', '', 0, 1, 1, 1, '{"legacy":false,"name":"files_joomla","type":"file","creationDate":"September 2011","author":"Joomla!","copyright":"(C) 2005 - 2011 Open Source Matters. All rights reserved","authorEmail":"admin@joomla.org","authorUrl":"www.joomla.org","version":"1.7.1","description":"FILES_JOOMLA_XML_DESCRIPTION","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
+(700, 'Joomla! CMS', 'file', 'joomla', '', 0, 1, 1, 1, '{"legacy":false,"name":"files_joomla","type":"file","creationDate":"November 2011","author":"Joomla!","copyright":"(C) 2005 - 2011 Open Source Matters. All rights reserved","authorEmail":"admin@joomla.org","authorUrl":"www.joomla.org","version":"1.7.3","description":"FILES_JOOMLA_XML_DESCRIPTION","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
 
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
 (800, 'joomla', 'package', 'pkg_joomla', '', 0, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
@@ -542,6 +542,7 @@ CREATE TABLE `#__languages` (
   `description` varchar(512) NOT NULL,
   `metakey` text NOT NULL,
   `metadesc` text NOT NULL,
+  `sitename` varchar(1024) NOT NULL,
   `published` int(11) NOT NULL default '0',
   `ordering` int(11) NOT NULL default '0',
   PRIMARY KEY  (`lang_id`),
@@ -561,7 +562,7 @@ CREATE TABLE `#__menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menutype` varchar(24) NOT NULL COMMENT 'The type of menu this item belongs to. FK to #__menu_types.menutype',
   `title` varchar(255) NOT NULL COMMENT 'The display title of the menu item.',
-  `alias` varchar(255) NOT NULL COMMENT 'The SEF alias of the menu item.',
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'The SEF alias of the menu item.',
   `note` varchar(255) NOT NULL DEFAULT '',
   `path` varchar(1024) NOT NULL COMMENT 'The computed path of the menu item based on the alias field.',
   `link` varchar(1024) NOT NULL COMMENT 'The actually link the menu item refers to.',
@@ -744,7 +745,6 @@ INSERT INTO `#__modules_menu` VALUES
 (15,0),
 (16,0),
 (17,0),
-(18,0),
 (79,0);
 
 # -------------------------------------------------------
@@ -757,7 +757,7 @@ CREATE TABLE `#__newsfeeds` (
   `catid` integer NOT NULL default '0',
   `id` integer(10) UNSIGNED NOT NULL auto_increment,
   `name`  varchar(100) NOT NULL DEFAULT '',
-  `alias` varchar(100) NOT NULL default '',
+  `alias` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '',
   `link` varchar(200) NOT NULL DEFAULT '',
   `filename` varchar(200) default NULL,
   `published` tinyint(1) NOT NULL default '0',
@@ -884,7 +884,7 @@ CREATE TABLE `#__update_sites_extensions` (
   `update_site_id` INT DEFAULT 0,
   `extension_id` INT DEFAULT 0,
   PRIMARY KEY(`update_site_id`, `extension_id`)
-) ENGINE = MYISAM CHARACTER SET utf8 COMMENT = 'Links extensions to update sites';
+) DEFAULT CHARSET=utf8 COMMENT = 'Links extensions to update sites';
 
 INSERT INTO `#__update_sites_extensions` VALUES
 (1, 700),
@@ -1012,7 +1012,7 @@ CREATE TABLE `#__weblinks` (
   `catid` integer NOT NULL default '0',
   `sid` integer NOT NULL default '0',
   `title` varchar(250) NOT NULL default '',
-  `alias` varchar(255) NOT NULL default '',
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL default '',
   `url` varchar(250) NOT NULL default '',
   `description` TEXT NOT NULL,
   `date` datetime NOT NULL default '0000-00-00 00:00:00',

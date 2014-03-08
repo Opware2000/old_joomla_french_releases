@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 21593 2011-06-21 02:45:51Z dextercowley $
+ * @version		$Id: article.php 22355 2011-11-07 05:11:58Z github_bot $
  * @package		Joomla.Administrator
  * @subpackage	com_content
  * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
@@ -65,7 +65,7 @@ class ContentModelArticle extends JModelAdmin
 			return $user->authorise('core.edit.state', 'com_content.article.'.(int) $record->id);
 		}
 		// New article, so check against the category.
-		else if (!empty($record->catid)) {
+		elseif (!empty($record->catid)) {
 			return $user->authorise('core.edit.state', 'com_content.category.'.(int) $record->catid);
 		}
 		// Default to component settings if neither article nor category known.
