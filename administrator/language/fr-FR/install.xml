@@ -2,7 +2,7 @@
 <install version="1.5" client="administrator" type="language">
     <name>French (FR)</name>
     <tag>fr-FR</tag>
-    <version>1.5.4</version>
+    <version>1.5.5</version>
     <creationDate>July 2008</creationDate>
     <author>French translation team : Joomla!fr</author>
     <authoremail>opware.joomla@gmail.com</authoremail>
@@ -51,6 +51,7 @@
 		<filename>fr-FR.ini</filename>
 		<filename>fr-FR.mod_components.ini</filename>
 		<filename>fr-FR.mod_custom.ini</filename>
+		<filename>fr-FR.mod_feed.ini</filename>
 		<filename>fr-FR.mod_footer.ini</filename>
 		<filename>fr-FR.mod_latest.ini</filename>
 		<filename>fr-FR.mod_logged.ini</filename>
