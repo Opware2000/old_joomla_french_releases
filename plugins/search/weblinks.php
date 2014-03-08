@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: weblinks.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: weblinks.php 8627 2007-08-29 21:55:02Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 $mainframe->registerEvent( 'onSearch', 'plgSearchWeblinks' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchWeblinksAreas' );
-$lang =& JFactory::getLanguage();
-$lang->load( 'plg_search_weblinks' );
+
+JPlugin::loadLanguage( 'plg_search_weblinks' );
 
 /**
  * @return array An array of search areas
@@ -63,7 +63,8 @@ function plgSearchWeblinks( $text, $phrase='', $ordering='', $areas=null )
 	$section 	= JText::_( 'Web Links' );
 
 	$wheres 	= array();
-	switch ($phrase) {
+	switch ($phrase) 
+	{
 		case 'exact':
 			$text = $db->getEscaped($text);
 			$wheres2 	= array();
@@ -90,7 +91,8 @@ function plgSearchWeblinks( $text, $phrase='', $ordering='', $areas=null )
 			break;
 	}
 
-	switch ( $ordering ) {
+	switch ( $ordering ) 
+	{
 		case 'oldest':
 			$order = 'a.date ASC';
 			break;
@@ -112,12 +114,11 @@ function plgSearchWeblinks( $text, $phrase='', $ordering='', $areas=null )
 			$order = 'a.date DESC';
 	}
 
-	$query = 'SELECT a.title AS title,'
-	. ' a.description AS text,'
-	. ' a.date AS created,'
+	$query = 'SELECT a.title AS title, a.description AS text, a.date AS created,'
+	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
+	. ' CASE WHEN CHAR_LENGTH(b.alias) THEN CONCAT_WS(\':\', b.id, b.alias) ELSE b.id END as catslug, '
 	. ' CONCAT_WS( " / ", '.$db->Quote($section).', b.title ) AS section,'
-	. ' "1" AS browsernav,'
-	. ' CONCAT("index.php?option=com_weblinks&view=weblink&id=", a.id ) AS href'
+	. ' "1" AS browsernav'
 	. ' FROM #__weblinks AS a'
 	. ' INNER JOIN #__categories AS b ON b.id = a.catid'
 	. ' WHERE ('. $where .')'
@@ -128,6 +129,10 @@ function plgSearchWeblinks( $text, $phrase='', $ordering='', $areas=null )
 	;
 	$db->setQuery( $query, 0, $limit );
 	$rows = $db->loadObjectList();
+	
+	foreach($rows as $key => $row) {
+		$rows[$key]->href = 'index.php?option=com_weblinks&view=weblink&catid='.$row->catslug.'&id='.$row->slug;
+	}
 
 	return $rows;
 }

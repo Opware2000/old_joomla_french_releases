@@ -2,7 +2,7 @@
 /**
  * patTemplate HighlightPHP filter
  *
- * $Id: HighlightPhp.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: HighlightPhp.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Highlights PHP code in the output.
  *
@@ -17,7 +17,7 @@ defined('JPATH_BASE') or die();
 /**
  * patTemplate HighlightPHP filter
  *
- * $Id: HighlightPhp.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: HighlightPhp.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Highlights PHP code in the output.
  *
@@ -27,7 +27,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_OutputFilter_HighlightPhp extends patTemplate_OutputFilter
 {
-   /**
+	/**
 	* filter name
 	*
 	* @access	protected
@@ -36,7 +36,7 @@ class patTemplate_OutputFilter_HighlightPhp extends patTemplate_OutputFilter
 	*/
 	var	$_name	=	'HighlightPhp';
 
-   /**
+	/**
 	* remove all whitespace from the output
 	*
 	* @access	public

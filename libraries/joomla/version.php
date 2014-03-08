@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: version.php 8140 2007-07-21 08:57:22Z willebil $
+ * @version		$Id: version.php 8688 2007-08-31 20:43:51Z willebil $
  * @package	Joomla.Framework
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
@@ -35,9 +35,9 @@ class JVersion
 	/** @var int build Number */
 	var $BUILD	 	= '';
 	/** @var string Codename */
-	var $CODENAME 	= 'Mapya';
+	var $CODENAME 	= 'Endeleo';
 	/** @var string Date */
-	var $RELDATE 	= '21-July-2007';
+	var $RELDATE 	= '1-September-2007';
 	/** @var string Time */
 	var $RELTIME 	= '15:00';
 	/** @var string Timezone */
@@ -45,7 +45,7 @@ class JVersion
 	/** @var string Copyright Text */
 	var $COPYRIGHT 	= 'Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.';
 	/** @var string URL */
-	var $URL 		= '<a href="http://www.joomla.org">Joomla!</a> is Free Software released under the GNU/GPL License.';
+	var $URL 		= '<a href="http://www.joomla.org">Joomla!</a> is Free Software released under the GNU General Public License.';
 
 	/**
 	 *

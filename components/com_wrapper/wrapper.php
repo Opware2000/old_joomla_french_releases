@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: wrapper.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: wrapper.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla
 * @subpackage	Wrapper
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -41,7 +41,7 @@ class WrapperController
 	function display()
 	{
 		global $mainframe, $option;
-		
+
 		$document =& JFactory::getDocument();
 
 		$menus	= &JMenu::getInstance();
@@ -49,7 +49,7 @@ class WrapperController
 
 		// Get the page/component configuration
 		$params = &$mainframe->getPageParameters();
-		
+
 		//set page title
 		$document->setTitle($menu->name);
 

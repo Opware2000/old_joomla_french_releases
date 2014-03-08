@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 6140 2007-01-02 03:44:18Z eddiea $
+* @version		$Id: helper.php 8252 2007-07-30 22:45:55Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -83,11 +83,9 @@ class modRandomImageHelper
 
 	function getFolder(&$params)
 	{
-		global $mainframe;
-
 		$folder 	= $params->get( 'folder' );
 
-		$LiveSite 	= $mainframe->getCfg('live_site');
+		$LiveSite 	= JURI::base();
 
 		// if folder includes livesite info, remove
 		if ( JString::strpos($folder, $LiveSite) === 0 ) {

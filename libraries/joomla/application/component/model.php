@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: model.php 8061 2007-07-18 21:08:55Z jinx $
+* @version		$Id: model.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -68,7 +68,7 @@ class JModel extends JObject
 		//set the view name
 		if (empty( $this->_name ))
 		{
-			if (isset($config['name']))  {
+			if (array_key_exists('name', $config))  {
 				$this->_name = $config['name'];
 			} else {
 				$this->_name = $this->getName();
@@ -76,7 +76,7 @@ class JModel extends JObject
 		}
 
 		// set the default view search path
-		if (isset($config['table_path'])) {
+		if (array_key_exists('table_path', $config)) {
 			$this->addTablePath($config['table_path']);
 		} else if (defined( 'JPATH_COMPONENT_ADMINISTRATOR' )){
 			$this->addTablePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
@@ -155,11 +155,11 @@ class JModel extends JObject
 	 * @return	object JDatabase connector object
 	 * @since	1.5
 	 */
-	function &getDBO() 
+	function &getDBO()
 	{
 		return $this->_db;
 	}
-	
+
 	/**
 	 * Method to set the database connector object
 	 *
@@ -176,7 +176,7 @@ class JModel extends JObject
 	 * Method to get the model name
 	 *
 	 * The model name by default parsed using the classname, or it can be set
-	 * by passing a $config['nameÕ] in the class constructor
+	 * by passing a $config['nameï¿½] in the class constructor
 	 *
 	 * @access	public
 	 * @return	string The name of the model
@@ -190,7 +190,7 @@ class JModel extends JObject
 		{
 			$r = null;
 			if (!preg_match('/Model(.*)/i', get_class($this), $r)) {
-				JError::raiseError (500, "JModel::__construct() : Can't get or parse class name.");
+				JError::raiseError (500, "JModel::getName() : Can't get or parse class name.");
 			}
 			$name = strtolower( $r[1] );
 		}

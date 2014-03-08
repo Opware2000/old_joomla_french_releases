@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.categories.php 8044 2007-07-18 11:31:24Z jinx $
+* @version		$Id: admin.categories.php 8346 2007-08-07 09:51:10Z eddieajau $
 * @package		Joomla
 * @subpackage	Categories
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -503,7 +503,7 @@ function removeCategories( $section, $cid )
 		$table = 'content';
 	}
 
-	$query = 'SELECT c.id, c.name, COUNT( s.catid ) AS numcat'
+	$query = 'SELECT c.id, c.name, c.title, COUNT( s.catid ) AS numcat'
 	. ' FROM #__categories AS c'
 	. ' LEFT JOIN #__'.$table.' AS s ON s.catid = c.id'
 	. ' WHERE c.id IN ( '.$cids.' )'

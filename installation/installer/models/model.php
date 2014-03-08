@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version		$Id: model.php 8091 2007-07-19 20:01:35Z willebil $
+ * @version		$Id: model.php 8524 2007-08-23 04:52:30Z humvee $
  * @package		Joomla
  * @subpackage	Installation
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -435,6 +435,11 @@ class JInstallationModel extends JModel
 		if($vars['ftpEnable']) {
 			JInstallationHelper::setFTPCfg( $vars );
 		}
+		
+		// Check a few directories are writeable as this may cause issues
+		if(!is_writeable(JPATH_SITE.DS.'tmp') || !is_writeable(JPATH_SITE.DS.'installation'.DS.'sql'.DS.'migration')) {
+			$vars['dircheck'] = JText::_('Some paths may be unwritable');
+		}
 
 		// Require the xajax library
 		require_once( JPATH_BASE.DS.'includes'.DS.'xajax'.DS.'xajax.inc.php' );
@@ -559,12 +564,12 @@ class JInstallationModel extends JModel
 			'state' => ($sp = ini_get('session.save_path')) ? 'Yes' : 'No'
 			);
 			$phpOptions[] = array (
-			'label' => JText::_('Session path writeable'),
+			'label' => JText::_('Session path writable'),
 			'state' => is_writable($sp) ? 'Yes' : 'No'
 			);*/
 		$cW = (@ file_exists('../configuration.php') && @ is_writable('../configuration.php')) || is_writable('..');
 		$phpOptions[] = array (
-			'label' => 'configuration.php '.JText::_('writeable'),
+			'label' => 'configuration.php '.JText::_('writable'),
 			'state' => $cW ? 'Yes' : 'No',
 			'notice' => $cW ? '' : JText::_('NOTICEYOUCANSTILLINSTALL')
 		);
@@ -818,6 +823,10 @@ class JInstallationModel extends JModel
 			JInstallationHelper::_chmod(JPATH_SITE.DS.'tmp', 0777);
 			jimport('joomla.filesystem.file');
 			$uploaded = JFile::upload($sqlFile['tmp_name'], JPATH_SITE.DS.'tmp'.DS.$sqlFile['name']);
+			if(!$uploaded) {
+				$this->setError(JText::_('WARNUPLOADFAILURE'));
+				return false;
+			}
 
 			if( !eregi('.sql$', $sqlFile['name']) )
 			{

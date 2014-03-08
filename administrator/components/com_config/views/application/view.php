@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.php 8127 2007-07-20 19:08:51Z jinx $
+* @version		$Id: view.php 8563 2007-08-25 20:50:33Z jinx $
 * @package		Joomla
 * @subpackage	Config
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -115,10 +115,6 @@ class ConfigApplicationView
 		<input type="hidden" name="c" value="global" />
 		<input type="hidden" name="option" value="com_config" />
 		<input type="hidden" name="secret" value="<?php echo $row->secret; ?>" />
-		<input type="hidden" name="lang_site" value="<?php echo $row->lang_site; ?>" />
-		<input type="hidden" name="lang_administrator" value="<?php echo $row->lang_administrator; ?>" />
-		<input type="hidden" name="language" value="<?php echo $row->language; ?>" />
-		<input type="hidden" name="lang" value="<?php echo $row->lang; ?>" />
 		<input type="hidden" name="task" value="" />
 		</form>
 		<?php

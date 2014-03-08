@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 8082 2007-07-19 07:31:54Z hackwar $
+* @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -34,9 +34,9 @@ class WeblinksViewCategory extends JView
 		// Initialize some variables
 		$document	= &JFactory::getDocument();
 		$uri 		= &JFactory::getURI();
-		$pathway	= &$mainframe->getPathWay();
+		$pathway	= &$mainframe->getPathway();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menus = &JMenu::getInstance();
 		$menu  = $menus->getActive();
 
@@ -64,7 +64,7 @@ class WeblinksViewCategory extends JView
 
 		// Set page title per category
 		$document->setTitle( $category->title. ' - '. $params->get( 'page_title'));
-		
+
 		//set breadcrumbs
 		if($menu->query['view'] != 'category') {
 			$pathway->addItem($category->title, '');
@@ -84,13 +84,13 @@ class WeblinksViewCategory extends JView
 		$params->def('com_description', JText::_('WEBLINKS_DESC'));
 
 		// Define image tag attributes
-		if (isset ($category->image))
+		if (isset( $category->image ) && $category->image != '')
 		{
 			$attribs['align']  = $category->image_position;
 			$attribs['hspace'] = 6;
 
 			// Use the static HTML library to build the image tag
-			$category->image = JHTML::_('image', '/images/stories/'.$category->image, JText::_('Web Links'), $attribs);
+			$category->image = JHTML::_('image', 'images/stories/'.$category->image, JText::_('Web Links'), $attribs);
 		}
 
 		// icon in table display
@@ -109,7 +109,7 @@ class WeblinksViewCategory extends JView
 			$menuclass = 'category'.$params->get( 'pageclass_sfx' );
 
 			$itemParams = new JParameter($item->params);
-			switch ($itemParams->get('link_target', $params->get('link_target')))
+			switch ($itemParams->get('target', $params->get('target')))
 			{
 				// cases are slightly different
 				case 1:
@@ -141,7 +141,8 @@ class WeblinksViewCategory extends JView
 		$this->assignRef('category',	$category);
 		$this->assignRef('items',		$items);
 		$this->assignRef('pagination',	$pagination);
-		$this->assignRef('action',		$uri->toString());
+		
+		$this->assign('action',	$uri->toString());
 
 		parent::display($tpl);
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: application.php 8130 2007-07-20 20:53:57Z jinx $
+* @version		$Id: application.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -14,9 +14,6 @@
 
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
-
-// Include library dependencies
-jimport('joomla.event.*');
 
 /**
 * Base class for a Joomla! application.
@@ -36,61 +33,158 @@ class JApplication extends JObject
 	/**
 	 * The client identifier.
 	 *
-	 * @var integer
-	 * @access protected
-	 * @since 1.5
+	 * @var		integer
+	 * @access	protected
+	 * @since	1.5
 	 */
 	var $_clientId = null;
-
 
 	/**
 	 * The router object
 	 *
-	 * @var object  JRouter object
-	 * @access protected
+	 * @var		JRouter
+	 * @access	protected
 	 */
 	var $_router = null;
+	
+	/**
+	 * The pathway object
+	 *
+	 * @var		JPathway
+	 * @access	protected
+	 */
+	var $_pathway = null;
 
 	/**
 	 * The application message queue.
 	 *
-	 * @var array
-	 * @access protected
+	 * @var		array
+	 * @access	protected
 	 */
 	var $_messageQueue = array();
 
 	/**
+	 * The name of the application
+	 *
+	 * @var		array
+	 * @access	protected
+	 */
+	var $_name = null;
+	
+	/**
 	* Class constructor.
 	*
-	* @param integer	A client identifier.
+	* @param	integer	A client identifier.
 	*/
-	function __construct( $clientId = 0 )
+	function __construct($config = array())
 	{
-		$this->_clientId = $clientId;
+		jimport('joomla.utilities.utility');
+		
+		//set the view name
+		$this->_name		= $this->getName();
+		$this->_clientId	= $config['clientId'];
+		
+		//Enable sessions by default
+		if(!isset($config['session'])) {
+			$config['session'] = true;
+		}
+		
+		//Set the session default name
+		if(!isset($config['session_name'])) {
+			 $config['session_name'] = $this->_name;
+		}
+		
+		//Set the default configuration file
+		if(!isset($config['config_file'])) {
+			$config['config_file'] = 'configuration.php';
+		}
+		
+		//create the configuration object
+		$this->_createConfiguration(JPATH_CONFIGURATION.DS.$config['config_file']);
+		
+		//create the session if a session name is passed
+		if($config['session'] !== false) {
+			$this->_createSession(JUtility::getHash($config['session_name']));
+		}
+		
 		$this->set( 'requestTime', gmdate('Y-m-d H:i') );
+	}
+	
+	/**
+	 * Returns a reference to the global JApplication object, only creating it if it
+	 * doesn't already exist.
+	 *
+	 * This method must be invoked as:
+	 * 		<pre>  $menu = &JApplication::getInstance();</pre>
+	 *
+	 * @access	public
+	 * @param	integer	$id 		A client identifier.
+	 * @param	array	$config 	An optional associative array of configuration settings.
+	 * @return	JApplication	The appliction object.
+	 * @since	1.5
+	 */
+	function &getInstance($client, $config = array())
+	{
+		static $instances;
+
+		if (!isset( $instances )) {
+			$instances = array();
+		}
+
+		if (empty($instances[$client]))
+		{	
+			//Load the router object
+			jimport('joomla.application.helper');
+			$info =& JApplicationHelper::getClientInfo($client, true);
+			
+			$path = $info->path.DS.'includes'.DS.'application.php';
+			if(file_exists($path)) 
+			{
+				require_once $path;
+				
+				// Create a JRouter object
+				$classname = 'J'.ucfirst($client);
+				$instance = new $classname($config);
+			} 
+			else 
+			{
+				$error = new JException( E_ERROR, 500, 'Unable to load application: '.$classname);
+				return $error;
+			}
+			
+			$instances[$client] = & $instance;
+		}
+
+		return $instances[$client];
 	}
 
 	/**
 	* Initialise the application.
 	*
 	* @param	array An optional associative array of configuration settings.
-	* @access public
+	* @access	public
 	*/
 	function initialise($options = array())
 	{
+		jimport('joomla.event.helper');
+		
 		//Set the language in the class
-		$conf =& JFactory::getConfig();
+		$config =& JFactory::getConfig();
+		
 		// Check that we were given a language in the array (since by default may be blank)
-		if(isset($options['language'])) $conf->setValue('config.language', $options['language']);
-
-		//define date formats
-		//define('DATE_FORMAT_LC' , JText::_('DATE_FORMAT_LC' ));
-		//define('DATE_FORMAT_LC2', JText::_('DATE_FORMAT_LC2'));
-		//define('DATE_FORMAT_LC3', JText::_('DATE_FORMAT_LC3'));
-		//define('DATE_FORMAT_LC4', JText::_('DATE_FORMAT_LC4'));
-
-		//create the router -> lazy load it later
-		$this->_createRouter();
+		if(isset($options['language'])) {
+			$config->setValue('config.language', $options['language']);
+		}
+		
+		// Set user specific editor
+		$user	 =& JFactory::getUser();
+		$editor	 = $user->getParam('editor', $this->getCfg('editor'));
+		$editor = JPLuginHelper::isEnabled('editors', $editor) ? $editor : $this->getCfg('editor');
+		$config->setValue('config.editor', $editor);
+		
+		// Set the database debug
+		$db =& JFactory::getDBO();
+		$db->debug( $config->get('debug_db'));
 	}
 
 	/**
@@ -102,7 +196,7 @@ class JApplication extends JObject
 	* dispatched
 	*
 	* @abstract
-	* @access public
+	* @access	public
 	*/
 	function route()
  	{
@@ -110,7 +204,7 @@ class JApplication extends JObject
 		$uri  =& JURI::getInstance();
 
 		$router =& $this->getRouter();
-		if(!$router->parse($uri->toString())) {
+		if(!$router->parse($uri)) {
 			JError::raiseError( 404, JText::_('Unable to route request') );
 		}
  	}
@@ -123,7 +217,7 @@ class JApplication extends JObject
 	* determining a default component to dispatch
 	*
 	* @abstract
-	* @access public
+	* @access	public
 	*/
  	function dispatch($component)
  	{
@@ -144,7 +238,7 @@ class JApplication extends JObject
 	* the JResponse buffer.
 	*
 	* @abstract
-	* @access public
+	* @access	public
 	*/
 	function render()
 	{
@@ -165,10 +259,7 @@ class JApplication extends JObject
 	* @access	public
 	* @param	int	Exit code
 	*/
-	function close( $code = 0 )
-	{
-		$session =& JFactory::getSession();
-		$session->close();
+	function close( $code = 0 ) {
 		exit($code);
 	}
 
@@ -276,10 +367,10 @@ class JApplication extends JObject
 	 /**
 	 * Gets a configuration value.
 	 *
-	 * @access public
-	 * @param string	The name of the value to get.
-	 * @return The user state.
-	 * @example application/japplication-getcfg.php Getting a configuration value
+	 * @access	public
+	 * @param	string	The name of the value to get.
+	 * @return	mixed	The user state.
+	 * @example	application/japplication-getcfg.php Getting a configuration value
 	 */
 	function getCfg( $varname )
 	{
@@ -288,11 +379,37 @@ class JApplication extends JObject
 	}
 
 	/**
+	 * Method to get the application name
+	 *
+	 * The dispatcher name by default parsed using the classname, or it can be set
+	 * by passing a $config['name'] in the class constructor
+	 *
+	 * @access	public
+	 * @return	string The name of the dispatcher
+	 * @since	1.5
+	 */
+	function getName()
+	{
+		$name = $this->_name;
+
+		if (empty( $name ))
+		{
+			$r = null;
+			if ( !preg_match( '/J(.*)/i', get_class( $this ), $r ) ) {
+				JError::raiseError(500, "JApplication::getName() : Can\'t get or parse class name.");
+			}
+			$name = strtolower( $r[1] );
+		}
+
+		return $name;
+	}
+
+	/**
 	 * Gets a user state.
 	 *
-	 * @access public
-	 * @param string The path of the state.
-	 * @return mixed The user state.
+	 * @access	public
+	 * @param	string	The path of the state.
+	 * @return	mixed	The user state.
 	 */
 	function getUserState( $key )
 	{
@@ -307,10 +424,10 @@ class JApplication extends JObject
 	/**
 	* Sets the value of a user state variable.
 	*
-	* @access public
-	* @param string	The path of the state.
-	* @param string	The value of the variable.
-	* @return mixed The previous state, if one existed.
+	* @access	public
+	* @param	string	The path of the state.
+	* @param	string	The value of the variable.
+	* @return	mixed	The previous state, if one existed.
 	*/
 	function setUserState( $key, $value )
 	{
@@ -325,12 +442,12 @@ class JApplication extends JObject
 	/**
 	 * Gets the value of a user state variable.
 	 *
-	 * @access public
-	 * @param string The key of the user state variable.
-	 * @param string The name of the variable passed in a request.
-	 * @param string The default value for the variable if not found. Optional.
-	 * @param string Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
-	 * @return The request user state.
+	 * @access	public
+	 * @param	string	The key of the user state variable.
+	 * @param	string	The name of the variable passed in a request.
+	 * @param	string	The default value for the variable if not found. Optional.
+	 * @param	string	Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
+	 * @return	The request user state.
 	 */
 	function getUserStateFromRequest( $key, $request, $default = null, $type = 'none' )
 	{
@@ -352,10 +469,10 @@ class JApplication extends JObject
 	 * Registers a handler to a particular event group.
 	 *
 	 * @static
-	 * @param string The event name.
-	 * @param mixed The handler, a function or an instance of a event object.
-	 * @return void
-	 * @since 1.5
+	 * @param	string	The event name.
+	 * @param	mixed	The handler, a function or an instance of a event object.
+	 * @return	void
+	 * @since	1.5
 	 */
 	function registerEvent($event, $handler)
 	{
@@ -367,10 +484,10 @@ class JApplication extends JObject
 	 * Calls all handlers associated with an event group.
 	 *
 	 * @static
-	 * @param string The event name.
-	 * @param array An array of arguments.
-	 * @return array An array of results from each function call.
-	 * @since 1.5
+	 * @param	string	The event name.
+	 * @param	array	An array of arguments.
+	 * @return	array	An array of results from each function call.
+	 * @since	1.5
 	 */
 	function triggerEvent($event, $args=null)
 	{
@@ -390,12 +507,11 @@ class JApplication extends JObject
 	 * validation.  Successful validation will update the current session with
 	 * the user details.
 	 *
-	 * @param string 	The username.
-	 * @param string 	The password.
-	 * @param boolean  	True, if the user login needs to be remembered by the application.
-	 * @return boolean 	True on success.
-	 * @access public
-	 * @since 1.5
+	 * @param	array 	Array( 'username' => string, 'password' => string )
+	 * @param	array 	Array( 'remember' => boolean )
+	 * @return	boolean True on success.
+	 * @access	public
+	 * @since	1.5
 	 */
 	function login($credentials, $options = array())
 	{
@@ -420,8 +536,8 @@ class JApplication extends JObject
 			 * to provide much more information about why the routine may have failed.
 			 */
 
-			if (!in_array(false, $results, true)) {
-
+			if (!in_array(false, $results, true))
+			{
 				// Set the remember me cookie if enabled
 				if (isset($options['remember']) && $options['remember'])
 				{
@@ -445,33 +561,38 @@ class JApplication extends JObject
 	}
 
 	/**
-	* Logout authentication function.
-	*
-	* Passed the current user information to the onLogoutUser event and reverts the current
-	* session record back to 'anonymous' parameters.
-	*
-	* @access public
-	*/
-	function logout()
+	 * Logout authentication function.
+	 *
+	 * Passed the current user information to the onLogoutUser event and reverts the current
+	 * session record back to 'anonymous' parameters.
+	 *
+	  * @param 	int 	$userid   The user to load - Can be an integer or string - If string, it is converted to ID automatically
+	 * @param	array 	$options  Array( 'clientid' => array of client id's )
+	 *
+	 * @access public
+	 */
+	function logout($userid = null, $options = array())
 	{
 		// Initialize variables
 		$retval = false;
-
+		
 		// Get a user object from the JApplication
-		$user = &JFactory::getUser();
-
-		// Hit the user last visit field
-		$user->setLastVisit();
-
+		$user = &JFactory::getUser($userid);
+			
 		// Build the credentials array
-		$parameters['username'] = $user->get('username');
-		$parameters['id'] 	    = $user->get('id');
+		$parameters['username']	= $user->get('username');
+		$parameters['id']		= $user->get('id');
+		
+		// Set clientid in the options array if it hasn't been set already
+		if(empty($options['clientid'])) {
+			$options['clientid'][] = $this->getClientId();
+		}
 
 		// Import the user plugin group
 		JPluginHelper::importPlugin('user');
 
 		// OK, the credentials are built. Lets fire the onLogout event
-		$results = $this->triggerEvent('onLogoutUser', array($parameters));
+		$results = $this->triggerEvent('onLogoutUser', array($parameters, $options));
 
 		/*
 		 * If any of the authentication plugins did not successfully complete
@@ -491,44 +612,9 @@ class JApplication extends JObject
 	}
 
 	/**
-	 * Load the user session.
-	 *
-	 * @access public
-	 * @param string The session's name.
-	 */
-	function loadSession($name)
-	{
-		$session =& $this->_createSession($name);
-
-		// Set user specific editor
-		$user   =& JFactory::getUser();
-		$editor = $user->getParam('editor', $this->getCfg('editor'));
-
-		$config =& JFactory::getConfig();
-		$config->setValue('config.editor', $editor);
-	}
-
-	/**
-	 * Load the configuration
-	 *
-	 * @access public
-	 * @param string	The path to the configuration file
-	 * @param string	The type of the configuration file
-	 * @since 1.5
-	 */
-	function loadConfiguration($file)
-	{
-		$config =& $this->_createConfiguration($file);
-
-		// Set the database debug
-		$db =& JFactory::getDBO();
-		$db->debug( $config->debug_db );
-	}
-
-	/**
 	 * Gets the name of the current template.
 	 *
-	 * @return string
+	 * @return	string
 	 */
 	function getTemplate()
 	{
@@ -536,23 +622,48 @@ class JApplication extends JObject
 	}
 
 	/**
-	 * Return a reference to the JRouter object.
+	 * Return a reference to the application JRouter object.
+	 *
+	 * @access	public
+	 * @param  array	$options 	An optional associative array of configuration settings.
+	 * @return	JRouter.
+	 * @since	1.5
+	 */
+	function &getRouter($options = array())
+	{
+		if(!isset($this->_router)) 
+		{
+			jimport( 'joomla.application.router' );
+			$this->_router =& JRouter::getInstance($this->_name, $options);
+		}
+		return $this->_router;
+	}
+	
+	/**
+	 * Return a reference to the application JPathway object.
 	 *
 	 * @access public
-	 * @return object JRouter.
+	 * @param  array	$options 	An optional associative array of configuration settings.
+	 * @return object JPathway.
 	 * @since 1.5
 	 */
-	function &getRouter()
+	function &getPathway($options = array())
 	{
-		return $this->_router;
+		if(!isset($this->_pathway)) 
+		{
+			jimport( 'joomla.application.pathway' );
+			$this->_pathway =& JPathway::getInstance($this->_name, $options);
+		}
+		
+		return $this->_pathway;
 	}
 
 	/**
 	 * Create the configuration registry
 	 *
-	 * @access private
-	 * @param string $file 	The path to the configuration file
-	 * return object JConfig
+	 * @access	private
+	 * @param	string	$file 	The path to the configuration file
+	 * return	JConfig
 	 */
 	function &_createConfiguration($file)
 	{
@@ -581,8 +692,8 @@ class JApplication extends JObject
 	 * the #__sessions table.
 	 *
 	 * @access	private
-	 * @param	string The sessions name.
-	 * @return	object JSession on success. May call exit() on database error.
+	 * @param	string	The sessions name.
+	 * @return	object	JSession on success. May call exit() on database error.
 	 * @since	1.5
 	 */
 	function &_createSession( $name )
@@ -592,8 +703,9 @@ class JApplication extends JObject
 
 		$session =& JFactory::getSession($options);
 
+		jimport('joomla.database.table');
 		$storage = & JTable::getInstance('session');
-		$storage->purge($session->getExpire() * 60);
+		$storage->purge($session->getExpire());
 
 		// Session exists and is not expired, update time in session table
 		if ($storage->load($session->getId())) {
@@ -602,8 +714,8 @@ class JApplication extends JObject
 		}
 
 		//Session doesn't exist yet, initalise and store it in the session table
-		$session->set('registry', new JRegistry('session'));
-		$session->set('user'    , new JUser());
+		$session->set('registry',	new JRegistry('session'));
+		$session->set('user',		new JUser());
 
 		if (!$storage->insert( $session->getId(), $this->getClientId())) {
 			die( $storage->getError());
@@ -612,38 +724,13 @@ class JApplication extends JObject
 		return $session;
 	}
 
-	/**
-	 * Create a JRouter object
-	 *
-	 * @access private
-	 * @return object JRouter.
-	 * @since 1.5
-	 */
-	function &_createRouter()
-	{
-		//Load the pathway object
-		jimport( 'joomla.application.router' );
-
-		$options = array();
-
-		// Get routing mode
-		$options['mode'] = $this->getCfg('sef');
-		if($this->getCfg('sef_rewrite')) {
-			$options['mode'] = 2;
-		}
-
-		// Create a JRouter object
-		$this->_router = JRouter::getInstance($options);
-
-		return $this->_router;
-	}
 
 	/**
 	 * Gets the client id of the current running application.
 	 *
 	 * @access	public
 	 * @return	int A client identifier.
-	 * @since		1.5
+	 * @since	1.5
 	 */
 	function getClientId( )
 	{
@@ -695,16 +782,33 @@ class JApplication extends JObject
 			$link = '';
 		}
 
-		// Add item to the pathway object
-		if ($this->_pathway->addItem($name, $link)) {
-			return true;
+		if( defined( '_JLEGACY' ) && $link == '' )
+		{
+			$matches = array();
+
+			$links = preg_match_all ( '/<a[^>]+href="([^"]*)"[^>]*>([^<]*)<\/a>/ui', $name, $matches, PREG_SET_ORDER );
+
+			foreach( $matches AS $match) {
+				// Add each item to the pathway object
+				if( !$this->_pathway->addItem( $match[2], $match[1] ) ) {
+					return false;
+				}
+			}
+			 return true;
+		}
+		else
+		{
+			// Add item to the pathway object
+			if ($this->_pathway->addItem($name, $link)) {
+				return true;
+			}
 		}
 
 		return false;
   }
 
 	/**
-	 * Deprecated, use JPathWay->getPathWayNames() method instead.
+	 * Deprecated, use JPathway->getPathWayNames() method instead.
 	 *
 	 * @since 1.0
 	 * @deprecated As of version 1.5
@@ -712,7 +816,8 @@ class JApplication extends JObject
 	 */
 	function getCustomPathWay()
 	{
-		return $this->_pathway->getPathWayNames();
+		$pathway = $this->getPathway();
+		return $pathway->getPathWayNames();
 	}
 
 	/**
@@ -897,13 +1002,13 @@ class JApplication extends JObject
 	 */
 	function getItemid( $id )
 	{
-		require_once JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php';
+		require_once JPATH_SITE.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'route.php';
 
 		// Load the article data to know what section/category it is in.
 		$article =& JTable::getInstance('content');
 		$article->load($id);
 
-		$info = ContentHelper::_getArticleMenuInfo($id, $article->catid, $article->sectionid);
+		$info = ContentHelperRoute::_getArticleMenuInfo($id, $article->catid, $article->sectionid);
 		return $info->id;
 	}
 

@@ -2,7 +2,7 @@
 /**
  * patTemplate BBCode output filter
  *
- * $Id: BBCode.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: BBCode.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Uses patBBCode.
  *
@@ -17,7 +17,7 @@ defined('JPATH_BASE') or die();
 /**
  * patTemplate BBCode output filter
  *
- * $Id: BBCode.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: BBCode.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Uses patBBCode. Note that patBBCode's syntax is not
  * entirely the same than the 'official' BBCode. See the
@@ -43,7 +43,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_OutputFilter_BBCode extends patTemplate_OutputFilter
 {
-   /**
+	/**
 	* filter name
 	*
 	* @access	protected
@@ -52,7 +52,7 @@ class patTemplate_OutputFilter_BBCode extends patTemplate_OutputFilter
 	*/
 	var	$_name	=	'BBCode';
 
-   /**
+	/**
 	* BBCode parser
 	*
 	* @access	private
@@ -60,7 +60,7 @@ class patTemplate_OutputFilter_BBCode extends patTemplate_OutputFilter
 	*/
 	var $BBCode = null;
 
-   /**
+	/**
 	* remove all whitespace from the output
 	*
 	* @access	public
@@ -77,7 +77,7 @@ class patTemplate_OutputFilter_BBCode extends patTemplate_OutputFilter
 		return $data;
 	}
 
-   /**
+	/**
 	* prepare BBCode object
 	*
 	* @access	private

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: image.php 7978 2007-07-15 04:26:22Z louis $
+* @version		$Id: image.php 8660 2007-08-30 23:53:21Z louis $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -33,11 +33,12 @@ class plgButtonImage extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgButtonImage(& $subject) {
-		parent::__construct($subject);
+	function plgButtonImage(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -52,11 +53,8 @@ class plgButtonImage extends JPlugin
 		$doc 		=& JFactory::getDocument();
 		$template 	= $mainframe->getTemplate();
 
-		$url 		= $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
-		$link = 'index.php?option=com_media&amp;task=imgManager&amp;tmpl=component';
-		$css = "\t.button1-left .image { background: url($url/plugins/editors-xtd/image.gif) 100% 0 no-repeat; }";
-		$doc->addStyleDeclaration($css);
+		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
+		$link = 'index.php?option=com_media&amp;view=images&amp;tmpl=component';
 
 		JHTML::_('behavior.modal');
 

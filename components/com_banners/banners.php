@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banners.php 7629 2007-06-05 01:51:49Z robs $
+ * @version		$Id: banners.php 8179 2007-07-23 05:44:05Z eddieajau $
  * @package  Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -27,4 +27,3 @@ $controller->execute(JRequest::getVar('task', null, 'default', 'cmd'));
 
 // Redirect if set by the controller
 $controller->redirect();
-?>

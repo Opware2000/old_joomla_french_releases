@@ -98,21 +98,16 @@ echo "<library>";
 				echo ("<icon>flag</icon>");
 			echo ("</container>");*/
 		}
-		echo ("<object>");
+		/*echo ("<object>");
 			echo ("<label>Page break placeholder</label>");
-			echo ("<data>&lt;joomla:pagebreak /&gt;</data>");
+			echo ("<data>".xs_xhtml_escape('<hr id="system-pagebreak" />')."</data>");
 			echo ("<icon>pagebreak</icon>");
 		echo ("</object>");
 		echo ("<object>");
 			echo ("<label>Read more placeholder</label>");
-			echo ("<data>&lt;joomla:readmore /&gt;</data>");
+			echo ("<data>".xs_xhtml_escape('<hr id="system-readmore" />')."</data>");
 			echo ("<icon>readmore</icon>");
-		echo ("</object>");
-		echo ("<object>");
-			echo ("<label>Image placeholder</label>");
-			echo ("<data>&lt;joomla:image /&gt;</data>");
-			echo ("<icon>image</icon>");
-		echo ("</object>");
+		echo ("</object>");*/
 	echo ("</containers>");
 	echo ("<objects>");
 

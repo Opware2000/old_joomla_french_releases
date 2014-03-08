@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.messages.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.messages.html.php 8540 2007-08-24 12:36:22Z jinx $
 * @package		Joomla
 * @subpackage	Messages
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -278,7 +278,7 @@ class HTML_messages
 				<?php echo JText::_( 'Message' ); ?>:
 			</td>
 			<td width="100%">
-				<textarea name="message" style="width:100%" rows="30" class="inputbox"></textarea>
+				<textarea name="message" style="width:95%" rows="30" class="inputbox"></textarea>
 			</td>
 		</tr>
 		</table>

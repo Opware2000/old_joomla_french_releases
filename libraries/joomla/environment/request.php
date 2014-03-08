@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: request.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: request.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla.Framework
  * @subpackage	Environment
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -263,10 +263,10 @@ class JRequest
 	 * @return	string	Previous value
 	 * @since	1.5
 	 */
-	function setVar($name, $value = null, $hash = 'default', $overwrite = true)
+	function setVar($name, $value = null, $hash = 'method', $overwrite = true)
 	{
 		//If overwrite is true, makes sure the variable hasn't been set yet
-		if(!$overwrite && isset($_REQUEST[$name])) {
+		if(!$overwrite && array_key_exists($name, $_REQUEST)) {
 			return $_REQUEST[$name];
 		}
 
@@ -280,7 +280,7 @@ class JRequest
 		}
 
 		$previous	= array_key_exists($name, $_REQUEST) ? $_REQUEST[$name] : null;
-
+		
 		switch ($hash)
 		{
 			case 'GET' :
@@ -298,13 +298,6 @@ class JRequest
 			case 'COOKIE' :
 				$_COOKIE[$name] = $value;
 				$_REQUEST[$name] = $value;
-				break;
-			default:
-				$_GET[$name] = $value;
-				$_POST[$name] = $value;
-				$_REQUEST[$name] = $value;
-				$GLOBALS['_JREQUEST'][$name]['SET.GET'] = true;
-				$GLOBALS['_JREQUEST'][$name]['SET.POST'] = true;
 				break;
 		}
 

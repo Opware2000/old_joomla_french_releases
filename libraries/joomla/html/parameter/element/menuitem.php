@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: menuitem.php 7926 2007-07-11 23:41:41Z friesengeist $
+* @version		$Id: menuitem.php 8288 2007-08-01 08:40:54Z eddieajau $
 * @package		Joomla.Framework
 * @subpackage	Parameter
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -26,7 +26,7 @@ defined('JPATH_BASE') or die();
 
 class JElementMenuItem extends JElement
 {
-   /**
+	/**
 	* Element name
 	*
 	* @access	protected

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: CHANGELOG.php 8140 2007-07-21 08:57:22Z willebil $
+* @version		$Id: CHANGELOG.php 8688 2007-08-31 20:43:51Z willebil $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -36,6 +36,344 @@ Legend:
 ^ -> Change
 - -> Removed
 ! -> Note
+
+-------------------- 1.5.0 Release Candidate 2 Released [1-September-2007] ---------------------
+
+31-Aug-2007 Johan Janssens
+ ^ Added support for charsets to JView, charset is used by the JView::escape function
+   when escaping using htmlspecialchars or htmlentities.
+ ^ Fixed com_search to use proper output escaping using JView::escape.
+ + Added JDocument::setBase and getBase functions to allow setting the document base uri
+ ! JRouter has been completely refactored.
+ ^ JApplicationHelper::getClientInfo now returns a reference to the client array instead
+   of a copy of the array. This allows to dynamically set client information at runtime
+ ^ Moved JText and JRoute to joomla.methods, to support lazy loading of JLanguage and JRouter
+ + Added getInstance functions to JApplication, JRouter and JPathway
+ - Removed JSearch class, not used in 1.5
+
+31-Aug-2007 Enno Klasing
+ ^ Updated, added and deleted installer application translations from the Accredited Translation Partners
+
+31-Aug-2007 Mateusz Krzeszowiec
+ # Fixed "View not found" error in com_media under Linux. View directories renamed to lowercase
+
+30-Aug-2007 Louis Landry
+ ^ Refactor of Media Manager to a new and improved MVC architecture ... we can sort out
+   the uglies for the next RC
+
+30-Aug-2007 Enno Klasing, Alan Langford, Jonah Braun
+ # Cleenup of Beez template overrides [WIP, com_contact, com_content and com_user not finished yet]
+
+30-Aug-2007 Toby Patterson
+ # Fixed [t207417] - Fatal error when installing language
+ # Fixed [#5695] Installer doesn't show output messages in PHP 4
+ # Fixed [#6705] Installing extensions, description issues using language file
+
+30-Aug-2007 Rob Schley
+ * Fixed several potential full path disclosure vulnerabilities
+ * Fixed XSS vulnerability in com_content
+ * Fixed SQL injection vulnerability in com_content
+
+30-Aug-2007 Andrew Eddie
+ # Fixed gacl_api::add_group not returning the id of the new group
+
+29-Aug-2007 Johan Janssens
+ ^ Refactored frontend search component to a full MVC implementation
+ # Fixed [#6763] sessionhandler="none" breaks site
+ # Fixed [#6703] Please add language ini functionality in template installer
+ # Fixed [#6777] mistake in name mod_syndicate
+
+29-Aug-2007 Enno Klasing
+ + Added module chrome to Beez
+
+28-Aug-2007 Rob Schley
+ # Fixed [topic,205896] Polls results giving error
+ # Fixed [#6112] Wrong message when trying to unpublish default menu item and more
+
+27-Aug-2007 Rob Schley
+ # Fixed [#6724] Component com_poll poll selection forms bad URL
+ # Fixed [#6230] Date of language package "unknown" and no "Author E-mail"
+ ^ Changed JPath::isOwner() to hopefully be more reliable.
+ ^ Changed administrator/com_templates language string "FAILED TO OPEN FILE FOR WRITING." to accept a file name.
+ # Fixed com_templates not notifying you which file it failed to open for writing.
+ # Fixed [topic,200825] Template editing, double notice
+ # Fixed administrator directory permission listing not displaying language directories
+ # Fixed [topic,191592] Template installer can not install language files
+
+27-Aug-2007 Robin Muilwijk
+ # Fixed [topic,206302] incorrect sample data, modules
+
+27-Aug-2007 Johan Janssens
+ # Fixed frontpage duplicate content issues with readmore links. Read more links now
+   redirect correctly.
+ # Fixed issues with relative links in feeds, added xml:base tag to Atom and added
+   relative to absolute link convertor to RSS.
+
+27-Aug-2007 Andrew Eddie
+ + Added Alias column to admin list views where appropriate
+ ^ Moved ID field consistently to last column of admin list views
+
+26-Aug-2007 Robin Muilwijk
+ # Fixed [topic,167080] incorrect sample data
+ # Fixed [topic,205985] incorrect image path name in admin popup
+
+26-Aug-2007 Johan Janssens
+ - Removed JApplication::loadConfiguration and loadSession, both are now handled by the
+   constructor
+ ^ Changed JSession to close and write the session store on object destruction. This change
+   removes the need to call JSession::close or JApplication::close manualy.
+
+25-Aug-2007 Johan Janssens
+ # Fixed [#4713] Preview article doesn't publish graphics...
+ # Fixed [#6110] Double Quotes in menu Title and article Title results
+ # Fixed [#6347] com_media folder content display issue
+ # Fixed [#6086] Newsflash and Latest News modules won't display current created articles.
+
+25-Aug-2007 Toby Patterson
+ # Fixed [t182533] Illegal character in component name?
+ # Fixed [t199839] extension installer - can't install extentions get No file selected
+
+24-Aug-2007 Rastin Mehr
+ # Fixed [#5996] Related item module broken
+ ! Thank you Kevin Devine for pointing out the issue regarding the article id
+ # Fixed [#5925] Search display drop down causes js error
+
+24-Aug-2007 Enno Klasing
+ ^ Updated Beez template, contributed by the Design and Accessibility working group
+
+24-Aug-2007 Johan Janssens
+ # Fixed [#5396] Section description will not process with IMG
+ # Fixed [#5453] Image lightbox popup window acts differently in each browser
+ # Fixed [#4870] Component Preferences: Title not translated
+ ^ Decoupled joomla authentication plugin from $mainframe, the authentication credentials
+   array now accepts an group varable that defines the minumum groupid the user needs to be
+   in for succesfull authentication
+
+24-Aug-2007 Toby Patterson
+ + re: topic 173244 Added setError() and getError() methods to JTable
+ ! Use these methods in preference of accessing the $_error attribute directly.
+   These overloaded methods will be removed and the methods in JObject will be used instead.
+
+23-Aug-2007 Johan Janssens
+ # Fixed [#6649] wrong image path in category blog
+ # Fixed [#6641] Usermanager: user can block himself
+ # Fixed [#6636] fat.js missing in khepri
+ # Fixed [#6573] Legacy - pagination.php vs pageNavigation.php
+ # Fixed [#6572] Legacy - mosWarning
+ ^ Improved user synchronisation and user plugin support for com_user, block and logout users
+    tasks now also trigger the user plugins
+ ^ JApplication::logout now accepts userid variable to allow a force logout of any user.
+ ^ Improved user onBeforeStore and onAfterStore events, the onBeforeStore event now receives
+   the old user data which can be used to create assynchronous application bridges
+ + Added Editor mode parameter to XStandard plugin
+
+23-Aug-2007 Toby Patterson
+ # Fixed [193612] RC1 - Mass mail throws language string error
+
+22-Aug-2007 Rob Schley
+ ^ Changed front-end rhuk_milkyway template default colors back to blue/blue.
+
+22-Aug-2007 Johan Janssens
+ # Fixed [#6090] E-mail this Link to a Friend, generates wrong URL
+
+22-Aug-2007 Toby Patterson
+ # Fixed [#6544] JPlugin::loadLanguage("") fails
+ ! JPlugin offers $_name and $_type
+
+21-August-2007 Johan Janssens
+ ^ Updated XStandard support to version 2.0
+ + Added editor-xtd button suppport to the XStandard plugin
+ # Fixed [#4709] No article preview with XStandard Lite 1.7
+ # Fixed [#6169] XStandard shown up despite its plugin is disabled
+ # Fixed [#6416] Mod_login fault
+
+20-August-2007 Robin Muilwijk
+# Fixed [#5769] added an extra if statement to prevent empty ordered list in debug plugin
+# Fixed [#6343] incorrect display of article modified date
+
+20-August-2007 Toby Patterson
+ # Fixed [t194459] Joomla! 1.5 RC1 - Com_contact doesn't send emails for me
+
+20-August-2007 Andrew Eddie
+ # Added JArchive::create back (based on Tar until we can rewrite it)
+ # Fixed bug in JArchiveTar::extract that ignored 'Unix file' types
+
+19-August-2007 Robin Muilwijk
+ # Fixed [#6599] typo in installation language file
+
+19-August-2007 Johan Janssens
+ + Added XCache session and cache store
+
+17-August-2007 Toby Patterson
+ # Fixed [#6181] Joomla! Forge is advertised
+ # Fixed [#6569] Menu Links: JError When Session Expires But User Clicks on Link for Registered+ Users
+ ! When unregistered user tries to access registered+ menu link, user will be prompted for authentication and redirected
+ # Fixed [#6433] JMail class keeps adding to email recipients
+ ! JFactory::getMailer() will return a copy of the mailer
+ # Fixed [no artifact] com_massmail sets phpmailer's IsHTML()
+ # Fixed [#5512] Dropdown not being translated in Global Config
+ + Fixed [t202745] Added josGetArrayInts() to legacy functions
+
+16-August-2007 Sam Moffatt
+ # Fixed breadcrumbs module related bug after a migration
+ # Fixed issue with polls
+ ^ Attempting to make the mainconfig installation screen more tolerant
+
+15-August-2007 Robin Muilwijk
+ ^ Updated mootools from 1.1 to 1.11
+
+12-August-2007 Robin Muilwijk
+ # Fixed [topic,200952] typo in weblink search plugin for JPlugin::loadlanguage()
+ ^ Removed var_dump from debug plugin
+
+12-August-2007 Johan Janssens
+ + Added JHTML::script and JHTML::stylesheet helper functions to allow easy loading of javascript
+   and stylesheet.
+ + Added cookie support to JSwitcher behavior
+ + Added JOpenID login form behavior to be eligible for the OpenID bounty program
+ - Removed includes/js/cookie.js, functionality already exists in mootools
+
+11-August-2007 Johan Janssens
+ + Added JPlugin::loadLanguage to make language loading fro plugins easier
+
+11-August-2007 Robin Muilwijk
+ ^ Added the css class .highlight to the milkyway so search results get highlighted
+ # Fixed [topic,200743] typo in poll module language file
+ # Fixed [topic,200745] typo in random image module language file
+
+11-August-2007
+ # Fixed instances of =& new Classname in core code (3rd-party libs are still an issue)
+
+10-August-2007 Toby Patterson
+ ^ Updated mail regex in JMailHelper::isEmailAddress() [topic,197027]
+ ^ JTableUser uses JMailHelper::isEmailAddress()
+ + Added check to JMail::Send to flag a warning if PHP's mail() function has been disabled ( resulted in PHP Error )
+
+10-August-2007 Sam Moffatt
+ # Fixed [#6249] New User Registration Type does not effect LDAP User
+
+10-August-2007 Andrew Eddie
+ # JRouterSite::build - added clone to JURI::getInstance to account for multiple routes of the same url
+ + Added parameter to admin template to vary the color of the header bar
+
+09-August-2007 Robin Muilwijk
+ # Fixed [topic,194994] added to front end plugin language files (content vote, plugin)
+ # Fixed [topic,200010] typo in front end language file of latest news module
+
+08-August-2007 Robin Muilwijk
+ # Fixed [#6057] added copyright text to khepri language file for NuoveXT Icons
+ # Fixed [#6438] small typo in contact form file
+ # Fixed [#6346] added permission check for administrator/language/ in Help > Sys info > Permissions
+
+07-August-2007 Robin Muilwijk
+ # Fixed [topic,199155] incorrect message statement for module manager, save ordering message
+
+07-August-2007 Andrew Eddie
+ # Fixed unrouted form action in search form
+ + Added optional id param to mod_mainmenu
+ # Fixed [#6387] Configuration Doesn't save TimeZones that are not integer
+ # Fixed [#6389] Web link component generates image tag if no image set
+ # Fixed output filtering in admin edit forms: com_user, com_templates, com_plugins, com_modules
+ # Fixed [#6110] Double Quotes in menu Title and article Title results
+ # Fixed [#6185] Not replaced variable in Category Manager
+
+06-August-2007 Johan Janssens
+ + Added isEnabled functions to JPluginHelper and JModuleHelper
+ ^ Changed JComponentHelper::getInfo to JComponentHelper::getComponent to maintain consistency
+ # Fixed [#6170] Article pagination not working when SEF is active
+
+06-August-2007 Andrew Eddie
+ - Removed js console.log calls - causes error when FireBug not installed/enabled with Fx
+ # Fixed "GNU/GPL License" Redundancy
+ + Implemented ignore argument JTable::save patch by acalderon
+
+04-August-2007 Andrew Eddie
+ # Partial fix to [#6345] 'Close' button not working when editing plugins
+ # Fixed [Q&T] function get_group_parents doesn't work
+
+03-August-2007 Robin Muilwijk
+ # Fixed [#6314] added a space between Version and Version number in backend template
+
+02-August-2007 Robin Muilwijk
+ # Fixed partially [#6314] duplicate language string, removed
+
+02-August-2007 Johan Janssens
+ # Fixed [#6344] Editor does not load correctly in legacy component
+
+02-August-2007 Andrew Eddie
+ + Added 'Last Activity' column to admin mod_logged (try and help sort out stale session issues)
+ + Added param to kephri template to optionally show the site title in the header
+ # Fixed session purging issues
+ ^ Changes config storage of cache lifetime from seconds to minutes to be the same as the session timeout
+
+01-August-2007 Johan Janssens
+ ^ Plugin parameters are now passed through the constructor of the plugin and are available by
+   default.
+
+01-August-2007 Andrew Eddie
+ ^ Turned down error handling in JSimpleXML to raiseWarning instead of raiseError -
+   makes it easier find what happened
+ # Altered Media Manager layout to handle the bleed from large folder trees a bit better
+ # Fixed contact selector not displaying in Contact View
+ # Removed target=_top from contact us forms - prevents use in iframes
+ # Fixed incorrect $url variable in JHTML::image
+ # Fixed image path issues for category image in weblinks and newsfeeds components
+
+31-July-2007 Johan Janssens
+ # Fixed [#5430] _parseApplicationRoute() removing too much of route on match
+ # Fixed [#6060] libraries/joomla/application/application.php
+ # Fixed [#6177] Redirect to a path contain &amp ; instead & after edit at front end
+ # Fixed [#6159] sefRelToAbs( 'index.php' ) returns a partial url, which generates a 404 error
+
+31-July-2007 Robin Muilwijk
+ # Fixed [#6275] incorrect prefix for sample data, changed jos_ to #__
+ # Fixed [topic, 194930] incorrect comment line in /templates/system/css/general.css
+
+31-July-2007 Andrew Eddie
+ # Fixed dupe show_title param in default layout, frontpage view of com_content
+ + Admin: New user is preset with the default new user group
+ # Fixed bug in delete user by adding missing aro_map table (presently not used but
+   included for forward compatibility with next version)
+
+30-July-2007 Robin Muilwijk
+ # Fixed [#6210] small typo in /libraries/joomla/utilities/mail.php
+
+29-July-2007 Johan Janssens
+ ^ Changed session data table field type from text to longtext, to accomodate session data larger then 64k
+
+29-July-2007 Andy Wallace
+ # Re-ordered some language files
+ # Amended Lnguage strings
+ - Deleted some old/unused language entries
+ + Added missing strings
+ + Added missing metadata.xml files and other .xml files to sort problems with Menu Item
+   tree listings and added language   references.
+ + Added appropriate svn keyword: Id to new files.
+ # Amended some titles for consistency
+ # Translated a number of error messages
+
+28-Jul-2007 Rastin Mehr
+ # $params->get( 'moduleclass_sfx') in mod_feed/tmpl/default was declared as $moduleclass_sfx
+   therefore breaking the code
+
+27-Jul-2007 Andrew Eddie
+ + Added example content bot
+
+27-Jul-2007 Andrew Eddie
+ # Fixed bug in contact us form: cc not working
+
+25-Jul-2007 Andrew Eddie
+ # Fixed bug where JModuleHelper::getModule couldn't load module by real name
+
+24-Jul-2007 Johan Janssens
+ ^ site_langauage and administrator_language settings are now stored as com_languages paramaters
+   instead of in the configuration.php
+
+23-Jul-2007 Andrew Eddie
+ # Fixed bug in JHTMLImage::site giving full image tag in the src attribute
+ # Removed eval from JUtility::sendAdminMail method
+ # Fixed possible syntax error evaluation in JDocumentHTML::countModules
+ ^ Added validation trigger onValiddateContact for custom form handling (compliments onSubmitContact)
 
 -------------------- 1.5.0 Release Candidate 1 Released [21-July-2007] ---------------------
 
@@ -110,7 +448,7 @@ Legend:
 
 17-Jul-2007 Johan Janssens
  ^ Changed template _system directory to system for consistency reasons
- + Added storage paramater to JFactory::getCache to allow different stores to be used
+ + Added storage parameter to JFactory::getCache to allow different stores to be used
  ^ Renamed JOutputFilter classname to JFilterOutput to adhere to naming conventions
  ^ Renamed JInputFilter classname to JFilterInput to adhere to naming conventions
 
@@ -562,7 +900,7 @@ Legend:
 02-May-2007 Johan Janssens
  + Added helper suppport to JView class, see loadHelper function
  + Added JPATH_XMLRPC define
- ^ Changed plugin auto-registration to push plugin paramaters into plugin class scope.
+ ^ Changed plugin auto-registration to push plugin parameters into plugin class scope.
  - Removed Cache_Lite package from the framework.
  ^ JHTML optimisation, work in progress
 
@@ -2677,7 +3015,7 @@ You have to open the article preferences and change the setting to show and save
 
 16-Mar-2005 Johan Janssens
  - Removed administrator/includes/toolbar.html.php
- - Moved paramater package into presentation package
+ - Moved parameter package into presentation package
 
 16-Mar-2005 Louis Landry
  + JMenu class to hold menu item information
@@ -3121,7 +3459,7 @@ You have to open the article preferences and change the setting to show and save
 22-Dec-2005 Johan Janssens
  ^ Implemented adapter pattern for JDocument class
  + Added JDocumentHTML class
- ^ Deprecated mosParamaters, use JParameters instead
+ ^ Deprecated mosParameters, use JParameters instead
  ^ Deprecated mosCategory, use JCategoryModel instead
  ^ Deprecated mosComponent, use JComponentModel instead
  ^ Deprecated mosContent, use JContentModel instead

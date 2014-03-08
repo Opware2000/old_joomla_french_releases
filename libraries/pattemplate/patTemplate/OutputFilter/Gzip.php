@@ -2,7 +2,7 @@
 /**
  * patTemplate GZip output filter
  *
- * $Id: Gzip.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Gzip.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Checks the accept encoding of the browser and
  * compresses the data before sending it to the client.
@@ -18,7 +18,7 @@ defined('JPATH_BASE') or die();
 /**
  * patTemplate GZip output filter
  *
- * $Id: Gzip.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Gzip.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Checks the accept encoding of the browser and
  * compresses the data before sending it to the client.
@@ -29,7 +29,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_OutputFilter_Gzip extends patTemplate_OutputFilter
 {
-   /**
+	/**
 	* filter name
 	*
 	* This has to be set in the final
@@ -41,7 +41,7 @@ class patTemplate_OutputFilter_Gzip extends patTemplate_OutputFilter
 	*/
 	var	$_name	=	'Gzip';
 
-   /**
+	/**
 	* compress the data
 	*
 	* @access	public
@@ -68,7 +68,7 @@ class patTemplate_OutputFilter_Gzip extends patTemplate_OutputFilter
 		return $data;
 	}
 
-   /**
+	/**
 	* check, whether client supports compressed data
 	*
 	* @access	private
@@ -86,7 +86,7 @@ class patTemplate_OutputFilter_Gzip extends patTemplate_OutputFilter
 		return  false;
 	}
 
-   /**
+	/**
 	* get value as hex-string
 	*
 	* @access      public

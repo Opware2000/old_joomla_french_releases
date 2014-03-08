@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: legacy.php 8130 2007-07-20 20:53:57Z jinx $
+* @version		$Id: legacy.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -31,11 +31,12 @@ class  plgSystemLegacy extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @param	object		$subject The object to observe
+	  * @param 	array  		$config  An array that holds the plugin configuration
 	 * @since	1.0
 	 */
-	function plgSystemLegacy(& $subject)
+	function plgSystemLegacy(& $subject, $config)
 	{
-		parent::__construct($subject);
+		parent::__construct($subject, $config);
 
 		global $mainframe;
 
@@ -111,7 +112,7 @@ class  plgSystemLegacy extends JPlugin
 		 * Insert configuration values into global scope (for backwards compatibility)
 		 * @deprecated	As of version 1.5
 		 */
-		
+
 		$temp = new JConfig;
 		foreach (get_object_vars($temp) as $k => $v) {
 			$name = 'mosConfig_'.$k;
@@ -121,10 +122,15 @@ class  plgSystemLegacy extends JPlugin
 		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
 		$GLOBALS['mosConfig_live_site']		= substr_replace($url, '', -1, 1);
 		$GLOBALS['mosConfig_absolute_path']	= JPATH_SITE;
-		
+		$GLOBALS['mosConfig_cache_path']	= JPATH_BASE.DS.'cache';
+
 		$lang =& JFactory::getLanguage();
 		$GLOBALS['mosConfig_lang']          = $lang->getBackwardLang();
 		
+		$config->setValue('config.live_site', 		$GLOBALS['mosConfig_live_site']);
+		$config->setValue('config.absolute_path', 	$GLOBALS['mosConfig_absolute_path']);
+		$config->setValue('config.lang', 			$GLOBALS['mosConfig_lang']);
+
 		/**
 		 * Legacy global, use JFactory::getUser() instead
 		 * @name $acl

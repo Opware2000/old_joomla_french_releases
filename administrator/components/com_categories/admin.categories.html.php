@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.categories.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.categories.html.php 8577 2007-08-26 22:45:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Categories
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -73,19 +73,17 @@ class categories_html
 					<?php echo JHTML::_('grid.sort',   'Title', 'c.title', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 				<th width="10%">
+					<?php echo JHTML::_('grid.sort',   'Alias', 'c.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="5%">
 					<?php echo JHTML::_('grid.sort',   'Published', 'c.published', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
-				<th width="80" nowrap="nowrap">
+				<th width="8%" nowrap="nowrap">
 					<?php echo JHTML::_('grid.sort',   'Order by', 'c.ordering', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="1%">
 					<?php echo JHTML::_('grid.order',  $rows ); ?>
 				</th>
 				<th width="7%">
 					<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="2%" nowrap="nowrap">
-					<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 				<?php
 				if ( $section == 'com_content') {
@@ -108,6 +106,9 @@ class categories_html
 					<?php
 				}
 				?>
+				<th width="1%" nowrap="nowrap">
+					<?php echo JHTML::_('grid.sort',   'ID', 'c.id', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -152,10 +153,13 @@ class categories_html
 					}
 					?></span>
 				</td>
+				<td>
+					<?php echo $row->alias;?>
+				</td>
 				<td align="center">
 					<?php echo $published;?>
 				</td>
-				<td class="order" colspan="2">
+				<td class="order">
 					<span><?php echo $page->orderUpIcon( $i, ($row->section == @$rows[$i-1]->section), 'orderup', 'Move Up', $ordering ); ?></span>
 					<span><?php echo $page->orderDownIcon( $i, $n, ($row->section == @$rows[$i+1]->section), 'orderdown', 'Move Down', $ordering ); ?></span>
 					<?php $disabled = $ordering ?  '' : 'disabled="disabled"'; ?>
@@ -163,9 +167,6 @@ class categories_html
 				</td>
 				<td align="center">
 					<?php echo $access;?>
-				</td>
-				<td align="center">
-					<?php echo $row->id; ?>
 				</td>
 				<?php
 				if ( $section == 'com_content' ) {
@@ -191,6 +192,9 @@ class categories_html
 				}
 				$k = 1 - $k;
 				?>
+				<td align="center">
+					<?php echo $row->id; ?>
+				</td>
 			</tr>
 			<?php
 		}
@@ -391,7 +395,7 @@ class categories_html
 						<td valign="top" colspan="3">
 							<?php
 							// parameters : areaname, content, width, height, cols, rows, show xtd buttons
-							echo $editor->display( 'description',  $row->description, '100%', '300', '60', '20', false ) ;
+							echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', false ) ;
 							?>
 						</td>
 					</tr>
@@ -519,9 +523,11 @@ class categories_html
 			<td valign="top">
 			<?php echo JText::_( 'This will copy the Categories listed' ); ?>
 			<br />
-			<?php echo JText::_( 'and all the items within the category (also listed)' ); ?>
+			<?php echo JText::_( 'and all the items within the Category (also listed)' ); ?>
 			<br />
-			<?php echo JText::_( 'to the selected Section' ); ?>.
+			<?php echo JText::_( 'to the selected Section' ); ?>
+			<br />
+			<?php echo JText::_( 'NOTE: IF NO SECTION' ); ?>.
 			</td>.
 		</tr>
 		</table>

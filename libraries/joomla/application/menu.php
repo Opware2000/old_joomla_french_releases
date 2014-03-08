@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: menu.php 7380 2007-05-06 21:26:03Z eddieajau $
+ * @version		$Id: menu.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla.Framework
  * @subpackage	Application
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -77,7 +77,7 @@ class JMenu extends JObject
 	 * 		<pre>  $menu = &JMenu::getInstance();</pre>
 	 *
 	 * @access	public
-	 * @return	JMenu	The Menu object.
+	 * @return	JMenu	The menu object.
 	 * @since	1.5
 	 */
 	function &getInstance()
@@ -117,7 +117,7 @@ class JMenu extends JObject
 	 */
 	function setDefault($id)
 	{
-		if(exists($this->_items[$id])) {
+		if(isset($this->_items[$id])) {
 			$this->_default = $id;
 			return true;
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 7995 2007-07-16 15:55:31Z jinx $
+* @version		$Id: helper.php 8616 2007-08-29 16:55:59Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -65,21 +65,5 @@ class modSearchHelper
 		}
 
 		return $output;
-	}
-
-	function getItemid()
-	{
-		// set Itemid id for links
-		$menu = &JMenu::getInstance();
-		$items	= $menu->getItems('link', 'index.php?option=com_search');
-			
-		if(isset($items[0])) {
-			$itemid = $items[0]->id;
-		} else {
-			$default = $menu->getDefault();
-			$itemid = $default->id;
-		}
-	
-		return $itemid;
 	}
 }

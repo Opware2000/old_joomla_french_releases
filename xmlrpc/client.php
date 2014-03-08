@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: client.php 7789 2007-06-26 17:39:36Z jinx $
+* @version		$Id: client.php 8568 2007-08-26 10:30:33Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -26,10 +26,7 @@ JError::setErrorHandling( E_WARNING, 'echo' );
 JError::setErrorHandling( E_NOTICE,	 'echo' );
 
 // create the mainframe object
-$mainframe = new JXMLRPC(3);
-
-// load the configuration
-$mainframe->loadConfiguration( JPATH_CONFIGURATION.DS.'configuration.php' );
+$mainframe = new JXMLRPC();
 
 // Ensure that this application is enabled
 if (!($mainframe->getCfg('xmlrpc_server') && $mainframe->getCfg('debug'))) {
@@ -72,9 +69,9 @@ if ($task)
 			jimport( 'joomla.html.html' );
 			$msg = new xmlrpcmsg('system.listMethods');
 			$xmlrpcdoc = $client->send($msg);
-			
-			echo var_dump($xmlrpcdoc);
-			die;
+
+			//echo var_dump($xmlrpcdoc);
+			//die;
 
 			if ($xmlrpcdoc->faultCode() == 0)
 			{

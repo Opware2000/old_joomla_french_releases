@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 7075 2007-03-31 16:07:07Z louis $
+ * @version		$Id: contact.php 8178 2007-07-23 05:39:47Z eddieajau $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -27,5 +27,3 @@ $controller->execute(JRequest::getVar('task', null, 'default', 'cmd'));
 
 // Redirect if set by the controller
 $controller->redirect();
-
-?>

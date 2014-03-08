@@ -4,7 +4,11 @@
 	<tbody>
 		<tr>
 			<td width="185" class="key">
+			
+			<span class="editlinktip hasTip" title="<?php echo JText::_( 'Site Offline' ); ?>::<?php echo JText::_( 'TIPSETYOURSITEISOFFLINE' ); ?>">
+			
 			<?php echo JText::_( 'Site Offline' ); ?>
+			</span>
 			</td>
 			<td>
 			<?php echo $lists['offline']; ?>
@@ -22,7 +26,9 @@
 		</tr>
 		<tr>
 			<td class="key">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Site Name' ); ?>::<?php echo JText::_( 'TIPSITENAME' ); ?>">
 				<?php echo JText::_( 'Site Name' ); ?>
+				</span>
 			</td>
 			<td>
 				<input class="text_area" type="text" name="sitename" size="50" value="<?php echo $row->sitename; ?>" />
@@ -30,7 +36,9 @@
 		</tr>
 		<tr>
 			<td class="key">
-				<?php echo JText::_( 'Default WYSIWYG Editor' ); ?>
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Default WYSIWYG Editor' ); ?>::<?php echo JText::_( 'TIPDEFWYSIWYG' ); ?>">
+			<?php echo JText::_( 'Default WYSIWYG Editor' ); ?>
+			</span>
 			</td>
 			<td>
 				<?php echo $lists['editor']; ?>

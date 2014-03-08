@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 7963 2007-07-14 16:16:41Z friesengeist $
+ * @version		$Id: banner.php 8179 2007-07-23 05:44:05Z eddieajau $
  * @package  Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -198,4 +198,3 @@ class BannersModelBanner extends JModel
 		return $url;
 	}
 }
-?>

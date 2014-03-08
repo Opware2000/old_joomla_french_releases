@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: sef.php 6636 2007-02-15 18:27:18Z Jinx $
+* @version		$Id: sef.php 8511 2007-08-22 18:22:54Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -36,10 +36,8 @@ function plgContentSEF( &$row, &$params, $page=0 )
 		return true;
 	}
 
-	$plugin =& JPluginHelper::getPlugin('content', 'sef');
-
 	// check whether plugin has been unpublished
-	if ( !$plugin->published ) {
+	if ( !JPluginHelper::isEnabled('content', 'sef')) {
 		return true;
 	}
 
@@ -100,4 +98,3 @@ function plgContentSEF_replacer( &$matches )
 		return $original;
 	}
 }
-?>

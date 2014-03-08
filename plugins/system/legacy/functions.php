@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: functions.php 8084 2007-07-19 10:33:20Z jinx $
+ * @version		$Id: functions.php 8563 2007-08-25 20:50:33Z jinx $
  * @package		Joomla.Legacy
  * @subpackage	1.5
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -169,7 +169,7 @@ function mosStripslashes( &$value )
 }
 
 /**
- * Legacy function, use {@link JObject::bind() JObject->bind()} instead
+ * Legacy function, use {@link JArrayHelper JArrayHelper->toObject()} instead
  *
  * @deprecated	As of version 1.5
  */
@@ -578,7 +578,7 @@ function initEditor()
 function getEditorContents($editorArea, $hiddenField)
 {
 	jimport( 'joomla.html.editor' );
-	$editor =& JEditor::getInstance();
+	$editor =& JFactory::getEditor();
 	echo $editor->save( $hiddenField );
 }
 
@@ -590,7 +590,7 @@ function getEditorContents($editorArea, $hiddenField)
 function editorArea($name, $content, $hiddenField, $width, $height, $col, $row)
 {
 	jimport( 'joomla.html.editor' );
-	$editor =& JEditor::getInstance();
+	$editor =& JFactory::getEditor();
 	echo $editor->display($hiddenField, $content, $width, $height, $col, $row);
 }
 
@@ -623,12 +623,12 @@ function mosObjectToArray( $p_obj, $recurse = true, $regex = null )
  * @deprecated	As of version 1.5
  */
 function mosFormatDate( $date = 'now', $format = null, $offset = null )  {
-	
+
 	if ( ! $format )
 	{
 		$format = JText::_('DATE_FORMAT_LC1');
 	}
-	
+
 	return JHTML::_('date', $date, $format, $offset);
 }
 
@@ -769,6 +769,18 @@ function SortArrayObjects( &$a, $k, $sort_direction=1 )
 }
 
 /**
+ * Legacy function, {@link JRequest::getVar()}
+ *
+ * @deprecated	As of version 1.5
+ */
+function josGetArrayInts( $name, $type=NULL ) {
+	
+	$array	=  JRequest::getVar($name, array(), 'default', 'array' );
+	
+	return $array;
+}
+
+/**
  * Legacy function, {@link JSession} transparently checks for spoofing attacks
  *
  * @deprecated	As of version 1.5
@@ -876,4 +888,11 @@ function mosTreeRecurse( $id, $indent, $list, &$children, $maxlevel=9999, $level
 	return JHTML::_('menu.treerecurse', $id, $indent, $list, $children, $maxlevel, $level, $type);
 }
 
-?>
+/**
+ * Legacy function, use {@link JHTML::tooltip()} instead
+ *
+ * @deprecated	As of version 1.5
+ */
+function mosWarning($warning, $title='Joomla! Warning') {
+	return JHTML::tooltip('blah', $title, 'warning.png', null, null, null);
+}

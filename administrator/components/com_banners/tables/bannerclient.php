@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: bannerclient.php 7234 2007-05-01 13:54:01Z jinx $
+ * @version		$Id: bannerclient.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -21,13 +21,13 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
  */
 class TableBannerClient extends JTable
 {
-	var	$cid 				= null;
-	var $name 				= '';
-	var $contact 			= '';
-	var $email 				= '';
-	var $extrainfo 			= '';
-	var $checked_out 		= 0;
-	var $checked_out_time 	= 0;
+	var	$cid				= null;
+	var $name				= '';
+	var $contact			= '';
+	var $email				= '';
+	var $extrainfo			= '';
+	var $checked_out		= 0;
+	var $checked_out_time	= 0;
 	var $editor				= '';
 
 	function __construct( &$_db ) {

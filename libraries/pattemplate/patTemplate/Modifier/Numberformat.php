@@ -2,7 +2,7 @@
 /**
  * patTemplate modfifier Numberformat
  *
- * $Id: Numberformat.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Numberformat.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -37,7 +37,7 @@ class patTemplate_Modifier_Numberformat extends patTemplate_Modifier
                         'point'     => '.',
                         'separator' => ','
                     );
-   /**
+	/**
 	* modify the value
 	*
 	* @access	public

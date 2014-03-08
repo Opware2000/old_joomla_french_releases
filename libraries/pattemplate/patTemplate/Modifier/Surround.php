@@ -2,7 +2,7 @@
 /**
  * patTemplate modfifier Surround
  *
- * $Id: Surround.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Surround.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -33,7 +33,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Modifier_Surround extends patTemplate_Modifier
 {
-   /**
+	/**
 	* modify the value
 	*
 	* @access	public

@@ -1,11 +1,11 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 
-echo '<div class="message_title">';
+echo '<h3>';
 echo $this->message->title ;
-echo '</div>';
+echo '</h3>';
 
-echo '<div class="message">';
+echo '<p class="message">';
 echo  $this->message->text ;
-echo '</div>';
+echo '</p>';
 ?>

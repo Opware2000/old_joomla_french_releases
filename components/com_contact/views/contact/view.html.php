@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8118 2007-07-20 13:56:38Z jinx $
+ * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -28,11 +28,11 @@ class ContactViewContact extends JView
 		global $mainframe;
 
 		$user		= &JFactory::getUser();
-		$pathway	= & $mainframe->getPathWay();
+		$pathway	= &$mainframe->getPathway();
 		$document	= & JFactory::getDocument();
 		$model		= &$this->getModel();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menus	= &JMenu::getInstance();
 		$menu    = $menus->getActive();
 
@@ -45,7 +45,10 @@ class ContactViewContact extends JView
 		$modelCat	= &$this->getModel( 'Category' );
 
 		// Selected Request vars
-		$contactId	= JRequest::getVar( 'id', 0, '', 'int' );
+		// ID may come from the contact switcher
+		if (!($contactId	= JRequest::getInt( 'contact_id',	0 ))) {
+			$contactId	= JRequest::getInt( 'id',			$contactId );
+		}
 
 		// query options
 		$options['id']	= $contactId;
@@ -141,10 +144,10 @@ class ContactViewContact extends JView
 
 		JHTML::_('behavior.formvalidation');
 
-		$this->assignRef('contact'  , $contact);
-		$this->assignRef('params'   , $pparams);
+		$this->assignRef('contact',		$contact);
+		$this->assignRef('contacts',	$contacts);
+		$this->assignRef('params',		$pparams);
 
 		parent::display($tpl);
 	}
 }
-?>

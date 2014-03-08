@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.feed.php 7910 2007-07-10 11:50:53Z jinx $
+ * @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,7 +35,7 @@ class ContentViewFrontpage extends JView
 		$db			=& JFactory::getDBO();
 		$document	=& JFactory::getDocument();
 		$limit		= '10';
-		$document->link = JURI::base().JRoute::_('index.php?option=com_content&view=frontpage');
+		$document->link = JRoute::_('index.php?option=com_content&view=frontpage');
 
 		JRequest::setVar('limit', $limit);
 		$rows = $this->get('data');
@@ -48,7 +48,7 @@ class ContentViewFrontpage extends JView
 
 			// url link to article
 			// & used instead of &amp; as this is converted by feed creator
-			$link = JRoute::_('index.php?option=com_content&view=article&id='. $row->id );
+			$link = ContentHelperRoute::getArticleRoute($row->slug, $row->catslug, $row->sectionid);
 
 			// strip html from feed item description text
 			$description	= $row->introtext;

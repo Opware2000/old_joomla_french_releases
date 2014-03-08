@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8082 2007-07-19 07:31:54Z hackwar $
+ * @version		$Id: view.html.php 8604 2007-08-28 18:06:52Z jinx $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -32,7 +32,7 @@ class ContactViewCategory extends JView
 		$model	  = &$this->getModel();
 		$document =& JFactory::getDocument();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menus	=& JMenu::getInstance();
 		$menu	= $menus->getActive();
 
@@ -75,7 +75,8 @@ class ContactViewCategory extends JView
 		{
 			$contact =& $contacts[$i];
 
-			$contact->link	= JRoute::_('index.php?option=com_contact&view=contact&id='.$contact->slug);
+			$contact->link	   = JRoute::_('index.php?option=com_contact&view=contact&id='.$contact->slug);
+			$contact->email_to = JHTML::_('email.cloak', $contact->email_to);
 
 			$contact->odd	= $k;
 			$contact->count = $i;
@@ -124,7 +125,8 @@ class ContactViewCategory extends JView
 		//$this->assignRef('data',		$data);
 		$this->assignRef('category',	$category);
 		$this->assignRef('params',		$pparams);
-		$this->assignRef('action',		$uri->toString());
+		
+		$this->assign('action',		$uri->toString());
 
 		parent::display($tpl);
 	}
@@ -134,4 +136,3 @@ class ContactViewCategory extends JView
 
 	}
 }
-?>

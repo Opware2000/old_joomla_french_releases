@@ -1,6 +1,6 @@
 <?php
 /**
-* @version $Id: loader.php 8054 2007-07-18 13:05:34Z jinx $
+* @version $Id: loader.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla.Framework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -37,14 +37,14 @@ class JLoader
 		{
 			$paths = array();
 		}
-		
+
 		//$keyPath	= $key ? $key . $filePath : $filePath;
 		if ( $key ) {
 			$keyPath = $key . $filePath;
 		} else {
 			$keyPath = $filePath;
 		}
-		
+
 		$trs	= 1;
 
 		if (!isset($paths[$keyPath]))
@@ -82,7 +82,7 @@ class JLoader
 				$path = str_replace( '.', DS, $filePath );
 				$trs	= include($base . DS . $path . '.php');
 			}
-			
+
 			$paths[$keyPath] = $trs;
 		}
 		return $trs;

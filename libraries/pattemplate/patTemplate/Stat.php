@@ -2,7 +2,7 @@
 /**
  * Base class for patTemplate Stat
  *
- * $Id: Stat.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Stat.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * A stat component should be implemented for each reader
  * to support caching. Stats return information about the
@@ -19,7 +19,7 @@ defined('JPATH_BASE') or die();
 /**
  * Base class for patTemplate Stat
  *
- * $Id: Stat.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Stat.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * A stat component should be implemented for each reader
  * to support caching. Stats return information about the
@@ -32,7 +32,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Stat extends patTemplate_Module
 {
-   /**
+	/**
 	* options, are identical to those of the corresponding reader
 	*
 	* @access	private
@@ -40,7 +40,7 @@ class patTemplate_Stat extends patTemplate_Module
 	*/
 	var $_options = array();
 
-   /**
+	/**
 	* get the modification time of a template
 	*
 	* Needed, if a template cache should be used, that auto-expires
@@ -56,7 +56,7 @@ class patTemplate_Stat extends patTemplate_Module
 		return	-1;
 	}
 
-   /**
+	/**
 	* set options
 	*
 	* @access	public

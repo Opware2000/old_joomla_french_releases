@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 7958 2007-07-14 12:56:30Z jinx $
+ * @version		$Id: controller.php 8502 2007-08-22 05:55:34Z jinx $
  * @package		Joomla
  * @subpackage	MailTo
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -123,9 +123,6 @@ class MailtoController extends JController
 			return $this->mailto();
 		}
 
-		// Build the link to send in the email
-		$link	= JRoute::_($link);
-	
 		// Build the message to send
 		$msg	= JText :: _('EMAIL_MSG');
 		$body	= sprintf( $msg, $SiteName, $sender, $from, $link);

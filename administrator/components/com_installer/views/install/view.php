@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.php 7640 2007-06-05 15:13:52Z tcp $
+ * @version		$Id: view.php 8416 2007-08-16 05:03:19Z louis $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -39,7 +39,7 @@ class InstallerViewInstall extends InstallerViewDefault
 		$paths->first = '';
 
 		$this->assignRef('paths', $paths);
-		$this->assignRef('state', $state);
+		$this->assignRef('state', $this->get('state'));
 
 		parent::display($tpl);
 	}

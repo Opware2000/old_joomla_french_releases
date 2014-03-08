@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8082 2007-07-19 07:31:54Z hackwar $
+ * @version		$Id: view.html.php 8252 2007-07-30 22:45:55Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -156,8 +156,6 @@ class ContentViewSection extends ContentView
 
 		$item->readmore_link = $linkOn;
 		$item->readmore_text = $linkText;
-
-		$item->print_link = $mainframe->getCfg('live_site').'/index.php?option=com_content&view=article&id='.$item->id.'&tmpl=component';
 
 		$item->event = new stdClass();
 		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $params,0));

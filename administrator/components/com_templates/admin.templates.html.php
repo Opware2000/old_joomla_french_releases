@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.templates.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.templates.html.php 8345 2007-08-07 09:20:52Z eddieajau $
 * @package		Joomla
 * @subpackage	Templates
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -506,7 +506,7 @@ class TemplatesView
 				<?php echo $t_dir; ?>
 			</th>
 			<th width="10%">
-				<?php echo JText::_( 'Writeable' ); ?>/<?php echo JText::_( 'Unwriteable' ); ?>
+				<?php echo JText::_( 'Writable' ); ?>/<?php echo JText::_( 'Unwritable' ); ?>
 			</th>
 		</tr>
 		<?php
@@ -517,13 +517,13 @@ class TemplatesView
 ?>
 			<tr class="<?php echo 'row'. $k; ?>">
 				<td width="5%">
-					<input type="radio" id="cb<?php echo $i;?>" name="filename" value="<?php echo $file; ?>" onClick="isChecked(this.checked);" />
+					<input type="radio" id="cb<?php echo $i;?>" name="filename" value="<?php echo htmlspecialchars( $file ); ?>" onClick="isChecked(this.checked);" />
 				</td>
 				<td width="85%">
 					<?php echo $file; ?>
 				</td>
 				<td width="10%">
-					<?php echo is_writable($t_dir.DS.$file) ? '<font color="green"> '. JText::_( 'Writeable' ) .'</font>' : '<font color="red"> '. JText::_( 'Unwriteable' ) .'</font>' ?>
+					<?php echo is_writable($t_dir.DS.$file) ? '<font color="green"> '. JText::_( 'Writable' ) .'</font>' : '<font color="red"> '. JText::_( 'Unwritable' ) .'</font>' ?>
 				</td>
 			</tr>
 		<?php

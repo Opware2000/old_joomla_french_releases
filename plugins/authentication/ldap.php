@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: ldap.php 7795 2007-06-26 22:02:14Z jinx $
+* @version		$Id: ldap.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -36,18 +36,19 @@ class plgAuthenticationLdap extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationLdap(& $subject) {
-		parent::__construct($subject);
+	function plgAuthenticationLdap(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
 	 * This method should handle any authentication and report back to the subject
 	 *
 	 * @access	public
-	 * @param   array 	$credentials Array holding the user credentials	
+	 * @param   array 	$credentials Array holding the user credentials
 	 * @param 	array   $options     Array of extra options
 	 * @param	object	$response	Authentication response object
 	 * @return	object	boolean
@@ -68,14 +69,12 @@ class plgAuthenticationLdap extends JPlugin
 		}
 
 		// load plugin params info
-	 	$plugin =& JPluginHelper::getPlugin('authentication','ldap');
-	 	$params = new JParameter( $plugin->params );
-		$ldap_email 	= $params->get('ldap_email');
-		$ldap_fullname	= $params->get('ldap_fullname');
-		$ldap_uid		= $params->get('ldap_uid');
-		$auth_method	= $params->get('auth_method');
+		$ldap_email 	= $this->params->get('ldap_email');
+		$ldap_fullname	= $this->params->get('ldap_fullname');
+		$ldap_uid		= $this->params->get('ldap_uid');
+		$auth_method	= $this->params->get('auth_method');
 
-		$ldap = new JLDAP($params);
+		$ldap = new JLDAP($this->params);
 
 		if (!$ldap->connect())
 		{
@@ -90,11 +89,11 @@ class plgAuthenticationLdap extends JPlugin
 			{
 				// Bind using Connect Username/password
 				$bindtest = $ldap->bind();
-				
+
 				if($bindtest)
 				{
 					// Search for users DN
-					$binddata = $ldap->simple_search(str_replace("[search]", $credentials['username'], $params->get('search_string')));
+					$binddata = $ldap->simple_search(str_replace("[search]", $credentials['username'], $this->params->get('search_string')));
 					// Verify Users Credentials
 					$success = $ldap->bind($binddata[0]['dn'],$credentials['password'],1);
 					// Get users details
@@ -111,10 +110,10 @@ class plgAuthenticationLdap extends JPlugin
 			{
 				// We just accept the result here
 				$success = $ldap->bind($credentials['username'],$credentials['password']);
-				$userdetails = $ldap->simple_search(str_replace("[search]", $credentials['username'], $params->get('search_string')));
+				$userdetails = $ldap->simple_search(str_replace("[search]", $credentials['username'], $this->params->get('search_string')));
 			}	break;
 		}
-		
+
 		if(!$success)
 		{
 			$response->status = JAUTHENTICATE_STATUS_FAILURE;
@@ -126,19 +125,20 @@ class plgAuthenticationLdap extends JPlugin
 			if (isset($userdetails[0][$ldap_uid][0])) {
 				$response->username = $userdetails[0][$ldap_uid][0];
 			}
-			
+
 			if (isset($userdetails[0][$ldap_email][0])) {
 				$response->email = $userdetails[0][$ldap_email][0];
 			}
-			
+
 			if(isset($userdetails[0][$ldap_fullname][0])) {
 				$response->fullname = $userdetails[0][$ldap_fullname][0];
 			} else {
 				$response->fullname = $credentials['username'];
 			}
-			
+
 			// Were good - So say so.
-			$response->status = JAUTHENTICATE_STATUS_SUCCESS;
+			$response->status        = JAUTHENTICATE_STATUS_SUCCESS;
+			$response->error_message = '';
 		}
 
 		$ldap->close();

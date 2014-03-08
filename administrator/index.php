@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: index.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: index.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -20,7 +20,6 @@ define('DS', DIRECTORY_SEPARATOR);
 
 require_once( JPATH_BASE .DS.'includes'.DS.'defines.php' );
 require_once( JPATH_BASE .DS.'includes'.DS.'framework.php' );
-require_once( JPATH_BASE .DS.'includes'.DS.'application.php' );
 require_once( JPATH_BASE .DS.'includes'.DS.'helper.php' );
 require_once( JPATH_BASE .DS.'includes'.DS.'toolbar.php' );
 
@@ -31,24 +30,18 @@ JDEBUG ? $_PROFILER->mark( 'afterLoad' ) : null;
  *
  * NOTE :
  */
-$mainframe = new JAdministrator();
-
-// load the configuration
-$mainframe->loadConfiguration(JPATH_CONFIGURATION.DS.'configuration.php');
-
-// create the session
-$mainframe->loadSession(JUtility::getHash($mainframe->getClientId()));
+$mainframe =& JApplication::getInstance('administrator');
 
 /**
  * INITIALISE THE APPLICATION
  *
  * NOTE :
  */
-JPluginHelper::importPlugin('system');
-
 $mainframe->initialise(array(
 	'language' => $mainframe->getUserState( "application.lang", 'lang' )
 ));
+
+JPluginHelper::importPlugin('system');
 
 // trigger the onAfterInitialise events
 JDEBUG ? $_PROFILER->mark('afterInitialise') : null;
@@ -87,11 +80,6 @@ $mainframe->render();
 // trigger the onAfterDisplay events
 JDEBUG ? $_PROFILER->mark( 'afterRender' ) : null;
 $mainframe->triggerEvent( 'onAfterRender' );
-
-/**
- * CLOSE THE SESSION
- */
-JSession::close();
 
 /**
  * RETURN THE RESPONSE

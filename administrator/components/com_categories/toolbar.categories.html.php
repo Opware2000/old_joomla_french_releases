@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.categories.html.php 7718 2007-06-11 23:00:58Z friesengeist $
+* @version		$Id: toolbar.categories.html.php 8229 2007-07-28 10:53:58Z humvee $
 * @package		Joomla
 * @subpackage	Categories
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -45,7 +45,7 @@ class TOOLBAR_categories {
 	*/
 	function _MOVE() {
 
-		JToolBarHelper::title( JText::_( 'Move Category' ) );
+		JToolBarHelper::title( JText::_( 'Category' ) .': <small><small>[ '. JText::_( 'Move' ).' ]</small></small>', 'categories.png' );
 		JToolBarHelper::save( 'movesave' );
 		JToolBarHelper::cancel();
 	}
@@ -55,8 +55,8 @@ class TOOLBAR_categories {
 	* @param int The published state (to display the inverse button)
 	*/
 	function _COPY() {
+		JToolBarHelper::title( JText::_( 'Category' ) .': <small><small>[ '. JText::_( 'Copy' ).' ]</small></small>', 'categories.png' );
 
-		JToolBarHelper::title( JText::_( 'Copy Category' ) );
 		JToolBarHelper::save( 'copysave' );
 		JToolBarHelper::cancel();
 	}

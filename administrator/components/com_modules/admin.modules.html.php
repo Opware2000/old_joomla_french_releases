@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.modules.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.modules.html.php 8577 2007-08-26 22:45:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Modules
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -85,9 +85,6 @@ class HTML_modules
 					<?php
 				}
 				?>
-				<th nowrap="nowrap" width="3%">
-					<?php echo JHTML::_('grid.sort',   'ID', 'm.id', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
 				<th nowrap="nowrap" width="7%">
 					<?php echo JHTML::_('grid.sort',   'Position', 'm.position', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
@@ -96,6 +93,9 @@ class HTML_modules
 				</th>
 				<th nowrap="nowrap" width="10%"  class="title">
 					<?php echo JHTML::_('grid.sort',   'Type', 'm.module', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th nowrap="nowrap" width="1%">
+					<?php echo JHTML::_('grid.sort',   'ID', 'm.id', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 			</tr>
 			</thead>
@@ -157,9 +157,6 @@ class HTML_modules
 					}
 					?>
 					<td align="center">
-						<?php echo $row->id;?>
-					</td>
-					<td align="center">
 						<?php echo $row->position; ?>
 					</td>
 					<td align="center">
@@ -175,6 +172,9 @@ class HTML_modules
 					</td>
 					<td>
 						<?php echo $row->module ? $row->module : JText::_( 'User' );?>
+					</td>
+					<td>
+						<?php echo $row->id;?>
 					</td>
 				</tr>
 				<?php
@@ -211,6 +211,10 @@ class HTML_modules
 	function edit( &$model, &$row, &$orders2, &$lists, &$params, $client )
 	{
 		JRequest::setVar( 'hidemainmenu', 1 );
+
+		// clean item data
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'content' );
 
 		// Check for component metadata.xml file
 		//$path = JApplicationHelper::getPath( 'mod'.$client->id.'_xml', $row->module );
@@ -312,7 +316,7 @@ class HTML_modules
 					<tr>
 						<td valign="top"  class="key">
 							<label for="ordering">
-								<?php echo JText::_( 'Module Order' ); ?>:
+								<?php echo JText::_( 'Order' ); ?>:
 							</label>
 						</td>
 						<td>

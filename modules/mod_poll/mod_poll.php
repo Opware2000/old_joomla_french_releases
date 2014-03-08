@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_poll.php 7708 2007-06-09 16:27:20Z jinx $
+* @version		$Id: mod_poll.php 8268 2007-07-31 21:04:36Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -25,13 +25,12 @@ $itemid = isset($items[0]) ? $items[0]->id : '0';
 
 $list   = modPollHelper::getList($params);
 $layout = JModuleHelper::getLayoutPath('mod_poll');
-$siteName = $mainframe->getCfg('live_site');
 
 foreach ($list as $item)
 {
 	$tabcnt 	= 0;
 
-	$cookieName = JUtility::getHash($siteName.'poll'.$item->id);
+	$cookieName = JUtility::getHash($mainframe->getName().'poll'.$item->id);
 	$voted = JRequest::getInt($cookieName, '0', 'COOKIE');
 
 	if ($item->id && $item->title)  {

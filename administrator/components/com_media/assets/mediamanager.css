@@ -1,5 +1,5 @@
 /**
-* @version $Id: mediamanager.css 8033 2007-07-18 05:51:57Z louis $
+* @version $Id: mediamanager.css 8273 2007-07-31 22:41:38Z eddieajau $
 * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -17,9 +17,10 @@
  */
 #treeview {
 	padding: 10px;
-	width: 140px;
+	width: 190px;
 	overflow: auto;
-	height: 390px;
+	/*height: 390px;*/
+	border: 0;
 }
 
 #folderview {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: menutype.php 8020 2007-07-17 16:42:27Z friesengeist $
+ * @version		$Id: menutype.php 8286 2007-08-01 08:27:44Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -21,7 +21,6 @@ jimport( 'joomla.application.component.model' );
 /**
  * @package		Joomla
  * @subpackage	Menus
- * @author Andrew Eddie
  */
 class MenusModelMenutype extends JModel
 {
@@ -267,4 +266,3 @@ class MenusModelMenutype extends JModel
 		return true;
 	}
 }
-?>

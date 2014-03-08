@@ -2,7 +2,7 @@
 /**
  * creates a new function alias
  *
- * $Id: Alias.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Alias.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -19,7 +19,7 @@ defined('JPATH_BASE') or die();
  * - alias => new alias
  * - function => function to call
  *
- * $Id: Alias.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Alias.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -27,14 +27,14 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Function_Alias extends patTemplate_Function
 {
-   /**
+	/**
 	* name of the function
 	* @access	private
 	* @var		string
 	*/
 	var $_name	=	'Alias';
 
-   /**
+	/**
 	* call the function
 	*
 	* @access	public

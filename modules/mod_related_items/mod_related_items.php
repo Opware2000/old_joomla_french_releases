@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_related_items.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: mod_related_items.php 8546 2007-08-25 05:16:52Z rmdstudio $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -22,5 +22,7 @@ $list = modRelatedItemsHelper::getList($params);
 if (!count($list)) {
 	return;
 }
+
+$showDate			= $params->get('showDate', 0);
 
 require(JModuleHelper::getLayoutPath('mod_related_items'));

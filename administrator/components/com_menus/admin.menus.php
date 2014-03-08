@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: admin.menus.php 7769 2007-06-22 10:17:41Z friesengeist $
+ * @version		$Id: admin.menus.php 8286 2007-08-01 08:27:44Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -23,4 +23,3 @@ $controller = new MenusController( array('default_task' => 'viewMenus') );
 $controller->registerTask('apply', 'save');
 $controller->execute( JRequest::getCmd( 'task' ) );
 $controller->redirect();
-?>

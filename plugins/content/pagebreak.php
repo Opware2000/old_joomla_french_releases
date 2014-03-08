@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pagebreak.php 7541 2007-05-29 20:45:05Z friesengeist $
+* @version		$Id: pagebreak.php 8621 2007-08-29 18:04:55Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -65,7 +65,7 @@ function plgContentPagebreak( &$row, &$params, $page=0 )
 
 
 	// check whether plugin has been unpublished
-	if (!$plugin->published || $params->get( 'intro_only' )|| $params->get( 'popup' ) || $full) {
+	if (!JPluginHelper::isEnabled('content', 'pagebreak') || $params->get( 'intro_only' )|| $params->get( 'popup' ) || $full) {
 		$row->text = preg_replace( $regex, '', $row->text );
 		return;
 	}
@@ -198,7 +198,7 @@ function plgContentCreateTOC( &$row, &$matches, &$page )
 	$row->toc .= '
 	<tr>
 		<td>
-		<a href="'. JRoute::_( '&limitstart=0') .'" class="toclink">'
+		<a href="'. JRoute::_( '&showall=&limitstart=') .'" class="toclink">'
 		. $heading .
 		'</a>
 		</td>
@@ -209,7 +209,7 @@ function plgContentCreateTOC( &$row, &$matches, &$page )
 
 	foreach ( $matches as $bot )
 	{
-		$link = JRoute::_( '&limitstart='. ($i-1) );
+		$link = JRoute::_( '&showall=&limitstart='. ($i-1) );
 
 		if ( @$bot[1] )
 		{
@@ -262,7 +262,7 @@ function plgContentCreateTOC( &$row, &$matches, &$page )
 
 	if ($params->get('showall') )
 	{
-		$link = JRoute::_( '&showall=1');
+		$link = JRoute::_( '&showall=1&limitstart=');
 		$row->toc .= '
 		<tr>
 			<td>
@@ -299,4 +299,3 @@ function plgContentCreateNavigation( &$row, $page, $n )
 
 	$row->text .= '<div>' . $prev . ' - ' . $next .'</div>';
 }
-?>

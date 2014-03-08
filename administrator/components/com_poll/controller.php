@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8040 2007-07-18 09:51:13Z friesengeist $
+ * @version		$Id: controller.php 8275 2007-07-31 23:10:13Z humvee $
  * @package		Joomla
  * @subpackage	Config
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -274,7 +274,7 @@ class PollController extends JController
 		if (count( $cid ) < 1)
 		{
 			$action = $publish ? 'publish' : 'unpublish';
-			JError::raiseError(500, JText::_( 'Select an item to '.$action, true ) );
+			JError::raiseError(500, JText::_( 'Select an item to' .$action, true ) );
 		}
 
 		$cids = implode( ',', $cid );
@@ -314,7 +314,7 @@ class PollController extends JController
 	{
 		$document =& JFactory::getDocument();
 		$document->setTitle(JText::_('Poll Preview'));
-		
+
 		$db 	=& JFactory::getDBO();
 		$pollid = JRequest::getVar( 'pollid', 0, '', 'int' );
 		$css	= JRequest::getVar( 't', '' );

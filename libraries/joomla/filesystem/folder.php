@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: folder.php 7990 2007-07-16 10:54:23Z jinx $
+ * @version		$Id: folder.php 8683 2007-08-31 20:02:02Z jinx $
  * @package		Joomla.Framework
  * @subpackage	FileSystem
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -382,7 +382,7 @@ class JFolder
 
 		// read the source directory
 		$handle = opendir($path);
-		while ($file = readdir($handle)) 
+		while (($file = readdir($handle)) !== false)
 		{
 			$dir = $path.DS.$file;
 			$isDir = is_dir($dir);
@@ -439,7 +439,8 @@ class JFolder
 
 		// read the source directory
 		$handle = opendir($path);
-		while ($file = readdir($handle)) {
+		while (($file = readdir($handle)) !== false) 
+		{
 			$dir = $path.DS.$file;
 			$isDir = is_dir($dir);
 			if (($file != '.') && ($file != '..') && (!in_array($file, $exclude)) && $isDir) {
@@ -507,7 +508,7 @@ class JFolder
 	 * @return	string The sanitised string
 	 * @since	1.5
 	 */
-	function makeSafe($path) 
+	function makeSafe($path)
 	{
 		$ds		= ( DS == '\\' ) ? '\\'.DS : DS;
 		$regex = array('#[^A-Za-z0-9:\_\-'.$ds.' ]#');

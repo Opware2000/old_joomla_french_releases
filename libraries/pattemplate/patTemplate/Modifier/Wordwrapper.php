@@ -2,7 +2,7 @@
 /**
  * patTemplate modfifier Wordwrapper
  *
- * $Id: Wordwrapper.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Wordwrapper.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -33,7 +33,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Modifier_Wordwrapper extends patTemplate_Modifier
 {
-   /**
+	/**
 	* modify the value
 	*
 	* @access	public

@@ -1,23 +1,9 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 
-/*
- *
- * Get the template parameters
- *
- */
-$filename = JPATH_ROOT . DS . 'templates' . DS . $mainframe->getTemplate() . DS . 'params.ini';
-if ($content = @ file_get_contents($filename)) {
-	$templateParams = new JParameter($content);
-} else {
-	$templateParams = null;
-}
-/*
- * hope to get a better solution very soon
- */
-
-$hlevel = $templateParams->get('headerLevelComponent', '2');
-$ptlevel = $templateParams->get('pageTitleHeaderLevel', '1');
+// temporary fix
+$hlevel = 2;
+$ptlevel = 1;
 $total = $this->total;
 $colcount=$this->params->def('num_columns', 2);
 if ($colcount == 0) {$colcount = 1;}
@@ -33,7 +19,7 @@ if ($this->params->def('show_description', 1) || $this->params->def('show_descri
 	echo '<div class="contentdescription' . $this->params->get('pageclass_sfx') . '">';
 	if ($this->params->get('show_description_image') && $this->section->image) {
 		$wrap = '<div class="wrap_image">&nbsp;</div>';
-		echo '<img src="images/stories/' . $this->image . '" class="image_' . $this->section->image_position . '" />';
+		echo '<img src="images/stories/' . $this->section->image . '" class="image_' . $this->section->image_position . '" />';
 	}
 
 	if ($this->params->get('show_description') && $this->section->description) {

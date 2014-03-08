@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: archive.php 7963 2007-07-14 16:16:41Z friesengeist $
+ * @version		$Id: archive.php 8648 2007-08-30 20:41:08Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -126,7 +126,7 @@ class ContentModelArchive extends JModel
 		}
 
 		// Get the page/component configuration
-		$params = &$this->getState('parameters.menu');
+		$params = $this->getState('parameters.menu');
 		if (!is_object($params)) {
 			$params = &JComponentHelper::getParams('com_content');
 		}
@@ -145,6 +145,7 @@ class ContentModelArchive extends JModel
 
 		// Initialize some variables
 		$user	=& JFactory::getUser();
+		$db		=& JFactory::getDBO();
 		$aid	= (int) $user->get('aid', 0);
 
 		// First thing we need to do is build the access section of the clause
@@ -172,6 +173,7 @@ class ContentModelArchive extends JModel
 		if ($filter) {
 			// clean filter variable
 			$filter = JString::strtolower($filter);
+			$filter	= $db->getEscaped($filter);
 
 			// Get the page/component configuration
 			$params = &$mainframe->getPageParameters();

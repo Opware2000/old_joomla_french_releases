@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8082 2007-07-19 07:31:54Z hackwar $
+ * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -34,7 +34,7 @@ class ContentViewCategory extends ContentView
 		$user		=& JFactory::getUser();
 		$document	=& JFactory::getDocument();
 		$uri 		=& JFactory::getURI();
-		$pathway	= & $mainframe->getPathWay();
+		$pathway	=& $mainframe->getPathway();
 
 		// Get the menu item object
 		$menus = &JMenu::getInstance();
@@ -188,19 +188,8 @@ class ContentViewCategory extends ContentView
 			}
 		}
 
-		// Set the Section name as a link if needed
-		if ($params->get('link_section') && $item->sectionid) {
-			$item->section = ContentHelperRoute::getSectionRoute($item);
-		}
-		// Set the Category name as a link if needed
-		if ($params->get('link_category') && $item->catid) {
-			$item->category = ContentHelperRoute::getCategoryRoute($item);
-		}
-
 		$item->readmore_link = $linkOn;
 		$item->readmore_text = $linkText;
-
-		$item->print_link = $mainframe->getCfg('live_site').'/index.php?option=com_content&view=article&id='.$item->slug.'&tmpl=component';
 
 		$item->event = new stdClass();
 		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $params,0));
@@ -222,16 +211,10 @@ class ContentViewCategory extends ContentView
 		$filter_order		= JRequest::getCmd('filter_order');
 		$filter_order_Dir	= JRequest::getCmd('filter_order_Dir');
 
-		$lists['task'] = 'category';
-		$lists['filter'] = $filter;
-
-		if ($filter_order_Dir == 'DESC') {
-			$lists['order_Dir'] = 'ASC';
-		} else {
-			$lists['order_Dir'] = 'DESC';
-		}
-
-		$lists['order'] = $filter_order;
+		$lists['task']      = 'category';
+		$lists['filter']    = $filter;
+		$lists['order']     = $filter_order;
+		$lists['order_Dir'] = $filter_order_Dir;
 
 		return $lists;
 	}

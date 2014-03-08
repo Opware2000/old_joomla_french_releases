@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: icon.php 7973 2007-07-14 18:08:03Z humvee $
+ * @version		$Id: icon.php 8502 2007-08-22 05:55:34Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -125,7 +125,7 @@ class JHTMLIcon
 		$author = $article->created_by_alias ? $article->created_by_alias : $article->author;
 
 		$overlib .= '<br />';
-		$overlib .= $article->groups;
+		$overlib .= JText::_($article->groups);
 		$overlib .= '<br />';
 		$overlib .= $date;
 		$overlib .= '<br />';
@@ -144,7 +144,7 @@ class JHTMLIcon
 
 		$user =& JFactory::getUser();
 
-		$url  = 'index.php?view=article;';
+		$url  = 'index.php?view=article';
 		$url .=  @$article->catslug ? '&catid='.$article->catslug : '';
 		$url .= '&id='.$article->slug.'&tmpl=component&print=1&page='.@ $request->limitstart;
 

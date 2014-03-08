@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: head.php 7525 2007-05-28 19:11:38Z jinx $
+* @version		$Id: head.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Document
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,7 +25,7 @@ defined('JPATH_BASE') or die();
  */
 class JDocumentRendererHead extends JDocumentRenderer
 {
-   /**
+	/**
 	 * Renders the document head and returns the results as a string
 	 *
 	 * @access public
@@ -60,9 +60,9 @@ class JDocumentRendererHead extends JDocumentRenderer
 		$tagEnd		= ' />';
 		$strHtml	= $tab . '<title>' . htmlspecialchars($document->getTitle()) . '</title>' . $lnEnd;
 
-		$link = $document->getLink();
-		if(!empty($link)) {
-			$strHtml .= $tab . '<base href="' . $document->getLink() . '" />' . $lnEnd;
+		$base = $document->getBase();
+		if(!empty($base)) {
+			$strHtml .= $tab . '<base href="' . $document->getBase() . '" />' . $lnEnd;
 		}
 
 		$strHtml .= $tab . '<meta name="description" content="' . $document->getDescription() . '" />' . $lnEnd;
@@ -138,18 +138,14 @@ class JDocumentRendererHead extends JDocumentRenderer
 				$strHtml .= $tab . '<script type="' . $type . '">' . $lnEnd;
 
 				// This is for full XHTML support.
-				if ($document->_mime == 'text/html' ) {
-					$strHtml .= $tab . $tab . '// <!--' . $lnEnd;
-				} else {
+				if ($document->_mime != 'text/html' ) {
 					$strHtml .= $tab . $tab . '<![CDATA[' . $lnEnd;
 				}
 
 				$strHtml .= $content . $lnEnd;
 
 				// See above note
-				if ($document->_mime == 'text/html' ) {
-					$strHtml .= $tab . $tab . '// -->' . $lnEnd;
-				} else {
+				if ($document->_mime != 'text/html' ) {
 					$strHtml .= $tab . $tab . '// ]]>' . $lnEnd;
 				}
 				$strHtml .= $tab . '</script>' . $lnEnd;

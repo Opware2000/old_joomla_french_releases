@@ -1,7 +1,11 @@
 <?php
 /**
- * @version		$Id: sysinfo_directory.php 8047 2007-07-18 12:27:25Z jinx $
+ * @version		$Id: sysinfo_directory.php 8630 2007-08-30 04:30:51Z robs $
  */
+// No direct access
+defined('_JEXEC') or die('Restricted access');
+
+jimport('joomla.filesystem.folder');
 ?>
 <fieldset class="adminform">
 	<legend><?php echo JText::_( 'Directory Permissions' ); ?></legend>
@@ -27,6 +31,15 @@
 			<?php
 			writableCell( 'administrator/backups' );
 			writableCell( 'administrator/components' );
+			writableCell( 'administrator/language' );
+
+			// List all admin languages
+			$admin_langs = JFolder::folders(JPATH_ADMINISTRATOR.DS.'language');
+			foreach ($admin_langs as $alang)
+			{
+				writableCell( 'administrator/language/'.$alang );
+			}
+
 			writableCell( 'administrator/modules' );
 			writableCell( 'administrator/templates' );
 			writableCell( 'components' );
@@ -34,6 +47,14 @@
 			writableCell( 'images/banners' );
 			writableCell( 'images/stories' );
 			writableCell( 'language' );
+
+			// List all site languages
+			$site_langs	= JFolder::folders(JPATH_SITE.DS.'language');
+			foreach ($site_langs as $slang)
+			{
+				writableCell( 'administrator/language/'.$slang );
+			}
+
 			writableCell( 'modules' );
 			writableCell( 'plugins' );
 			writableCell( 'plugins/content' );

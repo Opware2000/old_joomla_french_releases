@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: route.php 8120 2007-07-20 14:27:25Z jinx $
+ * @version		$Id: route.php 8337 2007-08-07 03:33:35Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,7 +35,7 @@ class ContentHelperRoute
 	{
 		$item = ContentHelperRoute::_getArticleMenuInfo((int)$id, (int)$catid, (int)$sectionid);
 
-		$link = 'index.php?option=com_content&view=article';
+		$link = 'index.php?option=com_content';
 
 		if(isset($item))
 		{
@@ -44,14 +44,14 @@ class ContentHelperRoute
 			}
 
 			if($item->link_parts['view'] == 'category') {
-				$link .= '&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
+				$link .= '&view=article&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
 			}
 
 			if($item->link_parts['view'] == 'section') {
-				$link .= '&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
+				$link .= '&view=article&catid='.$catid.'&id='. $id . '&Itemid='. $item->id;
 			}
 		} else {
-			$link .= '&catid='.$catid.'&id='. $id;
+			$link .= '&view=article&catid='.$catid.'&id='. $id;
 		}
 
 		return JRoute::_( $link );
@@ -175,7 +175,7 @@ class ContentHelperRoute
 	 */
 	function _getArticleMenuInfo($id, $catid = 0, $sectionid = 0)
 	{
-		$component	=& JComponentHelper::getInfo('com_content');
+		$component	=& JComponentHelper::getComponent('com_content');
 
 		$menus		=& JMenu::getInstance();
 		$items		= $menus->getItems('componentid', $component->id);

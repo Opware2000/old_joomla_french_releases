@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: legacy.php 7836 2007-07-03 05:09:26Z louis $
+* @version		$Id: legacy.php 8339 2007-08-07 08:04:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -417,4 +417,3 @@ function ItemidContained($link, $Itemid)
 		return false;
 	}
 }
-?>

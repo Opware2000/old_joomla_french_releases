@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: menu.php 7925 2007-07-11 21:50:21Z friesengeist $
+* @version		$Id: menu.php 8288 2007-08-01 08:40:54Z eddieajau $
 * @package		Joomla.Framework
 * @subpackage		HTML
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,7 +25,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
  */
 class JHTMLMenu
 {
-   /**
+	/**
 	* Build the select list for Menu Ordering
 	*/
 	function ordering( &$row, $id )
@@ -152,5 +152,3 @@ class JHTMLMenu
 		return $list;
 	}
 }
-
-?>

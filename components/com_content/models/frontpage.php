@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: frontpage.php 7986 2007-07-15 19:53:57Z friesengeist $
+ * @version		$Id: frontpage.php 8591 2007-08-27 21:09:32Z hackwar $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -99,7 +99,7 @@ class ContentModelFrontpage extends JModel
 			$query = $this->_buildQuery();
 			$Arows = $this->_getList($query, $limitstart, $limit);
 
-			// special handling required as static content does not have a section / category id linkage
+			// special handling required as Uncategorized content does not have a section / category id linkage
 			$i = $limitstart;
 			$rows = array();
 			foreach ($Arows as $row)
@@ -129,12 +129,14 @@ class ContentModelFrontpage extends JModel
 		$query = 'SELECT a.id, a.title, a.title_alias, a.introtext, a.sectionid, a.state, a.catid, a.created, a.created_by, a.created_by_alias, a.modified, a.modified_by,' .
 			' a.checked_out, a.checked_out_time, a.publish_up, a.publish_down, a.images, a.attribs, a.urls, a.ordering, a.metakey, a.metadesc, a.access,' .
 			' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'.
+			' CASE WHEN CHAR_LENGTH(cc.alias) THEN CONCAT_WS(":", cc.id, cc.alias) ELSE cc.id END as catslug,'.
 			' CHAR_LENGTH( a.`fulltext` ) AS readmore,' .
-			' u.name AS author, u.usertype, g.name AS groups, cc.name AS category'.
+			' u.name AS author, u.usertype, g.name AS groups, cc.title AS category, s.title AS section'.
 			$voting['select'] .
 			' FROM #__content AS a' .
 			' INNER JOIN #__content_frontpage AS f ON f.content_id = a.id' .
 			' LEFT JOIN #__categories AS cc ON cc.id = a.catid'.
+			' LEFT JOIN #__sections AS s ON s.id = a.sectionid'.
 			' LEFT JOIN #__users AS u ON u.id = a.created_by' .
 			' LEFT JOIN #__groups AS g ON a.access = g.id'.
 			$voting['join'].
@@ -194,6 +196,8 @@ class ContentModelFrontpage extends JModel
 			$where .= ' AND a.state >= 0';
 		} else {
 			$where .= ' AND a.state = 1' .
+					' AND ( cc.published = 1 )'.
+					' AND ( s.published = 1 )'.
 					' AND ( publish_up = '.$this->_db->Quote($nullDate).' OR publish_up <= '.$this->_db->Quote($now).' )' .
 					' AND ( publish_down = '.$this->_db->Quote($nullDate).' OR publish_down >= '.$this->_db->Quote($now).' )';
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: router.php 7708 2007-06-09 16:27:20Z jinx $
+ * @version		$Id: router.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@
 function PollBuildRoute( &$query )
 {
 	$segments = array();
-	
+
 	if (isset( $query['id'] ))
 	{
 		$segments[] = $query['id'];

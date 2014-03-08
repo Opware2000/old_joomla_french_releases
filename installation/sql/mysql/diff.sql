@@ -1,4 +1,22 @@
-# $Id: diff.sql 7618 2007-06-04 22:53:35Z eddieajau $
+# $Id: diff.sql 8260 2007-07-31 09:51:58Z eddieajau $
+
+# RC 1 to RC 2
+
+-- 30-July-2007 --
+-- Fixes delete user issue
+
+CREATE TABLE  `jos_core_acl_aro_map` (
+  `acl_id` int(11) NOT NULL default '0',
+  `section_value` varchar(230) NOT NULL default '0',
+  `value` varchar(100) NOT NULL,
+  PRIMARY KEY  (`acl_id`,`section_value`,`value`)
+) TYPE=MyISAM CHARACTER SET `utf8`;
+
+-- 29-July-2007 --
+-- Fixes large object in session data
+
+ALTER TABLE `jos_session`
+  MODIFY COLUMN `data` LONGTEXT;
 
 # Beta 2 to RC 1
 

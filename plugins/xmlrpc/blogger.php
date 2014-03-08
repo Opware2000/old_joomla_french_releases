@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: blogger.php 7068 2007-03-30 17:56:54Z jinx $
+* @version		$Id: blogger.php 8568 2007-08-26 10:30:33Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class plgXMLRPCBlogger extends JPlugin
 {
-	function plgXMLRPCBlogger(&$subject) {
-		parent::__construct($subject);
+	function plgXMLRPCBlogger(&$subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -243,7 +243,7 @@ class plgXMLRPCBloggerServices
 		//TODO::implement content access check
 
 		//lock the item
-		$item->checkout();
+		$item->checkout($user->id);
 
 		$item->title	 = plgXMLRPCBloggerHelper::getPostTitle($content);
 		$item->introtext = plgXMLRPCBloggerHelper::getPostIntroText($content);

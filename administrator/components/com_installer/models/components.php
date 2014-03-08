@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: components.php 7804 2007-06-28 17:08:08Z tcp $
+ * @version		$Id: components.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -110,7 +110,7 @@ class InstallerModelComponents extends InstallerModel
 		global $mainframe, $option;
 
 		jimport('joomla.filesystem.folder');
-		
+
 		/* Get a database connector */
 		$db =& JFactory::getDBO();
 
@@ -124,7 +124,7 @@ class InstallerModelComponents extends InstallerModel
 		/* Get the component base directory */
 		$adminDir = JPATH_ADMINISTRATOR .DS. 'components';
 		$siteDir = JPATH_SITE .DS. 'components';
-		
+
 		$numRows = count($rows);
 		for($i=0;$i < $numRows; $i++)
 		{

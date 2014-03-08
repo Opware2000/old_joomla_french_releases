@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.sections.html.php 7801 2007-06-27 23:52:53Z friesengeist $
+* @version		$Id: toolbar.sections.html.php 8234 2007-07-28 23:16:01Z humvee $
 * @package		Joomla
 * @subpackage	Sections
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -45,7 +45,8 @@ class TOOLBAR_sections {
 	* @param int The published state (to display the inverse button)
 	*/
 	function _COPY() {
-		JToolBarHelper::title( JText::_( 'Copy Section' ), 'sections.png' );
+		JToolBarHelper::title( JText::_( 'Section' ) .': <small><small>[ '. JText::_( 'Copy' ).' ]</small></small>', 'section.png' );
+		//JToolBarHelper::title( JText::_( 'Copy Section' ), 'sections.png' );
 		JToolBarHelper::save( 'copysave' );
 		JToolBarHelper::cancel();
 	}

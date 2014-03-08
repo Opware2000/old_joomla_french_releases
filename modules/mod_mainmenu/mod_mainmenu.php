@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_mainmenu.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: mod_mainmenu.php 8339 2007-08-07 08:04:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -40,4 +40,3 @@ $params->def('endLevel', 			0);
 $params->def('showAllChildren', 	0);
 
 require(JModuleHelper::getLayoutPath('mod_mainmenu'));
-?>

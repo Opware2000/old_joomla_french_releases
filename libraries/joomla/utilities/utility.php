@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: utility.php 7783 2007-06-25 21:44:53Z eddieajau $
+ * @version		$Id: utility.php 8176 2007-07-23 04:26:14Z eddieajau $
  * @package		Joomla.Framework
  * @subpackage	Utilities
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -93,8 +93,6 @@ class JUtility
 
 		$message = sprintf ( JText::_( 'MAIL_MSG_ADMIN' ), $adminName, $type, $title, $author, $url, $url, 'administrator', $type);
 		$message .= JText::_( 'MAIL_MSG') ."\n";
-
-		eval ("\$message = \"$message\";");
 
 		jimport('joomla.utilities.mail');
 

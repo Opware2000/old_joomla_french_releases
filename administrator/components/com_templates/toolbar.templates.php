@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.templates.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.templates.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Templates
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -17,7 +17,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
 
-$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 switch ($task)
 {

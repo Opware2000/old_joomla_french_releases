@@ -1,7 +1,7 @@
 <?php
 
 /**
-* @version		$Id: openid.php 8026 2007-07-17 20:59:07Z jinx $
+* @version		$Id: openid.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -36,18 +36,19 @@ class plgAuthenticationOpenID extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationOpenID(& $subject) {
-		parent::__construct($subject);
+	function plgAuthenticationOpenID(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
 	 * This method should handle any authentication and report back to the subject
 	 *
 	 * @access	public
-	 * @param   array 	$credentials Array holding the user credentials	
+	 * @param   array 	$credentials Array holding the user credentials
 	 * @param 	array   $options     Array of extra options
 	 * @param	object	$response	Authentication response object
 	 * @return	boolean
@@ -102,9 +103,10 @@ class plgAuthenticationOpenID extends JPlugin
 			$request->addExtensionArg('sreg', 'optional', 'fullname, language, timezone');
 
 			$options['return'] = isset($options['return']) ? base64_encode($options['return']) : base64_encode(JURI::base());
-			$process_url  = sprintf("index.php?option=com_user&task=login&username=%s", $credentials['username']);
+			$option       = $mainframe->isAdmin() ? 'com_login' : 'com_user';
+			$process_url  = sprintf("index.php?option=%s&task=login&username=%s", $option, $credentials['username']);
 			$process_url .= '&'.JURI::_buildQuery($options);
-			
+
 			$redirect_url = $request->redirectURL(JURI::base(), JURI::base().$process_url);
 
 			$session->set('trust_url', JURI::base());
@@ -117,7 +119,7 @@ class plgAuthenticationOpenID extends JPlugin
 		}
 
 		$result = $consumer->complete(JRequest::get('get'));
-		
+
 		switch ($result->status)
 		{
 			case Auth_OpenID_SUCCESS :
@@ -130,7 +132,7 @@ class plgAuthenticationOpenID extends JPlugin
 				$response->fullname	= isset($sreg['fullname']) ? $sreg['fullname'] : "";
 				$response->language	= isset($sreg['language']) ? $sreg['language'] : "";
 				$response->timezone	= isset($sreg['timezone']) ? $sreg['timezone'] : "";
-				
+
 			} break;
 
 			case Auth_OpenID_CANCEL :

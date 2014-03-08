@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.php 8075 2007-07-19 04:47:14Z louis $
+* @version		$Id: view.php 8578 2007-08-26 23:09:01Z jinx $
 * @package		Joomla
 * @subpackage	Menus
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -38,11 +38,15 @@ class MenusViewItem extends JView
 
 		$item = &$this->get('Item');
 
+		// clean item data
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $item, ENT_QUOTES, '' );
+
 		// Set toolbar items for the page
 		if (!$item->id) {
-			JToolBarHelper::title( JText::_( 'New Menu Item' ), 'menu.png' );
+			JToolBarHelper::title( JText::_( 'Menu Item' ) .': <small><small>[ '. JText::_( 'New' ) .' ]</small></small>', 'menu.png' );
 		} else {
-			JToolBarHelper::title( JText::_( 'Edit Menu Item' ), 'menu.png' );
+			JToolBarHelper::title( JText::_( 'Menu Item' ) .': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>', 'menu.png' );
 		}
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
@@ -61,7 +65,7 @@ class MenusViewItem extends JView
 		// Initialize variables
 		$urlparams		= $this->get( 'UrlParams' );
 		$params			= $this->get( 'StateParams' );
-		$sysparams			= $this->get( 'SystemParams' );
+		$sysparams		= $this->get( 'SystemParams' );
 		$advanced		= $this->get( 'AdvancedParams' );
 		$component		= $this->get( 'ComponentParams' );
 		$name			= $this->get( 'StateName' );
@@ -73,9 +77,9 @@ class MenusViewItem extends JView
 
 		$document = & JFactory::getDocument();
 		if ($item->id) {
-			$document->setTitle(JText::_('Edit Menu Item'));
+			$document->setTitle(JText::_( 'Menu Item' ) .': ['. JText::_( 'Edit' ) .']');
 		} else {
-			$document->setTitle(JText::_('New Menu Item'));
+			$document->setTitle(JText::_( 'Menu Item' ) .': ['. JText::_( 'New' ) .']');
 		}
 
 		// Was showing up null in some cases....
@@ -129,7 +133,7 @@ class MenusViewItem extends JView
 
 		// Set toolbar items for the page
 		if (!$item->id) {
-			JToolBarHelper::title(  JText::_( 'Add Menu Item' ), 'menu.png' );
+			JToolBarHelper::title(  JText::_( 'Menu Item' ) .': <small><small>[ '. JText::_( 'New' ) .' ]</small></small>', 'menu.png' );
 		} else {
 			JToolBarHelper::title(  JText::_( 'Change Menu Item' ), 'menu.png' );
 		}
@@ -171,9 +175,9 @@ class MenusViewItem extends JView
 
 		// Set document title
 		if ($item->id) {
-			$document->setTitle('Edit Menu Item Type');
+			$document->setTitle(JText::_( 'Menu Item' ) .': ['. JText::_( 'Edit' ) .']');
 		} else {
-			$document->setTitle('New Menu Item Type');
+			$document->setTitle(JText::_( 'Menu Item' ) .': ['. JText::_( 'New' ) .']');
 		}
 
 		$this->assignRef('item',		$item);
@@ -182,4 +186,3 @@ class MenusViewItem extends JView
 		parent::display($tpl);
 	}
 }
-?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 7986 2007-07-15 19:53:57Z friesengeist $
+ * @version		$Id: category.php 8171 2007-07-23 00:28:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -260,7 +260,7 @@ class ContentModelCategory extends JModel
 			$nullDate = $this->_db->getNullDate();
 			$section	 = $this->_category->section;
 
-			// Get the paramaters of the active menu item
+			// Get the parameters of the active menu item
 			$menu	=& JMenu::getInstance();
 			$item    = $menu->getActive();
 			$params	=& $menu->getParams($item->id);

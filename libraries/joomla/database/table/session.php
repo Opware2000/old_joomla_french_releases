@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: session.php 7921 2007-07-11 00:13:54Z friesengeist $
+* @version		$Id: session.php 8529 2007-08-23 12:16:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Table
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -123,10 +123,14 @@ class JTableSession extends JTable
 	/**
 	 * Destroys the pesisting session
 	 */
-	function destroy($sessionId)
+	function destroy($userId, $clientIds = array())
 	{
+		$clientIds = implode( ',', $clientIds );
+		
 		$query = 'DELETE FROM #__session'
-			. ' WHERE session_id = '. $this->_db->Quote( $sessionId );
+			. ' WHERE userid = '. $this->_db->Quote( $userId )
+			. ' AND client_id IN ( '.$clientIds.' )'
+			;
 		$this->_db->setQuery( $query );
 
 		if ( !$this->_db->query() ) {

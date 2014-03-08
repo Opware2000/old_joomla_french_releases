@@ -17,14 +17,19 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 <head>
 <jdoc:include type="head" />
 
+<link rel="stylesheet" href="templates/system/css/system.css" type="text/css" />
+<link href="templates/<?php echo $this->template ?>/css/login.css" rel="stylesheet" type="text/css" />
+
 <?php  if($this->direction == 'rtl') : ?>
 	<link href="templates/<?php echo $this->template ?>/css/login_rtl.css" rel="stylesheet" type="text/css" />
-<?php  else : ?>
-	<link href="templates/<?php echo $this->template ?>/css/login.css" rel="stylesheet" type="text/css" />
 <?php  endif; ?>
 
+<!--[if IE 7]>
+<link href="templates/<?php echo  $this->template ?>/css/ie7.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+
 <!--[if lte IE 6]>
-<link href="templates/<?php echo $this->template ?>/css/ie.css" rel="stylesheet" type="text/css" />
+<link href="templates/<?php echo  $this->template ?>/css/ie6.css" rel="stylesheet" type="text/css" />
 <![endif]-->
 
 <?php  if($this->params->get('useRoundedCorners')) : ?>
@@ -35,16 +40,16 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 <script language="javascript" type="text/javascript">
 	function setFocus() {
-		document.loginForm.username.select();
-		document.loginForm.username.focus();
+		document.login.username.select();
+		document.login.username.focus();
 	}
 </script>
 </head>
 <body onload="javascript:setFocus()">
-	<div id="border-top">
+	<div id="border-top" class="<?php echo $this->params->get('headerColor','green');?>">
 		<div>
 			<div>
-				<span class="title"><?php echo JText::_('Administration') ?></span>
+				<span class="title"><?php echo $this->params->get('showSiteName') ? $mainframe->getCfg( 'sitename' ) : JText::_('Administration'); ?></span>
 			</div>
 		</div>
 	</div>

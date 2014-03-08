@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: element.php 8004 2007-07-17 00:03:21Z friesengeist $
+ * @version		$Id: element.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -45,7 +45,7 @@ class ContentModelElement extends JModel
 	function getList()
 	{
 		global $mainframe;
-		
+
 		if (!empty($this->_list)) {
 			return $this->_list;
 		}
@@ -101,7 +101,7 @@ class ContentModelElement extends JModel
 
 		// Only published articles
 		$where[] = 'c.state = 1';
-			
+
 		// Keyword filter
 		if ($search) {
 			$where[] = 'LOWER( c.title ) LIKE "%'.$db->getEscaped($search).'%"';

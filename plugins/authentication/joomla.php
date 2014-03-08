@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: joomla.php 7900 2007-07-09 10:17:03Z eddieajau $
+* @version		$Id: joomla.php 8555 2007-08-25 14:50:33Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -37,10 +37,11 @@ class plgAuthenticationJoomla extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @param object $subject The object to observe
+	 * @param array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationJoomla(& $subject) {
-		parent::__construct($subject);
+	function plgAuthenticationJoomla(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -57,55 +58,61 @@ class plgAuthenticationJoomla extends JPlugin
 	{
 		jimport('joomla.user.helper');
 
-		global $mainframe;
-
 		// Joomla does not like blank passwords
 		if (empty($credentials['password']))
 		{
 			$response->status = JAUTHENTICATE_STATUS_FAILURE;
-			$response->error_message = 'Joomla can not have blank password';
+			$response->error_message = 'Empty password not allowed';
 			return false;
 		}
 
 		// Initialize variables
 		$conditions = '';
-
-		// If we are in the admin panel, make sure we have access to it
-		if($mainframe->isAdmin()) {
-			$conditions = ' AND gid > 22';
+		
+		//Make sure the group exists
+		if(!isset($credentials['group'])) {
+			$credentials['group'] = 0; 
 		}
 
 		// Get a database object
 		$db =& JFactory::getDBO();
 
-		$query = 'SELECT `id`, `password`'
+		$query = 'SELECT `id`, `password`, `gid`'
 			. ' FROM `#__users`'
 			. ' WHERE username=' . $db->Quote( $credentials['username'] )
-			. $conditions;
-
+			;
 		$db->setQuery( $query );
 		$result = $db->loadObject();
-
+		
 		if($result)
 		{
-			$parts	= explode( ':', $result->password );
-			$crypt	= $parts[0];
-			$salt	= @$parts[1];
-			$testcrypt = JUserHelper::getCryptedPassword($credentials['password'], $salt);
+			if($result->gid > $credentials['group']) 
+			{
+				$parts	= explode( ':', $result->password );
+				$crypt	= $parts[0];
+				$salt	= @$parts[1];
+				$testcrypt = JUserHelper::getCryptedPassword($credentials['password'], $salt);
 
-			if ($crypt == $testcrypt) {
-				$email = JUser::getInstance($result->id); // Bring this in line with the rest of the system
-				$response->email = $email->email;
-				$response->status = JAUTHENTICATE_STATUS_SUCCESS;
-			} else {
+				if ($crypt == $testcrypt) {
+					$email = JUser::getInstance($result->id); // Bring this in line with the rest of the system
+					$response->email = $email->email;
+					$response->status = JAUTHENTICATE_STATUS_SUCCESS;
+					$response->error_message = '';
+				} else {
+					$response->status = JAUTHENTICATE_STATUS_FAILURE;
+					$response->error_message = 'Invalid password';
+				}
+			} 
+			else 
+			{
 				$response->status = JAUTHENTICATE_STATUS_FAILURE;
-				$response->error_message = 'Invalid password';
+				$response->error_message = 'Access denied';
 			}
 		}
 		else
 		{
 			$response->status = JAUTHENTICATE_STATUS_FAILURE;
-			$response->error_message = 'Invalid response from database';
+			$response->error_message = 'User does not exist';
 		}
 	}
 }

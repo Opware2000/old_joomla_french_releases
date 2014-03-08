@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 7647 2007-06-05 19:52:11Z jinx $
+* @version		$Id: view.html.php 8283 2007-08-01 07:49:09Z eddieajau $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -30,7 +30,7 @@ class WeblinksViewCategories extends JView
 	function display( $tpl = null)
 	{
 		global $mainframe;
-		
+
 		$document =& JFactory::getDocument();
 
 		$menu = &JMenu::getInstance();
@@ -46,7 +46,7 @@ class WeblinksViewCategories extends JView
 		// Set some defaults if not set for params
 		$params->def('page_title', $item->name);
 		$params->def('comp_description', JText::_('WEBLINKS_DESC'));
-		
+
 		// Set the page title
 		$document->setTitle($params->get('page_title'));
 
@@ -57,7 +57,7 @@ class WeblinksViewCategories extends JView
 			$attribs['hspace'] = '"6"';
 
 			// Use the static HTML library to build the image tag
-			$image = JHTML::_('image', '/images/stories/'.$params->get('image'), JText::_('Web Links'), $attribs);
+			$image = JHTML::_('image', 'images/stories/'.$params->get('image'), JText::_('Web Links'), $attribs);
 		}
 
 		for($i = 0; $i < count($categories); $i++)

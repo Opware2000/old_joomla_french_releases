@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8119 2007-07-20 14:04:10Z jinx $
+ * @version		$Id: controller.php 8631 2007-08-30 09:07:41Z hackwar $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -54,6 +54,7 @@ class ContentController extends JController
 	function edit()
 	{
 		$user	=& JFactory::getUser();
+		
 		// Create a user access object for the user
 		$access					= new stdClass();
 		$access->canEdit		= $user->authorize('com_content', 'edit', 'content', 'all');
@@ -74,10 +75,16 @@ class ContentController extends JController
 		if( $model->get('id') > 1 && $user->get('gid') <= 19 && $model->get('created_by') != $user->id ) {
 			JError::raiseError( 403, JText::_("ALERTNOTAUTH") );
 		}
+		
+		if ( $model->isCheckedOut($user->get ('id')))
+		{
+			$msg = JText::sprintf('DESCBEINGEDITTED', JText::_('The item'), $model->get('title'));
+			$this->setRedirect(JRoute::_('index.php?view=article&id='.$model->get('id'), false), $msg);
+			return;
+		}
 
-		// Get the id of the article to display and set the model
-		$id = JRequest::getVar('id', 0, '', 'int');
-		$model->setId($id);
+		//Checkout the article
+		$model->checkout();
 
 		// Push the model into the view (as default)
 		$view->setModel($model, true);
@@ -114,7 +121,7 @@ class ContentController extends JController
 		$access->canEdit		= $user->authorize('com_content', 'edit', 'content', 'all');
 		$access->canEditOwn		= $user->authorize('com_content', 'edit', 'content', 'own');
 		$access->canPublish		= $user->authorize('com_content', 'publish', 'content', 'all');
-		
+
 		if (!($access->canEdit || $access->canEditOwn)) {
 			JError::raiseError( 403, JText::_("ALERTNOTAUTH") );
 		}
@@ -133,7 +140,7 @@ class ContentController extends JController
 			$msg = JText::_( 'Article Saved' );
 
 			if($isNew) {
-				$post['id'] = (int) $db->insertid();
+				$post['id'] = (int) $model->get('id');
 			}
 		} else {
 			$msg = JText::_( 'Error Saving Article' );
@@ -224,12 +231,12 @@ class ContentController extends JController
 				break;
 
 			case 'apply_new' :
-				$link = JRoute::_('index.php?task=edit&id='.$post['id']);
+				$link = JRoute::_('index.php?task=edit&id='.$post['id'], false);
 				break;
 
 			case 'save' :
 			default :
-				$link = JRoute::_('index.php?view=article&id='.$post['id']);
+				$link = JRoute::_('index.php?view=article&id='.$post['id'], false);
 				break;
 		}
 		$this->setRedirect($link, $msg);

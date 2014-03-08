@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 7667 2007-06-07 15:20:25Z jinx $
+* @version		$Id: helper.php 8473 2007-08-20 20:13:58Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -18,15 +18,19 @@ class modLoginHelper
 {
 	function getReturnURL($params, $type)
 	{
-		// url of current page that user will be returned to after login
-		$menu =& JMenu::getInstance();
-		$item =& $menu->getDefault();
-		
-		$itemid =  $params->get($type, $item->id);
-		
-		$url = 'index.php?Itemid='.$itemid;
-		$url = base64_encode(JRoute::_($url, false));
-		return $url;
+		if($itemid =  $params->get($type)) 
+		{
+			$url = 'index.php?Itemid='.$itemid;
+			$url = JRoute::_($url, false);
+		}
+		else
+		{
+			// Redirect to login
+			$uri = JFactory::getURI();
+			$url = $uri->toString();
+		}
+
+		return base64_encode($url);
 	}
 
 	function getType()

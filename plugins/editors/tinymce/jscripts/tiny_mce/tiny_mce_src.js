@@ -5,8 +5,8 @@ function TinyMCE_Engine() {
 	var ua;
 
 	this.majorVersion = "2";
-	this.minorVersion = "1.1";
-	this.releaseDate = "2007-05-08";
+	this.minorVersion = "1.2";
+	this.releaseDate = "2007-08-21";
 
 	this.instances = [];
 	this.switchClassCache = [];
@@ -205,6 +205,7 @@ TinyMCE_Engine.prototype = {
 		this._def("hide_selects_on_submit", true);
 		this._def("forced_root_block", false);
 		this._def("remove_trailing_nbsp", false);
+		this._def("save_on_tinymce_forms", false);
 
 		// Force strict loading mode to false on non Gecko browsers
 		if (this.isMSIE && !this.isOpera)
@@ -288,7 +289,7 @@ TinyMCE_Engine.prototype = {
 		}
 
 		// Only do this once
-		if (this.configs.length === 0) {
+		if (this.configs.length == 0) {
 			if (typeof(TinyMCECompressed) == "undefined") {
 				tinyMCE.addEvent(window, "DOMContentLoaded", TinyMCE_Engine.prototype.onLoad);
 
@@ -586,7 +587,7 @@ TinyMCE_Engine.prototype = {
 	},
 
 	removeMCEControl : function(editor_id) {
-		var inst = tinyMCE.getInstanceById(editor_id), h, re, ot, tn;
+		var inst = tinyMCE.getInstanceById(editor_id), h, re, ot, tn, n;
 
 		if (inst) {
 			inst.switchSettings();
@@ -598,6 +599,18 @@ TinyMCE_Engine.prototype = {
 
 			tinyMCE.selectedElement = null;
 			tinyMCE.selectedInstance = null;
+
+			tinyMCE.selectedElement = null;
+			tinyMCE.selectedInstance = null;
+
+			// Try finding an instance
+			for (n in tinyMCE.instances) {
+				if (!tinyMCE.isInstance(tinyMCE.instances[n]))
+					continue;
+
+				tinyMCE.selectedInstance = tinyMCE.instances[n];
+				break;
+			}
 
 			// Remove element
 			re = document.getElementById(editor_id + "_parent");
@@ -1096,7 +1109,7 @@ TinyMCE_Engine.prototype = {
 			return;
 
 		// Check if form is valid
-		if (typeof(form_obj) == "undefined" || form_obj === null)
+		if (typeof(form_obj) == "undefined" || form_obj == null)
 			return;
 
 		// If not a form, find the form
@@ -1108,14 +1121,14 @@ TinyMCE_Engine.prototype = {
 		}
 
 		// Still nothing
-		if (form_obj === null)
+		if (form_obj == null)
 			return;
 
 		// Disable all UI form elements that TinyMCE created
 		for (i=0; i<form_obj.elements.length; i++) {
 			elementId = form_obj.elements[i].name ? form_obj.elements[i].name : form_obj.elements[i].id;
 
-			if (elementId.indexOf('mce_editor_') === 0)
+			if (elementId.indexOf('mce_editor_') == 0)
 				form_obj.elements[i].disabled = true;
 		}
 	},
@@ -1443,7 +1456,7 @@ TinyMCE_Engine.prototype = {
 		// Use tilemaps when enabled and found and never in MSIE since it loads the tile each time from cache if cahce is disabled
 		if (tinyMCE.getParam('button_tile_map') && (!tinyMCE.isIE || tinyMCE.isOpera) && (m = this.buttonMap[id]) != null && (tinyMCE.getParam("language") == "en" || img.indexOf('$lang') == -1)) {
 			// Tiled button
-			x = 0 - (m * 20) === 0 ? '0' : 0 - (m * 20);
+			x = 0 - (m * 20) == 0 ? '0' : 0 - (m * 20);
 			h += '<a id="{$editor_id}_' + id + '" href="javascript:' + cmd + '" onclick="' + cmd + 'return false;" onmousedown="return false;" ' + io + ' class="mceTiledButton mceButtonNormal" target="_self">';
 			h += '<img src="{$themeurl}/images/spacer.gif" style="background-position: ' + x + 'px 0" alt="{$'+lang+'}" title="{$' + lang + '}" />';
 			h += '</a>';
@@ -1473,7 +1486,7 @@ TinyMCE_Engine.prototype = {
 
 		// Use tilemaps when enabled and found and never in MSIE since it loads the tile each time from cache if cahce is disabled
 		if (tinyMCE.getParam('button_tile_map') && (!tinyMCE.isIE || tinyMCE.isOpera) && (m = tinyMCE.buttonMap[id]) != null && (tinyMCE.getParam("language") == "en" || img.indexOf('$lang') == -1)) {
-			x = 0 - (m * 20) === 0 ? '0' : 0 - (m * 20);
+			x = 0 - (m * 20) == 0 ? '0' : 0 - (m * 20);
 
 			if (tinyMCE.isRealIE)
 				h += '<span id="{$editor_id}_' + id + '" class="mceMenuButton" onmouseover="tinyMCE._menuButtonEvent(\'over\',this);tinyMCE.lastHover = this;" onmouseout="tinyMCE._menuButtonEvent(\'out\',this);">';
@@ -1519,20 +1532,26 @@ TinyMCE_Engine.prototype = {
 	formSubmit : function(f, p) {
 		var n, inst, found = false;
 
+		if (f.form)
+			f = f.form;
+
 		// Is it a form that has a TinyMCE instance
-		for (n in tinyMCE.instances) {
-			inst = tinyMCE.instances[n];
+		if (tinyMCE.getParam('save_on_tinymce_forms')) {
+			for (n in tinyMCE.instances) {
+				inst = tinyMCE.instances[n];
 
-			if (!tinyMCE.isInstance(inst))
-				continue;
+				if (!tinyMCE.isInstance(inst))
+					continue;
 
-			if (inst.formElement) {
-				if (f == inst.formElement.form) {
-					found = true;
-					inst.isNotDirty = true;
+				if (inst.formElement) {
+					if (f == inst.formElement.form) {
+						found = true;
+						inst.isNotDirty = true;
+					}
 				}
 			}
-		}
+		} else
+			found  = true;
 
 		// Is valid
 		if (found) {
@@ -1800,8 +1819,8 @@ TinyMCE_Engine.prototype = {
 
 		// Call custom cleanup
 		customCleanup = tinyMCE.settings.cleanup_callback;
-		if (customCleanup != '' && window[customCleanup])
-			content = window[customCleanup](type, content, inst);
+		if (customCleanup != '')
+			content = tinyMCE.resolveDots(tinyMCE.settings.cleanup_callback, window)(type, content, inst);
 
 		// Trigger theme cleanup
 		po = tinyMCE.themes[tinyMCE.settings.theme];
@@ -1845,7 +1864,7 @@ TinyMCE_Engine.prototype = {
 
 	applyTemplate : function(h, ag) {
 		return h.replace(new RegExp('\\{\\$([a-z0-9_]+)\\}', 'gi'), function(m, s) {
-			if (s.indexOf('lang_') === 0 && tinyMCELang[s])
+			if (s.indexOf('lang_') == 0 && tinyMCELang[s])
 				return tinyMCELang[s];
 
 			if (ag && ag[s])
@@ -1912,7 +1931,7 @@ TinyMCE_Engine.prototype = {
 			html = tinyMCE.applyTemplate(html, args);
 
 			win = window.open("", "mcePopup" + new Date().getTime(), "top=" + y + ",left=" + x + ",scrollbars=" + scrollbars + ",dialog=yes,minimizable=" + resizable + ",modal=yes,width=" + width + ",height=" + height + ",resizable=" + resizable);
-			if (win === null) {
+			if (win == null) {
 				alert(tinyMCELang.lang_popup_blocked);
 				return;
 			}
@@ -1938,7 +1957,7 @@ TinyMCE_Engine.prototype = {
 					try {tinyMCE.lastWindow.close();} catch (ex) {}
 
 				win = window.open(url, "mcePopup" + new Date().getTime(), "top=" + y + ",left=" + x + ",scrollbars=" + scrollbars + ",dialog=" + modal + ",minimizable=" + resizable + ",modal=" + modal + ",width=" + width + ",height=" + height + ",resizable=" + resizable);
-				if (win === null) {
+				if (win == null) {
 					alert(tinyMCELang.lang_popup_blocked);
 					return;
 				}
@@ -2016,7 +2035,7 @@ TinyMCE_Engine.prototype = {
 				oldH = el.style.height;
 				bo = tinyMCE.getAttrib(el, "border");
 
-				bo = bo === '' || bo == "0" ? true : false;
+				bo = bo == '' || bo == "0" ? true : false;
 
 				tinyMCE.setAttrib(el, "class", tinyMCE.getVisualAidClass(tinyMCE.getAttrib(el, "class"), state && bo));
 
@@ -2248,7 +2267,7 @@ TinyMCE_Engine.prototype = {
 							rule = rules[c];
 
 							// Strip spaces between selectors
-							while (rule.indexOf(' ') === 0)
+							while (rule.indexOf(' ') == 0)
 								rule = rule.substring(1);
 
 							// Invalid rule
@@ -2283,7 +2302,7 @@ TinyMCE_Engine.prototype = {
 	regexpReplace : function(in_str, reg_exp, replace_str, opts) {
 		var re;
 
-		if (in_str === null)
+		if (in_str == null)
 			return in_str;
 
 		if (typeof(opts) == "undefined")
@@ -2382,6 +2401,18 @@ TinyMCE_Engine.prototype = {
 		return false;
 	},
 
+	resolveDots : function(s, o) {
+		var i;
+
+		if (typeof(s) == 'string') {
+			for (i=0, s=s.split('.'); i<s.length; i++)
+				o = o[s[i]];
+		} else
+			o = s;
+
+		return o;
+	},
+
 	xmlEncode : function(s) {
 		return s ? ('' + s).replace(this.xmlEncodeRe, function (c, b) {
 			switch (c) {
@@ -2405,8 +2436,10 @@ TinyMCE_Engine.prototype = {
 	add : function(c, m) {
 		var n;
 
-		for (n in m)
-			c.prototype[n] = m[n];
+		for (n in m) {
+			if (m.hasOwnProperty(n))
+				c.prototype[n] = m[n];
+		}
 	},
 
 	extend : function(p, np) {
@@ -2414,11 +2447,15 @@ TinyMCE_Engine.prototype = {
 
 		o.parent = p;
 
-		for (n in p)
-			o[n] = p[n];
+		for (n in p) {
+			if (p.hasOwnProperty(n))
+				o[n] = p[n];
+		}
 
-		for (n in np)
-			o[n] = np[n];
+		for (n in np) {
+			if (np.hasOwnProperty(n))
+				o[n] = np[n];
+		}
 
 		return o;
 	},
@@ -2642,7 +2679,7 @@ TinyMCE_Control.prototype = {
 		m = m.toLowerCase();
 		k = ie && !n ? k.toUpperCase() : k;
 		c = n ? null : k.charCodeAt(0);
-		d = d && d.indexOf('lang_') === 0 ? tinyMCE.getLang(d) : d;
+		d = d && d.indexOf('lang_') == 0 ? tinyMCE.getLang(d) : d;
 
 		sc = {
 			alt : m.indexOf('alt') != -1,
@@ -2707,7 +2744,7 @@ TinyMCE_Control.prototype = {
 		s = this.getSel();
 
 		// Weird, wheres that cursor selection?
-		return (!s || !s.rangeCount || s.rangeCount === 0);
+		return (!s || !s.rangeCount || s.rangeCount == 0);
 	},
 
 	isDirty : function() {
@@ -2771,7 +2808,7 @@ TinyMCE_Control.prototype = {
 			nx = ne.nextSibling;
 
 			// If text node or inline element wrap it in a block element
-			if (ne.nodeType == 3 || !tinyMCE.blockRegExp.test(ne.nodeName)) {
+			if ((ne.nodeType == 3 && ne.nodeValue.replace(/\s+/g, '') != '') || (ne.nodeType == 1 && !tinyMCE.blockRegExp.test(ne.nodeName))) {
 				if (!bm)
 					bm = this.selection.getBookmark();
 
@@ -2848,9 +2885,10 @@ TinyMCE_Control.prototype = {
 
 			switch (command) {
 				case "JustifyLeft":
-					if (align == 'left')
+					if (align == 'left') {
+						img.setAttribute('align', ''); // Needed for IE
 						img.removeAttribute('align');
-					else
+					} else
 						img.setAttribute('align', 'left');
 
 					// Remove the div
@@ -2864,6 +2902,7 @@ TinyMCE_Control.prototype = {
 					return;
 
 				case "JustifyCenter":
+					img.setAttribute('align', ''); // Needed for IE
 					img.removeAttribute('align');
 
 					// Is centered
@@ -2886,9 +2925,10 @@ TinyMCE_Control.prototype = {
 					return;
 
 				case "JustifyRight":
-					if (align == 'right')
+					if (align == 'right') {
+						img.setAttribute('align', ''); // Needed for IE
 						img.removeAttribute('align');
-					else
+					} else
 						img.setAttribute('align', 'right');
 
 					// Remove the div
@@ -2944,6 +2984,22 @@ TinyMCE_Control.prototype = {
 				this.repaint();
 				return true;
 
+			case "JustifyLeft":
+			case "JustifyCenter":
+			case "JustifyFull":
+			case "JustifyRight":
+				var el = tinyMCE.getParentNode(focusElm, function(n) {return tinyMCE.getAttrib(n, 'align');});
+
+				if (el) {
+					el.setAttribute('align', ''); // Needed for IE
+					el.removeAttribute('align');
+				} else
+					this.getDoc().execCommand(command, user_interface, value);
+
+				tinyMCE.triggerNodeChange();
+
+				return true;
+
 			case "unlink":
 				// Unlink if caret is inside link
 				if (tinyMCE.isGecko && this.getSel().isCollapsed) {
@@ -2979,7 +3035,7 @@ TinyMCE_Control.prototype = {
 				break;
 
 			case "FormatBlock":
-				if (value === null || value === '') {
+				if (value == null || value == '') {
 					var elm = tinyMCE.getParentElement(this.getFocusElement(), "p,div,h1,h2,h3,h4,h5,h6,pre,address,blockquote,dt,dl,dd,samp");
 
 					if (elm)
@@ -3052,8 +3108,8 @@ TinyMCE_Control.prototype = {
 				var sel = this.getSel();
 				var scmd = value.command;
 				var sname = value.name;
-				var svalue = value.value === null ? '' : value.value;
-				//var svalue = value['value'] === null ? '' : value['value'];
+				var svalue = value.value == null ? '' : value.value;
+				//var svalue = value['value'] == null ? '' : value['value'];
 				var wrapper = value.wrapper ? value.wrapper : "span";
 				var parentElm = null;
 				var invalidRe = new RegExp("^BODY|HTML$", "g");
@@ -3069,8 +3125,8 @@ TinyMCE_Control.prototype = {
 						var prng = doc.selection.createRange();
 						prng.moveToElementText(pelm);
 
-						if (rng.htmlText == prng.htmlText || rng.boundingWidth === 0) {
-							if (invalidParentsRe === null || !invalidParentsRe.test(pelm.nodeName))
+						if (rng.htmlText == prng.htmlText || rng.boundingWidth == 0) {
+							if (invalidParentsRe == null || !invalidParentsRe.test(pelm.nodeName))
 								parentElm = pelm;
 						}
 					}
@@ -3179,7 +3235,7 @@ TinyMCE_Control.prototype = {
 					// Is I the only child
 					if (elm.parentNode.childNodes.length == 1 && !invalidRe.test(elm.nodeName) && !invalidRe.test(elm.parentNode.nodeName)) {
 						//tinyMCE.debug("merge2" + isNew + "," + elm.nodeName + "," + elm.parentNode.nodeName);
-						if (invalidParentsRe === null || !invalidParentsRe.test(elm.parentNode.nodeName))
+						if (invalidParentsRe == null || !invalidParentsRe.test(elm.parentNode.nodeName))
 							this._mergeElements(scmd, elm.parentNode, elm, false);
 					}
 				}
@@ -3215,7 +3271,7 @@ TinyMCE_Control.prototype = {
 				break;
 
 			case "FontName":
-				if (value === null) {
+				if (value == null) {
 					var s = this.getSel();
 
 					// Find font and select it
@@ -3253,7 +3309,7 @@ TinyMCE_Control.prototype = {
 				return;
 
 			case "forecolor":
-				value = value === null ? this.foreColor : value;
+				value = value == null ? this.foreColor : value;
 				value = tinyMCE.trim(value);
 				value = value.charAt(0) != '#' ? (isNaN('0x' + value) ? value : '#' + value) : value;
 
@@ -3262,12 +3318,12 @@ TinyMCE_Control.prototype = {
 				break;
 
 			case "HiliteColor":
-				value = value === null ? this.backColor : value;
+				value = value == null ? this.backColor : value;
 				value = tinyMCE.trim(value);
 				value = value.charAt(0) != '#' ? (isNaN('0x' + value) ? value : '#' + value) : value;
 				this.backColor = value;
 
-				if (tinyMCE.isGecko) {
+				if (tinyMCE.isGecko || tinyMCE.isOpera) {
 					this._setUseCSS(true);
 					this.getDoc().execCommand('hilitecolor', false, value);
 					this._setUseCSS(false);
@@ -3635,7 +3691,7 @@ TinyMCE_Control.prototype = {
 				}
 
 				// Remove class
-				if (text.length === 0)
+				if (text.length == 0)
 					this.execCommand("mceSetCSSClass", false, "");
 
 				tinyMCE.triggerNodeChange();
@@ -3716,18 +3772,18 @@ TinyMCE_Control.prototype = {
 			this.settings.height = replace_element.offsetHeight;
 
 		// Try the style width
-		if (this.settings.width === 0)
+		if (this.settings.width == 0)
 			this.settings.width = replace_element.style.width;
 
 		// Try the style height
-		if (this.settings.height === 0)
+		if (this.settings.height == 0)
 			this.settings.height = replace_element.style.height; 
 
 		// If no width/height then default to 320x240, better than nothing
-		if (this.settings.width === 0)
+		if (this.settings.width == 0)
 			this.settings.width = 320;
 
-		if (this.settings.height === 0)
+		if (this.settings.height == 0)
 			this.settings.height = 240;
 
 		this.settings.area_width = parseInt(this.settings.width);
@@ -3904,7 +3960,7 @@ TinyMCE_Control.prototype = {
 			b.setAttribute('href', u);
 			h.appendChild(b);
 		} else {
-			if (u === '' || u === null)
+			if (u == '' || u == null)
 				b.parentNode.removeChild(b);
 			else
 				b.setAttribute('href', u);
@@ -3991,7 +4047,7 @@ TinyMCE_Control.prototype = {
 		htm = tinyMCE._customCleanup(this, "submit_content", htm);
 
 		if (!skip_callback && tinyMCE.settings.save_callback !== '')
-			content = window[tinyMCE.settings.save_callback](this.formTargetElementId,htm,this.getBody());
+			content = tinyMCE.resolveDots(tinyMCE.settings.save_callback, window)(this.formTargetElementId,htm,this.getBody());
 
 		// Use callback content if available
 		if ((typeof(content) != "undefined") && content != null)
@@ -4059,7 +4115,7 @@ tinyMCE.add(TinyMCE_Engine, {
 	parseStyle : function(str) {
 		var ar = [], st, i, re, pa;
 
-		if (str === null)
+		if (str == null)
 			return ar;
 
 		st = str.split(';');
@@ -4067,7 +4123,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		tinyMCE.clearArray(ar);
 
 		for (i=0; i<st.length; i++) {
-			if (st[i] === '')
+			if (st[i] == '')
 				continue;
 
 			re = new RegExp('^\\s*([^:]*):\\s*(.*)\\s*$');
@@ -4089,13 +4145,11 @@ tinyMCE.add(TinyMCE_Engine, {
 		box[3] = ar[pr + '-bottom' + sf];
 
 		for (i=0; i<box.length; i++) {
-			if (box[i] === null)
+			if (box[i] == null)
 				return;
 
-			for (a=0; a<box.length; a++) {
-				if (box[a] != box[i])
-					return;
-			}
+			if (i && box[i] != box[i-1])
+				return;
 		}
 
 		// They are all the same
@@ -4123,7 +4177,7 @@ tinyMCE.add(TinyMCE_Engine, {
 			if (typeof(val) == 'function')
 				continue;
 
-			if (key.indexOf('mso-') === 0)
+			if (key.indexOf('mso-') == 0)
 				continue;
 
 			if (val != null && val !== '') {
@@ -4271,7 +4325,7 @@ tinyMCE.add(TinyMCE_Engine, {
 
 		// Loops backwards due to bug #1467987
 		for (i=an.length-1; i>=0; i--) {
-			if (tinyMCE.getAttrib(an[i], "name") !== '' && tinyMCE.getAttrib(an[i], "href") === '') {
+			if (tinyMCE.getAttrib(an[i], "name") !== '' && tinyMCE.getAttrib(an[i], "href") == '') {
 				cn = an[i].childNodes;
 
 				for (x=cn.length-1; x>=0; x--)
@@ -4372,7 +4426,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		c.settings.on_save = on_save;
 
 		c.idCount = 0;
-		c.serializationId = new Date().getTime().toString(32); // Unique ID needed for the content duplication bug
+		c.serializationId++; // Unique ID needed for the content duplication bug
 		c.serializedNodes = [];
 		c.sourceIndex = -1;
 
@@ -4504,6 +4558,7 @@ TinyMCE_Cleanup.prototype = {
 		this.nlAfterRe = this._arrayToRe(s.newline_after_elements.split(','), 'gi', '<(',  ')([^>]*)>');
 		this.nlBeforeAfterRe = this._arrayToRe(s.newline_before_after_elements.split(','), 'gi', '<(\\/?)(', ')([^>]*)>');
 		this.serializedNodes = [];
+		this.serializationId = 0;
 
 		if (s.invalid_elements !== '')
 			this.iveRe = this._arrayToRe(s.invalid_elements.toUpperCase().split(','), 'g', '^(', ')$');
@@ -4572,7 +4627,7 @@ TinyMCE_Cleanup.prototype = {
 
 			// Split tag/children
 			p = this.split(/\[|\]/, s);
-			if (p === null || p.length < 1)
+			if (p == null || p.length < 1)
 				t = s.toUpperCase();
 			else
 				t = p[0].toUpperCase();
@@ -4604,8 +4659,8 @@ TinyMCE_Cleanup.prototype = {
 				}
 
 				r += ')$';
-//tinyMCE.debug(t + "=" + r);
-				if (this.childRules === null)
+
+				if (this.childRules == null)
 					this.childRules = tinyMCE.clearArray([]);
 
 				this.childRules[tn[y]] = new RegExp(r);
@@ -4619,18 +4674,18 @@ TinyMCE_Cleanup.prototype = {
 	parseRuleStr : function(s) {
 		var ta, p, r, a, i, x, px, t, tn, y, av, or = tinyMCE.clearArray([]), dv;
 
-		if (s === null || s.length === 0)
+		if (s == null || s.length == 0)
 			return or;
 
 		ta = s.split(',');
 		for (x=0; x<ta.length; x++) {
 			s = ta[x];
-			if (s.length === 0)
+			if (s.length == 0)
 				continue;
 
 			// Split tag/attrs
 			p = this.split(/\[|\]/, s);
-			if (p === null || p.length < 1)
+			if (p == null || p.length < 1)
 				t = s.toUpperCase();
 			else
 				t = p[0].toUpperCase();
@@ -4686,7 +4741,7 @@ TinyMCE_Cleanup.prototype = {
 
 								dv = av[0].substring(1);
 
-								r.defaultAttribs[t.toLowerCase()] = dv === '' ? "mce_empty" : dv;
+								r.defaultAttribs[t.toLowerCase()] = dv == '' ? "mce_empty" : dv;
 							} else if (av[0].charAt(0) == '<') {
 								if (!r.validAttribValues)
 									r.validAttribValues = tinyMCE.clearArray([]);
@@ -4947,16 +5002,16 @@ TinyMCE_Cleanup.prototype = {
 	_serializeAttribute : function(n, r, an) {
 		var av = '', t, os = this.settings.on_save;
 
-		if (os && (an.indexOf('mce_') === 0 || an.indexOf('_moz') === 0))
+		if (os && (an.indexOf('mce_') == 0 || an.indexOf('_moz') == 0))
 			return '';
 
 		if (os && this.mceAttribs[an])
 			av = this._getAttrib(n, this.mceAttribs[an]);
 
-		if (av.length === 0)
+		if (av.length == 0)
 			av = this._getAttrib(n, an);
 
-		if (av.length === 0 && r.defaultAttribs && (t = r.defaultAttribs[an])) {
+		if (av.length == 0 && r.defaultAttribs && (t = r.defaultAttribs[an])) {
 			av = t;
 
 			if (av == "mce_empty")
@@ -5252,7 +5307,7 @@ tinyMCE.add(TinyMCE_Engine, {
 	},
 
 	getElementByAttributeValue : function(n, e, a, v) {
-		return (n = this.getElementsByAttributeValue(n, e, a, v)).length === 0 ? null : n[0];
+		return (n = this.getElementsByAttributeValue(n, e, a, v)).length == 0 ? null : n[0];
 	},
 
 	getElementsByAttributeValue : function(n, e, a, v) {
@@ -5463,7 +5518,7 @@ tinyMCE.add(TinyMCE_Engine, {
 			va = "" + va;
 
 		if (fix) {
-			if (va === null)
+			if (va == null)
 				va = "";
 
 			va = va.replace(/[^0-9%]/g, '');
@@ -5485,7 +5540,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		e.style[n] = v;
 
 		// Style attrib deleted in IE
-		if (tinyMCE.isIE && v === null || v === '') {
+		if (tinyMCE.isIE && v == null || v == '') {
 			v = tinyMCE.serializeStyle(tinyMCE.parseStyle(e.style.cssText));
 			e.style.cssText = v;
 			e.setAttribute("style", v);
@@ -5502,7 +5557,7 @@ tinyMCE.add(TinyMCE_Engine, {
 
 		if (e) {
 			// Keep tile mode
-			if (tinyMCE.settings.button_tile_map && e.className && e.className.indexOf('mceTiledButton') === 0)
+			if (tinyMCE.settings.button_tile_map && e.className && e.className.indexOf('mceTiledButton') == 0)
 				c = 'mceTiledButton ' + c;
 
 			e.className = c;
@@ -5746,7 +5801,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		var i, strTok1, strTok2, breakPoint = 0, outPath = "", forceSlash = false;
 		var fileName, pos;
 
-		if (targetURL.path === '')
+		if (targetURL.path == '')
 			targetURL.path = "/";
 		else
 			forceSlash = true;
@@ -5790,7 +5845,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		targetURL.protocol = null;
 		targetURL.host = null;
 		targetURL.port = null;
-		targetURL.path = outPath === '' && forceSlash ? "/" : outPath;
+		targetURL.path = outPath == '' && forceSlash ? "/" : outPath;
 
 		// Remove document prefix from local anchors
 		fileName = baseURL.path;
@@ -5803,7 +5858,7 @@ tinyMCE.add(TinyMCE_Engine, {
 			targetURL.path = "";
 
 		// If empty and not local anchor force filename or slash
-		if (targetURL.path === '' && !targetURL.anchor)
+		if (targetURL.path == '' && !targetURL.anchor)
 			targetURL.path = fileName !== '' ? fileName : "/";
 
 		return this.serializeURL(targetURL);
@@ -5813,7 +5868,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		var baseURL = this.parseURL(base_url), baseURLParts, relURLParts, newRelURLParts, numBack, relURL = this.parseURL(relative_url), i;
 		var len, absPath, start, end, newBaseURLParts;
 
-		if (relative_url === '' || relative_url.indexOf('://') != -1 || /^(mailto:|javascript:|#|\/)/.test(relative_url))
+		if (relative_url == '' || relative_url.indexOf('://') != -1 || /^(mailto:|javascript:|#|\/)/.test(relative_url))
 			return relative_url;
 
 		// Split parts
@@ -5823,7 +5878,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		// Remove empty chunks
 		newBaseURLParts = [];
 		for (i=baseURLParts.length-1; i>=0; i--) {
-			if (baseURLParts[i].length === 0)
+			if (baseURLParts[i].length == 0)
 				continue;
 
 			newBaseURLParts[newBaseURLParts.length] = baseURLParts[i];
@@ -5834,7 +5889,7 @@ tinyMCE.add(TinyMCE_Engine, {
 		newRelURLParts = [];
 		numBack = 0;
 		for (i=relURLParts.length-1; i>=0; i--) {
-			if (relURLParts[i].length === 0 || relURLParts[i] == ".")
+			if (relURLParts[i].length == 0 || relURLParts[i] == ".")
 				continue;
 
 			if (relURLParts[i] == '..') {
@@ -5928,7 +5983,7 @@ tinyMCE.add(TinyMCE_Engine, {
 
 			start = prot + "//" + host + portPart + "/";
 
-			if (url.indexOf(start) === 0)
+			if (url.indexOf(start) == 0)
 				url = url.substring(start.length-1);
 		}
 
@@ -6515,7 +6570,7 @@ TinyMCE_Selection.prototype = {
 			/*
 			if (typeof(bookmark.index) != 'undefined') {
 				tinyMCE.selectElements(b, 'IMG', function (n) {
-					if (bookmark.index-- === 0) {
+					if (bookmark.index-- == 0) {
 						// Select image in Gecko here
 					}
 
@@ -6695,7 +6750,7 @@ TinyMCE_Selection.prototype = {
 	getRng : function() {
 		var s = this.getSel();
 
-		if (s === null)
+		if (s == null)
 			return null;
 
 		if (tinyMCE.isRealIE)
@@ -6716,7 +6771,7 @@ TinyMCE_Selection.prototype = {
 		if (r.item)
 			return false;
 
-		return r.boundingWidth === 0 || this.getSel().isCollapsed;
+		return r.boundingWidth == 0 || this.getSel().isCollapsed;
 	},
 
 	collapse : function(b) {
@@ -6909,7 +6964,7 @@ var TinyMCE_ForceParagraphs = {
 			var nodes;
 
 			function isEmptyHTML(html) {
-				return html.replace(new RegExp('[ \t\r\n]+', 'g'), '').toLowerCase() === '';
+				return html.replace(new RegExp('[ \t\r\n]+', 'g'), '').toLowerCase() == '';
 			}
 
 			// Check for images
@@ -6956,6 +7011,7 @@ var TinyMCE_ForceParagraphs = {
 		endNode = direct ? sel.focusNode : sel.anchorNode;
 		endOffset = direct ? sel.focusOffset : sel.anchorOffset;
 
+		startNode = startNode.nodeName == "HTML" ? doc.body : startNode; // Fix for Opera bug: https://bugs.opera.com/show_bug.cgi?id=273224&comments=yes
 		startNode = startNode.nodeName == "BODY" ? startNode.firstChild : startNode;
 		endNode = endNode.nodeName == "BODY" ? endNode.firstChild : endNode;
 
@@ -7025,7 +7081,7 @@ var TinyMCE_ForceParagraphs = {
 			endChop = endChop.lastChild;
 
 		// If not in a block element
-		if (startBlock === null) {
+		if (startBlock == null) {
 			// Delete selection
 			rng.deleteContents();
 
@@ -7138,7 +7194,7 @@ var TinyMCE_ForceParagraphs = {
 		if (!startChop.previousSibling && startChop.parentNode.nodeName.toUpperCase() == blockName) {
 			rng.setStartBefore(startChop.parentNode);
 		} else {
-			if (rngBefore.startContainer.nodeName.toUpperCase() == blockName && rngBefore.startOffset === 0)
+			if (rngBefore.startContainer.nodeName.toUpperCase() == blockName && rngBefore.startOffset == 0)
 				rng.setStartBefore(rngBefore.startContainer);
 			else
 				rng.setStart(rngBefore.startContainer, rngBefore.startOffset);
@@ -7390,7 +7446,7 @@ TinyMCE_Layer.prototype = {
 	},
 
 	parseInt : function(s) {
-		if (s === null || s === '')
+		if (s == null || s == '')
 			return 0;
 
 		return parseInt(s);

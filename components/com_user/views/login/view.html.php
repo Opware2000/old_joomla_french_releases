@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 7173 2007-04-21 12:14:59Z jinx $
+* @version		$Id: view.html.php 8485 2007-08-21 05:20:58Z jinx $
 * @package		Joomla
 * @subpackage	Login
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -83,14 +83,21 @@ class UserViewLogin extends JView
 			$image = 'images/stories/'. $params->get( 'image_'.$type );
 			$image = '<img src="'. $image  .'" align="'. $params->get( 'image_'.$type.'_align' ) .'" hspace="10" alt="" />';
 		}
-
+		
+		// Get the return URL
+		if (!$url = JRequest::getVar('return', '', 'method', 'base64')) {
+			$url = base64_encode($params->get($type));
+		}
+	
 		$errors =& JError::getErrors();
 
-		$this->assign('image', $image);
-		$this->assign('type', $type);
+		$this->assign('image' , $image);
+		$this->assign('type'  , $type);
+		$this->assign('return', $url);
+		
 		$this->assignRef('params', $params);
 
 		parent::display($tpl);
 	}
 }
-?>
+

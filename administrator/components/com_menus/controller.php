@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8020 2007-07-17 16:42:27Z friesengeist $
+ * @version		$Id: controller.php 8286 2007-08-01 08:27:44Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -45,7 +45,7 @@ class MenusController extends JController
 	{
 		$model	=& $this->getModel( 'Item' );
 		$model->checkout();
-		
+
 		$view =& $this->getView( 'Item' );
 		$view->setModel( $model, true );
 		// Set the layout and display
@@ -669,4 +669,3 @@ class MenusController extends JController
 		$mainframe->redirect( 'index.php?option=com_menus', $msg );
 	}
 }
-?>

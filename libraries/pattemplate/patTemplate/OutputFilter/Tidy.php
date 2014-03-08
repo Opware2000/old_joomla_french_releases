@@ -2,7 +2,7 @@
 /**
  * patTemplate Tidy output filter
  *
- * $Id: Tidy.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Tidy.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Used to tidy up your resulting HTML document,
  * requires ext/tidy.
@@ -23,7 +23,7 @@ define( 'PATTEMPLATE_OUTPUTFILTER_TIDY_ERROR_NOT_SUPPORTED', 'patTemplate::Outpu
 /**
  * patTemplate Tidy output filter
  *
- * $Id: Tidy.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Tidy.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Used to tidy up your resulting HTML document,
  * requires ext/tidy.
@@ -34,7 +34,7 @@ define( 'PATTEMPLATE_OUTPUTFILTER_TIDY_ERROR_NOT_SUPPORTED', 'patTemplate::Outpu
  */
 class patTemplate_OutputFilter_Tidy extends patTemplate_OutputFilter
 {
-   /**
+	/***
 	* filter name
 	*
 	* This has to be set in the final
@@ -44,7 +44,7 @@ class patTemplate_OutputFilter_Tidy extends patTemplate_OutputFilter
 	*/
 	var	$_name = 'Tidy';
 
-   /**
+	/***
 	* tidy the data
 	*
 	* @access	public

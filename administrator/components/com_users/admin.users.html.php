@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.users.html.php 8053 2007-07-18 13:01:17Z humvee $
+* @version		$Id: admin.users.html.php 8345 2007-08-07 09:20:52Z eddieajau $
 * @package		Joomla
 * @subpackage	Users
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -167,6 +167,10 @@ class HTML_users {
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		global $mainframe;
+
+		// clean item data
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $user, ENT_QUOTES, '' );
 
 		/*
 		 * Initialize variables

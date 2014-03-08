@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: application.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: application.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -38,13 +38,16 @@ class JAdministrator extends JApplication
 	* Class constructor
 	*
 	* @access protected
-	* @param integer A client id
+	* @param	array An optional associative array of configuration settings.
+	* Recognized key values include 'clientId' (this list is not meant to be comprehensive).
 	*/
-	function __construct() {
-		parent::__construct(1);
+	function __construct($config = array())
+	{
+		$config['clientId'] = 1;
+		parent::__construct($config);
 	}
 
-   /**
+	/**
 	* Initialise the application.
 	*
 	* @access public
@@ -54,7 +57,8 @@ class JAdministrator extends JApplication
 	{
 		// if a language was specified it has priority
 		// otherwise use user or default language settings
-		if (empty($options['language'])) {
+		if (empty($options['language']))
+		{
 			$user = & JFactory::getUser();
 			$lang	= $user->getParam( 'admin_language' );
 
@@ -62,9 +66,11 @@ class JAdministrator extends JApplication
 			if ( $lang && JLanguage::exists($lang) ) {
 				$options['language'] = $lang;
 			} else {
-				$options['language'] = $this->getCfg('lang_administrator');
+				jimport('joomla.application.helper');
+				$params = JComponentHelper::getParams('com_languages');
+				$client	=& JApplicationHelper::getClientInfo($this->getClientId());
+				$options['language'] = $params->get($client->name, 'en-GB');
 			}
-
 		}
 
 		// One last check to make sure we have something
@@ -105,7 +111,7 @@ class JAdministrator extends JApplication
 				if ( $user->get('id') ) {
 					$document->addScript( '../includes/js/joomla.javascript.js');
 				}
-				
+
 				JHTML::_('behavior.mootools');
 			} break;
 
@@ -155,6 +161,7 @@ class JAdministrator extends JApplication
 	*/
 	function login($credentials, $options = array())
 	{
+		$credentials['group']    = '22';  //The minimum group identifier
 		$options['autoregister'] = false; //Make sure users are not autoregistered
 
 		$result = parent::login($credentials, $options);
@@ -169,33 +176,6 @@ class JAdministrator extends JApplication
 		}
 
 		return $result;
-	}
-
-	/**
-	* Logout authentication function
-	*
-	* @access public
-	* @see JApplication::login
-	*/
-	function logout() {
-		return parent::logout();
-	}
-
-	/**
-	 * Set the configuration
-	 *
-	 * @access public
-	 * @param string	The path to the configuration file
-	 * @param string	The type of the configuration file
-	 * @since 1.5
-	 */
-	function loadConfiguration($file, $type = 'config')
-	{
-		parent::loadConfiguration($file, $type);
-
-		$registry =& JFactory::getConfig();
-		$registry->setValue('config.live_site', substr_replace($this->getSiteURL(), '', -1, 1));
-		$registry->setValue('config.absolute_path', JPATH_SITE);
 	}
 
 	/**
@@ -298,5 +278,3 @@ class JAdministrator extends JApplication
 		}
 	}
 }
-
-?>

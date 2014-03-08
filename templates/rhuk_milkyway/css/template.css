@@ -549,6 +549,10 @@ table.contentpaneopen h4 {
 	color: #333;
 }
 
+.highlight {
+	background-color: #fffebb;
+}
+
 /* module control elements */
 table.user1user2 div.moduletable {
 	margin-bottom: 0px;
@@ -617,16 +621,8 @@ div.search input {
 	margin: 15px 0 10px 0;
 }
 
-input#mod_login_username,
-input#mod_login_password {
-	width: 116px;
-}
-
-input#mod_login_username.openid {
-	background: url(../images/login-bg.gif) 0 50% no-repeat;
-	padding-left: 20px;
-	width: 100px;
-}
+form#form-login fieldset { border: 0 none; margin: 0em; padding: 0.2em;}
+form#form-login ul { padding-left: 20px; }
 
 /* thumbnails */
 div.mosimage         {  margin: 5px; }
@@ -739,8 +735,13 @@ td.key {
 	margin: 0;
 }
 
-/* Debug */
-#system-debug     { color: grey; background-color: white; padding: 10px; margin: 10px; }
-#system-debug div { font-size: 11px;}
+/* System Standard Messages */
+#system-message dd.message ul { background: #C3D2E5 url(../../images/notice-info.png) 4px center no-repeat;}
+
+/* System Error Messages */
+#system-message dd.error ul { color: #c00; background: #E6C0C0 url(../../system/images/notice-alert.png) 4px center no-repeat; border-top: 3px solid #DE7A7B; border-bottom: 3px solid #DE7A7B;}
+
+/* System Notice Messages */
+#system-message dd.notice ul { color: #c00; background: #EFE7B8 url(../../system/images/notice-note.png) 4px center no-repeat; border-top: 3px solid #F0DC7E; border-bottom: 3px solid #F0DC7E;}
 
 

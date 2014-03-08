@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -52,9 +52,16 @@ class WeblinksViewWeblink extends JView
 		global $mainframe;
 
 		// Get some objects from the JApplication
-		$pathway	=& $mainframe->getPathWay();
+		$pathway	=& $mainframe->getPathway();
 		$document	=& JFactory::getDocument();
 		$model		=& $this->getModel();
+		$user		=& JFactory::getUser();
+
+		// Make sure you are logged in and have the necessary access rights
+		if ($user->get('gid') < 19) {
+			JError::raiseError( 403, JText::_('ALERTNOTAUTH') );
+			return;
+		}
 
 		/*
 		 * Disabled until ACL system is implemented.  When enabled the $id variable

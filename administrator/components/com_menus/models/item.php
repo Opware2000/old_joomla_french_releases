@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: item.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: item.php 8578 2007-08-26 23:09:01Z jinx $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -21,7 +21,6 @@ jimport( 'joomla.application.component.model' );
 /**
  * @package		Joomla
  * @subpackage	Menus
- * @author Andrew Eddie
  */
 class MenusModelItem extends JModel
 {
@@ -195,18 +194,22 @@ class MenusModelItem extends JModel
 		$params	= null;
 		$item	= &$this->getItem();
 
-		if ($item->type == 'component') {
+		if ($item->type == 'component') 
+		{
 			$comp	= &$this->getComponent();
 			$option	= preg_replace( '#\W#', '', $comp->option );
 			$path	= JPATH_ADMINISTRATOR.DS.'components'.DS.$option.DS.'config.xml';
 
 			$params = new JParameter( $item->params );
-			if (file_exists( $path )) {
+			if (file_exists( $path )) 
+			{
 				$xml =& JFactory::getXMLParser('Simple');
-				if ($xml->loadFile($path)) {
+				if ($xml->loadFile($path)) 
+				{
 					$document =& $xml->document;
 
-					if (isset($document->params[0]->param)) {
+					if (isset($document->params[0]->param)) 
+					{
 						for ($i=0,$n=count($document->params[0]->param); $i<$n; $i++)
 						{
 							if ($document->params[0]->param[$i]->attributes('type') == 'radio' || $document->params[0]->param[$i]->attributes('type') == 'list') {
@@ -223,7 +226,6 @@ class MenusModelItem extends JModel
 		}
 		return $params;
 	}
-
 
 	function &getSystemParams()
 	{
@@ -292,7 +294,7 @@ class MenusModelItem extends JModel
 	function checkout($uid = null)
 	{
 		$id = JRequest::getVar('cid', array(0), '', 'array');
-		JArrayHelper::toInteger($cid, array(0));
+		JArrayHelper::toInteger( $id, array(0) );
 
 		// Make sure we have a user id to checkout the article with
 		if (is_null($uid)) {
@@ -477,7 +479,7 @@ class MenusModelItem extends JModel
 
 		return true;
 	}
-	
+
 	/**
 	 * Delete menu items by type
 	 */
@@ -684,28 +686,27 @@ class MenusModelItem extends JModel
 
 	/**
 	 * Sets the sublevel for menu items
-	 * 
+	 *
 	 * @param array id values to set
 	 * @param int level to assign to the sublevel
 	 */
-	function _setSubLevel( $cid, $level ) 
+	function _setSubLevel( $cid, $level )
 	{
 		JArrayHelper::toInteger($cid, array(0));
 
 		$ids = implode( ',', $cid );
-		
+
 		$query	= 'UPDATE #__menu SET sublevel = '.(int) $level
 				.' WHERE id IN ('.$ids.')';
 		$this->_db->setQuery( $query );
 		$this->_db->query();
-		
+
 		$query	= 'SELECT id FROM #__menu WHERE parent IN ('.$ids.')';
 		$this->_db->setQuery( $query );
 		$cids = $this->_db->loadResultArray( 0 );
-		
+
 		if (!empty( $cids )) {
 			$this->_setSubLevel( $cids, $level + 1 );
 		}
 	}
 }
-?>

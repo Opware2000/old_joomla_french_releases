@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 7944 2007-07-13 21:48:48Z friesengeist $
+* @version		$Id: helper.php 8559 2007-08-25 18:34:58Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -26,17 +26,24 @@ class modRelatedItemsHelper
 		$user				=& JFactory::getUser();
 
 		$option				= JRequest::getCmd('option');
-		$task				= JRequest::getCmd('task');
+		$view				= JRequest::getCmd('view');
 
-		$id					= JRequest::getInt('id');
+		$temp				= JRequest::getString('id');
+		$temp				= explode(':', $temp);
+		$id					= $temp[0];
+		
 		$showDate			= $params->get('showDate', 0);
 
-		$now				= date('Y-m-d H:i:s', time());
 		$nullDate			= $db->getNullDate();
+		
+		jimport('joomla.utilities.date');
+		$date = new JDate();
+		$now  = $date->toMySQL();
+		
 		$related			= array();
 
-		if ($option == 'com_content' && $task == 'view' && $id)
-		{
+		if ($option == 'com_content' && $view == 'article' && $id)
+		{	
 			// select the meta keywords from the item
 			$query = 'SELECT metakey' .
 					' FROM #__content' .

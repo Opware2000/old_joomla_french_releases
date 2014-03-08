@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: router.php 7425 2007-05-17 16:08:46Z jinx $
+* @version		$Id: router.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -28,7 +28,7 @@ function NewsfeedsBuildRoute(&$query)
 	};
 
 	unset($query['view']);
-	
+
 	return $segments;
 }
 

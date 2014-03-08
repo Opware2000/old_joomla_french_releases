@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: banner.php 8047 2007-07-18 12:27:25Z jinx $
+ * @version		$Id: banner.php 8577 2007-08-26 22:45:22Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -71,6 +71,9 @@ class BannersViewBanner
 						<?php echo JHTML::_('grid.sort',  'Name', 'b.name', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="10%" nowrap="nowrap">
+						<?php echo JHTML::_('grid.sort',   'Alias', 'b.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th width="10%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Client', 'c.name', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 					<th width="10%" nowrap="nowrap">
@@ -79,7 +82,7 @@ class BannersViewBanner
 					<th width="5%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Published', 'b.showBanner', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
-					<th width="5%" nowrap="nowrap">
+					<th width="8%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Order', 'b.ordering', @$lists['order_Dir'], @$lists['order'] ); ?>
 						<?php echo JHTML::_('grid.order',  $rows ); ?>
 					</th>
@@ -113,11 +116,11 @@ class BannersViewBanner
 			for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 				$row = &$rows[$i];
 
-				$row->id 	= $row->bid;
-				$link 		= JRoute::_( 'index.php?option=com_banners&task=edit&cid[]='. $row->id );
+				$row->id	= $row->bid;
+				$link		= JRoute::_( 'index.php?option=com_banners&task=edit&cid[]='. $row->id );
 
 				if( $row->imptotal <= 0 ) {
-					$row->imptotal 	=  JText::_('unlimited');
+					$row->imptotal	=  JText::_('unlimited');
 				}
 
 				if ( $row->impmade != 0 ) {
@@ -127,8 +130,8 @@ class BannersViewBanner
 				}
 
 				$row->published = $row->showBanner;
-				$published 		= JHTML::_('grid.published', $row, $i );
-				$checked 		= JHTML::_('grid.checkedout',   $row, $i );
+				$published		= JHTML::_('grid.published', $row, $i );
+				$checked		= JHTML::_('grid.checkedout',   $row, $i );
 				?>
 				<tr class="<?php echo "row$k"; ?>">
 					<td align="center">
@@ -143,11 +146,14 @@ class BannersViewBanner
 							echo $row->name;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Banner' ); ?>">
+							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Banner' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>'; ?>">
 								<?php echo $row->name; ?></a>
 							<?php
 						}
 						?>
+					</td>
+					<td>
+						<?php echo $row->alias;?>
 					</td>
 					<td align="center">
 						<?php echo $row->client_name;?>
@@ -199,7 +205,7 @@ class BannersViewBanner
 	{
 		$task = JRequest::getVar( 'task', '', 'method', 'string');
 
-		JToolBarHelper::title( $task == 'add' ? JText::_( 'New Banner' ) : JText::_( 'Edit Banner' ), 'generic.png' );
+		JToolBarHelper::title( $task == 'add' ? JText::_( 'Banner' ) . ': <small><small>[ '. JText::_( 'New' ) .' ]</small></small>' : JText::_( 'Banner' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>', 'generic.png' );
 		JToolBarHelper::save( 'save' );
 		JToolBarHelper::apply('apply');
 		JToolBarHelper::cancel( 'cancel' );
@@ -354,7 +360,7 @@ class BannersViewBanner
 					<tr >
 						<td valign="top" align="right" class="key">
 							<?php echo JText::_( 'Clicks' ); ?>
-			 			</td>
+						</td>
 						<td colspan="2">
 							<?php echo $row->clicks;?>
 							&nbsp;&nbsp;&nbsp;&nbsp;

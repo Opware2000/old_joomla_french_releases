@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: application.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: application.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -27,22 +27,16 @@ jimport('joomla.application.component.helper');
 class JSite extends JApplication
 {
 	/**
-	 * The pathway store (for breadcrumb generation).
-	 *
-	 * @var object  JPathWay object
-	 * @access protected
-	 */
-	var $_pathway = null;
-
-	/**
 	* Class constructor
 	*
 	* @access protected
-	* @param integer A client id
+	* @param	array An optional associative array of configuration settings.
+	* Recognized key values include 'clientId' (this list is not meant to be comprehensive).
 	*/
-	function __construct()
+	function __construct($config = array())
 	{
-		parent::__construct(0);
+		$config['clientId'] = 0;
+		parent::__construct($config);
 	}
 
 	/**
@@ -63,7 +57,10 @@ class JSite extends JApplication
 			if ( $lang && JLanguage::exists($lang) ) {
 				$options['language'] = $lang;
 			} else {
-				$options['language'] = $this->getCfg('lang_site');
+				jimport( 'joomla.application.helper' );
+				$params =  JComponentHelper::getParams('com_languages');
+				$client	=& JApplicationHelper::getClientInfo($this->getClientId());
+				$options['language'] = $params->get($client->name, 'en-GB');
 			}
 
 		}
@@ -72,7 +69,7 @@ class JSite extends JApplication
 		if ( ! JLanguage::exists($options['language']) ) {
 			$options['language'] = 'en-GB';
 		}
-
+		
 		parent::initialise($options);
 	}
 
@@ -92,13 +89,11 @@ class JSite extends JApplication
 	*/
 	function dispatch($component)
 	{
-		// Build the application pathway
-		$this->_createPathWay();
-
 		$document	=& JFactory::getDocument();
 		$config		=& JFactory::getConfig();
 		$user		=& JFactory::getUser();
-
+		$router     =& $this->getRouter();
+		
 		switch($document->getType())
 		{
 			case 'html':
@@ -109,6 +104,15 @@ class JSite extends JApplication
 				if ( $user->get('id') ) {
 					$document->addScript( 'includes/js/joomla.javascript.js');
 				}
+				
+				if($router->getMode() == JROUTER_MODE_SEF) {
+					$document->setBase(JURI::base());
+				}
+			} break;
+			
+			case 'feed':
+			{
+				$document->setBase(JURI::base());
 			} break;
 
 			default: break;
@@ -117,7 +121,7 @@ class JSite extends JApplication
 
 		$document->setTitle( $this->getCfg('sitename' ));
 		$document->setDescription( $this->getCfg('MetaDesc') );
-
+			
 		$contents = JComponentHelper::renderComponent($component);
 		$document->setBuffer( $contents, 'component');
 	}
@@ -134,7 +138,7 @@ class JSite extends JApplication
 
 		// get the format to render
 		$format = $document->getType();
-
+		
 		switch($format)
 		{
 			case 'feed' :
@@ -161,47 +165,42 @@ class JSite extends JApplication
 				);
 			} break;
  		}
-
+		
 		$data = $document->render( $this->getCfg('caching'), $params);
 		JResponse::setBody($data);
 	}
-
-   /**
+	
+	/**
 	* Check if the user can access the application
 	*
 	* @access public
 	*/
 	function authorize($itemid)
 	{
-		//TODO :: should we show a login screen here ?
-		$menus =& JMenu::getInstance();
-		$user  =& JFactory::getUser();
-		if(!$menus->authorize($itemid, $user->get('aid'))) {
-			JError::raiseError( 403, JText::_('Not Authorised') );
+		$menus	=& JMenu::getInstance();
+		$user	=& JFactory::getUser();
+		$aid	= $user->get('aid');
+		
+		if(!$menus->authorize($itemid, $aid))
+		{
+			if ( ! $aid )
+			{
+				// Redirect to login
+				$uri		= JFactory::getURI();
+				$return		= $uri->toString();
+				
+				$url  = 'index.php?option=com_user&view=login';
+				$url .= '&return='.base64_encode($return);;
+			
+				//$url	= JRoute::_($url, false);
+				$this->redirect($url, "You must login first");
+			}
+			else
+			{
+				$menu	= $menus->getItem($itemid);
+				JError::raiseError( 403, JText::_('Not Authorised') );
+			}
 		}
-	}
-
-	/**
-	* Login authentication function
-	*
-	* @param string The username
-	* @param string The password
-	* @access public
-	* @see JApplication::login
-	*/
-	function login($credentials, $options = array())
-	{
-		return parent::login($credentials, $options);
-	}
-
-	/**
-	* Logout authentication function
-	*
-	* @access public
-	* @see JApplication::login
-	*/
-	function logout($return = null) {
-		return parent::logout();
 	}
 
 	/**
@@ -232,23 +231,6 @@ class JSite extends JApplication
 		}
 
 		return $params;
-	}
-
-	/**
-	 * Set the configuration
-	 *
-	 * @access public
-	 * @param string	The path to the configuration file
-	 * @param string	The type of the configuration file
-	 * @since 1.5
-	 */
-	function loadConfiguration($file, $type = 'config')
-	{
-		parent::loadConfiguration($file, $type);
-
-		$registry =& JFactory::getConfig();
-		$registry->setValue('config.live_site', substr_replace(JURI::base(), '', -1, 1));
-		$registry->setValue('config.absolute_path', JPATH_SITE);
 	}
 
 	/**
@@ -312,7 +294,7 @@ class JSite extends JApplication
 	}
 
 	/**
-	 * Return a reference to the JPathWay object.
+	 * Return a reference to the JPathway object.
 	 *
 	 * @access public
 	 * @return object JPathway.
@@ -320,36 +302,30 @@ class JSite extends JApplication
 	 */
 	function &getPathWay()
 	{
-		return $this->_pathway;
+		$options = array();
+		$pathway =& parent::getPathway($options);
+		return $pathway;
 	}
-
+	
 	/**
-	 * Create a JPathWay object and set the home/component items of the pathway.
+	 * Return a reference to the JRouter object.
 	 *
-	 * @access private
-	 * @return object JPathway.
-	 * @since 1.5
+	 * @access	public
+	 * @return	JRouter.
+	 * @since	1.5
 	 */
-	function &_createPathWay()
+	function &getRouter()
 	{
-		//Load the pathway object
-		jimport( 'joomla.application.pathway' );
-
-		// Create a JPathWay object
-		$this->_pathway = new JPathWay();
-
-		$menu   =& JMenu::getInstance();
-		$item   = $menu->getActive();
-		$menus	= $menu->getMenu();
-		$home	= $menu->getDefault();
-
-		if( $item->id != $home->id)
+		if(!isset($this->_router)) 
 		{
-			foreach($item->tree as $menupath) {
-				$this->_pathway->addItem( $menus[$menupath]->name, 'index.php?Itemid='.$menupath);
+			$options['mode'] = $this->getCfg('sef');
+			if(!$this->getCfg('sef_rewrite')) {
+				$options['prefix'] = 'index.php';
 			}
+		
+			parent::getRouter($options);
 		}
-		return $this->_pathway;
+		
+		return $this->_router;
 	}
 }
-?>

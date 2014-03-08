@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: remember.php 7795 2007-06-26 22:02:14Z jinx $
+* @version		$Id: remember.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -31,11 +31,12 @@ class plgSystemRemember extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @access	protected
-	 * @param	object		$subject The object to observe
+	 * @param	object	$subject The object to observe
+	 * @param 	array   $config  An array that holds the plugin configuration
 	 * @since	1.0
 	 */
-	function plgSystemRemember(& $subject) {
-		parent::__construct($subject);
+	function plgSystemRemember(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	function onAfterInitialise()

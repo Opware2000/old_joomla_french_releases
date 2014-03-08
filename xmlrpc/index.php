@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: index.php 8095 2007-07-19 21:52:07Z laurens $
+* @version		$Id: index.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Installation
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,10 +25,7 @@ JError::setErrorHandling( E_WARNING, 'echo' );
 JError::setErrorHandling( E_NOTICE,	 'echo' );
 
 // create the mainframe object
-$mainframe = new JXMLRPC(3);
-
-// load the configuration
-$mainframe->loadConfiguration( JPATH_CONFIGURATION.DS.'configuration.php' );
+$mainframe =& JApplication::getInstance('xmlrpc');
 
 // Ensure that this application is enabled
 if (!$mainframe->getCfg('xmlrpc_server')) {

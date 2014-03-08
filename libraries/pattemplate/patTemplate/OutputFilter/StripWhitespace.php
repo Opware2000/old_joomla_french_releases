@@ -2,7 +2,7 @@
 /**
  * patTemplate StripWhitespace output filter
  *
- * $Id: StripWhitespace.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: StripWhitespace.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Will remove all whitespace and replace it with a single space.
  *
@@ -17,7 +17,7 @@ defined('JPATH_BASE') or die();
 /**
  * patTemplate StripWhitespace output filter
  *
- * $Id: StripWhitespace.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: StripWhitespace.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * Will remove all whitespace and replace it with a single space.
  *
@@ -27,7 +27,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_OutputFilter_StripWhitespace extends patTemplate_OutputFilter
 {
-   /**
+	/**
 	* filter name
 	*
 	* @access	protected
@@ -36,7 +36,7 @@ class patTemplate_OutputFilter_StripWhitespace extends patTemplate_OutputFilter
 	*/
 	var	$_name	=	'StripWhitespace';
 
-   /**
+	/**
 	* remove all whitespace from the output
 	*
 	* @access	public

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: templates.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: templates.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -92,7 +92,7 @@ class InstallerModelTemplates extends InstallerModel
 				}
 			}
 		} else {
-			$clientInfo = JApplicationHelper::getClientInfo($this->_state->get('filter.client'));
+			$clientInfo =& JApplicationHelper::getClientInfo($this->_state->get('filter.client'));
 			$client = $clientInfo->name;
 			$templateDirs = JFolder::folders($clientInfo->path.DS.'templates');
 

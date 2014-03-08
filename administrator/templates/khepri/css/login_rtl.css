@@ -1,5 +1,5 @@
 /**
-* @version $Id: login_rtl.css 5809 2006-11-19 05:57:10Z eddiea $
+* @version $Id: login_rtl.css 8412 2007-08-15 19:34:16Z jinx $
 * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -17,12 +17,12 @@
  * @since		1.5
  * @version    1.0
  */
- 
-/* -- Imported styles ----------------------------- */ 
- 
-@import url("general_rtl.css"); 
 
-/* -- Specific styles ----------------------------- */ 
+/* -- Imported styles ----------------------------- */
+
+@import url("general_rtl.css");
+
+/* -- Specific styles ----------------------------- */
 
 form  { margin: 0px; padding: 0px; }
 form .inputbox { width: 120px; margin-left: 10px; }
@@ -64,15 +64,15 @@ p {
 }
 
 .button { text-align: right; }
-	
+
 .login-form    { text-align: right; width: 60%; }
 .login-form h1 { display: none; }
 .login-form p { padding: 0 1em 0 1em; }
-	
+
 .login-text { text-align: right; width: 40%; float: right; }
 
 
-#loginForm label {
+#form-login label {
 	display: block;
 	float: right;
 	width: 70px;

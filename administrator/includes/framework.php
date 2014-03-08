@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: framework.php 8128 2007-07-20 19:51:03Z jinx $
+* @version		$Id: framework.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -24,7 +24,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 /*
  * Installation check, and check on removal of the install directory.
  */
-if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize( JPATH_CONFIGURATION . DS . 'configuration.php' ) < 10) || file_exists( JPATH_INSTALLATION . DS . 'index.php' )) {
+if (!file_exists( JPATH_CONFIGURATION . DS . 'configuration.php' ) || (filesize( JPATH_CONFIGURATION . DS . 'configuration.php' ) < 10) /*|| file_exists( JPATH_INSTALLATION . DS . 'index.php' )*/) {
 	header( 'Location: ../installation/index.php' );
 	exit();
 }
@@ -73,12 +73,11 @@ if (JDEBUG) {
 jimport( 'joomla.environment.response'   );
 jimport( 'joomla.application.application' );
 jimport( 'joomla.application.helper' );
-jimport( 'joomla.event.dispatcher' );
 jimport( 'joomla.application.menu' );
-jimport( 'joomla.database.table' );
 jimport( 'joomla.user.user');
 jimport( 'joomla.environment.uri' );
 jimport( 'joomla.factory' );
+jimport( 'joomla.methods' );
 jimport( 'joomla.html.html' );
 jimport( 'joomla.html.parameter' );
 jimport( 'joomla.utilities.array' );
@@ -86,5 +85,6 @@ jimport( 'joomla.utilities.error' );
 jimport( 'joomla.utilities.utility' );
 jimport( 'joomla.utilities.string' );
 jimport( 'joomla.version' );
+jimport( 'joomla.event.*');
 
 ?>

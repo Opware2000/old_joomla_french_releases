@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.contact.php 8004 2007-07-17 00:03:21Z friesengeist $
+* @version		$Id: admin.contact.php 8275 2007-07-31 23:10:13Z humvee $
 * @package		Joomla
 * @subpackage	Contact
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -357,7 +357,7 @@ function changeContact( $cid=null, $state=0 )
 
 	if (count( $cid ) < 1) {
 		$action = $state ? 'publish' : 'unpublish';
-		JError::raiseError(500, JText::_( 'Select an item to '.$action, true ) );
+		JError::raiseError(500, JText::_( 'Select an item to' .$action, true ) );
 	}
 
 	$cids = implode( ',', $cid );

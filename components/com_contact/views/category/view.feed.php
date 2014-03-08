@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.feed.php 7963 2007-07-14 16:16:41Z friesengeist $
+ * @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -29,7 +29,7 @@ class ContactViewCategory extends JView
 
 		$db			=& JFactory::getDBO();
 		$document	=& JFactory::getDocument();
-		$document->link = JURI::base().JRoute::_('index.php?option=com_contact&view=category&catid='.JRequest::getVar('catid',null, '', 'int'));
+		$document->link = JRoute::_('index.php?option=com_contact&view=category&catid='.JRequest::getVar('catid',null, '', 'int'));
 
 		$limit 		= JRequest::getVar('limit', 0, '', 'int');
 		$limitstart = JRequest::getVar('limitstart', 0, '', 'int');
@@ -81,4 +81,3 @@ class ContactViewCategory extends JView
 		}
 	}
 }
-?>

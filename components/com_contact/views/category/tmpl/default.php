@@ -1,5 +1,4 @@
-<?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
+<?php /** $Id: default.php 8497 2007-08-21 19:05:27Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
 <?php if ( $this->params->get( 'show_page_title' ) ) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 <?php if ($this->category->title) :
@@ -56,7 +55,7 @@ endif; ?>
 	<tbody>
 	<?php if ($this->params->get( 'show_headings' )) : ?>
 		<tr>
-			<td width="5" class="sectiontableheader<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+			<td width="5" align="right" class="sectiontableheader<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 				<?php echo JText::_('Num'); ?>
 			</td>
 			<td height="20" class="sectiontableheader<?php echo $this->params->get( 'pageclass_sfx' ); ?>">

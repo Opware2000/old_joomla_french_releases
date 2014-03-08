@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8014 2007-07-17 10:45:49Z friesengeist $
+ * @version		$Id: controller.php 8445 2007-08-18 21:03:25Z hackwar $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -507,7 +507,7 @@ class ContentController extends JController
 				$sectioncategories[$section->id][] = JHTML::_('select.option', $row2->id, $row2->title, 'id', 'title');
 			}
 		}
-
+		$sectioncategories['-1'][] = JHTML::_('select.option', '-1', JText::_( 'Select Category' ), 'id', 'title');
 		$categories = array();
 		foreach ($cat_list as $cat) {
 			if($cat->section == $row->sectionid)
@@ -749,13 +749,13 @@ class ContentController extends JController
 				break;
 
 			case 'apply' :
-				$msg = JText::sprintf('Successfully Saved changes to Item', $row->title);
+				$msg = JText::sprintf('SUCCESSFULLY SAVED CHANGES TO ARTICLE', $row->title);
 				$mainframe->redirect('index.php?option=com_content&sectionid='.$redirect.'&task=edit&cid[]='.$row->id, $msg);
 				break;
 
 			case 'save' :
 			default :
-				$msg = JText::sprintf('Successfully Saved Item', $row->title);
+				$msg = JText::sprintf('Successfully Saved Article', $row->title);
 				$mainframe->redirect('index.php?option=com_content&sectionid='.$redirect, $msg);
 				break;
 		}
@@ -1109,7 +1109,7 @@ class ContentController extends JController
 		if ($section && $category) {
 			$msg = JText::sprintf('Item(s) successfully moved to Section', $total, $section, $category);
 		} else {
-			$msg = JText::sprintf('Item(s) successfully moved to Static Content', $total);
+			$msg = JText::sprintf('ITEM(S) SUCCESSFULLY MOVED TO UNCATEGORIZED', $total);
 		}
 
 		$mainframe->redirect('index.php?option='.$option.'&sectionid='.$sectionid, $msg);

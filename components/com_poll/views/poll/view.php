@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.php 6474 2007-02-03 10:47:26Z pasamio $
+* @version		$Id: view.php 8417 2007-08-16 06:01:47Z pasamio $
 * @package		Joomla
 * @subpackage	Poll
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -36,8 +36,8 @@ class PollViewPoll extends JView
 		$tabcnt 	= 0;
 		$colorx 	= 0;
 
-		$maxval		= $this->votes[0]->hits;
-		$sumval		= $this->votes[0]->voters;
+		$maxval		= isset($this->votes[0]) ? $this->votes[0]->hits : 0;
+		$sumval		= isset($this->votes[0]) ? $this->votes[0]->voters : 0;
 
 		$k = 0;
 		for ($i = 0; $i < count( $this->votes ); $i++)

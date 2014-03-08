@@ -1,8 +1,7 @@
-<?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
+<?php /** $Id: default_items.php 8497 2007-08-21 19:05:27Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
 <?php foreach($this->items as $item) : ?>
 <tr>
-	<td align="center" width="5">
+	<td align="right" width="5">
 		<?php echo $item->count +1; ?>
 	</td>
 	<td height="20" class="sectiontableentry<?php echo $item->odd; ?>">

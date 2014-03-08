@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: joomla.php 7947 2007-07-14 08:57:30Z jinx $
+* @version		$Id: joomla.php 8529 2007-08-23 12:16:45Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -16,7 +16,6 @@
 defined('_JEXEC') or die();
 
 jimport('joomla.event.plugin');
-
 /**
  * Joomla User plugin
  *
@@ -34,31 +33,34 @@ class plgUserJoomla extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgUserJoomla(& $subject) {
-		parent::__construct($subject);
+	function plgUserJoomla(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
 	 * Remove all sessions for the user name
 	 *
-	 * Method is called before user data is deleted from the database
+	 * Method is called after user data is deleted from the database
 	 *
-	 * @param 	array		holds the user data
+	 * @param 	array	  	holds the user data
+	 * @param	boolean		true if user was succesfully stored in the database
+	 * @param	string		message
 	 */
-	function onBeforeDeleteUser($user)
+	function onAfterDeleteUser($user, $succes, $msg)
 	{
-		$db =& JFactory::getDBO();
-		if($user =& JUser::getInstance( $user['id'] )) {
-			$username = $user->get('username');
-		} else {
-			// This should never happen?!?
+		if(!$succes) {
 			return false;
 		}
-		$db->setQuery('DELETE FROM #__session WHERE username = '.$db->Quote($username));
+		
+		$db =& JFactory::getDBO();
+		$db->setQuery('DELETE FROM #__session WHERE userid = '.$db->Quote($user['id']));
 		$db->Query();
+		
+		return true;
 	}
 
 	/**
@@ -80,19 +82,25 @@ class plgUserJoomla extends JPlugin
 		}
 		else
 		{
-			$my->set( 'id'			, 0 );
-			$my->set( 'name'		, $user['fullname'] );
-			$my->set( 'username'	, $user['username'] );
-			$my->set( 'email'		, $user['email'] );	// Result should contain an email (check)
-			$my->set( 'gid'			, 18 );				//Make configurable
-			$my->set( 'usertype'	, 'Registered' ); 	//Make configurable
-			
+			$usersConfig = &JComponentHelper::getParams( 'com_users' );
+			$newUsertype = $usersConfig->get( 'new_usertype', 'Registered' );
+
+			$authorize	=& JFactory::getACL();
+
+			$my->set( 'id'				, 0 );
+			$my->set( 'name'			, $user['fullname'] );
+			$my->set( 'username'		, $user['username'] );
+			$my->set( 'password_clear'	, $user['password_clear'] );
+			$my->set( 'email'			, $user['email'] );	// Result should contain an email (check)
+			$my->set( 'gid'				, $authorize->get_group_id( '', $newUsertype, 'ARO' ));
+			$my->set( 'usertype'		, $newUsertype );
+
 			//If autoregister is set let's register the user
-			$autoregister = isset($autoregister) ? $autoregister :  $this->params->get('autoregister', 1);
-			
+			$autoregister = isset($options['autoregister']) ? $options['autoregister'] :  $this->params->get('autoregister', 1);
+
 			if($autoregister) {
 				if(!$my->save()) {
-					return false;
+					return JError::raiseWarning('SOME_ERROR_CODE', $my->getError());
 				}
 			}
 		}
@@ -147,19 +155,28 @@ class plgUserJoomla extends JPlugin
 	 *
 	 * @access public
 	 * @param  array	holds the user data
-	 * @return boolean True on success
+	 * @param 	array   array holding options (client, ...)
+	 * @return boolean  True on success
 	 * @since 1.5
 	 */
-	function onLogoutUser($user)
+	function onLogoutUser($user, $options = array())
 	{
-  		$session =& JFactory::getSession();
-
 		// Remove the session from the session table
 		$table = & JTable::getInstance('session');
-		$table->destroy($session->getId());
+		$table->destroy($user['id'], $options['clientid']);
 
-		// Destroy the php session for this user
-		$session->destroy();
+		$my =& JFactory::getUser();
+		if($my->get('id') == $user['id']) 
+		{
+			// Hit the user last visit field
+			$my->setLastVisit();
+			
+			// Destroy the php session for this user
+			$session =& JFactory::getSession();
+			$session->destroy();
+		}
+		
+		return true;
 	}
 }
 

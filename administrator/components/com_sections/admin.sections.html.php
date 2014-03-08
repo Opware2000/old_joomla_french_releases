@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.sections.html.php 8071 2007-07-18 23:23:27Z friesengeist $
+* @version		$Id: admin.sections.html.php 8577 2007-08-26 22:45:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Sections
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -67,29 +67,30 @@ class sections_html
 				<th class="title">
 					<?php echo JHTML::_('grid.sort',   'Title', 's.title', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
-				<th width="10%">
+				<th width="15%">
+					<?php echo JHTML::_('grid.sort',   'Alias', 's.alias', @$lists['order_Dir'], @$lists['order'] ); ?>
+				</th>
+				<th width="5%">
 					<?php echo JHTML::_('grid.sort',   'Published', 's.published', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
-				<th width="80" nowrap="nowrap">
+				<th width="8%" nowrap="nowrap">
 					<?php echo JHTML::_('grid.sort',   'Order', 's.ordering', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="1%">
 					<?php echo JHTML::_('grid.order',  $rows ); ?>
 				</th>
-				<th width="8%">
+				<th width="10%">
 					<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
-				<th width="2%" nowrap="nowrap">
-					<?php echo JHTML::_('grid.sort',   'ID', 's.id', @$lists['order_Dir'], @$lists['order'] ); ?>
-				</th>
-				<th width="9%" nowrap="nowrap">
+				<th width="5%" nowrap="nowrap">
 					<?php echo JText::_( 'Num Categories' ); ?>
 				</th>
-				<th width="9%" nowrap="nowrap">
+				<th width="5%" nowrap="nowrap">
 					<?php echo JText::_( 'Num Active' ); ?>
 				</th>
-				<th width="9%" nowrap="nowrap">
+				<th width="5%" nowrap="nowrap">
 					<?php echo JText::_( 'Num Trash' ); ?>
+				</th>
+				<th width="1%" nowrap="nowrap">
+					<?php echo JHTML::_('grid.sort',   'ID', 's.id', @$lists['order_Dir'], @$lists['order'] ); ?>
 				</th>
 			</tr>
 		</thead>
@@ -132,10 +133,13 @@ class sections_html
 					}
 					?></span>
 				</td>
+				<td>
+					<?php echo $row->alias;?>
+				</td>
 				<td align="center">
 					<?php echo $published;?>
 				</td>
-				<td class="order" colspan="2">
+				<td class="order">
 					<span><?php echo $page->orderUpIcon( $i, true, 'orderup', 'Move Up', $ordering ); ?></span>
 					<span><?php echo $page->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $ordering ); ?></span>
 					<?php $disabled = $ordering ?  '' : 'disabled="disabled"'; ?>
@@ -145,9 +149,6 @@ class sections_html
 					<?php echo $access;?>
 				</td>
 				<td align="center">
-					<?php echo $row->id; ?>
-				</td>
-				<td align="center">
 					<?php echo $row->categories; ?>
 				</td>
 				<td align="center">
@@ -155,6 +156,9 @@ class sections_html
 				</td>
 				<td align="center">
 					<?php echo $row->trash; ?>
+				</td>
+				<td align="center">
+					<?php echo $row->id; ?>
 				</td>
 				<?php
 				$k = 1 - $k;
@@ -216,19 +220,6 @@ class sections_html
 			if (pressbutton == 'cancel') {
 				submitform( pressbutton );
 				return;
-			}
-
-			if ( pressbutton == 'menulink' ) {
-				if ( form.menuselect.value == '' ) {
-					alert( "<?php echo JText::_( 'Please select a Menu', true ); ?>" );
-					return;
-				} else if ( form.link_type.value == "" ) {
-					alert( "<?php echo JText::_( 'Please select a menu type', true ); ?>" );
-					return;
-				} else if ( form.link_name.value == "" ) {
-					alert( "<?php echo JText::_( 'Please enter a Name for this menu item', true ); ?>" );
-					return;
-				}
 			}
 
 			if ( form.title.value == '' ){
@@ -346,7 +337,7 @@ class sections_html
 					<td valign="top" colspan="3">
 						<?php
 						// parameters : areaname, content, width, height, cols, rows
-						echo $editor->display( 'description',  $row->description, '100%', '300', '60', '20', false ) ;
+						echo $editor->display( 'description',  $row->description, '550', '300', '60', '20', false ) ;
 						?>
 					</td>
 				</tr>
@@ -379,7 +370,7 @@ class sections_html
 			<td  valign="top" width="30%">
 			<strong><?php echo JText::_( 'Copy to Section' ); ?>:</strong>
 			<br />
-			<input class="text_area" type="text" name="title" value="" size="35" maxlength="50" title="<?php echo JText::_( 'The new Section name' ); ?>" />
+			<input class="text_area" type="text" name="title" value="" size="35" maxlength="50" title="<?php echo JText::_( 'The new Section Title' ); ?>" />
 			<br /><br />
 			</td>
 			<td  valign="top" width="20%">

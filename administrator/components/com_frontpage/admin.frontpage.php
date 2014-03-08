@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.frontpage.php 8020 2007-07-17 16:42:27Z friesengeist $
+* @version		$Id: admin.frontpage.php 8275 2007-07-31 23:10:13Z humvee $
 * @package		Joomla
 * @subpackage	Content
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -226,7 +226,7 @@ function changeFrontPage( $cid=null, $state=0, $option )
 
 	if (count( $cid ) < 1) {
 		$action = $state == 1 ? 'publish' : ($state == -1 ? 'archive' : 'unpublish');
-		JError::raiseError(500, JText::_( 'Select an item to '.$action, true ) );
+		JError::raiseError(500, JText::_( 'Select an item to' .$action, true ) );
 	}
 
 	$cids = implode( ',', $cid );

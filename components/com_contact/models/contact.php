@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: contact.php 7708 2007-06-09 16:27:20Z jinx $
+ * @version		$Id: contact.php 8178 2007-07-23 05:39:47Z eddieajau $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -77,4 +77,3 @@ class ContactModelContact extends JModel
 		return @$result[0];
 	}
 }
-?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 7978 2007-07-15 04:26:22Z louis $
+* @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Registration
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -31,7 +31,7 @@ class UserViewRegister extends JView
 	{
 		global $mainframe;
 
-		$pathway  =& $mainframe->getPathWay();
+		$pathway  =& $mainframe->getPathway();
 		$document =& JFactory::getDocument();
 
 	 	// Page Title

@@ -59,9 +59,10 @@ class JInstallerModule extends JObject
 		 * ---------------------------------------------------------------------------------------------
 		 */
 
-		// Set the component name
+		// Set the extensions name
 		$name =& $this->manifest->getElementByPath('name');
-		$this->set('name', $name->data());
+		$name = JFilterInput::clean($name->data(), 'cmd');
+		$this->set('name', $name);
 
 		// Get the component description
 		$description = & $this->manifest->getElementByPath('description');
@@ -81,7 +82,7 @@ class JInstallerModule extends JObject
 		if ($cname = $this->manifest->attributes('client')) {
 			// Attempt to map the client to a base path
 			jimport('joomla.application.helper');
-			$client = JApplicationHelper::getClientInfo($cname, true);
+			$client =& JApplicationHelper::getClientInfo($cname, true);
 			if ($client === false) {
 				$this->parent->abort('Module Install: '.JText::_('Unknown client type').' ['.$client->name.']');
 				return false;
@@ -186,18 +187,18 @@ class JInstallerModule extends JObject
 
 		// Was there a module already installed with the same name?
 		if ($id) {
-			
+
 			if ( ! $this->parent->getOverwrite())
 			{
 				// Install failed, roll back changes
 				$this->parent->abort('Module Install: '.JText::_('Module').' "'.$mname.'" '.JText::_('already exists!'));
 				return false;
 			}
-			
-			
+
+
 		} else {
 */
-			
+
 			$row = & JTable::getInstance('module');
 			$row->title = $this->get('name');
 			$row->ordering = $row->getNextOrder( "position='left'" );
@@ -290,7 +291,7 @@ class JInstallerModule extends JObject
 
 		// Get the extension root path
 		jimport('joomla.application.helper');
-		$client = JApplicationHelper::getClientInfo($row->client_id);
+		$client =& JApplicationHelper::getClientInfo($row->client_id);
 		if ($client === false) {
 			$this->parent->abort('Module Uninstall: '.JText::_('Unknown client type').' ['.$row->client_id.']');
 			return false;

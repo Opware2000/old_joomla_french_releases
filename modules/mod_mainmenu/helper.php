@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: helper.php 8379 2007-08-10 23:20:01Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -139,6 +139,9 @@ class modMainMenuHelper
 				if ($xml) {
 					$class = $params->get('class_sfx');
 					$xml->addAttribute('class', 'menu'.$class);
+					if ($tagId = $params->get('tag_id')) {
+						$xml->addAttribute('id', $tagId);
+					}
 
 					echo JFilterOutput::ampReplace($xml->toString((bool)$params->get('show_whitespace')));
 				}
@@ -174,10 +177,10 @@ class JMenuTree extends JTree
 
 	function __construct(&$params)
 	{
-		$this->_params =& $params;
-		$this->_root =& new JMenuNode(0, 'ROOT');
-		$this->_nodeHash[0] =& $this->_root;
-		$this->_current = & $this->_root;
+		$this->_params		=& $params;
+		$this->_root		= new JMenuNode(0, 'ROOT');
+		$this->_nodeHash[0]	=& $this->_root;
+		$this->_current		=& $this->_root;
 	}
 
 	function addNode($item)
@@ -186,7 +189,7 @@ class JMenuTree extends JTree
 		$data = $this->_getItemData($item);
 
 		// Create the node and add it
-		$node =& new JMenuNode($item->id, $item->name, $item->access, $data);
+		$node = new JMenuNode($item->id, $item->name, $item->access, $data);
 
 		if (isset($item->mid)) {
 			$nid = $item->mid;
@@ -270,7 +273,7 @@ class JMenuTree extends JTree
 			$tmp->name = '<span><![CDATA['.$item->name.']]></span>';
 		}
 
-		$iParams =& new JParameter($tmp->params);
+		$iParams = new JParameter($tmp->params);
 		if ($iParams->get('menu_image') && $iParams->get('menu_image') != -1) {
 			$image = '<img src="images/stories/'.$iParams->get('menu_image').'" alt="" />';
 		} else {
@@ -368,4 +371,3 @@ class JMenuNode extends JNode
 		$this->class	= $class;
 	}
 }
-?>

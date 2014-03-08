@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: factory.php 8130 2007-07-20 20:53:57Z jinx $
+ * @version		$Id: factory.php 8529 2007-08-23 12:16:45Z jinx $
  * @package		Joomla.Framework
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
  * @license		GNU/GPL, see LICENSE.php
@@ -81,12 +81,12 @@ class JFactory
 	{
 		static $instance;
 
-		if (!is_object($instance)) 
+		if (!is_object($instance))
 		{
 			//get the debug configuration setting
 			$conf =& JFactory::getConfig();
 			$debug = $conf->getValue('config.debug_lang');
-			
+
 			$instance = JFactory::_createLanguage();
 			$instance->setDebug($debug);
 		}
@@ -120,18 +120,28 @@ class JFactory
 	 * Returns a reference to the global {@link JUser} object, only creating it
 	 * if it doesn't already exist.
 	 *
+	 * @param 	int 	$id 	The user to load - Can be an integer or string - If string, it is converted to ID automatically.
+	 *
 	 * @access public
 	 * @return object JUser
 	 */
-	function &getUser()
+	function &getUser($id = null)
 	{
 		jimport('joomla.user.user');
-		$session  =& JFactory::getSession();
-		$instance =& $session->get('user');
-		if (!is_a($instance, 'JUser')) {
-			$instance = new JUser();
-		}
-
+		
+		if(is_null($id)) 
+		{
+			$session  =& JFactory::getSession();
+			$instance =& $session->get('user');
+			if (!is_a($instance, 'JUser')) {
+				$instance =& JUser::getInstance();
+			}
+		} 
+		else
+		{
+			$instance =& JUser::getInstance($id);
+		} 
+		
 		return $instance;
 	}
 
@@ -159,7 +169,7 @@ class JFactory
 		$options = array(
 			'defaultgroup' 	=> $group,
 			'cachebase' 	=> $conf->getValue('config.cache_path'),
-			'lifetime' 		=> $conf->getValue('config.cachetime'),
+			'lifetime' 		=> $conf->getValue('config.cachetime') * 60,	// minutes to seconds
 			'language' 		=> $conf->getValue('config.language'),
 			'storage'		=> $storage
 		);
@@ -249,12 +259,15 @@ class JFactory
 	{
 		static $instance;
 
-		if (is_object($instance))
-			unset($instance);
-
-		$instance = JFactory::_createMailer();
-
-		return $instance;
+		if ( ! is_object($instance) ) { 
+			$instance = JFactory::_createMailer();
+		}
+		
+		// Create a copy of this object - do not return the original because it may be used several times
+		// PHP4 copies objects by value whereas PHP5 copies by reference
+		$copy	= (PHP_VERSION < 5) ? $instance : clone($instance);
+		
+		return $copy;
 	}
 
 	/**
@@ -399,6 +412,8 @@ class JFactory
 		//get the editor configuration setting
 		$conf =& JFactory::getConfig();
 		$handler =  $conf->getValue('config.session_handler', 'none');
+		
+		// config time is in minutes
 		$options['expire'] = ($conf->getValue('config.lifetime')) ? $conf->getValue('config.lifetime') * 60 : 900;
 
 		$session = JSession::getInstance($handler, $options);
@@ -443,6 +458,7 @@ class JFactory
 	function &_createDBO()
 	{
 		jimport('joomla.database.database');
+		jimport( 'joomla.database.table' );
 
 		$conf =& JFactory::getConfig();
 
@@ -505,7 +521,7 @@ class JFactory
 				$mail->useSMTP($smtpauth, $smtphost, $smtpuser, $smtppass);
 				break;
 			case 'sendmail' :
-				$mail->useSendmail();
+				$mail->IsSendmail();
 				break;
 			default :
 				$mail->IsMail();

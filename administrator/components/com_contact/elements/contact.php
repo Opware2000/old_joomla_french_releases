@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: contact.php 7286 2007-05-03 01:44:29Z jinx $
+* @version		$Id: contact.php 8591 2007-08-27 21:09:32Z hackwar $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,12 +16,12 @@ defined('_JEXEC') or die();
 
 class JElementContact extends JElement
 {
-   /**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 *
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Contact';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -32,6 +32,7 @@ class JElementContact extends JElement
 		. ' FROM #__contact_details AS a'
 		. ' INNER JOIN #__categories AS c ON a.catid = c.id'
 		. ' WHERE a.published = 1'
+		. ' AND c.published = 1'
 		. ' ORDER BY a.catid, a.name'
 		;
 		$db->setQuery( $query );
@@ -40,4 +41,3 @@ class JElementContact extends JElement
 		return JHTML::_('select.genericlist',  $options, ''.$control_name.'['.$name.']', 'class="inputbox"', 'id', 'text', $value, $control_name.$name );
 	}
 }
-?>

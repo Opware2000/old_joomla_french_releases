@@ -2,7 +2,7 @@
 /**
  * patTemplate Reader that reads from a string
  *
- * $Id: String.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: String.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Readers
@@ -21,7 +21,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Reader_String extends patTemplate_Reader
 {
-   /**
+	/**
 	* Read templates from a string
 	*
 	* @final

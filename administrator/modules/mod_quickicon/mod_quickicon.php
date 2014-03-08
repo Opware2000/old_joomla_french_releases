@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_quickicon.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: mod_quickicon.php 8295 2007-08-01 23:05:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -83,4 +83,3 @@ if (!defined( '_JOS_QUICKICON_MODULE' ))
 	</div>
 	<?php
 }
-?>

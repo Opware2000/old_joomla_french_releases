@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: none.php 7914 2007-07-10 19:51:53Z louis $
+* @version		$Id: none.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -33,11 +33,12 @@ class plgEditorNone extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgEditorNone(& $subject) {
-		parent::__construct($subject);
+	function plgEditorNone(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -120,6 +121,29 @@ class plgEditorNone extends JPlugin
 			$height .= 'px';
 		}
 
+		$buttons = $this->_displayButtons($name, $buttons);
+		$editor  = "<textarea name=\"$name\" id=\"$name\" cols=\"$col\" rows=\"$row\" style=\"width: $width; height: $height;\">$content</textarea>" . $buttons;
+
+		return $editor;
+	}
+
+	function onGetInsertMethod($name)
+	{
+		$doc = & JFactory::getDocument();
+
+		$js= "\tfunction jInsertEditorText( text ) {
+			insertAtCursor( document.adminForm.".$name.", text );
+		}";
+		$doc->addScriptDeclaration($js);
+
+		return true;
+	}
+	
+	function _displayButtons($name, $buttons)
+	{
+		// Load modal popup behavior
+		JHTML::_('behavior.modal', 'a.modal-button');
+
 		$args['name'] = $name;
 		$args['event'] = 'onGetInsertMethod';
 
@@ -144,7 +168,8 @@ class plgEditorNone extends JPlugin
 				/*
 				 * Results should be an object
 				 */
-				if ( $button->get('name') ) {
+				if ( $button->get('name') ) 
+				{
 					$modal		= ($button->get('modal')) ? 'class="modal-button"' : null;
 					$href		= ($button->get('link')) ? 'href="'.$button->get('link').'"' : null;
 					$onclick	= ($button->get('onclick')) ? 'onclick="'.$button->get('onclick').'"' : null;
@@ -153,22 +178,8 @@ class plgEditorNone extends JPlugin
 			}
 			$return .= "</div>\n";
 		}
-
-		$return = "<textarea name=\"$name\" id=\"$name\" cols=\"$col\" rows=\"$row\" style=\"width: $width; height: $height;\">$content</textarea>" . $return;
-
+		
 		return $return;
-	}
-
-	function onGetInsertMethod($name)
-	{
-		$doc = & JFactory::getDocument();
-
-		$js= "\tfunction jInsertEditorText( text ) {
-			insertAtCursor( document.adminForm.".$name.", text );
-		}";
-		$doc->addScriptDeclaration($js);
-
-		return true;
 	}
 }
 ?>

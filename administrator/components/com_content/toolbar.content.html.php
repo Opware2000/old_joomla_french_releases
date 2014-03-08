@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.content.html.php 7676 2007-06-07 23:33:01Z jinx $
+* @version		$Id: toolbar.content.html.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla
 * @subpackage	Content
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -38,7 +38,7 @@ class TOOLBAR_content
 		JToolBarHelper::help( 'screen.content.edit' );
 	}
 /*
-	function _ARCHIVE() 
+	function _ARCHIVE()
 	{
 		JToolBarHelper::title( JText::_( 'Archive Manager' ), 'addedit.png' );
 		JToolBarHelper::unarchiveList();
@@ -46,21 +46,21 @@ class TOOLBAR_content
 		JToolBarHelper::help( 'screen.content.archive' );
 	}
 */
-	function _MOVE() 
+	function _MOVE()
 	{
 		JToolBarHelper::title( JText::_( 'Move Articles' ), 'move_f2.png' );
 		JToolBarHelper::custom( 'movesectsave', 'save.png', 'save_f2.png', 'Save', false );
 		JToolBarHelper::cancel();
 	}
 
-	function _COPY() 
+	function _COPY()
 	{
 		JToolBarHelper::title( JText::_( 'Copy Articles' ), 'copy_f2.png' );
 		JToolBarHelper::custom( 'copysave', 'save.png', 'save_f2.png', 'Save', false );
 		JToolBarHelper::cancel();
 	}
 
-	function _DEFAULT() 
+	function _DEFAULT()
 	{
 		global $filter_state;
 

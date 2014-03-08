@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: example.php 7947 2007-07-14 08:57:30Z jinx $
+* @version		$Id: example.php 8536 2007-08-23 18:14:11Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,10 +35,11 @@ class plgUserExample extends JPlugin {
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @param object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgUserExample(& $subject) {
-		parent::__construct($subject);
+	function plgUserExample(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -46,7 +47,7 @@ class plgUserExample extends JPlugin {
 	 *
 	 * Method is called before user data is stored in the database
 	 *
-	 * @param 	array		holds the user data
+	 * @param 	array		holds the old user data
 	 * @param 	boolean		true if a new user is stored
 	 */
 	function onBeforeStoreUser($user, $isnew)
@@ -60,7 +61,7 @@ class plgUserExample extends JPlugin {
 	 *
 	 * Method is called after user data is stored in the database
 	 *
-	 * @param 	array		holds the user data
+	 * @param 	array		holds the new user data
 	 * @param 	boolean		true if a new user is stored
 	 * @param	boolean		true if user was succesfully stored in the database
 	 * @param	string		message

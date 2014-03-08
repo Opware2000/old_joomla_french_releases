@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 7944 2007-07-13 21:48:48Z friesengeist $
+* @version		$Id: helper.php 8559 2007-08-25 18:34:58Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -35,7 +35,9 @@ class modMostReadHelper
 		$access		= !$contentConfig->get('shownoauth');
 
 		$nullDate	= $db->getNullDate();
-		$now		= date('Y-m-d H:i:s', time());
+		jimport('joomla.utilities.date');
+		$date = new JDate();
+		$now  = $date->toMySQL();
 
 		if ($catid) {
 			$ids = explode( ',', $catid );

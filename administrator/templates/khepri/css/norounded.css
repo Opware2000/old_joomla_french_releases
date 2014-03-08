@@ -1,5 +1,5 @@
 /**
-* @version $Id: norounded.css 5809 2006-11-19 05:57:10Z eddiea $
+* @version $Id: norounded.css 8180 2007-07-23 05:52:29Z eddieajau $
 * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -30,11 +30,11 @@ div.section-box {
 
 
 div#toolbar-box {
-  background: #f7f7f7;  
+  background: #f7f7f7;
 }
 
 div#element-box {
-  background: #fff;  
+  background: #fff;
 }
 
 div#element-box div.section-box div.m {
@@ -44,7 +44,7 @@ div#element-box div.section-box div.m {
 
 div#toolbar-box,
 div#element-box div.section-box {
-  background: #fbfbfb;  
+  background: #fbfbfb;
 }
 
 div.t, div.b {

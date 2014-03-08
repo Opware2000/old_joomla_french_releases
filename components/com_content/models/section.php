@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: section.php 7986 2007-07-15 19:53:57Z friesengeist $
+ * @version		$Id: section.php 8171 2007-07-23 00:28:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -266,7 +266,7 @@ class ContentModelSection extends JModel
 			$now		= $mainframe->get('requestTime');
 			$nullDate	= $this->_db->getNullDate();
 
-			// Get the paramaters of the active menu item
+			// Get the parameters of the active menu item
 			$menu	=& JMenu::getInstance();
 			$item    = $menu->getActive();
 			$params	=& $menu->getParams($item->id);
@@ -427,7 +427,7 @@ class ContentModelSection extends JModel
 			$orderby .= $filter_order .' '. $filter_order_Dir.', ';
 		}
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menu	=& JMenu::getInstance();
 		$item    = $menu->getActive();
 		$params	=& $menu->getParams($item->id);

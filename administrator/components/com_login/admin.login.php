@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.login.php 7887 2007-07-07 01:04:49Z friesengeist $
+* @version		$Id: admin.login.php 8412 2007-08-15 19:34:16Z jinx $
 * @package		Joomla
 * @subpackage	Joomla.Extensions
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -52,10 +52,10 @@ class LoginController
 	function login()
 	{
 		global $mainframe;
-		
+
 		$credentials = array();
 
-		$credentials['username'] = JRequest::getVar('username', '', 'post', 'username');
+		$credentials['username'] = JRequest::getVar('username', '', 'method', 'username');
 		$credentials['password'] = JRequest::getVar('passwd', '', 'post', 'string', JREQUEST_ALLOWRAW);
 
 		$result = $mainframe->login($credentials);

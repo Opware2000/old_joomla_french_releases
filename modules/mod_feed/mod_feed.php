@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_feed.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: mod_feed.php 8185 2007-07-23 16:32:48Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -39,4 +39,5 @@ if (empty ($rssurl))
 	return;
 }
 
+$feed = modFeedHelper::getFeed($params);
 require(JModuleHelper::getLayoutPath('mod_feed'));

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: emailcloak.php 7384 2007-05-08 19:57:54Z hackwar $
+* @version		$Id: emailcloak.php 8220 2007-07-27 22:09:08Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -125,4 +125,3 @@ function plgContentEmailCloak_searchPattern ( $link, $text ) {
 
 	return $pattern;
 }
-?>

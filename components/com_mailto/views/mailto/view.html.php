@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 7682 2007-06-08 16:12:14Z friesengeist $
+ * @version		$Id: view.html.php 8502 2007-08-22 05:55:34Z jinx $
  * @package		Joomla
  * @subpackage	MailTo
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -37,6 +37,7 @@ class MailtoViewMailto extends JView
 		$data = new stdClass();
 
 		$data->link = urldecode( JRequest::getVar( 'link', '', 'method', 'base64' ) );
+		
 		if ($data->link == '') {
 			JError::raiseError( 403, 'Link is missing' );
 			$false = false;

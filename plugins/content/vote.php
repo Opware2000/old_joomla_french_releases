@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: vote.php 7767 2007-06-22 05:47:50Z tcp $
+* @version		$Id: vote.php 8386 2007-08-11 20:44:58Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -23,9 +23,9 @@ function plgContentVote( &$row, &$params, $page=0 )
 	$task 	= JRequest::getCmd('task');
 	$html 	= '';
 
-
 	if (isset($row->rating_count) && $params->get( 'show_vote' ) && !$params->get( 'popup' ))
 	{
+		JPlugin::loadLanguage( 'plg_content_vote' );
 		$html .= '<form method="post" action="' . JRoute::_( 'index.php' ) . '">';
 		$img = '';
 

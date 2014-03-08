@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: loadmodule.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: loadmodule.php 8220 2007-07-27 22:09:08Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -58,7 +58,7 @@ function plgContentLoadModule( &$row, &$params, $page=0 )
 
 function plgContentProcessPositions ( &$row, &$matches, $count, $regex, $style )
 {
- 	for ( $i=0; $i < $count; $i++ ) 
+ 	for ( $i=0; $i < $count; $i++ )
 	{
  		$load = str_replace( 'loadposition', '', $matches[0][$i] );
  		$load = str_replace( '{', '', $load );
@@ -85,4 +85,3 @@ function plgContentLoadPosition( $position, $style=-2 )
 	}
 	return $contents;
 }
-?>

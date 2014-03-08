@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: router.php 8049 2007-07-18 12:47:51Z jinx $
+* @version		$Id: router.php 8531 2007-08-23 12:55:45Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -34,6 +34,10 @@ function ContentBuildRoute(&$query)
 		$segments[] = $query['month'];
 		unset($query['month']);
 	};
+	
+	if(isset($query['layout'])) {
+		unset($query['layout']);
+	};
 
 	unset($query['view']);
 
@@ -57,8 +61,8 @@ function ContentParseRoute($segments)
 		case 'section' :
 		{
 			if($count == 1) {
-				
-				if($item->query['layout'] == 'blog') {
+
+				if(isset($item->query['layout']) && $item->query['layout'] == 'blog') {
 					$vars['view'] = 'article';
 				} else {
 					$vars['view'] = 'category';
@@ -78,7 +82,7 @@ function ContentParseRoute($segments)
 		{
 			$vars['id']   = $segments[$count-1];
 			$vars['view'] = 'article';
-
+		
 		} break;
 
 		case 'frontpage'   :

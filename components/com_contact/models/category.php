@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: category.php 7963 2007-07-14 16:16:41Z friesengeist $
+ * @version		$Id: category.php 8178 2007-07-23 05:39:47Z eddieajau $
  * @package		Joomla
  * @subpackage	Contact
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -156,4 +156,3 @@ class ContactModelCategory extends JModel
 		return $this->_getListCount( $query );
 	}
 }
-?>

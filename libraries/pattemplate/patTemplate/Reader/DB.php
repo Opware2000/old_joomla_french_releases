@@ -2,7 +2,7 @@
 /**
  * patTemplate Reader that reads from a database using PEAR::DB
  *
- * $Id: DB.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: DB.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Readers
@@ -35,7 +35,7 @@ define('PATTEMPLATE_READER_DB_ERROR_UNKNOWN_INPUT', 'patTemplate::Reader::DB::00
 /**
  * patTemplate Reader that reads from a database using PEAR::DB
  *
- * $Id: DB.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: DB.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Readers
@@ -43,14 +43,14 @@ define('PATTEMPLATE_READER_DB_ERROR_UNKNOWN_INPUT', 'patTemplate::Reader::DB::00
  */
 class patTemplate_Reader_DB extends patTemplate_Reader
 {
-   /**
+	/**
 	* reader name
 	* @access	private
 	* @var		string
 	*/
 	var	$_name = 'DB';
 
-   /**
+	/**
 	* read templates from the database
 	*
 	* Input may either be an SQL query or a string defining the location
@@ -74,7 +74,7 @@ class patTemplate_Reader_DB extends patTemplate_Reader
 		return $templates;
 	}
 
-   /**
+	/**
 	* fetch the template data from the database
 	*
 	* @access   protected
@@ -108,7 +108,7 @@ class patTemplate_Reader_DB extends patTemplate_Reader
 		return $content;
 	}
 
-   /**
+	/**
 	* Parse the template location syntax to a query
 	*
 	* @access  private
@@ -144,7 +144,7 @@ class patTemplate_Reader_DB extends patTemplate_Reader
 		return $query;
 	}
 
-   /**
+	/**
 	* load template from any input
 	*
 	* If the a template is loaded, the content will not get

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: fr-FR.xml 6275 2007-01-14 03:56:33Z eddiea $ -->
+<!-- $Id: fr-FR.xml 8041 2007-07-18 10:25:00Z humvee $ -->
 <metafile version="1.5" client="administrator">
     <name>French(FR)</name>
     <version>1.5.0</version>
@@ -8,15 +8,15 @@
     <authorEmail>admin@joomla.org</authorEmail>
     <authorUrl>www.joomla.org</authorUrl>
     <copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
-    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-    <description></description>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<description></description>
     <metadata>
     	<name>French (FR)</name>
     	<tag>fr-FR</tag>
     	<rtl>0</rtl>
-    	<locale>French_Standard, french, fr_FR, fre_FR, fr_FR.utf8, fr_FR.UTF-8, fr_FR.UTF-8@euro</locale>
-	<winCodePage>iso-8859-1</winCodePage>
-        <backwardLang>french</backwardLang> 
+    	<locale>fr_FR.utf8, fr_FR.UTF-8, fr_FR.UTF-8@euro, French_Standard, french, fr_FR, fre_FR</locale>
+	    <winCodePage>iso-8859-1</winCodePage>
+        <backwardLang>french</backwardLang>
     </metadata>
     <params />
 </metafile>

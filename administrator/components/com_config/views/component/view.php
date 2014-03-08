@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.php 7936 2007-07-13 16:00:58Z humvee $
+ * @version		$Id: view.php 8537 2007-08-24 02:53:09Z tcp $
  * @package		Joomla
  * @subpackage	Config
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -30,7 +30,7 @@ class ConfigViewComponent extends JView
 	{
 		$model		= &$this->getModel();
 		$params		= &$model->getParams();
-		$component	= JComponentHelper::getInfo(JRequest::getCmd( 'component' ));
+		$component	= JComponentHelper::getComponent(JRequest::getCmd( 'component' ));
 
 		$document = & JFactory::getDocument();
 		$document->setTitle( JText::_('Edit Preferences') );
@@ -45,7 +45,7 @@ class ConfigViewComponent extends JView
 					<?php echo JText::_( 'Cancel' );?></button>
 			</div>
 			<div class="configuration" >
-				<?php echo $this->component->name ?>
+				<?php echo JText::_($this->component->name) ?>
 			</div>
 		</fieldset>
 

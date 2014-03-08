@@ -3,7 +3,7 @@
  * patTemplate function that returns a complete imagetag and
  * width and height are extracted from the image
  *
- * $Id: Img.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Img.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -17,21 +17,21 @@ defined('JPATH_BASE') or die();
  * patTemplate function that returns a complete imagetag and
  * width and height are extracted from the image
  *
- * $Id: Img.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Img.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
  * @author		Jens Strobel <strobel@pixeldreamz.com>
  */
 class patTemplate_Function_Img extends patTemplate_Function {
-   /**
+	/**
 	* name of the function
 	* @access	private
 	* @var		string
 	*/
 	var $_name	  =	'Img';
 
-   /**
+	/**
 	* defaults for some tags
 	*
 	* @access	protected
@@ -39,7 +39,7 @@ class patTemplate_Function_Img extends patTemplate_Function {
 	*/
 	var $_defaults = array();
 
-   /**
+	/**
 	* call the function
 	*
 	* @access	public

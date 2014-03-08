@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: author.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: author.php 8288 2007-08-01 08:40:54Z eddieajau $
 * @package		Joomla
 * @subpackage	Articles
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,11 +25,11 @@ defined('_JEXEC') or die();
  */
 class JElementAuthor extends JElement
 {
-   /**
-	* Element name
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Author';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -37,4 +37,3 @@ class JElementAuthor extends JElement
 		return JHTML::_('list.users', $control_name.'['.$name.']', $value);
 	}
 }
-?>

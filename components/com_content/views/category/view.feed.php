@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.feed.php 7910 2007-07-10 11:50:53Z jinx $
+ * @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -31,7 +31,7 @@ class ContentViewCategory extends JView
 		global $mainframe;
 
 		$doc =& JFactory::getDocument();
-		$doc->link = JURI::base() . JRoute::_('index.php?option=com_content&view=category&id='.JRequest::getVar('id',null, '', 'int'));
+		$doc->link = JRoute::_('index.php?option=com_content&view=category&id='.JRequest::getVar('id',null, '', 'int'));
 
 		// Get some data from the model
 		$limit = '10';

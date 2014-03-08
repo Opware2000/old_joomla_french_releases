@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_online.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: mod_online.php 8295 2007-08-01 23:05:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -28,4 +28,3 @@ $db->setQuery($query);
 $online_num = intval( $db->loadResult() );
 
 echo $online_num . ' <img src="images/users.png" align="middle" alt="'. JText::_( 'Users Online' ) .'" />';
-?>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: framework.php 7702 2007-06-09 12:16:57Z friesengeist $
+* @version		$Id: framework.php 8322 2007-08-02 23:46:59Z jinx $
 * @package		Joomla
 * @subpackage	Installation
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -62,13 +62,11 @@ jimport( 'joomla.utilities.compat.compat' );
 
 // Joomla! library imports
 jimport( 'joomla.application.application' );
-jimport( 'joomla.event.dispatcher' );
-jimport( 'joomla.database.table' );
 jimport( 'joomla.environment.uri' );
 jimport( 'joomla.user.user' );
 jimport( 'joomla.factory' );
 jimport( 'joomla.filesystem.*' );
-jimport( 'joomla.i18n.language' );
 jimport( 'joomla.utilities.string' );
 jimport( 'joomla.utilities.error' );
+jimport( 'joomla.event.*');
 ?>

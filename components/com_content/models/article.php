@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: article.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: article.php 8631 2007-08-30 09:07:41Z hackwar $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -114,6 +114,7 @@ class ContentModelArticle extends JModel
 			if (!$this->_article->cat_pub && $this->_article->catid) {
 				JError::raiseError( 404, JText::_("Article category not published") );
 			}
+			
 			// Is the section published?
 			if ($this->_article->sectionid)
 			{
@@ -133,6 +134,7 @@ class ContentModelArticle extends JModel
 					JError::raiseError( 404, JText::_("Article section not published") );
 				}
 			}
+			
 			// Do we have access to the category?
 			if (($this->_article->cat_access > $user->get('aid', 0)) && $this->_article->catid) {
 				JError::raiseError( 403, JText::_("ALERTNOTAUTH") );
@@ -372,6 +374,11 @@ class ContentModelArticle extends JModel
 			return false;
 		}
 
+		if ($isNew)
+		{
+			$this->_id = $article->_db->insertId();
+		}
+
 		$article->reorder("catid = " . (int) $data['catid']);
 
 		return true;
@@ -427,7 +434,7 @@ class ContentModelArticle extends JModel
 			}
 			return true;
 		}
-		JError::raiseWarning( 'SOME_ERROR_CODE', 'Article Rating:: Invalid Rating: '.$rate, "JModelArticle::storeVote($rate)");
+		JError::raiseWarning( 'SOME_ERROR_CODE', 'Article Rating:: Invalid Rating:' .$rate, "JModelArticle::storeVote($rate)");
 		return false;
 	}
 
@@ -466,7 +473,7 @@ class ContentModelArticle extends JModel
 					$where;
 			$this->_db->setQuery($query);
 			$this->_article = $this->_db->loadObject();
-
+			
 			if ( ! $this->_article ) {
 				return false;
 			}
@@ -474,7 +481,7 @@ class ContentModelArticle extends JModel
 			if($this->_article->publish_down == $this->_db->getNullDate()) {
 				$this->_article->publish_down = JText::_('Never');
 			}
-			
+
 			// These attributes need to be defined in order for the voting plugin to work
 			if ( count($voting) && ! isset($this->_article->rating_count) ) {
 				$this->_article->rating_count	= 0;
@@ -567,7 +574,7 @@ class ContentModelArticle extends JModel
 
 		if (!$user->authorize('com_content', 'edit', 'content', 'all'))
 		{
-			$where .= ' AND ( a.state = 1 OR a.state = 0 )' .
+			$where .= ' AND ( a.state = 1 OR a.state = -1)' .
 					' AND ( a.publish_up = '.$this->_db->Quote($nullDate).' OR a.publish_up <= '.$this->_db->Quote($now).' )' .
 					' AND ( a.publish_down = '.$this->_db->Quote($nullDate).' OR a.publish_down >= '.$this->_db->Quote($now).' )';
 		}

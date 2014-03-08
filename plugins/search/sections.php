@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: sections.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: sections.php 8627 2007-08-29 21:55:02Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 $mainframe->registerEvent( 'onSearch', 'plgSearchSections' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchSectionAreas' );
-$lang =& JFactory::getLanguage();
-$lang->load( 'plg_search_sections' );
+
+JPlugin::loadLanguage( 'plg_search_sections' );
 
 /**
  * @return array An array of search areas
@@ -75,19 +75,16 @@ function plgSearchSections( $text, $phrase='', $ordering='', $areas=null )
 	}
 
 	$text = $db->getEscaped($text);
-	$query = 'SELECT a.name AS title,'
-	. ' a.description AS text,'
+	$query = 'SELECT a.name AS title, a.description AS text,'
 	. ' "" AS created,'
 	. ' "2" AS browsernav,'
-	. ' a.id AS secid, m.id AS menuid, m.type AS menutype'
+	. ' a.id AS secid'
 	. ' FROM #__sections AS a'
-	. ' LEFT JOIN #__menu AS m ON m.componentid = a.id'
 	. ' WHERE ( a.name LIKE "%'.$text.'%"'
 	. ' OR a.title LIKE "%'.$text.'%"'
 	. ' OR a.description LIKE "%'.$text.'%" )'
 	. ' AND a.published = 1'
 	. ' AND a.access <= '.(int) $user->get( 'aid' )
-	. ' AND ( m.type = "content_section" OR m.type = "content_blog_section" )'
 	. ' GROUP BY a.id'
 	. ' ORDER BY '. $order
 	;
@@ -95,15 +92,10 @@ function plgSearchSections( $text, $phrase='', $ordering='', $areas=null )
 	$rows = $db->loadObjectList();
 
 	$count = count( $rows );
-	for ( $i = 0; $i < $count; $i++ ) {
-		if ( $rows[$i]->menutype == 'content_section' ) {
-			$rows[$i]->href 	= 'index.php?option=com_content&task=section&id='. $rows[$i]->secid .'&Itemid='. $rows[$i]->menuid;
-			$rows[$i]->section 	= JText::_( 'Section List' );
-		}
-		if ( $rows[$i]->menutype == 'content_blog_section' ) {
-			$rows[$i]->href 	= 'index.php?option=com_content&task=blogsection&id='. $rows[$i]->secid .'&Itemid='. $rows[$i]->menuid;
-			$rows[$i]->section 	= JText::_( 'Section Blog' );
-		}
+	for ( $i = 0; $i < $count; $i++ ) 
+	{
+		$rows[$i]->href 	= 'index.php?option=com_content&task=section&id='. $rows[$i]->secid;
+		$rows[$i]->section 	= JText::_( 'Section' );
 	}
 
 	return $rows;

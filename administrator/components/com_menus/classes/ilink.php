@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: ilink.php 8126 2007-07-20 19:04:42Z humvee $
+ * @version		$Id: ilink.php 8399 2007-08-13 17:27:10Z hackwar $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -383,11 +383,10 @@ class iLinkNode extends JNode
 	 */
 	var $msg = null;
 
-	function __construct($title, $url = null, $msg = null) 
+	function __construct($title, $url = null, $msg = null)
 	{
 		$this->title	= trim($title);
 		$this->url		= $url;
 		$this->msg		= trim($msg);
 	}
 }
-?>

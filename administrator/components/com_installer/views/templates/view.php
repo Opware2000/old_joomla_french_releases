@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.php 7640 2007-06-05 15:13:52Z tcp $
+ * @version		$Id: view.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,7 +35,7 @@ class InstallerViewTemplates extends InstallerViewDefault
 		 */
 		JToolBarHelper::deleteList( '', 'remove', 'Uninstall' );
 		JToolBarHelper::help( 'screen.installer2' );
-		
+
 		// Get data from the model
 		$state		= &$this->get('State');
 		$items		= &$this->get('Items');

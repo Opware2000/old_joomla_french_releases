@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: controller.php 7770 2007-06-23 14:30:49Z jinx $
+* @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -158,7 +158,7 @@ class JController extends JObject
 		$methods[] = 'display';
 
 		// Iterate through methods and map tasks
-		foreach ( $methods as $method ) 
+		foreach ( $methods as $method )
 		{
 			if ( substr( $method, 0, 1 ) != '_' ) {
 				$this->_methods[] = strtolower( $method );
@@ -166,11 +166,11 @@ class JController extends JObject
 				$this->_taskMap[strtolower( $method )] = $method;
 			}
 		}
-		
+
 		//set the view name
 		if (empty( $this->_name ))
 		{
-			if (isset($config['name']))  {
+			if (array_key_exists('name', $config))  {
 				$this->_name = $config['name'];
 			} else {
 				$this->_name = $this->getName();
@@ -178,21 +178,21 @@ class JController extends JObject
 		}
 
 		// Set a base path for use by the controller
-		if (isset($config['base_path'])) {
+		if (array_key_exists('base_path', $config)) {
 			$this->_basePath	= $config['base_path'];
 		} else {
 			$this->_basePath	= JPATH_COMPONENT;
 		}
 
 		// If the default task is set, register it as such
-		if ( isset( $config['default_task'] ) ) {
+		if ( array_key_exists( 'default_task', $config ) ) {
 			$this->registerDefaultTask( $config['default_task'] );
 		} else {
 			$this->registerDefaultTask( 'display' );
 		}
 
 		// set the default model search path
-		if ( isset( $config['model_path'] ) ) {
+		if ( array_key_exists( 'model_path', $config ) ) {
 			// user-defined dirs
 			$this->_setPath( 'model', $config['model_path'] );
 		} else {
@@ -200,7 +200,7 @@ class JController extends JObject
 		}
 
 		// set the default view search path
-		if ( isset( $config['view_path'] ) ) {
+		if ( array_key_exists( 'view_path', $config ) ) {
 			// user-defined dirs
 			$this->_setPath( 'view', $config['view_path'] );
 		} else {
@@ -415,16 +415,16 @@ class JController extends JObject
 	function getName()
 	{
 		$name = $this->_name;
-		
+
 		if (empty( $name ))
 		{
 			$r = null;
 			if ( !preg_match( '/(.*)Controller/i', get_class( $this ), $r ) ) {
-				JError::raiseError(500, "JController::__construct() : Can\'t get or parse class name.");
+				JError::raiseError(500, "JController::getName() : Cannot get or parse class name.");
 			}
 			$name = strtolower( $r[1] );
 		}
-		
+
 		return $name;
 	}
 
@@ -670,7 +670,7 @@ class JController extends JObject
 		return $result;
 	}
 
-   /**
+	/**
 	* Sets an entire array of search paths for resources.
 	*
 	* @access	protected
@@ -687,7 +687,7 @@ class JController extends JObject
 		$this->_addPath( $type, $path );
 	}
 
-   /**
+	/**
 	* Adds to the search path for templates and resources.
 	*
 	* @access	protected

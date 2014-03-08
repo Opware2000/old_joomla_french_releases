@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_unread.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: mod_unread.php 8295 2007-08-01 23:05:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -30,4 +30,3 @@ if ($unread) {
 } else {
 	echo "<a href=\"index.php?option=com_messages\" style=\"color: black; text-decoration: none;\">$unread <img src=\"images/nomail.png\" align=\"middle\" border=\"0\" alt=\"". JText::_( 'Mail' ) ."\" /></a>";
 }
-?>

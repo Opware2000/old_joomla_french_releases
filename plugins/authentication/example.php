@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: example.php 7795 2007-06-26 22:02:14Z jinx $
+* @version		$Id: example.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @subpackage	JFramework
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,18 +35,19 @@ class plgAuthenticationExample extends JPlugin
 	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
-	 * @param object $subject The object to observe
+	 * @param 	object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgAuthenticationExample(& $subject) {
-		parent::__construct($subject);
+	function plgAuthenticationExample(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
 	 * This method should handle any authentication and report back to the subject
 	 *
 	 * @access	public
-	 * @param   array 	$credentials Array holding the user credentials	
+	 * @param   array 	$credentials Array holding the user credentials
 	 * @param 	array   $options     Array of extra options
 	 * @param	object	$response	Authentication response object
 	 * @return	boolean
@@ -62,7 +63,8 @@ class plgAuthenticationExample extends JPlugin
 		 * user if the routine passes
 		 */
 
-		$response->status 	= JAUTHENTICATE_STATUS_SUCCESS;
+		$response->status 	     = JAUTHENTICATE_STATUS_SUCCESS;
+		$response->error_message = '';
 	}
 }
 ?>

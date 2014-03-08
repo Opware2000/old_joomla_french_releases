@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mysql.php 8123 2007-07-20 16:14:16Z friesengeist $
+* @version		$Id: mysql.php 8575 2007-08-26 20:02:09Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Database
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -487,7 +487,8 @@ class JDatabaseMySQL extends JDatabase
 	{
 		$fmtsql = "UPDATE $table SET %s WHERE %s";
 		$tmp = array();
-		foreach (get_object_vars( $object ) as $k => $v) {
+		foreach (get_object_vars( $object ) as $k => $v) 
+		{
 			if( is_array($v) or is_object($v) or $k[0] == '_' ) { // internal or NA field
 				continue;
 			}

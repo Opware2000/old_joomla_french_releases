@@ -1,6 +1,6 @@
 /**
  * CSS Document for media manager thumbnail view
- * @version $Id: mediathumbs.css 3613 2006-05-24 03:11:01Z rhuk $
+ * @version $Id: medialist-thumbs.css 8665 2007-08-31 03:21:50Z rhuk $
  * @package Joomla
  * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
  * @license GNU/GPL, see LICENSE.php
@@ -12,8 +12,8 @@
 div.imgOutline {
 	float: left;
 	border: 1px;
-	border-right: 1px dashed #e0e0e0;
-	border-bottom: 1px solid #e0e0e0;
+	border-right: 1px solid #f0f0f0;
+	border-bottom: 1px solid #ccc;
 }
 
 div.imgTotal { }
@@ -43,8 +43,28 @@ div.imgBorder a:hover {
 	cursor: hand;
 }
 
+div.controls {
+	text-align: center;
+	height: 20px;
+	line-height: 20px;
+	background: #f9fcf9;
+	border-top: 1px solid #ddd;
+}
+
+div.controls input {
+	vertical-align: middle;
+}
+
+div.controls img {
+	vertical-align: middle;
+}
+
+div.controls:hover {
+	display: block;
+}
+
 div.imginfoBorder {
-	background: #f3f3f3;
+	background: #f9f9f9;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	width: 88px;

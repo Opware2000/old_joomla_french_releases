@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: router.php 7398 2007-05-14 04:08:41Z eddieajau $
+* @version		$Id: router.php 8338 2007-08-07 05:30:34Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -11,7 +11,11 @@
 * See COPYRIGHT.php for copyright notices and details.
 */
 
-function SearchBuildRoute(&$query)
+/**
+ * @param	array
+ * @return	array
+ */
+function SearchBuildRoute( &$query )
 {
 	$segments = array();
 
@@ -23,7 +27,11 @@ function SearchBuildRoute(&$query)
 	return $segments;
 }
 
-function SearchParseRoute($segments)
+/**
+ * @param	array
+ * @return	array
+ */
+function SearchParseRoute( $segments )
 {
 	$vars = array();
 
@@ -32,4 +40,3 @@ function SearchParseRoute($segments)
 
 	return $vars;
 }
-?>

@@ -4,7 +4,7 @@
  *
  * It automatically retrieves the width and height of the image.
  *
- * $Id: Img.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Img.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -19,7 +19,7 @@ defined('JPATH_BASE') or die();
  *
  * It automatically retrieves the width and height of the image.
  *
- * $Id: Img.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Img.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Modifiers
@@ -27,7 +27,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Modifier_HTML_Img extends patTemplate_Modifier
 {
-   /**
+	/**
 	* modify the value
 	*
 	* @access	public
@@ -43,7 +43,7 @@ class patTemplate_Modifier_HTML_Img extends patTemplate_Modifier
 		return '<img'.$this->arrayToAttributes($params).' />';
 	}
 
-   /**
+	/**
 	* create an attribute list
 	*
 	* @access	private

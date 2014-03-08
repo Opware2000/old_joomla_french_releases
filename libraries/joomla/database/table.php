@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: table.php 7938 2007-07-13 17:21:51Z robs $
+ * @version		$Id: table.php 8575 2007-08-26 20:02:09Z jinx $
  * @package		Joomla.Framework
  * @subpackage	Table
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -45,6 +45,15 @@ class JTable extends JObject
 	 */
 	var $_tbl_key	= '';
 
+	/**
+	 * Error Message
+	 * 
+	 * @var		string
+	 * @access	protected
+	 * @todo	remove the local implementation in preference of the one defined in JObject
+	 */
+	var $_error		= null;
+	
 	/**
 	 * Error number
 	 *
@@ -162,7 +171,24 @@ class JTable extends JObject
 	{
 		return $this->_tbl_key;
 	}
-
+	
+	/**
+	 * Get the most recent error message
+	 *
+	 * Use this method in preference of accessing the $_error attribute directly!
+	 * 
+	 * @param	int		Not Used
+	 * @param	boolean	Not Used
+	 * @return	string	Error message
+	 * @access	public
+	 * @since	1.5
+	 * @todo 	Change dependent code to call the API, not access $_error directly
+	 */
+	function getError($i = null, $toString = true )
+	{
+		return $this->_error;
+	}
+	
 	/**
 	 * Returns the error number
 	 *
@@ -497,10 +523,10 @@ class JTable extends JObject
 	function canDelete( $oid=null, $joins=null )
 	{
 		$k = $this->_tbl_key;
-		if ($oid)
-		{
+		if ($oid) {
 			$this->$k = intval( $oid );
 		}
+		
 		if (is_array( $joins ))
 		{
 			$select = "$k";
@@ -566,8 +592,7 @@ class JTable extends JObject
 		//}
 
 		$k = $this->_tbl_key;
-		if ($oid)
-		{
+		if ($oid) {
 			$this->$k = intval( $oid );
 		}
 
@@ -716,27 +741,24 @@ class JTable extends JObject
 	/**
 	 * Generic save function
 	 *
-	 * @access public
-	 * @param array Source array for binding to class vars
-	 * @param string Filter for the order updating
+	 * @access	public
+	 * @param	array	Source array for binding to class vars
+	 * @param	string	Filter for the order updating
+	 * @param	mixed	An array or space separated list of fields not to bind
 	 * @returns TRUE if completely successful, FALSE if partially or not succesful.
 	 */
-	function save( $source, $order_filter='' )
+	function save( $source, $order_filter='', $ignore='' )
 	{
-		if (!$this->bind( $source ))
-		{
+		if (!$this->bind( $source, $ignore )) {
 			return false;
 		}
-		if (!$this->check())
-		{
+		if (!$this->check()) {
 			return false;
 		}
-		if (!$this->store())
-		{
+		if (!$this->store()) {
 			return false;
 		}
-		if (!$this->checkin())
-		{
+		if (!$this->checkin()) {
 			return false;
 		}
 		if ($order_filter)
@@ -747,6 +769,21 @@ class JTable extends JObject
 		$this->setError('');
 		$this->setErrorNum(0);
 		return true;
+	}
+	
+	/**
+	 * Set an error message
+	 *
+	 * Use this method in preference of accessing the $_error attribute directly!
+	 * 
+	 * @param	string $error Error message
+	 * @access	public
+	 * @since	1.5
+	 * @todo 	Change dependent code to call the API, not access $_error directly
+	 */
+	function setError($error)
+	{
+		$this->_error	= $error;
 	}
 
 	/**

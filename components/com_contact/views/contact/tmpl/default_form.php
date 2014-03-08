@@ -1,5 +1,4 @@
-<?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
+<?php /** $Id: default_form.php 8499 2007-08-21 20:23:38Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
 <script type="text/javascript">
 <!--
 	function validateForm( frm ) {
@@ -20,13 +19,13 @@ defined('_JEXEC') or die('Restricted access'); ?>
 </script>
 <?php if(isset($this->error)) : ?>
 <tr>
-	<p><?php echo $this->error; ?></p>
+	<td><?php echo $this->error; ?></td>
 </tr>
 <?php endif; ?>
 <tr>
 	<td colspan="2">
 	<br /><br />
-	<form action="index.php" method="post" name="emailForm" target="_top" id="emailForm" class="form-validate">
+	<form action="<?php echo JRoute::_( 'index.php' );?>" method="post" name="emailForm" id="emailForm" class="form-validate">
 		<div class="contact_email<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 			<label for="contact_name">
 				&nbsp;<?php echo JText::_( 'Enter your name' );?>:

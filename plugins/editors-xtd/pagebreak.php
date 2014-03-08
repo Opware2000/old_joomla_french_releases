@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pagebreak.php 7978 2007-07-15 04:26:22Z louis $
+* @version		$Id: pagebreak.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -33,10 +33,11 @@ class plgButtonPagebreak extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @param object $subject The object to observe
+	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
 	 */
-	function plgButtonPagebreak(& $subject) {
-		parent::__construct($subject);
+	function plgButtonPagebreak(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**
@@ -50,12 +51,9 @@ class plgButtonPagebreak extends JPlugin
 
 		$doc = & JFactory::getDocument();
 		$template = $mainframe->getTemplate();
+		
 		$url = $mainframe->isAdmin() ? $mainframe->getSiteURL() : JURI::base();
-
 		$link = 'index.php?option=com_content&amp;task=ins_pagebreak&amp;tmpl=component';
-
-		$css = "\t.button1-left .pagebreak { background: url($url/plugins/editors-xtd/pagebreak.gif) 100% 0 no-repeat; }";
-		$doc->addStyleDeclaration($css);
 
 		JHTML::_('behavior.modal');
 
@@ -64,7 +62,7 @@ class plgButtonPagebreak extends JPlugin
 		$button->set('link', $link);
 		$button->set('text', JText::_('Pagebreak'));
 		$button->set('name', 'pagebreak');
-		$button->set('options', "{handler: 'iframe', size: {x: 400, y: 150}}");
+		$button->set('options', "{handler: 'iframe', size: {x: 400, y: 85}}");
 
 		return $button;
 	}

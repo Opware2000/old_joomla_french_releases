@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8082 2007-07-19 07:31:54Z hackwar $
+ * @version		$Id: view.html.php 8578 2007-08-26 23:09:01Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -165,7 +165,7 @@ class ContentViewFrontpage extends ContentView
 			// checks if the item is a public or registered/special item
 			if ($item->access <= $user->get('aid', 0))
 			{
-				$linkOn = JRoute::_("index.php?view=article&id=".$item->slug);
+				$linkOn = ContentHelperRoute::getArticleRoute($item->slug, $item->catslug, $item->sectionid);
 				$linkText = JText::_('Read more...');
 			}
 			else
@@ -177,8 +177,6 @@ class ContentViewFrontpage extends ContentView
 
 		$item->readmore_link = $linkOn;
 		$item->readmore_text = $linkText;
-
-		$item->print_link = $mainframe->getCfg('live_site').'/index.php?option=com_content&view=article&id='.$item->id.'&tmpl=component';
 
 		$item->event = new stdClass();
 		$results = $dispatcher->trigger('onAfterDisplayTitle', array (& $item, & $params,0));

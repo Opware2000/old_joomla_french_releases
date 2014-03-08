@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_status.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: mod_status.php 8295 2007-08-01 23:05:25Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -83,4 +83,3 @@ if ( $lang->isRTL() ) {
 foreach ($output as $item){
 	echo $item;
 }
- ?>

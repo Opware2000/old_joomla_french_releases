@@ -51,16 +51,27 @@ endif; ?>
 	<td>
 		<?php if ($this->params->get('show_section') && $this->item->sectionid && isset($this->item->section)) : ?>
 		<span>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '<a href="'.ContentHelperRoute::getSectionRoute($this->item).'">'; ?>
+			<?php endif; ?>
 			<?php echo $this->item->section; ?>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '</a>'; ?>
+			<?php endif; ?>
 				<?php if ($this->params->get('show_category')) : ?>
 				<?php echo ' - '; ?>
 			<?php endif; ?>
 		</span>
 		<?php endif; ?>
-
 		<?php if ($this->params->get('show_category') && $this->item->catid) : ?>
 		<span>
+			<?php if ($this->params->get('link_category')) : ?>
+				<?php echo '<a href="'.ContentHelperRoute::getCategoryRoute($this->item).'">'; ?>
+			<?php endif; ?>
 			<?php echo $this->item->category; ?>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '</a>'; ?>
+			<?php endif; ?>
 		</span>
 		<?php endif; ?>
 	</td>
@@ -112,7 +123,7 @@ endif; ?>
 </tr>
 <?php endif; ?>
 
-<?php if ($this->params->get('show_readmore') && $this->item->readmore_text) : ?>
+<?php if ($this->params->get('show_readmore') && $this->item->readmore_text && $this->item->readmore) : ?>
 <tr>
 	<td  colspan="2">
 		<a href="<?php echo $this->item->readmore_link; ?>" class="readon<?php echo $this->params->get( 'pageclass_sfx' ); ?>">

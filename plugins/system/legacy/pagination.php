@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pagination.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: pagination.php 8487 2007-08-21 06:17:47Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -46,7 +46,7 @@ class mosPageNav extends JPagination
 	 * @deprecated as of 1.5
 	 */
 	function writePagesCounter() {
-		echo $this->getPagesCounter();
+		return $this->getPagesCounter();
 	}
 
 	/**
@@ -56,7 +56,7 @@ class mosPageNav extends JPagination
 	 * @deprecated as of 1.5
 	 */
 	function writePagesLinks($link = null) {
-		echo $this->getPagesLinks();
+		return $this->getPagesLinks();
 	}
 
 	/**
@@ -66,7 +66,7 @@ class mosPageNav extends JPagination
 	 * @deprecated as of 1.5
 	 */
 	function writeLeafsCounter() {
-		echo $this->getPagesCounter();
+		return $this->getPagesCounter();
 	}
 
 	/**

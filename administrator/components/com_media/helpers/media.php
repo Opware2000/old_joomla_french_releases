@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: media.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: media.php 8660 2007-08-30 23:53:21Z louis $
  * @package		Joomla
  * @subpackage	Media
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -42,7 +42,7 @@ class MediaHelper
 
 	/**
 	 * Checks if the file can be uploaded
-	 * 
+	 *
 	 * @param array File information
 	 * @param string An error message to be returned
 	 * @return boolean
@@ -55,7 +55,7 @@ class MediaHelper
 			$err = 'Please input a file for upload';
 			return false;
 		}
-		
+
 		if ($file['name'] !== JFilterInput::clean($file['name'], 'cmd')) {
 			$err = 'WARNFILENAME';
 			return false;
@@ -111,9 +111,7 @@ class MediaHelper
 		$width = round($width * $percentage);
 		$height = round($height * $percentage);
 
-		//returns the new sizes in html image tag format...this is so you
-		//can plug this function inside an image tag and just get the
-		return "width=\"$width\" height=\"$height\"";
+		return array($width, $height);
 	}
 
 	function countFiles( $dir )

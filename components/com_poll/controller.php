@@ -37,7 +37,7 @@ class PollController extends JController
 
 		$db 	  =& JFactory::getDBO();
 		$document =& JFactory::getDocument();
-		$pathway  =& $mainframe->getPathWay();
+		$pathway  =& $mainframe->getPathway();
 
 		$poll_id = JRequest::getVar( 'id', 0, '', 'int' );
 
@@ -61,8 +61,8 @@ class PollController extends JController
 		//Set pathway information
 		$pathway->addItem($poll->title, '');
 
-		$params->def( 'page_title',	1 );
-		$params->def( 'header', $item->name );
+		$params->def( 'show_page_title', 1 );
+		$params->def( 'page_title', $item->name );
 
 		$first_vote = '';
 		$last_vote 	= '';
@@ -106,20 +106,22 @@ class PollController extends JController
 			. ' ORDER BY id'
 		;
 		$db->setQuery( $query );
-		$polls = $db->loadObjectList();
+		$pList = $db->loadObjectList();
 
-		$lists = array();
+		foreach ($pList as $k=>$p)
+		{
+			$pList[$k]->url = JRoute::_('index.php?option=com_poll&id='.$p->id);
+		}
+
+		array_unshift( $pList, JHTML::_('select.option',  '', JText::_( 'Select Poll from the list' ), 'url', 'title' ));
 
 		// dropdown output
-		//$link = JRoute::_( 'index.php?option=com_poll&task=results&id='.$poll->id );
-		$link = JRoute::_( 'index.php?option=com_poll&task=results&id=' );
+		$lists = array();
 
-		array_unshift( $polls, JHTML::_('select.option',  '', JText::_( 'Select Poll from the list' ), 'id', 'title' ));
-
-		$lists['polls'] = JHTML::_('select.genericlist',   $polls, 'id',
-			'class="inputbox" size="1" style="width:200px" onchange="if (this.options[selectedIndex].value != \'\') {document.location.href=\''. $link .'\' + this.options[selectedIndex].value}"',
- 			'id', 'title',
- 			$poll->id
+		$lists['polls'] = JHTML::_('select.genericlist',   $pList, 'id',
+			'class="inputbox" size="1" style="width:200px" onchange="if (this.options[selectedIndex].value != \'\') {document.location.href=this.options[selectedIndex].value}"',
+ 			'url', 'title',
+ 			JRoute::_('index.php?option=com_poll&id='.$poll_id)
  			);
 
 		require_once (JPATH_COMPONENT.DS.'views'.DS.'poll'.DS.'view.php');
@@ -161,8 +163,7 @@ class PollController extends JController
 			return;
 		}
 
-		$siteName	= $mainframe->getCfg( 'live_site' );
-		$cookieName	= JUtility::getHash( $siteName . 'poll' . $poll_id );
+		$cookieName	= JUtility::getHash( $mainframe->getName() . 'poll' . $poll_id );
 		// ToDo - may be adding those information to the session?
 		$voted = JRequest::getVar( $cookieName, '0', 'COOKIE', 'INT');
 
@@ -183,7 +184,7 @@ class PollController extends JController
 		require_once(JPATH_COMPONENT.DS.'models'.DS.'poll.php');
 		$model = new PollModelPoll();
 		$model->addVote( $poll_id, $option_id );
-		
+
 		$this->setRedirect( JRoute::_('index.php?option=com_poll&id='. $poll_id.':'.$post->alias, false), JText::_( 'Thanks for your vote!' ) );
 	}
 }

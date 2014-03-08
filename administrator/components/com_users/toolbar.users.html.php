@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.users.html.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.users.html.php 8242 2007-07-30 11:25:06Z humvee $
 * @package		Joomla
 * @subpackage	Users
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,9 +25,9 @@ class TOOLBAR_users {
 	*/
 	function _EDIT() {
 		$cid = JRequest::getVar( 'cid', array(0) );
-		$text = intval($cid[0]) ? JText::_( 'Edit' ) : JText::_( 'Add' );
+		$text = intval($cid[0]) ? JText::_( 'Edit' ) : JText::_( 'New' );
 
-		JToolBarHelper::title( JText::_( 'User Manager' ) .' - <span>'. $text.'</span>', 'user.png' );
+		JToolBarHelper::title( JText::_( 'User' ) . ': <small><small>[ '. $text .' ]</small></small>' , 'user.png' );
 		JToolBarHelper::save();
 		JToolBarHelper::apply();
 		if ( $cid[0] ) {

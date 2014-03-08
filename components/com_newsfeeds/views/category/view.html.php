@@ -1,6 +1,6 @@
 <?php
 /**
-* version $Id: view.html.php 7647 2007-06-05 19:52:11Z jinx $
+* version $Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Newsfeeds
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -32,10 +32,10 @@ class NewsfeedsViewCategory extends JView
 	{
 		global $mainframe;
 
-		$pathway 	= & $mainframe->getPathWay();
+		$pathway 	= & $mainframe->getPathway();
 		$document	= & JFactory::getDocument();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menus	= &JMenu::getInstance();
 		$menu	= $menus->getActive();
 		$params	= &$mainframe->getPageParameters();
@@ -76,7 +76,7 @@ class NewsfeedsViewCategory extends JView
 			$attribs['hspace'] = '"6"';
 
 			// Use the static HTML library to build the image tag
-			$image = JHTML::_('image', '/images/stories/'.$category->image, JText::_('NEWS_FEEDS'), $attribs);
+			$image = JHTML::_('image', 'images/stories/'.$category->image, JText::_('NEWS_FEEDS'), $attribs);
 		}
 
 		$this->assignRef('image',		$image);

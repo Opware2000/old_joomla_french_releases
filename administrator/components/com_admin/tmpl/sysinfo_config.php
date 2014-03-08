@@ -1,7 +1,10 @@
 <?php
 /**
- * @version		$Id: sysinfo_config.php 8047 2007-07-18 12:27:25Z jinx $
+ * @version		$Id: sysinfo_config.php 8630 2007-08-30 04:30:51Z robs $
  */
+// No direct access
+defined('_JEXEC') or die('Restricted access');
+
 ?>
 <fieldset class="adminform">
 	<legend><?php echo JText::_( 'Configuration File' ); ?></legend>
@@ -50,12 +53,12 @@
 				} else if (eregi( 'class JConfig {', $v)) {
 					$cf[$k] = '';
 				}
-				$cf[$k] 	= str_replace('var ','',$cf[$k]);
-				$cf[$k] 	= str_replace(';','',$cf[$k]);
-				$cf[$k] 	= str_replace(' = ','</td><td>',$cf[$k]);
-				$cf[$k] 	= '<td>'. $cf[$k] .'</td>';
+				$cf[$k]		= str_replace('var ','',$cf[$k]);
+				$cf[$k]		= str_replace(';','',$cf[$k]);
+				$cf[$k]		= str_replace(' = ','</td><td>',$cf[$k]);
+				$cf[$k]		= '<td>'. $cf[$k] .'</td>';
 				if ($cf[$k] != '<td></td>') {
-					$config_output[] 	= $cf[$k];
+					$config_output[] = $cf[$k];
 				}
 			}
 			echo implode( '</tr><tr>', $config_output );

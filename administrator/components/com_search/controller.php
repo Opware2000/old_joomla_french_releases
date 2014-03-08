@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 7692 2007-06-08 20:41:29Z tcp $
+ * @version		$Id: controller.php 8554 2007-08-25 13:59:27Z jinx $
  * @package		Joomla
  * @subpackage	Search
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -12,6 +12,7 @@
  * source software licenses. See COPYRIGHT.php for copyright notices and
  * details.
  */
+ 
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();

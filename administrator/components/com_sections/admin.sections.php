@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.sections.php 8071 2007-07-18 23:23:27Z friesengeist $
+* @version		$Id: admin.sections.php 8540 2007-08-24 12:36:22Z jinx $
 * @package		Joomla
 * @subpackage	Sections
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -276,7 +276,7 @@ function saveSection( $option, $scope, $task )
 	$post = JRequest::get('post');
 
 	// fix up special html fields
-	$post['description'] = JRequest::getVar( 'description', '', 'post', 'string', JREQUEST_ALLOWHTML );
+	$post['description'] = JRequest::getVar( 'description', '', 'post', 'string', JREQUEST_ALLOWRAW );
 
 	$row =& JTable::getInstance('section');
 	if (!$row->bind($post)) {

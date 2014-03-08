@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: bannerclient.php 7286 2007-05-03 01:44:29Z jinx $
+ * @version		$Id: bannerclient.php 8288 2007-08-01 08:40:54Z eddieajau $
  * @package		Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -18,19 +18,18 @@ defined('_JEXEC') or die();
 /**
  * Renders a category element
  *
- * @author 		Andrew Eddie
- * @package 	Joomla
+ * @package		Joomla
  * @subpackage	Banners
  * @since		1.5
  */
 class JElementBannerclient extends JElement
 {
-   /**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 *
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Bannerclient';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -48,4 +47,3 @@ class JElementBannerclient extends JElement
 		return JHTML::_('select.genericlist',  $options, ''.$control_name.'['.$name.']', 'class="inputbox"', 'cid', 'name', $value, $control_name.$name );
 	}
 }
-?>

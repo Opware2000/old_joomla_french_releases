@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: classes.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: classes.php 8269 2007-07-31 21:15:16Z jinx $
 * @package		Joomla.Legacy
 * @subpackage	1.5
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -48,7 +48,9 @@ class mosMainFrame extends JApplication
 	 */
 	function __construct( &$db, $option, $basePath=null, $client=0 )
 	{
-		parent::__construct( $client );
+		$config = array();
+		$config['clientId'] = $client;
+		parent::__construct( $config );
 	}
 
 	/**
@@ -59,7 +61,9 @@ class mosMainFrame extends JApplication
 	 */
 	function mosMainFrame( &$db, $option, $basePath=null, $client=0 )
 	{
-		parent::__construct( $client );
+		$config = array();
+		$config['clientId'] = $client;
+		parent::__construct( $config );
 	}
 
 	/**
@@ -72,9 +76,7 @@ class mosMainFrame extends JApplication
 	 */
 	function initSession( )
 	{
-		// TODO: Quick fix to preserve session when going to https
-		global $mainframe;
-		$this->setSession(str_replace( 'https:', 'http:', $mainframe->getCfg('live_site') ).$this->getClientId());
+		
 	}
 
 	/**
@@ -547,12 +549,12 @@ class mosSession extends JTableSession
 	{
 		$this->publish( $cid, $publish, $user_id );
 	}
-	
+
 	/**
 	 * Legacy Method, use {@link JTable::publish()} instead
 	 * @deprecated As of 1.5
 	 */
-	function setFromRequest( $key, $varName, $default=null ) 
+	function setFromRequest( $key, $varName, $default=null )
 	{
 		if (isset( $_REQUEST[$varName] )) {
 			return $_SESSION[$key] = $_REQUEST[$varName];
@@ -997,8 +999,8 @@ class mosHTML
  	*/
 	function writableCell( $folder, $relative=1, $text='', $visible=1 )
 	{
-		$writeable 		= '<b><font color="green">'. JText::_( 'Writeable' ) .'</font></b>';
-		$unwriteable 	= '<b><font color="red">'. JText::_( 'Unwriteable' ) .'</font></b>';
+		$writeable 		= '<b><font color="green">'. JText::_( 'Writable' ) .'</font></b>';
+		$unwriteable 	= '<b><font color="red">'. JText::_( 'Unwritable' ) .'</font></b>';
 
 		echo '<tr>';
 		echo '<td class="item">';
@@ -1271,7 +1273,7 @@ jimport('joomla.installer.installer');
  * @deprecated	As of version 1.5
  * @package		Joomla.Legacy
  * @subpackage	1.5
- * 
+ *
  */
 class mosInstaller extends JInstaller
 {
@@ -1976,11 +1978,11 @@ class mosTabs extends JPaneTabs
 	function endTab() {
 		echo $this->endPanel();
 	}
-	
+
 	function startPane( $tabText ){
 		echo parent::startPane( $tabText );
 	}
-	
+
 	function endPane(){
 		echo parent::endPane();
 	}

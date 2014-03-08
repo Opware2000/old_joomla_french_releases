@@ -1,5 +1,5 @@
 /**
-* @version $Id: popup-imagelist.css 8068 2007-07-18 23:05:45Z rhuk $
+* @version $Id: popup-imagelist.css 8540 2007-08-24 12:36:22Z jinx $
 * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -18,7 +18,7 @@
  * @version    1.0
  */
 
- html, body { margin: 0; padding: 0; font: 10px Tahoma, Verdana, sans-serif; }
+ html, body { margin: 0 !important; padding: 0 !important; font: 10px Tahoma, Verdana, sans-serif; }
 
 .item { float: left; border: 1px solid #ccc; margin: 3px;	 position: relative; }
 
@@ -27,7 +27,7 @@
 	display: block;
 	width: 80px; height: 90px;
 	overflow: hidden;
-	vertical-align: middle;  
+	vertical-align: middle;
 	text-align: center;
 	text-decoration: none;
 	color: black;
@@ -42,11 +42,11 @@ html>body .item img {margin: auto;}
 .item span {
 	line-height: 100%;
 	clear:both;
-	display: block; 
+	display: block;
 	width: 100%;
-	position: absolute; 
+	position: absolute;
 	bottom: 0;
-	left: 0; 
+	left: 0;
 	padding: 2px 0;
 	background-color: #eee;
 	overflow: hidden;

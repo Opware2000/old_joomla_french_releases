@@ -1,22 +1,24 @@
+<?php defined('_JEXEC') or die('Restricted access'); ?>
+
 <form action="index.php?option=com_menus&amp;menutype=<?php echo $this->menutype; ?>" method="post" name="adminForm">
 
-<table>
-<tr>
-	<td align="left" width="100%">
-		<?php echo JText::_( 'Filter' ); ?>:
-		<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
-		<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-		<button onclick="getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
-	</td>
-	<td nowrap="nowrap">
-		<?php
-		echo JText::_( 'Max Levels' );
-		echo $this->lists['levellist'];
-		echo $this->lists['state'];
-		?>
-	</td>
-</tr>
-</table>
+	<table>
+		<tr>
+			<td align="left" width="100%">
+				<?php echo JText::_( 'Filter' ); ?>:
+				<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+				<button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
+				<button onclick="getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
+			</td>
+			<td nowrap="nowrap">
+				<?php
+				echo JText::_( 'Max Levels' );
+				echo $this->lists['levellist'];
+				echo $this->lists['state'];
+				?>
+			</td>
+		</tr>
+	</table>
 
 <table class="adminlist">
 	<thead>
@@ -27,8 +29,11 @@
 			<th width="20">
 				<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($this->items); ?>);" />
 			</th>
-			<th class="title" width="30%">
+			<th class="title">
 				<?php echo JHTML::_('grid.sort',   'Menu Item', 'm.name', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+			</th>
+			<th class="title" width="10%">
+				<?php echo JHTML::_('grid.sort',   'Alias', 'm.alias', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 			<th width="5%">
 				<?php echo JText::_( 'Default' ); ?>
@@ -36,10 +41,8 @@
 			<th width="5%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',   'Published', 'm.published', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
-			<th width="80" nowrap="nowrap">
+			<th width="8%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',   'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
-			<th width="1%">
 				<?php echo JHTML::_('grid.order',  $this->items ); ?>
 			</th>
 			<th width="10%">
@@ -48,7 +51,7 @@
 			<th width="10%" class="title">
 				<?php echo JHTML::_('grid.sort',   'Type', 'm.type', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
-			<th nowrap="nowrap">
+			<th width="1%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',   'Itemid', 'm.id', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 		</tr>
@@ -85,6 +88,9 @@
 				<a href="<?php echo JRoute::_( 'index.php?option=com_menus&menutype='.$row->menutype.'&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->treename; ?></a>
 				<?php endif; ?>
 			</td>
+			<td>
+				<?php echo $row->alias;?>
+			</td>
 			<td align="center">
 				<?php if ( $row->home == 1 ) : ?>
 				<img src="templates/khepri/images/menu/icon-16-default.png" alt="<?php echo JText::_( 'Default' ); ?>" />
@@ -92,10 +98,10 @@
 				&nbsp;
 				<?php endif; ?>
 			</td>
-			<td width="10%" align="center">
+			<td align="center">
 				<?php echo $published;?>
 			</td>
-			<td class="order" colspan="2" nowrap="nowrap">
+			<td class="order" nowrap="nowrap">
 				<span><?php echo $this->pagination->orderUpIcon( $i, $row->parent == 0 || $row->parent == @$rows[$i-1]->parent, 'orderup', 'Move Up', $this->ordering); ?></span>
 				<span><?php echo $this->pagination->orderDownIcon( $i, $n, $row->parent == 0 || $row->parent == @$rows[$i+1]->parent, 'orderdown', 'Move Down', $this->ordering ); ?></span>
 				<?php $disabled = $this->ordering ?  '' : 'disabled="disabled"'; ?>
@@ -119,10 +125,10 @@
 	</tbody>
 	</table>
 
-<input type="hidden" name="option" value="com_menus" />
-<input type="hidden" name="menutype" value="<?php echo $this->menutype; ?>" />
-<input type="hidden" name="task" value="view" />
-<input type="hidden" name="boxchecked" value="0" />
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="" />
+	<input type="hidden" name="option" value="com_menus" />
+	<input type="hidden" name="menutype" value="<?php echo $this->menutype; ?>" />
+	<input type="hidden" name="task" value="view" />
+	<input type="hidden" name="boxchecked" value="0" />
+	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="" />
 </form>

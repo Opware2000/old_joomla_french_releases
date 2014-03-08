@@ -1,49 +1,36 @@
 <?php
-defined('_JEXEC') or die('Restricted access');
-
-/*
- *
- * Get the template parameters
- *
+/**
+ * @version $Id: default_logout.php 8650 2007-08-30 20:53:58Z friesengeist $
  */
-$filename = JPATH_ROOT . DS . 'templates' . DS . $mainframe->getTemplate() . DS . 'params.ini';
-if ($content = @ file_get_contents($filename)) {
-	$templateParams = new JParameter($content);
-} else {
-	$templateParams = null;
-}
-/*
- * hope to get a better solution very soon
- */
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-$hlevel = $templateParams->get('headerLevelComponent', '2');
-$ptlevel = $templateParams->get('pageTitleHeaderLevel', '1');
+?>
 
-echo '<form action="index.php" method="post" name="login" id="login" class="logout_form' . $this->params->get('pageclass_sfx') . '">';
+<form action="index.php" method="post" name="login" id="login" class="logout_form<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+	<?php if ( $this->params->get( 'page_title' ) ) : ?>
+	<h1 class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+		<?php echo $this->params->get( 'header_logout' ); ?>
+	</h1>
+	<?php endif; ?>
 
-if ($this->params->get('page_title')) {
-	echo '<h' . $ptlevel . ' class="componentheading' . $this->params->get('pageclass_sfx') . '">';
-	echo $this->params->get('header_logout');
-	echo '</h' . $ptlevel . '>';
-}
+	<?php if ( $this->params->get( 'description_logout' ) || isset( $this->image ) ) : ?>
+	<div class="contentdescription<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+		<?php if (isset ($this->image)) :
+			echo $this->image;
+		endif;
+		if ( $this->params->get( 'description_logout' ) ) : ?>
+		<p>
+			<?php echo $this->params->get('description_logout_text'); ?>
+		</p>
+		<?php endif;
+		if (isset ($this->image)) : ?>
+		<div class="wrap_image">&nbsp;</div>
+		<?php endif; ?>
+	</div>
+	<?php endif; ?>
 
-if ($this->params->get('description_logout') || isset ($this->image)) {
-	$wrap = '';
-	echo '<div class="contentdescription' . $this->params->get('pageclass_sfx') . '">';
-	if (isset ($this->image)) {
-		echo $this->image;
-		$wrap = '<div class="wrap_image">&nbsp;</div>';
-	}
-	if ($this->params->get('description_logout')) {
-		echo '<p>' . $this->params->get('description_logout_text') . '</p>';
-	}
-	echo $wrap;
-	echo '</div>';
-}
-
-echo '<p><input type="submit" name="Submit" class="button" value="' . JText :: _('Logout') . '" /></p>';
-
-echo '<input type="hidden" name="option" value="com_login" />';
-echo '<input type="hidden" name="task" value="logout" />';
-echo '<input type="hidden" name="return" value="' . JRoute :: _($this->params->get('logout')) . '" />';
-echo '</form>';
+	<p><input type="submit" name="Submit" class="button" value="<?php echo JText::_( 'Logout' ); ?>" /></p>
+	<input type="hidden" name="option" value="com_user" />
+	<input type="hidden" name="task" value="logout" />
+	<input type="hidden" name="return" value="<?php echo $this->return; ?>" />
+</form>

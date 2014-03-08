@@ -2,7 +2,7 @@
 /**
  * patTemplate output filter that creates PDF files from latex
  *
- * $Id: PdfLatex.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: PdfLatex.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Filters
@@ -15,7 +15,7 @@ defined('JPATH_BASE') or die();
 /**
  * patTemplate output filter that creates PDF files from latex
  *
- * $Id: PdfLatex.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: PdfLatex.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Filters
@@ -23,7 +23,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_OutputFilter_PdfLatex extends patTemplate_OutputFilter
 {
-   /**
+	/**
 	* filter name
 	*
 	* This has to be set in the final
@@ -37,7 +37,7 @@ class patTemplate_OutputFilter_PdfLatex extends patTemplate_OutputFilter
 						   'cacheFolder' => './'
 					   );
 
-   /**
+	/**
 	* tidy the data
 	*
 	* @access	public

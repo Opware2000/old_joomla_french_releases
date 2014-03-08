@@ -1,5 +1,5 @@
 /**
-* @version		$Id: index.js 6402 2007-01-30 02:08:11Z louis $
+* @version		$Id: index.js 8412 2007-08-15 19:34:16Z jinx $
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -30,5 +30,4 @@ Window.onDomReady(function(){
 		var menu = new JMenu(element)
 		document.menu = menu
 	}
-	Fat.fade_all();
 });

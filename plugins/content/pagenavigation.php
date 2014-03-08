@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: pagenavigation.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: pagenavigation.php 8220 2007-07-27 22:09:08Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -210,4 +210,3 @@ function plgContentNavigation( &$row, &$params, $page=0 )
 
 	return ;
 }
-?>

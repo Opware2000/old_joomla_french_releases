@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: view.html.php 8582 2007-08-27 14:37:02Z jinx $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -110,8 +110,8 @@ class WeblinksViewWeblink extends JView
 		jimport('joomla.filter.output');
 		JFilterOutput::objectHTMLSafe( $weblink, ENT_QUOTES, 'description' );
 
-		$file 	= JPATH_ADMINISTRATOR .'/components/com_weblinks/models/weblink.xml';
-		$params = new JParameter( $weblink->params, $file, 'component' );
+		$file 	= JPATH_COMPONENT.DS.'models'.DS.'weblink.xml';
+		$params = new JParameter( $weblink->params, $file );
 
 		$this->assignRef('lists',		$lists);
 		$this->assignRef('weblink',		$weblink);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: application.php 8127 2007-07-20 19:08:51Z jinx $
+ * @version		$Id: application.php 8563 2007-08-25 20:50:33Z jinx $
  * @package		Joomla
  * @subpackage	Config
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -160,7 +160,7 @@ class ConfigControllerApplication extends ConfigController
 		$stores = JCache::getStores();
 		$options = array();
 		foreach($stores as $store) {
-			$options[] = JHTML::_('select.option', $store, ucfirst($store));
+			$options[] = JHTML::_('select.option', $store, JText::_(ucfirst($store)) );
 		}
 		$lists['cache_handlers'] = JHTML::_('select.genericlist',  $options, 'cache_handler', 'class="inputbox" size="1"', 'value', 'text', $row->cache_handler);
 
@@ -189,7 +189,7 @@ class ConfigControllerApplication extends ConfigController
 		$stores = JSession::getStores();
 		$options = array();
 		foreach($stores as $store) {
-			$options[] = JHTML::_('select.option', $store, ucfirst($store));
+			$options[] = JHTML::_('select.option', $store, JText::_(ucfirst($store)) );
 		}
 		$lists['session_handlers'] = JHTML::_('select.genericlist',  $options, 'session_handler', 'class="inputbox" size="1"', 'value', 'text', $row->session_handler);
 
@@ -277,7 +277,7 @@ class ConfigControllerApplication extends ConfigController
 		$config_array['tmp_path']			= JRequest::getVar('tmp_path', JPATH_ROOT.DS.'tmp', 'post', 'string');
 
 		// LOCALE SETTINGS
-		$config_array['offset']				= JRequest::getVar('offset', 0, 'post', 'int');
+		$config_array['offset']				= JRequest::getVar('offset', 0, 'post', 'float');
 
 		// CACHE SETTINGS
 		$config_array['caching']			= JRequest::getVar('caching', 0, 'post', 'int');
@@ -317,13 +317,11 @@ class ConfigControllerApplication extends ConfigController
 		// SESSION SETTINGS
 		$config_array['lifetime']			= JRequest::getVar('lifetime', 0, 'post', 'int');
 		$config_array['session_handler']	= JRequest::getVar('session_handler', 'none', 'post', 'word');
-		
+
 		//LANGUAGE SETTINGS
-		$config_array['lang_site']			= JRequest::getVar('lang_site', 'en-GB', 'post', 'cmd');
-		$config_array['lang_administrator'] = JRequest::getVar('lang_administrator', 'en-GB', 'post', 'cmd');
-		$config_array['lang']				= JRequest::getVar('lang', 'none', 'english', 'cmd');
-		$config_array['language']			= JRequest::getVar('language', 'en-GB', 'post', 'cmd');
-		
+		//$config_array['lang']				= JRequest::getVar('lang', 'none', 'english', 'cmd');
+		//$config_array['language']			= JRequest::getVar('language', 'en-GB', 'post', 'cmd');
+
 		$config->loadArray($config_array);
 
 		//override any possible database password change
@@ -391,7 +389,7 @@ class ConfigControllerApplication extends ConfigController
 		// Try to make configuration.php unwriteable
 		//if (!$ftp['enabled'] && JPath::isOwner($fname) && !JPath::setPermissions($fname, '0444')) {
 		if (!$ftp['enabled'] && JPath::isOwner($fname) && !JPath::setPermissions($fname, '0444')) {
-			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make configuration.php unwriteable');
+			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make configuration.php unwritable');
 		}
 	}
 

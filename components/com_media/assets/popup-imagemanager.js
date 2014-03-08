@@ -1,5 +1,5 @@
 /**
-* @version		$Id: popup-imagemanager.js 3997 2006-06-12 03:59:51Z spacemonkey $
+* @version		$Id: popup-imagemanager.js 8656 2007-08-30 22:40:39Z louis $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -19,7 +19,7 @@
  * @subpackage	Media
  * @since		1.5
  */
-var JImageManager = new Class({
+var ImageManager = {
 	initialize: function()
 	{
 		// Setup image manager fields object
@@ -33,19 +33,25 @@ var JImageManager = new Class({
 		// Setup image listing objects
 		this.folderlist = $('folderlist');
 
+		this.frame		= window.frames['imageframe'];
+		this.frameurl	= this.frame.location.href;
+
 		// Setup imave listing frame
 		this.imageframe = $('imageframe');
 		this.imageframe.manager = this;
-		this.imageframe.addEvent('load', function(){ this.manager.onloadimageframe(); });
+		this.imageframe.addEvent('load', function(){ ImageManager.onloadimageview(); });
 
 		// Setup folder up button
 		this.upbutton = $('upbutton');
-		this.upbutton.manager = this;
-		this.upbutton.addEvent('click', function(){ this.manager.upFolder(); });
+		this.upbutton.removeEvents('click');
+		this.upbutton.addEvent('click', function(){ ImageManager.upFolder(); });
 	},
 
-	onloadimageframe: function()
+	onloadimageview: function()
 	{
+		// Update the frame url
+		this.frameurl = this.frame.location.href;
+
 		var folder = this.getImageFolder();
 		for(var i = 0; i < this.folderlist.length; i++)
 		{
@@ -54,11 +60,24 @@ var JImageManager = new Class({
 				break;
 			}
 		}
+
+		a = this._getUriObject($('uploadForm').getProperty('action'));
+		//console.log(a);
+		q = $H(this._getQueryObject(a.query));
+		q.set('folder', folder);
+		var query = [];
+		q.each(function(v, k){
+			if ($chk(v)) {
+				this.push(k+'='+v);
+			}
+		}, query);
+		a.query = query.join('&');
+		$('uploadForm').setProperty('action', a.scheme+'://'+a.domain+a.path+'?'+a.query);
 	},
 
 	getImageFolder: function()
 	{
-		var url 	= window.frames['imageframe'].location.search.substring(1);
+		var url 	= this.frame.location.search.substring(1);
 		var args	= this.parseQuery(url);
 
 		return args['folder'];
@@ -66,6 +85,7 @@ var JImageManager = new Class({
 
 	onok: function()
 	{
+		extra = '';
 		// Get the image tag field information
 		var url		= this.fields.url.getValue();
 		var alt		= this.fields.alt.getValue();
@@ -76,22 +96,24 @@ var JImageManager = new Class({
 		if (url != '') {
 			// Set alt attribute
 			if (alt != '') {
-				var alt = "alt=\""+alt+"\" ";
+				extra = extra + 'alt="'+alt+'" ';
+			} else {
+				extra = extra + 'alt="" ';
 			}
 			// Set align attribute
 			if (align != '') {
-				align = "align=\""+align+"\" ";
+				extra = extra + 'align="'+align+'" ';
 			}
 			// Set align attribute
 			if (title != '') {
-				title = "title=\""+title+"\" ";
+				extra = extra + 'title="'+title+'" ';
 			}
 			// Set align attribute
 			if (caption != '') {
-				caption = 'class="caption"';
+				extra = extra + 'class="caption" ';
 			}
 
-			var tag = "<img src=\""+url+"\" "+alt+align+title+caption+" />";
+			var tag = "<img src=\""+url+"\" "+extra+"/>";
 		}
 
 		window.parent.jInsertEditorText(tag);
@@ -109,7 +131,7 @@ var JImageManager = new Class({
 				break;
 			}
 		}
-		window.frames['imageframe'].location.href='index.php?option=com_media&task=imgManagerList&tmpl=component&folder=' + folder;
+		this.frame.location.href='index.php?option=com_media&view=imagesList&tmpl=component&folder=' + folder;
 	},
 
 	getFolder: function() {
@@ -137,6 +159,7 @@ var JImageManager = new Class({
 		for(var i = 0; i < this.folderlist.length; i++)
 		{
 			var thisFolder = this.folderlist.options[i].value;
+
 			if(thisFolder == search)
 			{
 				this.folderlist.selectedIndex = i;
@@ -147,8 +170,9 @@ var JImageManager = new Class({
 		}
 	},
 
-	populateFields: function(file) {
-		$("f_url").value = "images/stories/"+this.folderlist.options[this.folderlist.selectedIndex].value+file;
+	populateFields: function(file)
+	{
+		$("f_url").value = "images/stories/"+file;
 	},
 
 	showMessage: function(text)
@@ -181,10 +205,39 @@ var JImageManager = new Class({
 			params[key] = val;
 	   }
 	   return params;
-	}
-});
+	},
 
-document.imagemanager = null;
-Window.onDomReady(function(){
-	document.imagemanager = new JImageManager();
+	refreshFrame: function()
+	{
+		this._setFrameUrl();
+	},
+
+	_setFrameUrl: function(url)
+	{
+		if ($chk(url)) {
+			this.frameurl = url;
+		}
+		this.frame.location.href = this.frameurl;
+	},
+
+	_getQueryObject: function(q) {
+		var vars = q.split(/[&;]/);
+		var rs = {};
+		if (vars.length) vars.each(function(val) {
+			var keys = val.split('=');
+			if (keys.length && keys.length == 2) rs[encodeURIComponent(keys[0])] = encodeURIComponent(keys[1]);
+		});
+		return rs;
+	},
+
+	_getUriObject: function(u){
+		var bits = u.match(/^(?:([^:\/?#.]+):)?(?:\/\/)?(([^:\/?#]*)(?::(\d*))?)((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[\?#]|$)))*\/?)?([^?#\/]*))?(?:\?([^#]*))?(?:#(.*))?/);
+		return (bits)
+			? bits.associate(['uri', 'scheme', 'authority', 'domain', 'port', 'path', 'directory', 'file', 'query', 'fragment'])
+			: null;
+	}
+};
+
+window.addEvent('domready', function(){
+	ImageManager.initialize();
 });

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.php 7796 2007-06-26 22:52:22Z friesengeist $
+* @version		$Id: view.php 8563 2007-08-25 20:50:33Z jinx $
 * @package		Joomla
 * @subpackage	Search
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -30,7 +30,7 @@ class searchViewSearch extends JView
 
 		JToolBarHelper::title( JText::_( 'Search Statistics' ), 'searchtext.png' );
 		JToolBarHelper::custom( 'reset', 'delete.png', 'delete_f2.png', 'Reset', false );
-		JToolBarHelper::preferences( 'com_search', '125' );
+		JToolBarHelper::preferences( 'com_search', '140' );
 		JToolBarHelper::help( 'screen.stats.searches' );
 
 		$document = & JFactory::getDocument();
@@ -48,18 +48,18 @@ class searchViewSearch extends JView
 		$pageNav = new JPagination( count($items), $limitstart, $limit );
 
 		$showResults	= JRequest::getInt('search_results');
-
+		
 		$search 		= $mainframe->getUserStateFromRequest( 'com_search.search', 'search', '', 'string' );
-
+		
 		$this->assignRef('items', 	$items);
 		$this->assignRef('enabled', $enabled);
 		$this->assignRef('pageNav', $pageNav);
-		$this->assignRef('showResults', $showResults);
 		$this->assignRef('search', 	$search );
 		$this->assignRef('lists',	$model->lists );
+		
+		$this->assignRef('showResults', $showResults);
 
 		parent::display($tpl);
 	}
-
 }
 ?>

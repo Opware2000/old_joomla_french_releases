@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: list.php 8020 2007-07-17 16:42:27Z friesengeist $
+ * @version		$Id: list.php 8598 2007-08-28 08:44:08Z robs $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -21,7 +21,6 @@ jimport( 'joomla.application.component.model' );
 /**
  * @package		Joomla
  * @subpackage	Menus
- * @author Andrew Eddie
  */
 class MenusModelList extends JModel
 {
@@ -447,7 +446,8 @@ class MenusModelList extends JModel
 						return false;
 					}
 				} else {
-					JError::raiseWarning( 'SOME_ERROR_CODE', 'You can\'t unpublish the default menu item'  );
+					JError::raiseWarning( 'SOME_ERROR_CODE', 'You cannot unpublish the default menu item');
+					return false;
 				}
 			}
 		}
@@ -671,4 +671,3 @@ class MenusModelList extends JModel
 		return $return;
 	}
 }
-?>

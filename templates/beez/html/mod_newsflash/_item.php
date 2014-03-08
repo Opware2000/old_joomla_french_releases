@@ -1,45 +1,31 @@
 <?php
+/**
+ * @version $Id: _item.php 8637 2007-08-30 16:25:06Z friesengeist $
+ */
+
 defined('_JEXEC') or die('Restricted access');
 
-/*
- *
- * Get the template parameters
- *
- */
-$filename = JPATH_ROOT . DS . 'templates' . DS . $mainframe->getTemplate() . DS . 'params.ini';
-if ($content = @ file_get_contents($filename)) {
-	$templateParams = new JParameter($content);
-} else {
-	$templateParams = null;
-}
-/*
- * hope to get a better solution very soon
- */
-
-$hlevel = $templateParams->get('headerLevelComponent', '2');
-$level = $hlevel +2;
-
-if ($params->get('item_title')) {
-	if ($params->get('link_titles') && $linkOn != '') {
-		echo '<h' . $level . '><a href="' . JRoute::_($linkOn) . '" class="contentpagetitle' . $params->get('moduleclass_sfx') . '">';
+if ($params->get('item_title')) : ?>
+<h4>
+	<?php if ($params->get('link_titles') && $linkOn != '') : ?>
+	<a href="<?php echo JRoute::_($linkOn); ?>" class="contentpagetitle<?php echo $params->get('moduleclass_sfx'); ?>">
+		<?php echo $item->title; ?>
+	</a>
+	<?php else :
 		echo $item->title;
-		echo '</a></h' . $level . '>';
-	} else {
-		echo '<h' . $level . '>' . $item->title . '</h' . $level . '>';
-	}
+	endif; ?>
+</h4>
+<?php endif; ?>
 
-}
-
-if (!$params->get('intro_only')) {
+<?php if (!$params->get('intro_only')) :
 	echo $item->afterDisplayTitle;
-}
+endif; ?>
 
-echo $item->beforeDisplayContent;
+<?php echo $item->beforeDisplayContent;
 echo JFilterOutput::ampReplace($item->text);
-if (isset ($item->linkOn) && $item->readmore) {
-	echo '<a href="' . $item->linkOn . '">' . JText :: _('Read more') . '</a>';
-}
-// AJE: Don't think this is relevent in the context of this module??
-//echo $item->afterDisplayContent;
-echo '<span class="article_separator">&nbsp;</span>';
-?>
+if (isset($item->linkOn) && $item->readmore) : ?>
+<a href="<?php $item->linkOn; ?>" class="readon">
+	<?php echo JText::_('Read more'); ?>
+</a>
+<?php endif; ?>
+<span class="article_separator">&nbsp;</span>

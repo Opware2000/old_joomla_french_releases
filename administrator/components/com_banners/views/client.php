@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: client.php 8047 2007-07-18 12:27:25Z jinx $
+ * @version		$Id: client.php 8242 2007-07-30 11:25:06Z humvee $
  * @package		Joomla
  * @subpackage	Banners
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -84,10 +84,10 @@ class BannersViewClients
 			for ($i=0, $n=count( $rows ); $i < $n; $i++) {
 				$row = &$rows[$i];
 
-				$row->id 		= $row->cid;
-				$link 			= JRoute::_( 'index.php?option=com_banners&c=client&task=edit&cid[]='. $row->id );
+				$row->id		= $row->cid;
+				$link			= JRoute::_( 'index.php?option=com_banners&c=client&task=edit&cid[]='. $row->id );
 
-				$checked 		= JHTML::_('grid.checkedout',   $row, $i );
+				$checked		= JHTML::_('grid.checkedout',   $row, $i );
 				?>
 				<tr class="<?php echo "row$k"; ?>">
 					<td align="center">
@@ -102,7 +102,7 @@ class BannersViewClients
 							echo $row->name;
 						} else {
 							?>
-							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Banner Client' ); ?>">
+							<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Banner Client' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>'; ?>">
 								<?php echo $row->name; ?></a>
 							<?php
 						}
@@ -139,7 +139,7 @@ class BannersViewClients
 	{
 		$task = JRequest::getVar( 'task', '', 'method', 'string');
 
-		JToolBarHelper::title( $task == 'add' ? JText::_( 'New Banner Client' ) : JText::_( 'Edit Banner Client' ), 'generic.png' );
+		JToolBarHelper::title( $task == 'add' ? JText::_( 'Banner Client' ) . ': <small><small>[ '. JText::_( 'New' ) .' ]</small></small>' : JText::_( 'Banner Client' ) . ': <small><small>[ '. JText::_( 'Edit' ) .' ]</small></small>', 'generic.png' );
 		JToolBarHelper::save( 'save' );
 		JToolBarHelper::apply('apply');
 		JToolBarHelper::cancel( 'cancel' );

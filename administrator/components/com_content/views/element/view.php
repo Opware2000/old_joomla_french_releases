@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.php 8075 2007-07-19 04:47:14Z louis $
+ * @version		$Id: view.php 8345 2007-08-07 09:20:52Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -122,7 +122,7 @@ class ContentViewElement extends JView
 						<?php echo $page->getRowOffset( $i ); ?>
 					</td>
 					<td>
-						<a style="cursor: pointer;" onclick="window.parent.jSelectArticle('<?php echo $row->id; ?>', '<?php echo addSlashes($row->title); ?>');">
+						<a style="cursor: pointer;" onclick="window.parent.jSelectArticle('<?php echo $row->id; ?>', '<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>');">
 							<?php echo htmlspecialchars($row->title, ENT_QUOTES); ?>
 						</a>
 					</td>

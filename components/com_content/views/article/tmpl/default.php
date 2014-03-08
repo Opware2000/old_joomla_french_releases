@@ -50,30 +50,39 @@ defined('_JEXEC') or die('Restricted access'); ?>
 <?php  if (!$this->params->get('show_intro')) :
 	echo $this->article->event->afterDisplayTitle;
 endif; ?>
-
 <?php echo $this->article->event->beforeDisplayContent; ?>
 <table class="contentpaneopen<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-<?php if (($this->params->get('section') && $this->article->sectionid) || ($this->params->get('category') && $this->article->catid)) : ?>
+<?php if (($this->params->get('show_section') && $this->article->sectionid) || ($this->params->get('show_category') && $this->article->catid)) : ?>
 <tr>
 	<td>
-		<?php if ($this->params->get('show_section') && $this->article->sectionid) : ?>
+		<?php if ($this->params->get('show_section') && $this->article->sectionid && isset($this->article->section)) : ?>
 		<span>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '<a href="'.ContentHelperRoute::getSectionRoute($this->article).'">'; ?>
+			<?php endif; ?>
 			<?php echo $this->article->section; ?>
-			<?php if ($this->params->get('show_category')) : ?>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '</a>'; ?>
+			<?php endif; ?>
+				<?php if ($this->params->get('show_category')) : ?>
 				<?php echo ' - '; ?>
 			<?php endif; ?>
 		</span>
 		<?php endif; ?>
-
 		<?php if ($this->params->get('show_category') && $this->article->catid) : ?>
 		<span>
+			<?php if ($this->params->get('link_category')) : ?>
+				<?php echo '<a href="'.ContentHelperRoute::getCategoryRoute($this->article).'">'; ?>
+			<?php endif; ?>
 			<?php echo $this->article->category; ?>
+			<?php if ($this->params->get('link_section')) : ?>
+				<?php echo '</a>'; ?>
+			<?php endif; ?>
 		</span>
 		<?php endif; ?>
 	</td>
 </tr>
 <?php endif; ?>
-
 <?php if (($this->params->get('show_author')) && ($this->article->author != "")) : ?>
 <tr>
 	<td width="70%"  valign="top" colspan="2">
@@ -111,7 +120,7 @@ endif; ?>
 </td>
 </tr>
 
-<?php if ( $this->article->modified !='' && $this->params->get('show_modify_date')) : ?>
+<?php if ( intval($this->article->modified) !=0 && $this->params->get('show_modify_date')) : ?>
 <tr>
 	<td colspan="2"  class="modifydate">
 		<?php echo JText::_( 'Last Updated' ); ?> ( <?php echo JHTML::_('date', $this->article->modified, JText::_('DATE_FORMAT_LC2')); ?> )

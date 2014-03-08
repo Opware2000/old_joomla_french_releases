@@ -28,5 +28,10 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
+		<param name="showSiteName" type="radio" default="0" label="Show Site Name" description="Show the site name in the template header">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="headerColor" type="folderlist" default="h_green" directory="administrator/templates/khepri/images" filter="^h_." hide_none="1" hide_default="1" label="Header Color" description="The color of the bar under the header" />
 	</params>
 </install>

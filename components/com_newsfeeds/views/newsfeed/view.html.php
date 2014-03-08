@@ -1,6 +1,6 @@
 <?php
 /**
-* version $Id: view.html.php 7692 2007-06-08 20:41:29Z tcp $
+* version $Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Newsfeeds
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -35,12 +35,12 @@ class NewsfeedsViewNewsfeed extends JView
 		// check if cache directory is writeable
 		$cacheDir = JPATH_BASE.DS.'cache'.DS;
 		if ( !is_writable( $cacheDir ) ) {
-			echo JText::_( 'Cache Directory Unwriteable' );
+			echo JText::_( 'Cache Directory Unwritable' );
 			return;
 		}
 
 		// Get some objects from the JApplication
-		$pathway  =& $mainframe->getPathWay();
+		$pathway  =& $mainframe->getPathway();
 		$document =& JFactory::getDocument();
 
 		// Get the current menu item
@@ -87,7 +87,7 @@ class NewsfeedsViewNewsfeed extends JView
 
 		// Set page title per category
 		$document->setTitle( $newsfeed->name . ' - '. $params->get( 'page_title'));
-		
+
 
 		//set breadcrumbs
 		if($menu->query['view'] != 'newsfeed')

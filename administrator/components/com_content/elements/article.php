@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: article.php 8034 2007-07-18 06:15:31Z louis $
+* @version		$Id: article.php 8345 2007-08-07 09:20:52Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,12 +16,12 @@ defined('_JEXEC') or die();
 
 class JElementArticle extends JElement
 {
-   /**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 *
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Article';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -51,12 +51,11 @@ class JElementArticle extends JElement
 		$link = 'index.php?option=com_content&amp;task=element&amp;tmpl=component';
 
 		JHTML::_('behavior.modal', 'a.modal');
-		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$article->title\" disabled=\"disabled\" /></div>";
+		$html = "\n".'<div style="float: left;"><input style="background: #ffffff;" type="text" id="a_name" value="'.htmlspecialchars($article->title, ENT_QUOTES).'" disabled="disabled" /></div>';
 //		$html .= "\n &nbsp; <input class=\"inputbox modal-button\" type=\"button\" value=\"".JText::_('Select')."\" />";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('Select an Article')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('Select')."</a></div></div>\n";
-		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
+		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="'.JText::_('Select an Article').'"  href="'.$link.'" rel="{handler: \'iframe\', size: {x: 650, y: 375}}">'.JText::_('Select').'</a></div></div>'."\n";
+		$html .= "\n".'<input type="hidden" id="a_id" name="'.$fieldName.'" value="'.(int)$value.'" />';
 
 		return $html;
 	}
 }
-?>

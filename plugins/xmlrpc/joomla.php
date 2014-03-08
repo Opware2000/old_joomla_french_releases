@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: joomla.php 7180 2007-04-23 16:51:53Z jinx $
+* @version		$Id: joomla.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -34,10 +34,11 @@ class plgXMLRPCJoomla extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @param object $subject The object to observe
+	 * @param object $params  The object that holds the plugin parameters
 	 * @since 1.5
 	 */
-	function plgXMLRPCJoomla(& $subject) {
-		parent::__construct($subject);
+	function plgXMLRPCJoomla(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	/**

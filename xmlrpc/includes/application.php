@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: application.php 8062 2007-07-18 21:22:15Z jinx $
+* @version		$Id: application.php 8269 2007-07-31 21:15:16Z jinx $
 * @package		Joomla
 * @subpackage	Installation
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -32,7 +32,7 @@ class JXMLRPC extends JApplication
 	 * @access protected
 	 */
 	var $_siteURL = null;
-	
+
 	/**
 	 * The encoding (default: UTF-8)
 	 *
@@ -41,8 +41,18 @@ class JXMLRPC extends JApplication
 	 */
 	var $_encoding = null;
 
-	function __construct() 
+	/**
+	* Class constructor
+	*
+	* @access protected
+	* @param	array An optional associative array of configuration settings.
+	* Recognized key values include 'clientId' (this list is not meant to be comprehensive).
+	*/
+	function __construct($config = array())
 	{
+		$config['clientId'] = 4;
+		parent::__construct($config);
+	
 		$url = JURI::base();
 		$url = str_replace('xmlrpc/', '', $url);
 
@@ -75,8 +85,7 @@ class JXMLRPC extends JApplication
 	 * @return string The site URL
 	 * @since 1.5
 	 */
-	function getSiteURL()
-	{
+	function getSiteURL() {
 		return $this->_siteURL;
 	}
 }

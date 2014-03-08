@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: view.php 8020 2007-07-17 16:42:27Z friesengeist $
-* @package		Joomla
-* @subpackage	Menus
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: view.php 8286 2007-08-01 08:27:44Z eddieajau $
+ * @package		Joomla
+ * @subpackage	Menus
+ * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -37,11 +37,11 @@ class MenusViewList extends JView
 		 */
 		$menutype 	= $mainframe->getUserStateFromRequest( 'com_menus.menutype', 'menutype', 'mainmenu', 'string' );
 
-		JToolBarHelper::title( JText::_( 'Menu Manager' ) .': <small><small>['.$menutype.']</small></small>', 'menu.png' );
-		
+		JToolBarHelper::title( JText::_( 'MENU ITEM MANAGER' ) .': <small><small>['.$menutype.']</small></small>', 'menu.png' );
+
 		$bar =& JToolBar::getInstance('toolbar');
 		$bar->appendButton( 'Link', 'menus', 'Menus', "index.php?option=com_menus" );
-		
+
 		JToolBarHelper::makeDefault( 'setdefault' );
 		JToolBarHelper::publishList();
 		JToolBarHelper::unpublishList();
@@ -122,7 +122,7 @@ class MenusViewList extends JView
 		/*
 		 * Set toolbar items for the page
 		 */
-		JToolBarHelper::title( JText::_( 'Move Menu Items' ) );
+		JToolBarHelper::title( JText::_( 'Menu Items' ) . ': <small><small>[ '. JText::_( 'Move' ) .' ]</small></small>' );
 		JToolBarHelper::custom( 'doMove', 'move.png', 'move_f2.png', 'Move', false );
 		JToolBarHelper::cancel('cancelItem');
 		JToolBarHelper::help( 'screen.menus.move' );
@@ -178,4 +178,3 @@ class MenusViewList extends JView
 		return $lists;
 	}
 }
-?>

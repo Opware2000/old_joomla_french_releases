@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.languages.php 8031 2007-07-17 23:14:23Z jinx $
+* @version		$Id: admin.languages.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Languages
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -57,8 +57,8 @@ function viewLanguages()
 	global $mainframe, $option;
 
 	// Initialize some variables
-	$db		= & JFactory::getDBO();
-	$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+	$db		=& JFactory::getDBO();
+	$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 	$rows	= array ();
 
 	$limit		= $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
@@ -82,7 +82,6 @@ function viewLanguages()
 		{
 			$data = JApplicationHelper::parseXMLLangMetaFile($path.DS.$dir.DS.$file);
 
-
 			$row 			= new StdClass();
 			$row->id 		= $rowid;
 			$row->language 	= substr($file,0,-4);
@@ -94,10 +93,9 @@ function viewLanguages()
 				$row->$key = $value;
 			}
 
-			$lang = ($client->name == 'site') ? 'lang_site' : 'lang_'.$client->name;
-
 			// if current than set published
-			if ( $mainframe->getCfg($lang) == $row->language) {
+			$params = JComponentHelper::getParams('com_languages');
+			if ( $params->get($client->name, 'en-GB') == $row->language) {
 				$row->published	= 1;
 			} else {
 				$row->published = 0;
@@ -122,46 +120,33 @@ function viewLanguages()
 /**
 * Publish, or make current, the selected language
 */
-//function publishLanguage( $language, $option )
 function publishLanguage( $language )
 {
 	global $mainframe;
 
 	// Initialize some variables
-	$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+	$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
-	// Set FTP credentials, if given
-	jimport('joomla.client.helper');
-	JClientHelper::setCredentialsFromRequest('ftp');
-	$ftp = JClientHelper::getCredentials('ftp');
+	$params = JComponentHelper::getParams('com_languages');
+	$params->set($client->name, $language);
 
-	// Set the new default language
-	$varname = ($client->id == 0) ? 'lang_site' : 'lang_administrator';
-	$config =& JFactory::getConfig();
-	$config->setValue('config.'.$varname, $language);
+	$table =& JTable::getInstance('component');
+	$table->loadByOption( 'com_languages' );
 
-	// Get the path of the configuration file
-	$fname = JPATH_CONFIGURATION.DS.'configuration.php';
+	$table->params = $params->toString();
 
-	// Try to make the configuration file writeable
-	if (!$ftp['enabled'] && !JPath::setPermissions($fname, '0755')) {
-		JError::raiseNotice('SOME_ERROR_CODE', 'Could not make configuration.php writeable');
+	// pre-save checks
+	if (!$table->check()) {
+		JError::raiseWarning( 500, $table->getError() );
+		return false;
 	}
 
-	// Get the config registry in PHP class format and write it to configuration.php
-	jimport('joomla.filesystem.file');
-	$return = JFile::write($fname, $config->toString('PHP', 'config',  array('class' => 'JConfig')));
-
-	// Try to make the configuration file unwriteable
-	if (!$ftp['enabled'] && !JPath::setPermissions($fname, '0555')) {
-		JError::raiseNotice('SOME_ERROR_CODE', 'Could not make configuration.php unwriteable');
+	// save the changes
+	if (!$table->store()) {
+		JError::raiseWarning( 500, $table->getError() );
+		return false;
 	}
 
-	// Redirect appropriately
-	if ($return) {
-		$mainframe->redirect('index.php?option=com_languages&client='.$client->id, JText::_( 'Configuration successfully updated!' ) );
-	} else {
-		$mainframe->redirect('index.php?option=com_languages&client='.$client->id, JText::_( 'ERRORCONFIGWRITEABLE' ) );
-	}
+	$mainframe->redirect('index.php?option=com_languages&client='.$client->id);
 }
 ?>

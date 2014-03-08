@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: router.php 7999 2007-07-16 19:46:36Z jinx $
+* @version		$Id: router.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla.Framework
 * @subpackage	Application
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -16,85 +16,15 @@
 defined('JPATH_BASE') or die();
 
 /**
- * Route handling class
- *
- * @static
- * @author		Johan Janssens <johan.janssens@joomla.org>
- * @package 	Joomla.Framework
- * @subpackage	Application
- * @since		1.5
+ * Set the available masks for the routing mode
  */
-class JRoute
-{
-	/**
-	 * Translates an internal Joomla URL to a humanly readible URL.
-	 *
-	 * @access public
-	 * @param 	string 	 $url 	Absolute or Relative URI to Joomla resource
-	 * @param 	boolean  $xhtml Replace & by &amp; for xml compilance
-	 * @param	int		 $ssl	Secure state for the resolved URI
-	 * 		 1: Make URI secure using global secure site URI
-	 * 		 0: Leave URI in the same secure state as it was passed to the function
-	 * 		-1: Make URI unsecure using the global unsecure site URI
-	 * @return The translated humanly readible URL
-	 */
-	function _($url, $xhtml = true, $ssl = 0)
-	{
-		global $mainframe;
-
-		// If we are in the administrator application return
-		if($mainframe->isAdmin()) {
-			return  str_replace( '&', '&amp;', str_replace('&amp;', '&', $url));
-		}
-
-		// Get the router
-		$router =& $mainframe->getRouter();
-
-		// Build route
-		$url = $router->build($url);
-
-		/*
-		 * Get the secure/unsecure URLs.
-
-		 * If the first 5 characters of the BASE are 'https', then we are on an ssl connection over
-		 * https and need to set our secure URL to the current request URL, if not, and the scheme is
-		 * 'http', then we need to do a quick string manipulation to switch schemes.
-		 */
-
-		$base = JURI::base(); //get base URL
-
-		if ( substr( $base, 0, 5 ) == 'https' )
-		{
-			$secure 	= $base;
-			$unsecure	= 'http'.substr( $base, 5 );
-		}
-		elseif ( substr( $base, 0, 4 ) == 'http' )
-		{
-			$secure		= 'https'.substr( $base, 4 );
-			$unsecure	= $base;
-		}
-
-		// Ensure that proper secure URL is used if ssl flag set secure
-		if ($ssl == 1) {
-			$url = $secure.$url;
-		}
-
-		// Ensure that unsecure URL is used if ssl flag is set to unsecure
-		if ($ssl == -1) {
-			$url = $unsecure.$url;
-		}
-
-		if($xhtml) {
-			$url = str_replace( '&', '&amp;', $url );
-		}
-
-		return $url;
-	}
-}
+define('JROUTER_MODE_RAW', 0);
+define('JROUTER_MODE_SEF', 1);
 
 /**
  * Class to create and parse routes
  *
+ * @abstract
  * @author		Johan Janssens <johan.janssens@joomla.org>
  * @package 	Joomla.Framework
  * @subpackage	Application
@@ -117,7 +47,15 @@ class JRouter extends JObject
 	 * @var array
 	 */
 	var $_vars = array();
-
+	
+	/**
+	 * An route prefix
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	var $_prefix = null;
+	
 	/**
 	 * Class constructor
 	 *
@@ -125,32 +63,50 @@ class JRouter extends JObject
 	 */
 	function __construct($options = array())
 	{
-		if(isset($options['mode'])) {
+		if(array_key_exists('mode', $options)) {
 			$this->_mode = $options['mode'];
 		} else {
-			$this->_mode = 0;
+			$this->_mode = JROUTER_MODE_RAW;
 		}
+		
+		if(array_key_exists('prefix', $options)) {
+			$this->_prefix = $options['prefix'];
+		} 
 	}
-
+	
 	/**
-	 * Returns a reference to the global Router object, only creating it
-	 * if it doesn't already exist.
+	 * Returns a reference to the global JRouter object, only creating it if it
+	 * doesn't already exist.
 	 *
 	 * This method must be invoked as:
-	 * 		<pre>  $router = &JRouter::getInstance();</pre>
+	 * 		<pre>  $menu = &JRouter::getInstance();</pre>
 	 *
 	 * @access	public
-	 * @return	JRouter	The Router object.
+	 * @param string  $client  The name of the client
+	 * @param array   $options An associative array of options
+	 * @return	JRouter	A router object.
 	 * @since	1.5
 	 */
-	function &getInstance($options = array())
+	function &getInstance($client, $options = array())
 	{
-		static $instance;
-
-		if (!is_object($instance)) {
-			$instance = new JRouter($options);
+		//Load the router object
+		$info =& JApplicationHelper::getClientInfo($client, true);
+			
+		$path = $info->path.DS.'includes'.DS.'router.php';
+		if(file_exists($path)) 
+		{
+			require_once $path;
+				
+			// Create a JRouter object
+			$classname = 'JRouter'.ucfirst($client);
+			$instance = new $classname($options);
+		} 
+		else 
+		{
+			$error = new JException( E_ERROR, 500, 'Unable to load router: '.$classname);
+			return $error;
 		}
-
+			
 		return $instance;
 	}
 
@@ -158,138 +114,10 @@ class JRouter extends JObject
 	 * Route a request
 	 *
 	 * @access public
+	 * @since	1.5
 	 */
 	function parse($url)
 	{
-		$uri  =& JURI::getInstance($url);
-		$menu =& JMenu::getInstance(true);
-
-		// Set Local Vars passed in via the URL
-		$vars = $uri->getQuery(true);
-		$this->_vars	= array_merge($this->_vars, $vars);
-
-		// Get the base and full URLs
-		$full = $uri->toString( array('scheme', 'host', 'port', 'path'));
-		$base = $uri->base();
-
-		$url = urldecode(str_replace($base, '', $full));
-		$url = preg_replace('/index[\d]?.php/', '', $url);
-		$url = trim($url , '/');
-	
-		/*
-		 * Handle empty URL : mysite/ or mysite/index.php
-		 */
-		if(empty($url) && !$uri->getQuery())
-		{	
-			if($itemid = JRequest::getVar('Itemid')) {
-				$item = $menu->getItem($itemid);
-			} else {
-				$item = $menu->getDefault();
-			}
-			
-			// Set the active menu item
-			$menu->setActive($item->id);
-
-			//Set the information in the request
-			JRequest::set($item->query, 'get', false );
-
-			//Set the itemid in the request
-			JRequest::setVar('Itemid',  $item->id);
-			
-			return true;
-		}
-
-		/*
-		 * Handle routed URL : mysite/index.php/route?var=x
-		 */
-		if(!empty($url)&& !(int) $uri->getVar('Itemid'))
-		{
-			// Set document link
-			$doc = & JFactory::getDocument();
-			$doc->setLink($base);
-			
-			if (!empty($url))
-			{
-				// Parse application route
-				if(!$itemid = $this->_parseApplicationRoute($url)) {
-					return false;
-				}
-			
-				// Set the active menu item
-				JRequest::setVar('Itemid', $itemid);
-				$menu->setActive($itemid);
-			}
-				
-			if(!empty($url))
-			{
-				// Parse component route
-				$vars = $this->_parseComponentRoute($url);
-
-				//Set the variables
-				$this->_vars = array_merge($this->_vars, $vars);
-				JRequest::set($this->_vars, 'get', true );
-			}
-			else
-			{
-				//Set active menu item
-				$item =& $menu->getActive();
-
-				//Set the information in the request
-				JRequest::set($item->query, 'get', true );
-				JRequest::setVar('Itemid', $item->id);
-			}
-
-			return true;
-		}
-
-		/*
-		 * Handle unrouted URL : mysite/index.php?option=x&var=y&Itemid=z
-		 */
-		if(($itemid = (int) $uri->getVar('Itemid')))
-		{
-			//Make sure the itemid exists
-			if(!$menu->getItem($itemid)) {
-				return false;
-			}
-			
-			// Set the active menu item
-			$item =& $menu->setActive($itemid);
-
-			//Set the variables
-			$vars = JRequest::get('get');
-
-			// Removed any appended variables
-			/* Do we need this - tcp -> Yes we do but it's broken ! I'll fix
-			foreach($vars as $key => $value)
-			{
-				$this->_vars[$key] = $value;
-				if($key === 'Itemid') {
-					break;
-				}
-			}
-			*/
-
-			//We only received an Itemid, set the information from the itemid in the 
-			// request
-			if(count($vars) == 1) {
-				JRequest::set($item->query, 'get', false );
-			}
-
-			//Set the route information in the request
-			JRequest::set($vars, 'get', true );
-			
-			return true;
-		}
-
-		$default = $menu->getDefault();
-		$itemid = $default->id;
-
-		// Set the active menu item
-		$menu->setActive($itemid);
-
-		//Set the itemid in the request
-		JRequest::setVar('Itemid', $itemid);
-
 		return true;
 	}
 
@@ -300,262 +128,126 @@ class JRouter extends JObject
 	 * @return	string	The absolute search engine friendly URL
 	 * @since	1.5
 	 */
-	function build($value)
+	function build($url)
 	{
-		// Replace all &amp; with & - ensures cache integrity
-		$url = str_replace('&amp;', '&', $value);
+		$url = str_replace('&amp;', '&', $url);
 
+		return $url;
+	}
+	
+	/**
+	 * Get the router mode
+	 *
+	 * @access public
+	 */
+	function getMode() {
+		return $this->_mode;
+	}
+	
+	/**
+	 * Get the router mode
+	 *
+	 * @access public
+	 */
+	function setMode($mode) {
+		$this->_mode = $mode;
+	}
+	
+	/**
+	 * Set a router variable, creating it if it doesn't exist
+	 *
+	 * @access	public
+	 * @param	string  $key    The name of the variable
+	 * @param	mixed   $value  The value of the variable
+	 * @param	boolean $create If True, the variable will be created if it doesn't exist yet
+	 * @since	1.5
+ 	 */
+	function setVar($key, $value, $create = true) {
+		
+		if(!$create && array_key_exists($key, $this->_vars)) {
+			$this->_vars[$key] = $value;
+		} else {
+			$this->_vars[$key] = $value;
+		}
+	}
+	
+	/**
+	 * Set the router variable array
+	 *
+	 * @access	public
+	 * @param	array   $vars   An associative array with variables
+	 * @param	boolean $create If True, the array will be merged instead of overwritten
+	 * @since	1.5
+ 	 */
+	function setVars($vars = array(), $merge = true) {
+		
+		if($merge) {
+			$this->_vars = array_merge($this->_vars, $vars);
+		} else {
+			$this->_vars = $vars;
+		}
+	}
+	
+	/**
+	 * Get a router variable
+	 *
+	 * @access	public
+	 * @param	string $key   The name of the variable
+	 * $return  mixed  Value of the variable
+	 * @since	1.5
+ 	 */
+	function getVar($key) 
+	{
+		$result = null;
+		if(isset($this->_vars, $key)) {
+			$result = $this->_vars[$key];
+		}
+		return $result;
+	}
+	
+	/**
+	 * Get the router variable array
+	 *
+	 * @access	public
+	 * @return  array An associative array of router variables
+	 * @since	1.5
+ 	 */
+	function getVars() {
+		return $this->_vars;
+	}
+	
+	/**
+	 * Create a uri based on a full or partial url string
+	 *
+	 * @access	protected
+	 * @return  JURI  A JURI object
+	 * @since	1.5
+ 	 */
+	function &_createURI($url)
+	{
 		// Create full URL if we are only appending variables to it
 		if(substr($url, 0, 1) == '&')
 		{
 			$vars = array();
 			parse_str($url, $vars);
 
-			$vars = array_merge($this->_vars, $vars);
+			$vars = array_merge($this->getVars(), $vars);
+			
+			foreach($vars as $key => $var) 
+			{
+				if(empty($var)) {
+					unset($vars[$key]);
+				}
+			}
+			
 			$url = 'index.php?'.JURI::_buildQuery($vars);
 		}
 		
-		// Can this URL be build
-		if(preg_match('/^(([^:\/\?#]+):)/i', $url) || strcasecmp(substr($url, 0, 9), 'index.php')) {
-			return $url;
-		}
-
 		// Decompose link into url component parts
-		$uri  =& JURI::getInstance(JURI::base().$url);
-		$menu =& JMenu::getInstance();
-		
-		/*
-		 * Build unrouted URL
-		 */ 
-		if(!$this->_mode)
-		{
-			if($uri->getVar('Itemid') && count($uri->getQuery(true)) == 1)
-			{
-				// Get the active menu item
-				$itemid = $uri->getVar('Itemid');
-				$item = $menu->getItem($itemid);
-				$uri->setQuery($item->query);
-				$uri->setVar('Itemid', $itemid);
-				$url = $uri->toString();
-				return $url;
-			} 
-		}
-
-		// If the itemid isn't set in the URL use default
-		if(!$itemid = $uri->getVar('Itemid'))
-		{
-			$default = $menu->getDefault();
-			$uri->setVar('Itemid', JRequest::getInt('Itemid', $default->id));
-		}
-
-		$item = $menu->getItem($uri->getVar('Itemid'));
-
-		// If the option isn't set in the URL use the itemid
-		if(!$option = $uri->getVar('option')) {
-			$uri->setVar('option', $item->component);
-		}
-		
-		$url = $uri->toString(array('query', 'fragment'));
-		
-		/*
-		 * Build routed URL : mysite/route/index.php?var=x
-		 */
-		if ($this->_mode)
-		{
-			$route = ''; //the route created
-
-			$query = $uri->getQuery(true);
-
-			//Built application route
-			$app_route = $this->_buildApplicationRoute($query);
-
-			//Build component route
-			$com_route = $this->_buildComponentRoute($query);
-
-			//Set query again in the URI
-			$uri->setQuery($query);
-
-			//Check if link contained fragment identifiers (ex. #foo)
-			$fragment = null;
-			if ($fragment = $uri->getFragment())
-			{
-				// ensure fragment identifiers are compatible with HTML4
-				if (preg_match('@^[A-Za-z][A-Za-z0-9:_.-]*$@', $fragment)) {
-					$fragment = '#'.$fragment;
-				}
-			}
-
-			//Check if the component has left any query information unhandled
-			if($query = $uri->getQuery()) {
-				$query = '?'.$query;
-			}
-
-			//Create the route
-			$url = $app_route.$com_route.$fragment.$query;
-
-			//Prepend the base URI if we are not using mod_rewrite
-			if ($this->_mode == 1) {
-				$url = 'index.php/'.$url;
-			}
-		}
-		
-		return $url;
+		$uri = new JURI(JURI::base().$url);
+		return $uri;
 	}
-
-	/**
-	* Parse a application specific route
-	*
-	* @access protected
-	*/
-	function _parseApplicationRoute(&$url)
-	{
-		$menu  =& JMenu::getInstance();
-
-		$itemid = null;
-		$option = null;
-
-		if(substr($url, 0, 9) == 'component')
-		{
-			$segments = explode('/', $url);
-			$url = str_replace('component/'.$segments[1], '', $url);;
-
-			//Get the option
-			$option = 'com_'.$segments[1];
-			
-			if($itemid = JRequest::getVar('Itemid')) {
-				$item = $menu->getItem($itemid);
-			} else {
-				$item = $menu->getDefault();
-			}
-
-			$itemid = $item->id;
-		}
-		else
-		{
-			//Need to reverse the array (highest sublevels first)
-			$items = array_reverse($menu->getMenu());
-
-			foreach ($items as $item)
-			{
-				if(strlen($item->route) > 0 && strpos($url.'/', $item->route.'/') === 0)
-				{
-					$url    = str_replace($item->route, '', $url);
-
-					$itemid = $item->id;
-					$option = $item->component;
-					break;
-				}
-			}
-		}
-
-		//Set the option in the variables array
-		if (empty($this->_vars['option'])) {
-			$this->_vars['option'] = $option;
-		}
-		
-		return $itemid;
-	}
-
-	/**
-	* Parse a component specific route
-	*
-	* @access protected
-	*/
-	function _parseComponentRoute($url)
-	{
-		$vars = array();
-
-		$segments = explode('/', $url);
-		array_shift($segments);
-
-		// Handle pagination
-		$limitstart = JRequest::getVar('start', null, 'get', 'int');
-		if(isset($limitstart)) {
-			JRequest::setVar('limitstart', $limitstart);
-		}
-
-		// Handle component	route
-		$component = $this->_vars['option'];
-
-		// Use the component routing handler if it exists
-		$path = JPATH_BASE.DS.'components'.DS.$component.DS.'router.php';
-
-		if (file_exists($path) && count($segments))
-		{
-			//decode the route segments
-			$segments = $this->_decodeSegments($segments);
-
-			require_once $path;
-			$function =  substr($component, 4).'ParseRoute';
-			$vars =  $function($segments);
-		}
-
-		return $vars;
-	}
-
-	/**
-	* Build the application specific route
-	*
-	* @access protected
-	*/
-	function _buildApplicationRoute(&$query)
-	{
-		$route = '';
-
-		$menu =& JMenu::getInstance();
-		$item = $menu->getItem($query['Itemid']);
-
-		if ($query['option'] == $item->component /*&& @$query['view'] == @$item->query['view']*/) {
-			$route = $item->route;
-		} else {
-			$route = 'component/'.substr($query['option'], 4);
-		}
-
-		return $route;
-	}
-
-	/**
-	* Build the component specific route
-	*
-	* @access protected
-	*/
-	function _buildComponentRoute(&$query)
-	{
-		$route = '';
-
-		// Get the component
-		$component = preg_replace('/[^A-Z0-9_\.-]/i', '', $query['option']);
-
-		// Unset unneeded query information
-		unset($query['option']);
-		unset($query['Itemid']);
-
-		// Use the component routing handler if it exists
-		$path = JPATH_BASE.DS.'components'.DS.$component.DS.'router.php';
-
-		// Use the custom request handler if it exists
-		if (file_exists($path))
-		{
-			require_once $path;
-			$function	= substr($component, 4).'BuildRoute';
-			$parts		= $function($query);
-
-			if (isset( $query['limitstart'] ))
-			{
-				$query['start'] = (int) $query['limitstart'];
-				unset($query['limitstart']);
-			}
-
-			//encode the route segments
-			$parts = $this->_encodeSegments($parts);
-
-			$route = implode('/', $parts);
-			$route = ($route) ? '/'.$route : null;
-		}
-
-		return $route;
-	}
-
+	
 	function _encodeSegments($segments)
 	{
 		$total = count($segments);

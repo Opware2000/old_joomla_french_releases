@@ -3,7 +3,7 @@
  * patTemplate function that enables adding global variables
  * from within a template.
  *
- * $Id: Globalvar.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Globalvar.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -24,7 +24,7 @@ defined('JPATH_BASE') or die();
  * default  >  default value of the variable
  * hidden   >  whether to output the content of the variable: yes|no
  *
- * $Id: Globalvar.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Globalvar.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -33,14 +33,14 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Function_Globalvar extends patTemplate_Function
 {
-   /**
+	/**
 	* name of the function
 	* @access	private
 	* @var		string
 	*/
 	var $_name	=	'Globalvar';
 
-   /**
+	/**
 	* reference to the patTemplate object that instantiated the module
 	*
 	* @access	protected
@@ -48,7 +48,7 @@ class patTemplate_Function_Globalvar extends patTemplate_Function
 	*/
 	var	$_tmpl;
 
-   /**
+	/**
 	* set a reference to the patTemplate object that instantiated the reader
 	*
 	* @access	public
@@ -59,7 +59,7 @@ class patTemplate_Function_Globalvar extends patTemplate_Function
 		$this->_tmpl		=	&$tmpl;
 	}
 
-   /**
+	/**
 	* call the function
 	*
 	* @access	public

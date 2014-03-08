@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8026 2007-07-17 20:59:07Z jinx $
+ * @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -111,7 +111,7 @@ class UserController extends JController
 		if ($return = JRequest::getVar('return', '', 'method', 'base64')) {
 			$return = base64_decode($return);
 		}
-		
+
 		$options = array();
 		$options['remember'] = JRequest::getBool('remember', false);
 		$options['return'] = $return;
@@ -132,18 +132,21 @@ class UserController extends JController
 		if(!JError::isError($error))
 		{
 			// Redirect if the return url is not registration or login
-			if ( $return && !( strpos( $return, 'com_user' ))) {
-				$mainframe->redirect( $return );
+			if ( ! $return ) {
+				$return	= 'index.php?option=com_user';
 			}
+
+			$mainframe->redirect( $return );
 		}
 		else
 		{
 			// Facilitate third party login forms
-			if ( $return ) {
-				$mainframe->redirect( $return );
-			} else {
-				parent::display();
+			if ( ! $return ) {
+				$return	= 'index.php?option=com_user&view=login';
 			}
+
+			// Redirect to a login form
+			$mainframe->redirect( $return );
 		}
 	}
 
@@ -156,9 +159,8 @@ class UserController extends JController
 
 		if(!JError::isError($error))
 		{
-			if ($return = JRequest::getVar('return', '', 'post', 'base64')) {
+			if ($return = JRequest::getVar('return', '', 'method', 'base64')) {
 				$return = base64_decode($return);
-				$return = JURI::base().$return;
 			}
 
 			// Redirect if the return url is not registration or login
@@ -205,7 +207,7 @@ class UserController extends JController
 
 		// Get required system objects
 		$user 		= clone(JFactory::getUser());
-		$pathway 	=& $mainframe->getPathWay();
+		$pathway 	=& $mainframe->getPathway();
 		$config		=& JFactory::getConfig();
 		$authorize	=& JFactory::getACL();
 		$document   =& JFactory::getDocument();
@@ -218,7 +220,6 @@ class UserController extends JController
 		}
 
 		// Initialize new usertype setting
-		$usersConfig = &JComponentHelper::getParams( 'com_users' );
 		$newUsertype = $usersConfig->get( 'new_usertype' );
 		if (!$newUsertype) {
 			$newUsertype = 'Registered';

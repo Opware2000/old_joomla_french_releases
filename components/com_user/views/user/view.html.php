@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.html.php 7799 2007-06-27 08:33:35Z robs $
+* @version		$Id: view.html.php 8425 2007-08-17 05:30:29Z tcp $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -31,8 +31,14 @@ class UserViewUser extends JView
 	{
 		global $mainframe;
 
-		if($this->getLayout() == 'form') {
+		$layout	= $this->getLayout();
+		if( $layout == 'form') {
 			$this->_displayForm($tpl);
+			return;
+		}
+		
+		if ( $layout == 'login' ) {
+			parent::display($tpl);
 			return;
 		}
 
@@ -51,7 +57,7 @@ class UserViewUser extends JView
 		$user     =& JFactory::getUser();
 		$document =& JFactory::getDocument();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menu = &JMenu::getInstance();
 		$item = $menu->getActive();
 

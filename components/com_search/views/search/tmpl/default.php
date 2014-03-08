@@ -1,5 +1,5 @@
-<?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
+<?php defined('_JEXEC') or die('Restricted access'); ?>
+
 <?php if ( $this->params->get( 'show_page_title' ) ) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 	<?php echo $this->params->get( 'page_title' ); ?>
@@ -7,7 +7,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 <?php endif; ?>
 
 <?php echo $this->loadTemplate('form'); ?>
-<?php if(!$this->error) :
+<?php if(!$this->error && count($this->results) > 0) :
 	echo $this->loadTemplate('results');
 else :
 	echo $this->loadTemplate('error');

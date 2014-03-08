@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: controller.php 8071 2007-07-18 23:23:27Z friesengeist $
+ * @version		$Id: controller.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Templates
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -30,7 +30,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$db		=& JFactory::getDBO();
-		$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		// Initialize the pagination variables
 		$limit		= $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
@@ -68,7 +68,7 @@ class TemplatesController
 	{
 		$template	= JRequest::getVar('id', '', 'method', 'cmd');
 		$option 	= JRequest::getCmd('option');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		if (!$template)
 		{
@@ -95,7 +95,7 @@ class TemplatesController
 		$cid	= JRequest::getVar('cid', array(), 'method', 'array');
 		$cid	= array(JFilterInput::clean(@$cid[0], 'cmd'));
 		$option	= JRequest::getCmd('option');
-		$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		if ($cid[0])
 		{
@@ -124,7 +124,7 @@ class TemplatesController
 		$cid		= array(JFilterInput::clean(@$cid[0], 'cmd'));
 		$template	= $cid[0];
 		$option		= JRequest::getCmd('option');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		if (!$cid[0]) {
 			return JError::raiseWarning( 500, 'Template not specified' );
@@ -186,7 +186,7 @@ class TemplatesController
 
 		$template	= JRequest::getVar('id', '', 'method', 'cmd');
 		$option		= JRequest::getVar('option', '', '', 'cmd');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 		$menus		= JRequest::getVar('selections', array(), 'post', 'array');
 		$params		= JRequest::getVar('params', array(), 'post', 'array');
 		$default	= JRequest::getBool('default');
@@ -212,19 +212,19 @@ class TemplatesController
 			}
 
 			// Try to make the params file writeable
-			if (!$ftp['enabled'] && !JPath::setPermissions($file, '0755')) {
-				JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template parameter file writeable');
+			if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0755')) {
+				JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template parameter file writable');
 			}
 
 			$return = JFile::write($file, $txt);
 
 			// Try to make the params file unwriteable
-			if (!$ftp['enabled'] && !JPath::setPermissions($file, '0555')) {
-				JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template parameter file unwriteable');
+			if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0555')) {
+				JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template parameter file unwritable');
 			}
 
 			if (!$return) {
-				$mainframe->redirect('index.php?option='.$option.'&client='.$client->id, JText::_('Operation Failed').': '.JText::_('Failed to open file for writing.'));
+				$mainframe->redirect('index.php?option='.$option.'&client='.$client->id, JText::_('Operation Failed').': '.JText::sprintf('Failed to open file for writing.', $file));
 			}
 		}
 
@@ -272,7 +272,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$option	= JRequest::getCmd('option');
-		$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -287,7 +287,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$option		= JRequest::getCmd('option');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 		$template	= JRequest::getVar('id', '', 'method', 'cmd');
 		$file		= $client->path.DS.'templates'.DS.$template.DS.'index.php';
 
@@ -316,7 +316,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$option			= JRequest::getCmd('option');
-		$client			= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client			=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 		$template		= JRequest::getVar('id', '', 'method', 'cmd');
 		$filecontent	= JRequest::getVar('filecontent', '', 'post', 'string', JREQUEST_ALLOWRAW);
 
@@ -337,7 +337,7 @@ class TemplatesController
 
 		// Try to make the template file writeable
 		if (!$ftp['enabled'] && !JPath::setPermissions($file, '0755')) {
-			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template file writeable');
+			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template file writable');
 		}
 
 		jimport('joomla.filesystem.file');
@@ -345,7 +345,7 @@ class TemplatesController
 
 		// Try to make the template file unwriteable
 		if (!$ftp['enabled'] && !JPath::setPermissions($file, '0555')) {
-			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template file unwriteable');
+			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the template file unwritable');
 		}
 
 		if ($return)
@@ -375,7 +375,7 @@ class TemplatesController
 		// Initialize some variables
 		$option 	= JRequest::getCmd('option');
 		$template	= JRequest::getVar('id', '', 'method', 'cmd');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		// Determine template CSS directory
 		$dir = $client->path.DS.'templates'.DS.$template.DS.'css';
@@ -398,7 +398,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$option		= JRequest::getCmd('option');
-		$client		= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client		=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 		$template	= JRequest::getVar('id', '', 'method', 'cmd');
 		$filename	= JRequest::getVar('filename', '', 'method', 'cmd');
 
@@ -434,7 +434,7 @@ class TemplatesController
 
 		// Initialize some variables
 		$option			= JRequest::getCmd('option');
-		$client			= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client			=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 		$template		= JRequest::getVar('id', '', 'post', 'cmd');
 		$filename		= JRequest::getVar('filename', '', 'post', 'cmd');
 		$filecontent	= JRequest::getVar('filecontent', '', 'post', 'string', JREQUEST_ALLOWRAW);
@@ -455,16 +455,16 @@ class TemplatesController
 		$file = $client->path.DS.'templates'.DS.$template.DS.'css'.DS.$filename;
 
 		// Try to make the css file writeable
-		if (!$ftp['enabled'] && !JPath::setPermissions($file, '0755')) {
-			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the css file writeable');
+		if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0755')) {
+			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the css file writable');
 		}
 
 		jimport('joomla.filesystem.file');
 		$return = JFile::write($file, $filecontent);
 
 		// Try to make the css file unwriteable
-		if (!$ftp['enabled'] && !JPath::setPermissions($file, '0555')) {
-			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the css file unwriteable');
+		if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0555')) {
+			JError::raiseNotice('SOME_ERROR_CODE', 'Could not make the css file unwritable');
 		}
 
 		if ($return)
@@ -483,7 +483,7 @@ class TemplatesController
 			}
 		}
 		else {
-			$mainframe->redirect('index.php?option='.$option.'&client='.$client->id, JText::_('Operation Failed').': '.JText::_('Failed to open file for writing.'));
+			$mainframe->redirect('index.php?option='.$option.'&client='.$client->id.'&id='.$template.'&task=choose_css', JText::_('Operation Failed').': '.JText::sprintf('Failed to open file for writing.', $file));
 		}
 	}
 }

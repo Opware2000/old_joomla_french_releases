@@ -1,6 +1,6 @@
 <?php
 /**
-* version $Id: newsfeeds.php 6681 2007-02-19 15:07:54Z hackwar $
+* version $Id: newsfeeds.php 8628 2007-08-29 22:41:32Z jinx $
 * @package		Joomla
 * @subpackage	Newsfeeds
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.

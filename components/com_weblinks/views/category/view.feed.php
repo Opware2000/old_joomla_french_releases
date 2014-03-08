@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.feed.php 7771 2007-06-23 17:13:14Z jinx $
+* @version		$Id: view.feed.php 8578 2007-08-26 23:09:01Z jinx $
 * @package		Joomla
 * @subpackage	Weblinks
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -33,7 +33,7 @@ class WeblinksViewCategory extends JView
 
 		$document =& JFactory::getDocument();
 
-		$document->link = JURI::base().JRoute::_('index.php?option=com_weblinks&view=category&id='.JRequest::getVar('id',null, '', 'int'));
+		$document->link = JRoute::_('index.php?option=com_weblinks&view=category&id='.JRequest::getVar('id',null, '', 'int'));
 		$limit = '10';
 		JRequest::setVar('limit', $limit);
 

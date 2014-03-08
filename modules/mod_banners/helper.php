@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 6997 2007-03-23 00:54:41Z hackwar $
+* @version		$Id: helper.php 8559 2007-08-25 18:34:58Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -31,7 +31,7 @@ class modBannersHelper
 		if ($params->get( 'tag_search' ))
 		{
 			$document		=& JFactory::getDocument();
-			$keywords		=& $document->getMetaData( 'keywords' );
+			$keywords		=  $document->getMetaData( 'keywords' );
 
 			$vars['tag_search'] = BannerHelper::getKeywords( $keywords );
 		}

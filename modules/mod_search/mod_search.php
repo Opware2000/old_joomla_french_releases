@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: mod_search.php 7995 2007-07-16 15:55:31Z jinx $
+* @version		$Id: mod_search.php 8616 2007-08-29 16:55:59Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -18,6 +18,5 @@ defined('_JEXEC') or die('Restricted access');
 require_once( dirname(__FILE__).DS.'helper.php' );
 
 $inputfield	= modSearchHelper::renderInputField($params);
-$itemid		= modSearchHelper::getItemid();
 
 require(JModuleHelper::getLayoutPath('mod_search'));

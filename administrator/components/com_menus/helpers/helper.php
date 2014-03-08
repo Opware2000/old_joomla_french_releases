@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: helper.php 8020 2007-07-17 16:42:27Z friesengeist $
+ * @version		$Id: helper.php 8286 2007-08-01 08:27:44Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -16,7 +16,6 @@
 /**
  * @package		Joomla
  * @subpackage	Menus
- * @author Andrew Eddie
  */
 class MenusHelper
 {
@@ -153,4 +152,3 @@ class MenusHelper
 		return $published;
 	}
 }
-?>

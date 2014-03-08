@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: poll.php 7286 2007-05-03 01:44:29Z jinx $
+* @version		$Id: poll.php 8288 2007-08-01 08:40:54Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,12 +16,12 @@ defined('_JEXEC') or die();
 
 class JElementPoll extends JElement
 {
-   /**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 *
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Poll';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -41,4 +41,3 @@ class JElementPoll extends JElement
 		return JHTML::_('select.genericlist',  $options, ''.$control_name.'['.$name.']', 'class="inputbox"', 'id', 'title', $value, $control_name.$name );
 	}
 }
-?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.pdf.php 7791 2007-06-26 18:56:42Z tcp $
+ * @version		$Id: view.pdf.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -50,7 +50,7 @@ class ContentViewArticle extends JView
 
 		// prepare header lines
 		$document->setHeader($this->_getHeaderText($article, $params));
-		
+
 		echo $article->text;
 	}
 

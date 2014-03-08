@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: uri.php 7074 2007-03-31 15:37:23Z jinx $
+ * @version		$Id: uri.php 8292 2007-08-01 19:37:33Z jinx $
  * @package		Joomla.Framework
  * @subpackage	Environment
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -626,7 +626,7 @@ class JURI extends JObject
 			return false;
 		}
 
-		static $out = array();
+		$out = array();
 
 		//reset in case we are looping
 		if( !isset($akey) && !count($out) )  {

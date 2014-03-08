@@ -1,11 +1,14 @@
 <?php
 /**
- * @version		$Id: navigation.php 6142 2007-01-02 04:04:12Z eddiea $
+ * @version		$Id: navigation.php 8630 2007-08-30 04:30:51Z robs $
  */
+// No direct access
+defined('_JEXEC') or die('Restricted access');
+
 ?>
 <div class="submenu-box">
 	<div class="submenu-pad">
-		<ul id="submenu">
+		<ul id="submenu" class="information">
 			<li>
 				<a id="site" class="active">
 					<?php echo JText::_( 'System Info' ); ?></a>

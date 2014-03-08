@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.php 7692 2007-06-08 20:41:29Z tcp $
+ * @version		$Id: view.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -32,7 +32,7 @@ class InstallerViewDefault extends JView
 		parent::__construct($config);
 		$this->_addPath('template', $this->_basePath.DS.'views'.DS.'default'.DS.'tmpl');
 	}
-	
+
 	function display($tpl=null)
 	{
 		/*
@@ -55,10 +55,10 @@ class InstallerViewDefault extends JView
 			$message2		= $state->get('extension.message');
 			$showMessage	= ( $message1 || $message2 );
 		}
-		
+
 		$this->assign('showMessage',	$showMessage);
 		$this->assignRef('state',		$state);
-		
+
 		JHTML::_('behavior.tooltip');
 		parent::display($tpl);
 	}

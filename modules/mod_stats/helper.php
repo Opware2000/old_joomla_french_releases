@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: helper.php 7944 2007-07-13 21:48:48Z friesengeist $
+* @version		$Id: helper.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -90,9 +90,9 @@ class modStatsHelper
 				$rows[$i]->data 	= $links;
 				$i++;
 			}
-			
+
 		}
-		
+
 		if( $counter )
 		{
 			$query = 'SELECT SUM( hits ) AS count_hits'
@@ -101,7 +101,7 @@ class modStatsHelper
 			;
 			$db->setQuery( $query );
 			$hits = $db->loadResult();
-			
+
 			if ( $hits ) {
 				$rows[$i]->title 	= JText::_( 'Content View Hits' );
 				$rows[$i]->data 	= $hits + $increase;

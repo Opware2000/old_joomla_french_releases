@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.cache.php 7416 2007-05-16 13:00:24Z jinx $
+* @version		$Id: admin.cache.php 8682 2007-08-31 18:36:45Z jinx $
 * @package		Joomla
 * @subpackage	Cache
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -66,7 +66,7 @@ class CacheController
 	{
 		global $mainframe, $option;
 		$submenu = JRequest::getVar('client', '0', '', 'int');
-		$client	= JApplicationHelper::getClientInfo($submenu);
+		$client	 =& JApplicationHelper::getClientInfo($submenu);
 		if ($submenu == 1) {
 			JSubMenuHelper::addEntry(JText::_('Site'), 'index.php?option=com_cache&client=0');
 			JSubMenuHelper::addEntry(JText::_('Administrator'), 'index.php?option=com_cache&client=1', true);
@@ -88,7 +88,7 @@ class CacheController
 
 	function deleteCache($cid)
 	{
-		$client	= JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
+		$client	=& JApplicationHelper::getClientInfo(JRequest::getVar('client', '0', '', 'int'));
 
 		$cmData = new CacheData($client->path.DS.'cache');
 		$cmData->cleanCacheList( $cid );

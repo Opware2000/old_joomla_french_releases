@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: geshi.php 6714 2007-02-24 02:00:40Z hackwar $
+* @version		$Id: geshi.php 8220 2007-07-27 22:09:08Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -32,7 +32,7 @@ function plgContentGeshi( &$row, &$params, $page=0 )
  	$plugin =& JPluginHelper::getPlugin('content', 'geshi');
 
 	// define the regular expression for the bot
-	$regex = "#<pre\s*(.*?)>(.*?)</pre>#s";
+	$regex = "#<pre xml:\s*(.*?)>(.*?)</pre>#s";
 
 	$GLOBALS['_MAMBOT_GESHI_PARAMS'] =& $params;
 
@@ -86,4 +86,3 @@ function plgContentGeshi_replacer( &$matches )
 
 	return $text;
 }
-?>

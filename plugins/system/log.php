@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: log.php 7266 2007-05-02 15:03:32Z jinx $
+* @version		$Id: log.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -31,11 +31,12 @@ class  plgSystemLog extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @access	protected
-	 * @param	object		$subject The object to observe
-	 * @since	1.0
+	 * @param	object	$subject The object to observe
+	 * @param 	array   $config  An array that holds the plugin configuration
+	 * @since	1.5
 	 */
-	function plgSystemLog(& $subject) {
-		parent::__construct($subject);
+	function plgSystemLog(& $subject, $config) {
+		parent::__construct($subject, $config);
 	}
 
 	function onLoginFailure($response)
@@ -45,7 +46,7 @@ class  plgSystemLog extends JPlugin
 		$log = JLog::getInstance();
 		$errorlog = array();
 
-		switch($response->status)
+		switch($response['status'])
 	    {
 			case JAUTHENTICATE_STATUS_CANCEL :
 			{

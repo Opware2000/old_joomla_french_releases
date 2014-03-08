@@ -1,5 +1,5 @@
 <jtmpl:comment>
-@version	$Id: configuration.html 7740 2007-06-13 21:01:25Z laurens $
+@version	$Id: configuration.html 8563 2007-08-25 20:50:33Z jinx $
 @package	Joomla
 @subpackage	Installation
 @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -39,9 +39,6 @@ var $ftp_pass = '{VAR_FTPPASSWORD|addslashes}';
 var $ftp_root = '{VAR_FTPROOT|addslashes}';
 var $ftp_enable = '{VAR_FTPENABLE|intval}';
 /* Locale Settings */
-var $lang_site = '{VAR_DEFLANG|addslashes}';
-var $lang_administrator = '{VAR_DEFLANG|addslashes}';
-var $lang = '{VAR_BCLANG|addslashes}';
 var $offset = '0';
 var $offset_user = '0';
 /* Mail Settings */
@@ -55,7 +52,7 @@ var $smtppass = '';
 var $smtphost = 'localhost';
 /* Cache Settings */
 var $caching = '0';
-var $cachetime = '900';
+var $cachetime = '15';
 var $cache_handler = 'file';
 /* Meta Settings */
 var $MetaDesc = '{VAR_METADESC|addslashes}';

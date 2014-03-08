@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.plugins.php 8030 2007-07-17 22:58:52Z friesengeist $
+* @version		$Id: admin.plugins.php 8330 2007-08-03 20:33:40Z eddieajau $
 * @package		Joomla
 * @subpackage	Plugins
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -26,7 +26,7 @@ if (!$user->authorize( 'com_plugins', 'manage' )) {
 require_once( JApplicationHelper::getPath( 'admin_html' ) );
 
 $option = JRequest::getCmd( 'option' );
-$client = JRequest::getWord( 'client', 'site' );
+$client = JRequest::getWord( 'filter_client', 'site' );
 $cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 $task	= JRequest::getCmd( 'task' );
 
@@ -365,7 +365,7 @@ function cancelPlugin( $option, $client )
 	$row->bind(JRequest::get('post'));
 	$row->checkin();
 
-	$mainframe->redirect( JRoute::_( 'index.php?option='. $option .'&client='. $client ) );
+	$mainframe->redirect( JRoute::_( 'index.php?option='. $option .'&client='. $client, false ) );
 }
 
 /**

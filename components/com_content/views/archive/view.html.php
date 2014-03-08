@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 7679 2007-06-08 10:46:05Z friesengeist $
+ * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -39,7 +39,7 @@ class ContentViewArchive extends ContentView
 		// Initialize some variables
 		$user		=& JFactory::getUser();
 		$document	=& JFactory::getDocument();
-		$pathway	= & $mainframe->getPathWay();
+		$pathway	=& $mainframe->getPathway();
 
 		// Get the menu item object
 		$menus = &JMenu::getInstance();

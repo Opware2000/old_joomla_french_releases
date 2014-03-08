@@ -1,16 +1,16 @@
 <?php
 /**
-* @version		$Id: view.php 7380 2007-05-06 21:26:03Z eddieajau $
-* @package		Joomla
-* @subpackage	Menus
-* @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
+ * @version		$Id: view.php 8286 2007-08-01 08:27:44Z eddieajau $
+ * @package		Joomla
+ * @subpackage	Menus
+ * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ * See COPYRIGHT.php for copyright notices and details.
+ */
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -91,7 +91,7 @@ class MenusViewMenus extends JView
 		/*
 		 * Set toolbar items for the page
 		 */
-		JToolBarHelper::title(  JText::_( 'Delete Menu' ) );
+		JToolBarHelper::title(  JText::_( 'Menu' ) . ': <small><small>[ '. JText::_( 'Delete' ) .' ]</small></small>' );
 		JToolBarHelper::custom( 'doDeleteMenu', 'delete.png', 'delete_f2.png', 'Delete', false );
 		JToolBarHelper::cancel();
 		JToolBarHelper::help( 'screen.menumanager.delete' );
@@ -139,4 +139,3 @@ class MenusViewMenus extends JView
 		parent::display($tpl);
 	}
 }
-?>

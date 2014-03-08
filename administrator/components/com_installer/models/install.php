@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: install.php 7753 2007-06-16 14:25:07Z friesengeist $
+ * @version		$Id: install.php 8553 2007-08-25 07:26:32Z tcp $
  * @package		Joomla
  * @subpackage	Menus
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights
@@ -48,7 +48,7 @@ class InstallerModelInstall extends JModel
 	function install()
 	{
 		global $mainframe;
-		
+
 		$this->setState('action', 'install');
 
 		switch(JRequest::getWord('installtype'))
@@ -132,13 +132,13 @@ class InstallerModelInstall extends JModel
 		}
 
 		// If there is no uploaded file, we have a problem...
-		if (!is_array($userfile) || $userfile['size'] < 1) {
+		if (!is_array($userfile) ) {
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('No file selected'));
 			return false;
 		}
 
 		// Check if there was a problem uploading the file.
-		if ( $userfile['error'] )
+		if ( $userfile['error'] || $userfile['size'] < 1 )
 		{
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('WARNINSTALLUPLOADERROR'));
 			return false;

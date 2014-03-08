@@ -2,7 +2,7 @@
 /**
  * Base class for patTemplate template cache
  *
- * $Id: TemplateCache.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: TemplateCache.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * A template cache is used to cache the data after
  * the template has been read, but before the variables
@@ -24,7 +24,7 @@ defined('JPATH_BASE') or die();
 /**
  * Base class for patTemplate template cache
  *
- * $Id: TemplateCache.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: TemplateCache.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * A template cache is used to cache the data after
  * the template has been read, but before the variables
@@ -42,7 +42,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_TemplateCache extends patTemplate_Module
 {
-   /**
+	/**
 	* load template from cache
 	*
 	* @access	public
@@ -55,7 +55,7 @@ class patTemplate_TemplateCache extends patTemplate_Module
 		return false;
 	}
 
-   /**
+	/**
 	* write template to cache
 	*
 	* @access	public
@@ -67,7 +67,7 @@ class patTemplate_TemplateCache extends patTemplate_Module
 		return true;
 	}
 
-   /**
+	/**
 	* get the cache key for the input
 	*
 	* @param	mixed	input to read from.

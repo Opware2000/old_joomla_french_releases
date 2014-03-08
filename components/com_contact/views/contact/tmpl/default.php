@@ -1,16 +1,15 @@
-<?php // no direct access
-defined('_JEXEC') or die('Restricted access'); ?>
+<?php /** $Id: default.php 8448 2007-08-19 01:22:48Z hackwar $ */ defined( '_JEXEC' ) or die(); ?>
 <?php if ( $this->params->get( 'show_page_title' ) && !$this->contact->params->get( 'popup' ) ) : ?>
 <div class="componentheading<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 	<?php echo $this->params->get( 'page_title' ); ?>
 </div>
 <?php endif; ?>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="contentpane<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-<?php if ( $this->contact->params->get( 'show_contact_list' ) && count( $this->contacts ) > 1) : ?>
+<?php if ( $this->params->get( 'show_contact_list' ) && count( $this->contacts ) > 1) : ?>
 <tr>
 	<td colspan="2" align="center">
 		<br />
-		<form action="<?php echo JRoute::_('index.php') ?>" method="post" name="selectForm" target="_top" id="selectForm">
+		<form action="<?php echo JRoute::_('index.php') ?>" method="post" name="selectForm" id="selectForm">
 		<?php echo JText::_( 'Select Contact' ); ?>:
 			<br />
 			<?php echo JHTML::_('select.genericlist',  $this->contacts, 'contact_id', 'class="inputbox" onchange="this.form.submit()"', 'id', 'name', $this->contact->id);?>
@@ -66,7 +65,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 	</td>
 </tr>
 <?php endif;
-if ( $this->contact->params->get('show_email_form') )
+if ( $this->contact->params->get('show_email_form') && ($this->contact->email_to || $this->contact->user_id))
 	echo $this->loadTemplate('form');
 ?>
 </table>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: input.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: input.php 8180 2007-07-23 05:52:29Z eddieajau $
  * @package		Joomla.Framework
  * @subpackage	Filter
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -244,7 +244,7 @@ class JFilterInput extends JObject
 		$postTag	= $source;
 		$currentSpace = false;
 		$attr = '';	 // moffats: setting to null due to issues in migration system - undefined variable errors
-		
+
 		// Is there a tag? If so it will certainly start with a '<'
 		$tagOpen_start	= strpos($source, '<');
 

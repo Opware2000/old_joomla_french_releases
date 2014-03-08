@@ -1,5 +1,5 @@
 /**
-* @version $Id: general_rtl.css 7277 2007-05-02 18:03:58Z tcp $
+* @version $Id: general_rtl.css 8369 2007-08-09 22:59:30Z eddieajau $
 * @copyright Copyright (C) 2005 - 2006 Open Source Matters. All rights reserved.
 * @license GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
@@ -81,9 +81,17 @@ textarea:focus { background-color: #ffd }
 
 /* -- overall styles ------------------------------ */
 
-#border-top          { background: url(../images/j_header_middle.png) repeat-x; }
-#border-top div      { background: url(../images/j_header_right_rtl.png) 100% 0 no-repeat; }
-#border-top div div  { background: url(../images/j_header_left_rtl.png) no-repeat; height: 54px; }
+#border-top.h_green          { background: url(../images/h_green/j_header_middle.png) repeat-x; }
+#border-top.h_green div      { background: url(../images/h_green/j_header_right_rtl.png) 100% 0 no-repeat; }
+#border-top.h_green div div  { background: url(../images/h_green/j_header_left_rtl.png) no-repeat; height: 54px; }
+
+#border-top.h_teal          { background: url(../images/h_teal/j_header_middle.png) repeat-x; }
+#border-top.h_teal div      { background: url(../images/h_teal/j_header_right_rtl.png) 100% 0 no-repeat; }
+#border-top.h_teal div div  { background: url(../images/h_teal/j_header_left_rtl.png) no-repeat; height: 54px; }
+
+#border-top.h_cherry          { background: url(../images/h_cherry/j_header_middle.png) repeat-x; }
+#border-top.h_cherry div      { background: url(../images/h_cherry/j_header_right_rtl.png) 100% 0 no-repeat; }
+#border-top.h_cherry div div  { background: url(../images/h_cherry/j_header_left_rtl.png) no-repeat; height: 54px; }
 
 #border-top .title {
 	font-size: 22px; font-weight: bold; color: #fff; line-height: 44px;
@@ -478,11 +486,16 @@ table.noshow fieldset { margin: 15px 7px 7px 7px; }
 .button2-left .page a,
 .button2-right .page a,
 .button2-left .page span,
-.button2-right .page span {
+.button2-right .page span,
+.button2-left .blank a,
+.button2-right .blank a,
+.button2-left .blank span,
+.button2-right .blank span {
 	padding: 0 6px;
 }
 
-.page span {
+.page span,
+.blank span {
 	color: #000;
 	font-weight: bold;
 }
@@ -531,7 +544,8 @@ table.noshow fieldset { margin: 15px 7px 7px 7px; }
 	background: url(../images/j_button2_last_off.png) 100% 0 no-repeat;
 }
 
-.button2-left .page {
+.button2-left .page,
+.button2-left .blank {
 	background: url(../images/j_button2_left_cap.png) 0 no-repeat;
 }
 

@@ -1,7 +1,10 @@
 <?php
 /**
- * @version		$Id: sysinfo_phpinfo.php 6143 2007-01-02 04:04:50Z eddiea $
+ * @version		$Id: sysinfo_phpinfo.php 8630 2007-08-30 04:30:51Z robs $
  */
+// No direct access
+defined('_JEXEC') or die('Restricted access');
+
 ?>
 <fieldset class="adminform">
 	<legend><?php echo JText::_( 'PHP Information' ); ?></legend>

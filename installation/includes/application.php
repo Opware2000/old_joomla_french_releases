@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: application.php 8091 2007-07-19 20:01:35Z willebil $
+* @version		$Id: application.php 8684 2007-08-31 20:02:53Z jinx $
 * @package		Joomla
 * @subpackage	Installation
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -14,8 +14,6 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
-
-require_once( JPATH_BASE.DS.'includes'.DS.'framework.php' );
 
 /**
 * Joomla! Application class
@@ -37,11 +35,16 @@ class JInstallation extends JApplication
 
 	/**
 	* Class constructor
+	*
+	* @access protected
+	* @param	array An optional associative array of configuration settings.
+	* Recognized key values include 'clientId' (this list is not meant to be comprehensive).
 	*/
-	function __construct( )
+	function __construct($config = array())
 	{
-		parent::__construct(2);
-
+		$config['clientId'] = 3;
+		parent::__construct($config);
+	
 		JError::setErrorHandling(E_ALL, 'Ignore');
 		$this->_createConfiguration();
 	}
@@ -173,17 +176,6 @@ class JInstallation extends JApplication
 	function getTemplate()
 	{
 		return 'template';
-	}
-
-	/**
-	 * Set the user session.
-	 *
-	 * @access public
-	 * @param string The session's name.
-	 */
-	function loadSession($name)
-	{
-		$session =& $this->_createSession($name);
 	}
 
 	/**

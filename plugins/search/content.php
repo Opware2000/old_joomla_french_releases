@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: content.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: content.php 8627 2007-08-29 21:55:02Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 $mainframe->registerEvent( 'onSearch', 'plgSearchContent' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchContentAreas' );
-$lang =& JFactory::getLanguage();
-$lang->load( 'plg_search_content' );
+
+JPlugin::loadLanguage( 'plg_search_content' );
 
 /**
  * @return array An array of search areas
@@ -67,7 +67,7 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	if ($text == '') {
 		return array();
 	}
-
+	
 	$wheres = array();
 	switch ($phrase) {
 		case 'exact':
@@ -128,7 +128,8 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	$rows = array();
 
 	// search articles
-	if ( $sContent ) {
+	if ( $sContent ) 
+	{
 		$query = 'SELECT a.title AS title,'
 		. ' a.created AS created,'
 		. ' CONCAT(a.introtext, a.`fulltext`) AS text,'
@@ -157,7 +158,8 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	}
 
 	// search uncategorised content
-	if ( $sUncategorised ) {
+	if ( $sUncategorised ) 
+	{
 		$query = 'SELECT id, a.title AS title, a.created AS created,'
 		. ' a.introtext AS text,'
 		. ' CONCAT( "index.php?option=com_content&view=article&id=", a.id ) AS href,'
@@ -179,7 +181,8 @@ function plgSearchContent( $text, $phrase='', $ordering='', $areas=null )
 	}
 
 	// search archived content
-	if ( $sArchived ) {
+	if ( $sArchived ) 
+	{
 		$searchArchived = JText::_( 'Archived' );
 
 		$query = 'SELECT a.title AS title,'

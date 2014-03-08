@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: toolbar.php 7692 2007-06-08 20:41:29Z tcp $
+* @version		$Id: toolbar.php 8180 2007-07-23 05:52:29Z eddieajau $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -480,7 +480,7 @@ class JToolBarHelper
 		if ($user->get('gid') != 25) {
 			return;
 		}
-		
+
 		$component	= urlencode( $component );
 		$path		= urlencode( $path );
 		$bar = & JToolBar::getInstance('toolbar');

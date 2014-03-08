@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: newsfeed.php 8131 2007-07-20 21:30:08Z eddieajau $
+* @version		$Id: newsfeed.php 8591 2007-08-27 21:09:32Z hackwar $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -24,12 +24,12 @@ defined('_JEXEC') or die();
 
 class JElementNewsfeed extends JElement
 {
-   /**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
+	/**
+	 * Element name
+	 *
+	 * @access	protected
+	 * @var		string
+	 */
 	var	$_name = 'Newsfeed';
 
 	function fetchElement($name, $value, &$node, $control_name)
@@ -40,6 +40,7 @@ class JElementNewsfeed extends JElement
 		. ' FROM #__newsfeeds AS a'
 		. ' INNER JOIN #__categories AS c ON a.catid = c.id'
 		. ' WHERE a.published = 1'
+		. ' AND c.published = 1'
 		. ' ORDER BY a.catid, a.name'
 		;
 		$db->setQuery( $query );

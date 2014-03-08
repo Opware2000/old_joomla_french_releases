@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: cache.php 7980 2007-07-15 09:54:47Z jinx $
+* @version		$Id: cache.php 8503 2007-08-22 07:39:40Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -36,24 +36,21 @@ class  plgSystemCache extends JPlugin
 	 * This causes problems with cross-referencing necessary for the observer design pattern.
 	 *
 	 * @access	protected
-	 * @param	object		$subject The object to observe
+	 * @param	object	$subject The object to observe
+	 * @param 	array   $config  An array that holds the plugin configuration
 	 * @since	1.0
 	 */
-	function plgSystemCache(& $subject)
+	function plgSystemCache(& $subject, $config)
 	{
-		parent::__construct($subject);
-
-		// load plugin parameters
-		$this->_plugin = & JPluginHelper::getPlugin('system', 'cache');
-		$this->_params = new JParameter($this->_plugin->params);
+		parent::__construct($subject, $config);
 
 		$user =& JFactory::getUser();
 
 		$options = array(
 			'cachebase' 	=> JPATH_BASE.DS.'cache',
 			'defaultgroup' 	=> 'page',
-			'lifetime' 		=> $this->_params->get('cachetime', 15) * 60,
-			'browsercache'	=> $this->_params->get('browsercache', false)
+			'lifetime' 		=> $this->params->get('cachetime', 15) * 60,
+			'browsercache'	=> $this->params->get('browsercache', false)
 		);
 
 		$this->_cache =& JCache::getInstance( 'page', $options );

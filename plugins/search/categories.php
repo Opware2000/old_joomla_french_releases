@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: categories.php 7946 2007-07-14 01:52:32Z friesengeist $
+* @version		$Id: categories.php 8627 2007-08-29 21:55:02Z jinx $
 * @package		Joomla
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 $mainframe->registerEvent( 'onSearch', 'plgSearchCategories' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchCategoryAreas' );
-$lang =& JFactory::getLanguage();
-$lang->load( 'plg_search_categories' );
+
+JPlugin::loadLanguage( 'plg_search_categories' );
 
 /**
  * @return array An array of search areas
@@ -76,17 +76,12 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 	}
 
 	$text = $db->getEscaped($text);
-	$query = 'SELECT a.name AS title,'
-	. ' a.description AS text,'
-	. ' "" AS created,'
+	$query = 'SELECT a.title, a.description AS text, "" AS created,'
 	. ' "2" AS browsernav,'
-	. ' "" AS section,'
-	. ' "" AS href,'
 	. ' s.id AS secid, a.id AS catid,'
-	. ' m.id AS menuid, m.type AS menutype'
+	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(":", a.id, a.alias) ELSE a.id END as slug'
 	. ' FROM #__categories AS a'
 	. ' INNER JOIN #__sections AS s ON s.id = a.section'
-	. ' LEFT JOIN #__menu AS m ON m.componentid = a.id'
 	. ' WHERE ( a.name LIKE "%'.$text.'%"'
 	. ' OR a.title LIKE "%'.$text.'%"'
 	. ' OR a.description LIKE "%'.$text.'%" )'
@@ -94,8 +89,6 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 	. ' AND s.published = 1'
 	. ' AND a.access <= '.(int) $user->get('aid')
 	. ' AND s.access <= '.(int) $user->get('aid')
-	. ' AND ( m.type = "content_section" OR m.type = "content_blog_section"'
-	. ' OR m.type = "content_category" OR m.type = "content_blog_category")'
 	. ' GROUP BY a.id'
 	. ' ORDER BY '. $order
 	;
@@ -104,13 +97,8 @@ function plgSearchCategories( $text, $phrase='', $ordering='', $areas=null )
 
 	$count = count( $rows );
 	for ( $i = 0; $i < $count; $i++ ) {
-		if ( $rows[$i]->menutype == 'content_blog_category' ) {
-			$rows[$i]->href = 'index.php?option=com_content&task=blogcategory&id='. $rows[$i]->catid .'&Itemid='. $rows[$i]->menuid;
-			$rows[$i]->section 	= JText::_( 'Category Blog' );
-		} else {
-			$rows[$i]->href = 'index.php?option=com_content&task=category&sectionid='. $rows[$i]->secid .'&id='. $rows[$i]->catid .'&Itemid='. $rows[$i]->menuid;
-			$rows[$i]->section 	= JText::_( 'Category List' );
-		}
+		$rows[$i]->href = 'index.php?option=com_content&view=category&id='. $rows[$i]->catid;
+		$rows[$i]->section 	= JText::_( 'Category' );
 	}
 
 	return $rows;

@@ -2,7 +2,7 @@
 /**
  * patTemplate Module base class
  *
- * $Id: Module.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Module.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * The patTemplate_Module is the base class for all patTemplate
  * modules like readers, dumpers, filters, etc.
@@ -14,7 +14,7 @@
 /**
  * patTemplate Module base class
  *
- * $Id: Module.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Module.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * The patTemplate_Module is the base class for all patTemplate
  * modules like readers, dumpers, filters, etc.
@@ -26,7 +26,7 @@
  */
 class patTemplate_Module
 {
-   /**
+	/**
 	* module name
 	*
 	* This has to be set in the final
@@ -37,7 +37,7 @@ class patTemplate_Module
 	*/
 	var	$_name = null;
 
-   /**
+	/**
 	* module parameters
 	*
 	* @access	protected
@@ -45,7 +45,7 @@ class patTemplate_Module
 	*/
 	var	$_params = array();
 
-   /**
+	/**
 	* get the name of the module
 	*
 	* @access	public
@@ -56,7 +56,7 @@ class patTemplate_Module
 		return $this->_name;
 	}
 
-   /**
+	/**
 	* sets parameters of the module
 	*
 	* @access	public
@@ -70,7 +70,7 @@ class patTemplate_Module
 		$this->_params = array_merge( $this->_params, $params );
 	}
 
-   /**
+	/**
 	* gets a parameter of the module
 	*
 	* @access	public

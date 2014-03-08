@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: view.html.php 8031 2007-07-17 23:14:23Z jinx $
+ * @version		$Id: view.html.php 8682 2007-08-31 18:36:45Z jinx $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -33,7 +33,7 @@ class ContentViewArticle extends ContentView
 		$user		   =& JFactory::getUser();
 		$document	   =& JFactory::getDocument();
 		$dispatcher	   =& JEventDispatcher::getInstance();
-		$pathway	   =& $mainframe->getPathWay();
+		$pathway	   =& $mainframe->getPathway();
 		$contentConfig = &JComponentHelper::getParams( 'com_content' );
 
 		// Initialize variables
@@ -141,7 +141,7 @@ class ContentViewArticle extends ContentView
 				}
 			}
 		}
-		
+
 		/* moved to template - tcp June 27 2007
 		$article->mod_date = '';
 		if (intval($article->modified) != 0) {
@@ -151,7 +151,7 @@ class ContentViewArticle extends ContentView
 			$article->created = JHTML::_('date', $article->created);
 		}
 		*/
-		
+
 		$article->readmore_link = $linkOn;
 		$article->readmore_text = $linkText;
 

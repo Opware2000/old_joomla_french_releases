@@ -3,7 +3,7 @@
  * patTemplate function to dynamically change the
  * value of _any_ attribute of the parent tag.
  *
- * $Id: Attribute.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Attribute.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -22,7 +22,7 @@ defined('JPATH_BASE') or die();
  *
  * The enclosed data will be used as the value of the attribute.
  *
- * $Id: Attribute.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Attribute.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * @package		patTemplate
  * @subpackage	Functions
@@ -30,14 +30,14 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Function_Attribute extends patTemplate_Function
 {
-   /**
+	/**
 	* name of the function
 	* @access	private
 	* @var		string
 	*/
 	var $_name	=	'Attribute';
 
-   /**
+	/**
 	* call the function
 	*
 	* @access	public

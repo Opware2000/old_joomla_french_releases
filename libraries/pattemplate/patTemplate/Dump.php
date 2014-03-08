@@ -2,7 +2,7 @@
 /**
  * Base class for patTemplate dumpers
  *
- * $Id: Dump.php 7692 2007-06-08 20:41:29Z tcp $
+ * $Id: Dump.php 8287 2007-08-01 08:38:59Z eddieajau $
  *
  * The dump functionality is separated from the main class
  * for performance reasons.
@@ -28,7 +28,7 @@ defined('JPATH_BASE') or die();
  */
 class patTemplate_Dump extends patTemplate_Module
 {
-   /**
+	/**
 	* reference to the patTemplate object that instantiated the module
 	*
 	* @access	protected
@@ -36,7 +36,7 @@ class patTemplate_Dump extends patTemplate_Module
 	*/
 	var	$_tmpl;
 
-   /**
+	/**
 	* set a reference to the patTemplate object that instantiated the reader
 	*
 	* @access	public
@@ -47,7 +47,7 @@ class patTemplate_Dump extends patTemplate_Module
 		$this->_tmpl		=	&$tmpl;
 	}
 
-   /**
+	/**
 	* display the header
 	*
 	* @access	public
@@ -56,7 +56,7 @@ class patTemplate_Dump extends patTemplate_Module
 	{
 	}
 
-   /**
+	/**
 	* dump the global variables
 	*
 	* @access	public
@@ -67,7 +67,7 @@ class patTemplate_Dump extends patTemplate_Module
 	{
 	}
 
-   /**
+	/**
 	* dump the templates
 	*
 	* This method has to be implemented in the dumpers.
@@ -81,7 +81,7 @@ class patTemplate_Dump extends patTemplate_Module
 	{
 	}
 
-   /**
+	/**
 	* display the footer
 	*
 	* @access	public
@@ -90,7 +90,7 @@ class patTemplate_Dump extends patTemplate_Module
 	{
 	}
 
-   /**
+	/**
  	* flatten the variables
 	*
 	* This will convert the variable definitions
@@ -130,7 +130,7 @@ class patTemplate_Dump extends patTemplate_Module
 		return $flatten;
 	}
 
-   /**
+	/**
 	* extract all variables from a template
 	*
 	* @access	private

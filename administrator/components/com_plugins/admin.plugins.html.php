@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: admin.plugins.html.php 8047 2007-07-18 12:27:25Z jinx $
+* @version		$Id: admin.plugins.html.php 8577 2007-08-26 22:45:22Z eddieajau $
 * @package		Joomla
 * @subpackage	Plugins
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -69,23 +69,21 @@ class HTML_modules {
 					<th nowrap="nowrap" width="5%">
 						<?php echo JHTML::_('grid.sort',   'Published', 'p.published', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
-					<th width="80" nowrap="nowrap">
+					<th width="8%" nowrap="nowrap">
 						<?php echo JHTML::_('grid.sort',   'Order', 'p.folder', @$lists['order_Dir'], @$lists['order'] ); ?>
-					</th>
-					<th width="1%">
 						<?php echo JHTML::_('grid.order',  $rows ); ?>
 					</th>
-					<th nowrap="nowrap" width="7%">
+					<th nowrap="nowrap" width="10%">
 						<?php echo JHTML::_('grid.sort',   'Access', 'groupname', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
-					<th nowrap="nowrap"  width="3%" class="title">
-						<?php echo JHTML::_('grid.sort',   'ID', 'p.id', @$lists['order_Dir'], @$lists['order'] ); ?>
-					</th>
-					<th nowrap="nowrap"  width="13%" class="title">
+					<th nowrap="nowrap"  width="10%" class="title">
 						<?php echo JHTML::_('grid.sort',   'Type', 'p.folder', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
-					<th nowrap="nowrap"  width="13%" class="title">
+					<th nowrap="nowrap"  width="10%" class="title">
 						<?php echo JHTML::_('grid.sort',   'File', 'p.element', @$lists['order_Dir'], @$lists['order'] ); ?>
+					</th>
+					<th nowrap="nowrap"  width="1%" class="title">
+						<?php echo JHTML::_('grid.sort',   'ID', 'p.id', @$lists['order_Dir'], @$lists['order'] ); ?>
 					</th>
 				</tr>
 			</thead>
@@ -130,7 +128,7 @@ class HTML_modules {
 					<td align="center">
 						<?php echo $published;?>
 					</td>
-					<td class="order" colspan="2">
+					<td class="order">
 						<span><?php echo $page->orderUpIcon( $i, ($row->folder == @$rows[$i-1]->folder && $row->ordering > -10000 && $row->ordering < 10000), 'orderup', 'Move Up', $ordering ); ?></span>
 						<span><?php echo $page->orderDownIcon( $i, $n, ($row->folder == @$rows[$i+1]->folder && $row->ordering > -10000 && $row->ordering < 10000), 'orderdown', 'Move Down', $ordering ); ?></span>
 						<?php $disabled = $ordering ?  '' : 'disabled="disabled"'; ?>
@@ -140,13 +138,13 @@ class HTML_modules {
 						<?php echo $access;?>
 					</td>
 					<td nowrap="nowrap">
-						<?php echo $row->id;?>
-					</td>
-					<td nowrap="nowrap">
 						<?php echo $row->folder;?>
 					</td>
 					<td nowrap="nowrap">
 						<?php echo $row->element;?>
+					</td>
+					<td align="center">
+						<?php echo $row->id;?>
 					</td>
 				</tr>
 				<?php
@@ -158,7 +156,7 @@ class HTML_modules {
 
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="client" value="<?php echo $client;?>" />
+		<input type="hidden" name="filter_client" value="<?php echo $client;?>" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="" />
@@ -183,6 +181,10 @@ class HTML_modules {
 	function editPlugin( &$row, &$lists, &$params, $option )
 	{
 		JRequest::setVar( 'hidemainmenu', 1 );
+
+		// clean item data
+		jimport('joomla.filter.output');
+		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, '' );
 
 		JHTML::_('behavior.tooltip');
 
@@ -266,7 +268,7 @@ class HTML_modules {
 				</tr>
 				<tr>
 					<td valign="top" class="key">
-						<?php echo JText::_( 'Plugin Order' ); ?>:
+						<?php echo JText::_( 'Order' ); ?>:
 					</td>
 					<td>
 						<?php echo $lists['ordering']; ?>

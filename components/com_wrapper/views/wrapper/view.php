@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: view.php 7466 2007-05-22 13:30:39Z jinx $
+* @version		$Id: view.php 8171 2007-07-23 00:28:29Z eddieajau $
 * @package		Joomla
 * @subpackage	Wrapper
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -25,10 +25,10 @@ class WrapperViewWrapper extends JView
 {
 	function display( $tpl = null )
 	{
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$menus = &JMenu::getInstance();
 		$menu  = $menus->getActive();
-		
+
 		$this->params->def( 'page_title', $menu->name );
 
 		// auto height control

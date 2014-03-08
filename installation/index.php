@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		$Id: index.php 8091 2007-07-19 20:01:35Z willebil $
+* @version		$Id: index.php 8684 2007-08-31 20:02:53Z jinx $
 * @package		Joomla
 * @subpackage	Installation
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
@@ -15,13 +15,10 @@ define( '_JEXEC', 1 );
 define( 'JPATH_BASE', dirname( __FILE__ ) );
 
 require_once( JPATH_BASE .'/includes/defines.php' );
-require_once( JPATH_BASE .'/includes/application.php' );
+require_once( JPATH_BASE .'/includes/framework.php' );
 
 // create the mainframe object
-$mainframe = new JInstallation();
-
-// create the session
-$mainframe->loadSession('installation');
+$mainframe =& JApplication::getInstance('installation');
 
 // initialuse the application
 $mainframe->initialise();
