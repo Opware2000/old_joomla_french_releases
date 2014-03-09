@@ -2,8 +2,8 @@
 <extension version="3.0" client="site" type="language" method="upgrade">
 	<name>French (fr-FR)</name>
     <tag>fr-FR</tag>
-	<version>3.0.0.3</version>
-	<creationDate>27 sept 2012</creationDate>
+	<version>3.0.1.1</version>
+	<creationDate>9 oct 2012</creationDate>
 	<author>French translation team : joomla.fr</author>
 	<authorEmail>traduction@joomla.fr</authorEmail>
 	<authorUrl>www.joomla.fr</authorUrl>
@@ -80,7 +80,6 @@
 		<filename>fr-FR.mod_whosonline.sys.ini</filename>
 		<filename>fr-FR.mod_wrapper.ini</filename>
 		<filename>fr-FR.mod_wrapper.sys.ini</filename>
-		<filename>fr-FR.pkg_joomla.sys.ini</filename>
 		<filename>fr-FR.tpl_beez3.ini</filename>
 		<filename>fr-FR.tpl_beez3.sys.ini</filename>
 		<filename>fr-FR.tpl_protostar.ini</filename>
