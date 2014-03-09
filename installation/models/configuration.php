@@ -1,7 +1,7 @@
 <?php
 /**
  * @package		Joomla.Installation
- * @copyright	Copyright (C) 2005 - 2012 Open Source Matters. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2013 Open Source Matters. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -267,7 +267,7 @@ class JInstallationModelConfiguration extends JModelLegacy
 			$query->insert('#__users', true);
 			$query->columns($columns);
 
-			$query->values($db->quote($userId) . ', '. $db->quote('Super User') . ', ' . $db->quote($options->admin_user) . ', '.
+			$query->values($db->quote($userId) . ', '. $db->quote('Super Utilisateur') . ', ' . $db->quote($options->admin_user) . ', '.
 				$db->quote($options->admin_email). ', '. $db->quote($cryptpass). ', '. $db->quote('deprecated').', '.$db->quote('0').', '.$db->quote('1').', '.
 				$db->quote($installdate).', '.$db->quote($nullDate).', '.$db->quote('0').', '.$db->quote(''));
 		}
