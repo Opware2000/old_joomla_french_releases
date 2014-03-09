@@ -39,7 +39,7 @@ class JFormFieldSample extends JFormFieldList
 		$lang = JFactory::getLanguage();
 		$options = array();
 		$type = $this->form instanceof JForm ? $this->form->getValue('db_type') : 'mysql' || 'sqlazure';
-		if ($type == 'mysqli') {
+		if ($type == ('mysql' || 'mysqli')) {
 			$type='mysql';
 		}
 		elseif($type='sqlsrv'){
