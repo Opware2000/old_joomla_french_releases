@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<extension version="3.0" client="site" type="language" method="upgrade">
+<extension version="3.1" client="site" type="language" method="upgrade">
 	<name>French (fr-FR)</name>
     <tag>fr-FR</tag>
-	<version>3.0.2.1</version>
-	<creationDate>8 nov 2012</creationDate>
+	<version>3.1.1.1</version>
+	<creationDate>27 avr 2013</creationDate>
 	<author>French translation team : joomla.fr</author>
 	<authorEmail>traduction@joomla.fr</authorEmail>
 	<authorUrl>www.joomla.fr</authorUrl>
-    <copyright>Copyright (C) 2005 - 2012 joomla.fr et Open Source Matters. Tous droits réservés</copyright>
+    <copyright>Copyright (C) 2005 - 2013 joomla.fr et Open Source Matters. Tous droits réservés</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<description>fr-FR site language</description>
 	<files>
@@ -20,6 +20,7 @@
 		<filename>fr-FR.com_messages.ini</filename>
 		<filename>fr-FR.com_newsfeeds.ini</filename>
 		<filename>fr-FR.com_search.ini</filename>
+ 		<filename>fr-FR.com_tags.ini</filename>
 		<filename>fr-FR.com_users.ini</filename>
 		<filename>fr-FR.com_weblinks.ini</filename>
 		<filename>fr-FR.com_wrapper.ini</filename>
@@ -72,6 +73,10 @@
 		<filename>fr-FR.mod_stats.sys.ini</filename>
 		<filename>fr-FR.mod_syndicate.ini</filename>
 		<filename>fr-FR.mod_syndicate.sys.ini</filename>
+ 		<filename>fr-FR.mod_tags_popular.ini</filename>
+ 		<filename>fr-FR.mod_tags_popular.sys.ini</filename>
+ 		<filename>fr-FR.mod_tags_similar.ini</filename>
+ 		<filename>fr-FR.mod_tags_similar.sys.ini</filename>
 		<filename>fr-FR.mod_users_latest.ini</filename>
 		<filename>fr-FR.mod_users_latest.sys.ini</filename>
 		<filename>fr-FR.mod_weblinks.ini</filename>

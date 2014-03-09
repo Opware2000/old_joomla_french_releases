@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_menus
  *
- * @copyright   Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -18,7 +18,7 @@ JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/he
 abstract class MenusHtmlMenus
 {
 	/**
-	 * @param	int $itemid	The menu item id
+	 * @param   int $itemid	The menu item id
 	 */
 	public static function association($itemid)
 	{
@@ -27,15 +27,15 @@ abstract class MenusHtmlMenus
 
 		// Get the associated menu items
 		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select('m.*');
-		$query->select('mt.title as menu_title');
-		$query->from('#__menu as m');
-		$query->leftJoin('#__menu_types as mt ON mt.menutype=m.menutype');
-		$query->where('m.id IN ('.implode(',', array_values($associations)).')');
-		$query->leftJoin('#__languages as l ON m.language=l.lang_code');
-		$query->select('l.image');
-		$query->select('l.title as language_title');
+		$query = $db->getQuery(true)
+			->select('m.*')
+			->select('mt.title as menu_title')
+			->from('#__menu as m')
+			->join('LEFT', '#__menu_types as mt ON mt.menutype=m.menutype')
+			->where('m.id IN ('.implode(',', array_values($associations)).')')
+			->join('LEFT', '#__languages as l ON m.language=l.lang_code')
+			->select('l.image')
+			->select('l.title as language_title');
 		$db->setQuery($query);
 
 		try
