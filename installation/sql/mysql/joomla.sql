@@ -536,13 +536,13 @@ INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
 (600, 'English (United Kingdom)', 'language', 'en-GB', '', 0, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
 (601, 'English (United Kingdom)', 'language', 'en-GB', '', 1, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
-(602, 'Français (French)', 'language', 'fr-FR', '', 0, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
-(603, 'Français (French)', 'language', 'fr-FR', '', 1, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
-(10003, 'fr-FR', 'package', 'pkg_fr-FR', '', 0, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
-(10004, 'TinyMCE langue FR', 'file', 'TinyMCE_fr-FR', '', 0, 1, 0, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
+(602, 'French Language Pack', 'package', 'pkg_fr-FR', '', 0, 1, 1, 1, '{"legacy":false,"name":"French Language Pack","type":"package","creationDate":"20 juin 2012","author":"French translation team : joomla.fr","copyright":"Copyright (C) 2005 - 2012 joomla.fr et Open Source Matters. Tous droits r\\u00e9serv\\u00e9s","authorEmail":"traduction@joomla.fr","authorUrl":"www.joomla.fr","version":"2.5.6.1","description":"\\n\\t\\t\\n\\t\\t<h3>Paquet de langue fran\\u00e7ais complet Joomla! fr-FR version 2.5.6v1<\\/h3>\\n\\t\\t<h3>Joomla! 2.5.6 Full French (fr-FR) Language Package version 2.5.6v1<\\/h3>\\n\\t\\t<br>\\n\\t\\t<h3>Installation du pack de langue fr-FR de TinyMCE 3.5.1 pour Joomla 2.5 inclus<\\/h3>\\n\\t\\t<div style=\\"font-weight: normal;\\">N''oubliez pas de s\\u00e9lectionner la langue FR dans les <a href=\\"index.php?option=com_plugins&amp;view=plugins&amp;filter_search=TinyMCE\\"><strong>param\\u00e8tres du plug-in ''\\u00c9diteur - TinyMCE''<\\/strong><\\/a> (param\\u00e8tre  ''Langue de l''\\u00e9diteur'' = fr).<br><br>\\n \\t\\tSi vous utilisez la <strong>d\\u00e9tection automatique<\\/strong>, veillez \\u00e0 ce que soient install\\u00e9s les diff\\u00e9rents packs de langue de TinyMCE correspondants aux packs de langue install\\u00e9s pour Joomla!<\\/div>\\n\\t\\t\\n\\t","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
+(603, 'Frenchfr-FR', 'language', 'fr-FR', '', 1, 1, 0, 1, '{"legacy":false,"name":"French (fr-FR)","type":"language","creationDate":"20 juin 2012","author":"French translation team : joomla.fr","copyright":"Copyright (C) 2005 - 2012 joomla.fr et Open Source Matters. Tous droits r\\u00e9serv\\u00e9s","authorEmail":"traduction@joomla.fr","authorUrl":"www.joomla.fr","version":"2.5.6.1","description":"fr-FR administrator language","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
+(604, 'Frenchfr-FR', 'language', 'fr-FR', '', 0, 1, 0, 1, '{"legacy":false,"name":"French (fr-FR)","type":"language","creationDate":"20 juin 2012","author":"French translation team : joomla.fr","copyright":"Copyright (C) 2005 - 2012 joomla.fr et Open Source Matters. Tous droits r\\u00e9serv\\u00e9s","authorEmail":"traduction@joomla.fr","authorUrl":"www.joomla.fr","version":"2.5.6.1","description":"fr-FR site language","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0),
+(605, 'TinyMCE langue FR', 'file', 'TinyMCE_fr-FR', '', 0, 1, 0, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
 
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
-(700, 'Joomla! CMS', 'file', 'joomla', '', 0, 1, 1, 1, '{"legacy":false,"name":"files_joomla","type":"file","creationDate":"June 2012","author":"Joomla!","copyright":"(C) 2005 - 2012 Open Source Matters. All rights reserved","authorEmail":"admin@joomla.org","authorUrl":"www.joomla.org","version":"2.5.5","description":"FILES_JOOMLA_XML_DESCRIPTION","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
+(700, 'Joomla! CMS', 'file', 'joomla', '', 0, 1, 1, 1, '{"legacy":false,"name":"files_joomla","type":"file","creationDate":"June 2012","author":"Joomla!","copyright":"(C) 2005 - 2012 Open Source Matters. All rights reserved","authorEmail":"admin@joomla.org","authorUrl":"www.joomla.org","version":"2.5.6","description":"FILES_JOOMLA_XML_DESCRIPTION","group":""}', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
 
 INSERT INTO `#__extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES
 (800, 'joomla', 'package', 'pkg_joomla', '', 0, 1, 1, 1, '', '', '', '', 0, '0000-00-00 00:00:00', 0, 0);
@@ -1467,7 +1467,7 @@ CREATE TABLE  `#__update_sites` (
 INSERT INTO `#__update_sites` VALUES
 (1, 'Joomla Core', 'collection', 'http://update.joomla.org/core/list.xml', 1, 0),
 (2, 'Joomla Extension Directory', 'collection', 'http://update.joomla.org/jed/list.xml', 1, 0),
-(3, 'French Language Pack Updates', 'collection', 'http://update.joomla.fr/translationlist.xml', 1, 1333380912);
+(3, 'French Language Pack Updates', 'collection', 'http://update.joomla.fr/translationlist.xml', 1, 0);
 
 CREATE TABLE `#__update_sites_extensions` (
   `update_site_id` INT DEFAULT 0,
@@ -1478,7 +1478,7 @@ CREATE TABLE `#__update_sites_extensions` (
 INSERT INTO `#__update_sites_extensions` VALUES
 (1, 700),
 (2, 700),
-(3, 10003);
+(3, 602);
 
 
 CREATE TABLE  `#__update_categories` (
