@@ -242,7 +242,7 @@ class JInstallationModelConfiguration extends JModelLegacy
 		{
 			$query = $db->getQuery(true);
 			$query->update('#__users');
-			$query->set('name = '.$db->quote('Super User'));
+			$query->set('name = '.$db->quote('Super Utilisateur'));
 			$query->set('username = '.$db->quote($options->admin_user));
 			$query->set('email = '.$db->quote($options->admin_email));
 			$query->set('password = '.$db->quote($cryptpass));
